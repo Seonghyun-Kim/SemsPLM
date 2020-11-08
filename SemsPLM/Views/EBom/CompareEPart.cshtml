@@ -1,0 +1,94 @@
+﻿
+@{
+    Layout = null;
+}
+<input type="hidden" value="" id="LOID"/>
+<input type="text" />
+<input type="button" value="검색" id="SelLOID"/>
+<input type="hidden" value="" id="ROID" />
+<input type="text" />
+<input type="button" value="검색" id="SelROID"/>
+<input type="button" value="비교"/>
+<div id="CompareEPartGrid"></div>
+
+<script type="text/javascript">
+    $(function () {
+        const CompareEPartSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'Level', type: 'number' },
+                { name: 'RootBaseLineOID', type: 'number' },
+                { name: 'ProjectOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'CompareChildren', type: 'array' },
+                { name: 'expanded', type: 'bool' },
+                { name: 'Action', type: 'string' },
+
+                //Object Mandatory
+                { name: 'LName', type: 'string' },
+
+                { name: 'RName', type: 'string' },
+            ],
+            hierarchy:
+            {
+                root: 'CompareChildren',
+            },
+            id: 'ToOID',
+            addRow: function (rowID, rowData, position, parentID, commit) {
+                commit(true);
+            },
+            deleteRow: function (rowID, commit) {
+                commit(true);
+            },
+            updateRow: function (rowID, rowData, commit) {
+                commit(true);
+            }
+        };
+
+        var CompareEPartAdapter = new $.jqx.dataAdapter(CompareEPartSource);
+        const CompareEPartGrid$ = $("#CompareEPartGrid");
+        CompareEPartGrid$.jqxTreeGrid('render');
+        CompareEPartGrid$.jqxTreeGrid({
+            theme: 'arctic',
+            width: "100%",
+            //height: "99%",
+            source: CompareEPartAdapter,
+            sortable: false,
+            pageable: false,
+            selectionMode: "custom",
+            editable: false,
+            editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+            showtoolbar: false,
+            columnsResize: true,
+            checkboxes: false,
+            columns: [
+                { text: '레벨', dataField: 'Level', width: '8%', align: 'center', editable: false, },
+                { text: 'L품번', dataField: 'LName', width: '8%', align: 'center', editable: false, },
+                { text: 'R품번', dataField: 'RName', width: '8%', align: 'center', editable: false, },
+
+            ],
+            columnGroups: [
+                { text: '기준', name: 'base' },
+                { text: '비교', name: 'target' },
+            ],
+        });
+
+        //RequestData('/EBom/SelectCompare', { 'ProjectOID': @ViewBag.ProjectOID, 'ProjectBaseLineOID': @ViewBag.ProjectBaseLineOID }, function (res) {
+        //    baseLineCompareDatas = [];
+        //    baseLineCompareDatas.push(res);
+        //    PrintJqxTreeGrid(baseLineCompareSource, baseLineCompareGrd$, baseLineCompareDatas);
+        //});
+
+
+        $('#SelLOID').on('click', function () {
+            OpenSearchEBomOIDDialog(null, null, null, '/EBom/dlgSearchEPart', 'EPART 검색');
+        });
+
+
+
+    });
+
+
+</script>

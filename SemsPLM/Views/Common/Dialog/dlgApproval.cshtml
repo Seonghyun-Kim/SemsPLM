@@ -1,0 +1,349 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="approvalTopBtn"><button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 결재 상신</button></div>
+<div class="approvalLine">
+    <div class="wholeUserList">
+        <h4><i class="fas fa-building"></i> &nbsp;조직도</h4>
+        <input type="text" id="txtSearchApprovPerson" value="" placeholder="이름을 입력하세요" class="findPerson" style="width:208px;" /><button id="btnSearchApprovPerson" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+        <div id="organiListGridApr" style="margin-bottom:8px;overflow-y: auto;"><!--조직도--></div>
+    </div>
+    <div class="approvalButtonBox">
+        <button class="custom-button" id="addApproveBtn">결재 <i class="fas fa-caret-right"></i></button>
+        <button class="custom-button" id="addAgreeBtn">합의 <i class="fas fa-caret-right"></i></button>
+        <button class="custom-button" id="addDistBtn">수신 <i class="fas fa-caret-right"></i></button>
+    </div>
+    <div class="selectedUserList">
+        <div class="savedLine">
+            &nbsp;<i class="fas fa-tasks"></i>&nbsp;결재선
+            <div id="approvalLineComboBox"></div>
+            <button class="custom-button" id="btnSaveApprov"><i class="fas fa-save"></i> 저장</button>
+        </div>
+        <div class="approvalList clearfix">
+            <table>
+                <colgroup>
+                    <col width="8%" />
+                    <col width="15%" />
+                    <col width="77%" />
+                </colgroup>
+                <tbody>
+                </tbody>
+
+            </table>
+        </div>
+        <h4><i class="fas fa-paper-plane"></i> &nbsp;수신</h4>
+        <div id="distPartList" class="distList connectedList"></div>
+    </div>
+    <div class="doc_editor">
+        <h4>
+            <span><i class="fas fa-pen"></i> &nbsp;제목</span>
+            <input type="text" value="" placeholder="문서 제목을 입력하세요" />
+        </h4>
+        <div id="docEditor"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var organizationAprSource = @Html.Raw(Json.Encode(ViewBag.Organization));
+        var organiListGridApr$ = $('#organiListGridApr');
+        var distPartList$ = $('#distPartList');
+        organiListGridApr$.jqxTree({
+            width: '99.5%',
+            height: 400,
+            source: [organizationAprSource],
+            checkboxes: true,
+            allowDrag: false,
+            allowDrop: false,
+        });
+
+        $("#txtSearchApprovPerson").keydown(function (key) {
+            if (key.keyCode == 13) {
+                $('#btnSearchApprovPerson').click();
+            }
+        });
+
+        $('#btnSearchApprovPerson').on('click', function () {
+            //Setting current selected item as null
+            organiListGridApr$.jqxTree('selectItem', null);
+
+            //collapsing tree(in case if user has already searched it )
+            organiListGridApr$.jqxTree('collapseAll');
+
+            //Using span for highlighting text so finding earlier searched items(if any)
+            var previousHighlightedItems = organiListGridApr$.find('span.highlightedText');
+
+            // If there are some highlighted items, replace the span with its html part, e.g. if earlier it was <span style="background-color:"Yellow">Te></span>st then it will replace it with "Te""st"
+            if (previousHighlightedItems && previousHighlightedItems.length > 0) {
+                var highlightedText = previousHighlightedItems.eq(0).html();
+
+                $.each(previousHighlightedItems, function (idx, ele) {
+                    $(ele).replaceWith(highlightedText);
+                });
+            }
+
+            //Getting all items for jqxTree
+            var items = organiListGridApr$.jqxTree("getItems");
+
+            //Getting value for input search box and converting it to lower for case insensitive(may change)
+            var searchedValue = $("#txtSearchApprovPerson").val().toLowerCase();
+
+            if (searchedValue.length < 1) {
+                //Setting current selected item as null
+                organiListGridApr$.jqxTree('selectItem', null);
+                organiListGridApr$.jqxTree('expandAll');
+                return;
+            }
+
+            //Searching the text in items label
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].label.toLowerCase().indexOf(searchedValue) > -1) {
+
+                    //If found expanding the tree to that item
+                    organiListGridApr$.jqxTree('expandItem', items[i].parentElement);
+
+                    //selecting the item : not necessary as it selects the last item if multiple occurrences are found
+                    organiListGridApr$.jqxTree('selectItem', items[i]);
+
+                }
+            }
+        });
+
+        var tableTbody$ = $('.approvalList tbody');
+        tableTbody$.sortable({
+            stop: function (event, ui) {
+                setTableIdx();
+            }
+        });
+
+        $('#addApproveBtn').click(function () {
+            var checkedApprover = organiListGridApr$.jqxTree('getCheckedItems');
+            if (checkedApprover.length === 0) {
+                return;
+            }
+
+            if (fbActionApprov('@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV', null, checkedApprover)) {
+                alert('결재에 등록된 사용자가 있습니다.');
+                return;
+            }
+
+            var lName = [];
+            for (var i = 0; i < checkedApprover.length; i++) {
+                lName.push(checkedApprover[i]);
+            }
+
+            lName.map(function (val, index) {
+                var dataInx = tableTbody$.children().get();
+                var newTr = '<tr>';
+                newTr += '<th>' + (dataInx.length + 1) + '</th><td>결재</td><td><span class="approver" data-id="' + val.id + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV">' + val.label + ' <small>' + val.value + '</small></span><i class="fas fa-window-close"></i></td>';
+                tableTbody$.append(newTr);
+            });
+
+            organiListGridApr$.jqxTree('uncheckAll');
+        });
+
+        $('#addAgreeBtn').on('click', function () {
+            var checkedApprover = organiListGridApr$.jqxTree('getCheckedItems');
+            if (checkedApprover.length === 0) {
+                return;
+            }
+
+            if (fbActionApprov('@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE', null, checkedApprover)) {
+                alert('합의에 등록된 사용자가 있습니다.');
+                return;
+            }
+
+            var lName = [];
+            for (var i = 0; i < checkedApprover.length; i++) {
+                lName.push(checkedApprover[i]);
+            }
+
+            lName.forEach(function (val) {
+                var trArr$ = tableTbody$.children().get();
+                var selAgreeTr$ = $('.selectedAgree ul');
+                if ((trArr$.length === 0 || trArr$[trArr$.length - 1].getElementsByClassName('agreeTd').length === 0) && selAgreeTr$.length < 1) {
+                    //마지막 행이 '합의'가 아닌 경우 새로운 ul을 추가
+                    var newTr = document.createElement('tr');
+                    newTr.setAttribute("class", "agreeTr");
+                    newTr.setAttribute("data-id", "agreeTr" + (trArr$.length + 1));
+                    var idName = "agreeList" + (trArr$.length + 1);
+                    tableTbody$.append(newTr);
+                    newTr.innerHTML = '<th>' + (trArr$.length + 1) + '</th><td>합의</td><td class="agreeTd"><ul id="' + idName + '" class="agreeList" data-group="' + (trArr$.length + 1) + '"><li><span class="approver" data-id="' + val.id + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE" data-group="' + (trArr$.length + 1) + '">' + val.label + ' <small>' + val.value + '</small><i class="fas fa-times"></i></span></li></ul><i class="fas fa-window-close"></i></td>';
+                } else {
+                    var newLi = document.createElement('li');
+                    if (selAgreeTr$.length < 1) {
+                        newLi.innerHTML = '<span class="approver" data-id="' + val.id + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE" data-group="' + trArr$.length + '">' + val.label + ' <small>' + val.value + '</small><i class="fas fa-times"></i></span>';
+                        var idName = "agreeList" + (trArr$.length);
+                        $("#" + idName).append(newLi);
+                    } else {
+                        newLi.innerHTML = '<span class="approver" data-id="' + val.id + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE" data-group="' + selAgreeTr$.attr('data-group') + '">' + val.label + ' <small>' + val.value + '</small><i class="fas fa-times"></i></span>';
+                        selAgreeTr$.append(newLi);
+                    }
+                }
+            });
+
+            organiListGridApr$.jqxTree('uncheckAll');
+        });
+
+        tableTbody$.on('click', '.agreeTr', function () {
+            var selAgree$ = $('.selectedAgree ul');
+            var this$ = $(this).find('ul');
+            if (selAgree$.length < 1) {
+                $(this).addClass('selectedAgree');
+            } else if (selAgree$.attr('id') == this$.attr('id')) {
+                $(this).removeClass('selectedAgree');
+            } else {
+                tableTbody$.children().removeClass('selectedAgree');
+                $(this).addClass('selectedAgree');
+            }
+        });
+
+        tableTbody$.on('click', '.approver > i', function () {
+            $(this).parents('li').remove();
+            if ($(this).parent() != null) {
+                var dataGroup = $(this).parent().attr('data-group');
+                if ($("#agreeList" + dataGroup).children().length < 1) {
+                    $('tr[data-id="agreeTr' + dataGroup + '"]').remove();
+                    setTableIdx();
+                }
+            }
+        });
+
+        tableTbody$.on('click', '.fa-window-close', function () {
+            $(this).parents('tr').remove();
+            setTableIdx();
+        });
+
+        $('#addDistBtn').click(function () {
+            var checkedApprover = organiListGridApr$.jqxTree('getCheckedItems');
+            if (checkedApprover.length === 0) {
+                return;
+            }
+
+            if (fbActionApprov('@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST', null, checkedApprover)) {
+                alert('수신에 등록된 사용자가 있습니다.');
+                return;
+            }
+
+            var lName = [];
+            for (var i = 0; i < checkedApprover.length; i++) {
+                lName.push(checkedApprover[i]);
+            }
+
+            lName.forEach(function (val) {
+                var dataInx = tableTbody$.children().get();
+                var newSpan = '<span>';
+                newSpan += '<span class="approver" data-id="' + val.id + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST">' + val.label + ' <small>' + val.value + '</small><i class="fas fa-window-close"></i></span>';
+                distPartList$.append(newSpan);
+            });
+
+            organiListGridApr$.jqxTree('uncheckAll');
+        });
+
+        distPartList$.on('click', '.fa-window-close', function () {
+            $(this).parents('span').remove();
+        });
+
+        var approvComboSource = {
+            datatype: "json",
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' }
+            ],
+            async: false
+        }
+        var approvalLineComboBox$ = $('#approvalLineComboBox');
+        approvalLineComboBox$.jqxComboBox({
+            width: 245,
+            height: 33,
+            displayMember: "Name",
+            valueMember: "OID",
+        });
+
+        RequestData('/Common/SelApproval', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
+            PrintJqxCombo(approvComboSource, approvalLineComboBox$, res);
+        });
+
+        $('#docEditor').jqxEditor({
+            width: '100%',
+            height: 180,
+        });
+
+        $('#btnSaveApprov').on('click', function () {
+            RequestData('/Common/InsApproval', foDataApprov(), function () {
+                alert('저장되었습니다.');
+                RequestData('/Common/SelApproval', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
+                    PrintJqxCombo(approvComboSource, approvalLineComboBox$, res);
+                });
+            });
+        });
+
+        function setTableIdx() {
+            tableTbody$.children('tr').each(function (index) {
+                $(this).children('th').text(index + 1);
+            });
+        };
+    });
+
+    var fbActionApprov = function (mode, target$, selPersons) {
+            var result = false;
+            var approv$ = $('span[data-type="' + mode + '"]');
+
+            approv$.each(function (idx, val) {
+                if (selPersons.filter(function (innerVal, innerIdx) { return innerVal.id == val.getAttribute('data-id'); }).length > 0) {
+                    result = true;
+                }
+            });
+
+            return result;
+    }
+
+    var foDataApprov = function () {
+        var approv$ = $('span.approver');
+        var approval = {};
+        approval.Name = $("#approvalLineComboBox").jqxComboBox('val');
+        approval.InboxStep = [];
+        approval.TargetOID = @ViewBag.TargetOID;
+
+        approv$.each(function (idx, val) {
+            var inboxStep = {};
+            inboxStep.InboxTask = [];
+            inboxStep.ApprovalType = val.getAttribute('data-type');
+
+            var inboxTask = {};
+            inboxTask.PersonOID = val.getAttribute('data-id');
+            inboxTask.ApprovalType = inboxStep.ApprovalType;
+
+            if (inboxStep.ApprovalType == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV') {
+                inboxStep.InboxTask.push(inboxTask);
+            } else if (inboxStep.ApprovalType == '@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE') {
+                inboxStep.Group = val.getAttribute('data-group');
+                var filInboxStep = approval.InboxStep.filter(function (val, index) {
+                    return val.Group == inboxStep.Group;
+                });
+
+                if (filInboxStep.length > 0) {
+                    filInboxStep[0].InboxTask.push(inboxTask);
+                    return;
+                } else {
+                    inboxStep.InboxTask.push(inboxTask);
+                }
+            } else if (inboxStep.ApprovalType == '@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST') {
+                var filInboxStep = approval.InboxStep.filter(function (val, index) {
+                    return val.ApprovalType == inboxStep.ApprovalType;
+                });
+
+                if (filInboxStep.length > 0) {
+                    filInboxStep[0].InboxTask.push(inboxTask);
+                    return;
+                } else {
+                    inboxStep.InboxTask.push(inboxTask);
+                }
+            }
+            approval.InboxStep.push(inboxStep);
+        });
+        return approval
+    }
+
+</script>

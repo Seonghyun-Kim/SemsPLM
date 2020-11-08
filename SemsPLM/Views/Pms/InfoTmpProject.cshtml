@@ -1,0 +1,145 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="pms_@ViewBag.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="wbs"><i class="fas fa-stream"></i> WBS</li>
+            <li class="tab" info="resource"><i class="fas fa-users"></i> 멤버</li>
+            <li class="tab" info="deliveries"><i class="fas fa-file-medical"></i> 산출물</li>
+            <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 리스크</li>
+            <li class="tab" info="gateView"><i class="fas fa-check-square"></i> Gate 뷰</li>
+            <li class="tab" info="gantt"><i class="fas fa-retweet"></i> 간트차트</li>
+        </ul>
+    </div>
+
+    <div class="project_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>@ViewBag.Detail.Name<!--프로젝트 이름--></h3>
+                <p>PM : <span>@ViewBag.Detail.PMNm</span></p>
+            </div>
+            <div class="basic_image">
+                <input type="file" name="file_@ViewBag.OID" multiple="true" id="imageDrag_@ViewBag.OID" style="display:none;">
+                <div class="image_inputbox" id="dropZone_@ViewBag.OID">이미지<!--이미지 드래그 영역--></div>
+                <ul class="image_thumbnail" id="uploadResult_@ViewBag.OID"><!--이미지 썸네일 영역--></ul>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                            <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                        </div>
+                    }
+                </div>
+                <p>설명 : <span>@ViewBag.Detail.Description</span></p>
+            </div>
+        </div>
+
+        <div id="properties" class="basic_grid">
+            <div class="propertiesInfo">
+                <table class="infoTable">
+                    <colgroup>
+                        <col style="width:15%;" />
+                        <col style="width:auto;" />
+                        <col style="width:15%;" />
+                        <col style="width:auto;" />
+                    </colgroup>
+
+                    <tr>
+                        <th>구분</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.ProjectType
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>프로젝트명</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>생성일</th>
+                        <td>
+                            @ViewBag.Detail.CreateDt
+                        </td>
+                        <th>생성자</th>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr class="tr_tall">
+                        <th>설명</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>상태</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.BPolicy.StatusNm
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>달력</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.Calendar.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>기준일</th>
+                        <td colspan="3">
+                            @string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstStartDt)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>예상시작일</th>
+                        <td>
+                            @string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstStartDt)
+                        </td>
+                        <th>예상완료일</th>
+                        <td>
+                            @(ViewBag.Detail.EstEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstEndDt) : "")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>예상기간</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.EstDuration
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="wbs" class="basic_grid dective">
+            <div id="wbsInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="resource" class="basic_grid dective">
+            <div id="resourceInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="deliveries" class="basic_grid dective">
+            <div id="deliveriesInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="riskIssue" class="basic_grid dective">
+            <div id="riskIssueInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="gateView" class="basic_grid dective">
+            <div class="Phase-Gate" id="gateViewInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="baseLine" class="basic_grid dective">
+            <div id="baseLineInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="gantt" class="basic_grid dective">
+            <iframe id="ganttInfo_@ViewBag.OID"></iframe>
+        </div>
+    </div>
+</div>

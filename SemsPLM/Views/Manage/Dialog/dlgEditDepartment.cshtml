@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="width:100%;text-align:right;padding-right:10px;">
+    <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+</div>
+
+<div class="dlg_table dlgEditDepartment_table">
+    <input type="hidden" id="hidId" value="@ViewBag.id" />
+    <table>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 부서명</label></td>
+            <td><input type="text" id="txtDlgDepartment" value="@ViewBag.label" /></td>
+        </tr>
+        <tr>
+            <td style="vertical-align:top;"><label class="lbText"><i class="fa fa-caret-right"></i> 설명</label></td>
+            <td><textarea id="txtDlgDescription" style="width:90%;height:100px;">@ViewBag.value</textarea></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 생성일</label></td>
+            <td><input type="text" id="" value="" readonly /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 생성자</label></td>
+            <td><input type="text" id="" value="" readonly /></td>
+        </tr>
+    </table>
+</div>

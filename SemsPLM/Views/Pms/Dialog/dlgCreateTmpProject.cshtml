@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+
+<input type="hidden" id="hidTmpCalendarOID" value="" />
+<input type="hidden" id="hidTmpWorkingDay" value="" />
+<input type="hidden" id="hidIsTemplate" value="@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP" />
+<input type="hidden" id="hidIsTemplateNm" value="프로젝트 템플릿" />
+
+<div style="width:100%;text-align:right;padding-right:10px;">
+    <button id="btnDlgTmpCreateProject" class="custom-button"><i class='fas fa-check-circle'></i> 등록</button>
+</div>
+
+<div class="dlg_table dlgCreateProject_table">
+    <table>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 구분</label></td>
+            <td colspan="3">
+                <input type="text" id="txtTmpProjType" class="txtBox large" style="width:98%;" value="프로젝트 템플릿" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트명</label></td>
+            <td colspan="3"><input type="text" id="txtDlgTmpProjName" class="txtBox large" style="width:99%;" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 기준일</label></td>
+            <td>
+                <input type="text" id="txtDlgTmpProjDate" class="txtBox large" readonly />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 근무일수</label></td>
+            <td>
+                <input type="text" id="txtTmpWorkingDay" class="txtBox large" style="width:98%;" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align:baseline;"><label class="lbText"><i class="fa fa-caret-right"></i> 내용</label></td>
+            <td colspan="3"><textarea id="txtDlgTmpContent" style="width:99%;height:50px;"></textarea></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 달력</label></td>
+            <td colspan="3">
+                <input type="text" id="txtDlgTmpCalendar" class="txtBox large" style="width:84%;" readonly />
+                <button id="schDlgTmpCalendar" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgTmpCalendarClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 생성일</label></td>
+            <td>
+                <input type="text" id="txtDlgTmpCreateDt" class="txtBox large" style="width:98%;" readonly />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 작성자</label></td>
+            <td>
+                <input type="text" id="txtDlgTmpCreateUs" class="txtBox large" style="width:98%;" readonly value="" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        const dlgProjTmpDate$ = $('#txtDlgTmpProjDate');
+        dlgProjTmpDate$.jqxDateTimeInput(DateFormat);
+        dlgProjTmpDate$.val(WebUtils.GetDate(-1, "m", "-"));
+        dlgProjTmpDate$.jqxDateTimeInput({ width: "98%", height: 32 });
+
+        $("#txtDlgTmpCreateDt").val(WebUtils.GetDate(0, "m", "-"));
+
+        $('#schDlgTmpCalendar').on('click', function () {
+            OpenCreateProjectContentDialog(function (checkData) {
+                $('#txtDlgTmpCalendar').val(checkData.Name);
+                $('#hidTmpCalendarOID').val(checkData.OID);
+                $('#hidTmpWorkingDay').val(checkData.WorkingDay);
+                $('#txtTmpWorkingDay').val(checkData.WorkingDay);
+            }, null, "/Pms/CreateProjectContent", { Title: '달력 검색', Mode: 'Calendar' });
+        });
+
+        $('#schDlgTmpCalendarClear').on('click', function () {
+            $('#txtDlgTmpCalendar').val('');
+            $('#hidTmpCalendarOID').val('');
+            $('#hidTmpWorkingDay').val('');
+            $('#txtTmpWorkingDay').val('');
+        });
+    });
+</script>

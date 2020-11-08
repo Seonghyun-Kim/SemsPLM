@@ -1,0 +1,306 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="process_@ViewBag.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="wbs"><i class="fas fa-stream"></i> WBS</li>
+            <li class="tab" info="resource"><i class="fas fa-users"></i> 멤버</li>
+            <li class="tab" info="deliveries"><i class="fas fa-file-medical"></i> 산출물</li>
+            <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 리스크/이슈</li>
+        </ul>
+    </div>
+
+    <div class="project_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>@ViewBag.ProjectDetail.Name<!--프로젝트 이름--></h3>
+                <p>PM : <span>@ViewBag.ProjectDetail.PMNm</span></p>
+            </div>
+            <div class="basic_image">
+                <ul class="image_thumbnail">
+                    @if (ViewBag.ProjectDetail.Thumbnail != null)
+                    {
+                        <li>
+                            <img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")@ViewBag.ProjectDetail.Thumbnail" />
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                            <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                        </div>
+                    }
+                </div>
+                <p>설명 : <span>@ViewBag.ProjectDetail.Description</span></p>
+            </div>
+        </div>
+
+        <div id="properties" class="basic_grid">
+            <div class="propertiesInfo">
+                <table class="infoTable">
+                    <colgroup>
+                        <col style="width:15%;" />
+                        <col style="width:auto;" />
+                        <col style="width:15%;" />
+                        <col style="width:auto;" />
+                    </colgroup>
+
+                    <tr>
+                        <th>구분</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.ProcessType
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>이름</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>프로젝트명</th>
+                        <td colspan="3">
+                            @ViewBag.ProjectDetail.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>생성일</th>
+                        <td>
+                            @ViewBag.Detail.CreateDt
+                        </td>
+                        <th>생성자</th>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr class="tr_tall">
+                        <th>설명</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>상태</th>
+                        <td colspan="3">
+                            @ViewBag.Detail.BPolicy.StatusNm
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>달력</th>
+                        <td colspan="3">
+                            @ViewBag.ProjectDetail.Calendar.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>예상시작일</th>
+                        <td>
+                            @string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstStartDt)
+                        </td>
+                        <th>실제시작일</th>
+                        <td>
+                            @(ViewBag.Detail.ActStartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.ActStartDt) : "")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>예상완료일</th>
+                        <td>
+                            @(ViewBag.Detail.EstEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstEndDt) : "")
+                        </td>
+                        <th>실제완료일</th>
+                        <td>
+                            @(ViewBag.Detail.ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.ActEndDt) : "")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>예상기간</th>
+                        <td>
+                            @ViewBag.Detail.EstDuration
+                        </td>
+                        <th>실기간</th>
+                        <td>
+                            @ViewBag.Detail.ActDuration
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="wbs" class="basic_grid dective">
+            <div id="wbsInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="resource" class="basic_grid dective">
+            <div id="resourceInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="deliveries" class="basic_grid dective">
+            <div id="deliveriesInfo_@ViewBag.OID"></div>
+        </div>
+
+        <div id="riskIssue" class="basic_grid dective">
+            <div id="riskIssueInfo_@ViewBag.OID"></div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        const OID = '@ViewBag.OID';
+        const screenWidth = $('.project_content').width();
+        const screenHeight = $('.project_content').height() - 152;
+        const procDiv$ = $('#process_' + OID);
+        const current = @ViewBag.Detail.BPolicyOID;
+        const headerStatus = $('#process_' + OID + ' .pointer_wrap .pointer');
+        if (headerStatus != null && headerStatus.length > 0) {
+            headerStatus.removeClass('pointer_focus');
+            const currentStatus = headerStatus.filter(function (index, item) {
+                return item.getAttribute('data-Status') == current;
+            });
+            if (currentStatus != null && currentStatus.length > 0) {
+                currentStatus[0].className += ' ' + 'pointer_focus';
+            }
+        }
+
+        $('#process_' + OID + ' .tab').on('click', function () {
+            if ($(this).hasClass('info_focus')) {
+                return;
+            }
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            procDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            procDiv$.find('[class="basic_grid"]').addClass('dective');
+            procDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'wbs') {
+
+                var source =
+                {
+                    dataType: "json",
+                    dataFields: [
+                        //System Mandatory
+                        { name: 'OID', type: 'number' },
+                        { name: 'RootOID', type: 'number' },
+                        { name: 'FromOID', type: 'number' },
+                        { name: 'ToOID', type: 'number' },
+                        { name: 'Children', type: 'array' },
+                        { name: 'Action', type: 'string' },
+                        { name: 'Ord', type: 'number' },
+
+                        //System Option
+                        { name: 'expanded', type: 'bool' },
+
+                        //Object Mandatory
+                        { name: 'ObjName', type: 'string' },
+                        { name: 'ObjType', type: 'string' },
+                        { name: 'Id', type: 'number' },
+                        { name: 'Dependency', type: 'string' },
+                        { name: 'ObjSt', type: 'number' },
+                        { name: 'ObjStNm', type: 'string' },
+                        { name: 'Complete', type: 'number' },
+                        { name: 'Members', type: 'array' },
+                        { name: 'EstDuration', type: 'number' },
+                        { name: 'EstStartDt', type: 'date' },
+                        { name: 'EstEndDt', type: 'date' },
+                        { name: 'ActDuration', type: 'number' },
+                        { name: 'ActStartDt', type: 'date' },
+                        { name: 'ActEndDt', type: 'date' },
+                        { name: 'Level', type: 'number' },
+                        { name: 'Delay', type: 'number' },
+                        { name: 'Deliveries', type: 'number' },
+
+                        //Object Optional
+                        { name: 'Description', type: 'string' },
+                    ],
+                    hierarchy:
+                    {
+                        root: 'Children',
+                    },
+                    id: 'ToOID',
+                };
+
+                var dataAdapter = new $.jqx.dataAdapter(source);
+                const procWbsInfo$ = $("#wbsInfo_" + OID);
+                procWbsInfo$.jqxTreeGrid('render');
+                procWbsInfo$.jqxTreeGrid({
+                    width: screenWidth,
+                    height: screenHeight,
+                    theme: "kdnc",
+                    source: dataAdapter,
+                    columnsResize: true,
+                    sortable: false,
+                    checkboxes: false,
+                    selectionMode: "custom",
+                    editable: false,
+                    pagerButtonsCount: 8,
+                    toolbarHeight: 44,
+                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                    showToolbar: true,
+                    ready: function () {
+
+                    },
+                    columns: [
+                        { text: '이름', dataField: 'ObjName', width: '20%', pinned: true, align: 'center', },
+                        { text: '구분', dataField: 'ObjType', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '레벨', dataField: 'Level', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '7%', align: 'center', cellsAlign: 'center', },
+                        { text: '산출물', dataField: 'Deliveries', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '상태', dataField: 'ObjStNm', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '진행', dataField: 'Delay', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '% 완료', dataField: 'Complete', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '멤버', dataField: 'Members', width: '10%', align: 'center', editable: false, },
+                        { text: '기간', dataField: 'EstDuration', columnGroup: 'Estimated', width: '4%', align: 'center', cellsAlign: 'center', },
+                        { text: '시작일', dataField: 'EstStartDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center', },
+                        { text: '완료일', dataField: 'EstEndDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center', },
+                        { text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '시작일', dataField: 'ActStartDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '완료일', dataField: 'ActEndDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
+                    ],
+                    columnGroups: [
+                        { text: '예상', name: 'Estimated' },
+                        { text: '실제', name: 'Actual' },
+                        { text: 'Dependency', name: 'Dependency' },
+                    ],
+                    showToolbar: true,
+                    renderToolbar: function (toolBar) {
+                        var modifyFlag = false;
+                        var container = $("<div class='lGridComponent' ></div>");
+                        var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
+                        var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
+                        var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
+                        saveButton.jqxButton({ disabled: true });
+                        cancelButton.jqxButton({ disabled: true });
+                        container.append(modifyButton);
+                        container.append('<span class="buttonSeparator"></span>');
+                        container.append(saveButton);
+                        container.append(cancelButton);
+                        toolBar.append(container);
+                    },
+                    pagerRenderer: function () {
+                    }
+                });
+                procWbsInfo$.jqxTreeGrid('pagerRenderer');
+
+            } else if (infoValue == 'resource') {
+
+            } else if (infoValue == 'deliveries') {
+
+            } else if (infoValue == 'riskIssue') {
+
+            }
+        });
+
+    });
+</script>

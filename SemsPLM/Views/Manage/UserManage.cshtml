@@ -1,0 +1,226 @@
+﻿@{
+    Layout = null;
+}
+
+<div>
+    <div class="user_tree clearfix">
+        <div class="treeButtonWrap">
+            <h3><i class="fas fa-building"></i> &nbsp;조직도</h3>
+            <div style="position:absolute;top:10px;right:10px;">
+                <button id="btnDeptAdd" class="custom-button"><i class='fas fa-plus'></i> 추가</button>
+                <button id="btnDeptEdit" class="custom-button"><i class='far fa-edit'></i> 수정</button>
+                <button id="btnDeptDel" class="custom-button"><i class='fas fa-minus'></i> 삭제</button>
+            </div>
+        </div>
+        <div id="userTree" style="overflow-y: auto;"></div>
+    </div>
+    <div class="user_list">
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;사용자 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>회사명</div>
+                    <div><input type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>부서명</div>
+                    <div><input type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>직급</div>
+                    <div><input type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>이름</div>
+                    <div><input type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>연락처</div>
+                    <div><input type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchButton">
+                    <button id="btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+        </div>
+        <div id="userList"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+
+        var organizationSource = @Html.Raw(Json.Encode(ViewBag.Organization));
+        var userTree$ = $('#userTree');
+        userTree$.jqxTree({
+            width: '100%',
+            height: '95%',
+            source: [organizationSource],
+        });
+
+        var btnDeptAdd$ = $('#btnDeptAdd').jqxButton();
+        var btnDeptEdit$ = $('#btnDeptEdit').jqxButton();
+        var btnDeptDel$ = $('#btnDeptDel').jqxButton();
+
+        btnDeptAdd$.on('click', function () {
+            var selectedItem = userTree$.jqxTree('selectedItem');
+            if (selectedItem == null) {
+                alert('부서를 선택해주세요.');
+                return;
+            }
+
+            OpenDepartmentDialog(function (res) {
+                res.icon = '@Common.Constant.CommonConstant.ICON_DEPARTMENT';
+                res.iconsize = @Common.Constant.CommonConstant.DEFAULT_ICONSIZE ;
+                userTree$.jqxTree('addTo', res, selectedItem.element, false);
+                userTree$.jqxTree('render');
+            }, null, { parentId: selectedItem.id }, '/Manage/EditDepartment', '부서 등록');
+        });
+
+        btnDeptEdit$.on('click', function () {
+            var selectedItem = userTree$.jqxTree('selectedItem');
+            if (selectedItem == null) {
+                alert('부서를 선택해주세요.');
+                return;
+            }
+
+            OpenDepartmentDialog(function (res) {
+                userTree$.jqxTree('updateItem', res, selectedItem.element);
+                userTree$.jqxTree('render');
+            }, null, { id: selectedItem.id }, '/Manage/EditDepartment', '부서 수정');
+        });
+
+        btnDeptDel$.on('click', function () {
+            var selectedItem = userTree$.jqxTree('selectedItem');
+            if (selectedItem == null) {
+                alert('부서를 선택해주세요.');
+                return;
+            }
+
+            RequestData('/Manage/DelDepartment', { id: selectedItem.id, parentId: selectedItem.parentId }, function (res) {
+                userTree$.jqxTree('removeItem', selectedItem.element, false);
+                userTree$.jqxTree('render');
+            });
+        });
+
+        userTree$.on('select', function (event) {
+            var args = event.args;
+            var item = userTree$.jqxTree('getItem', args.element);
+            getPersonList(UserListSource, userList$, { DepartmentOID: item.id });
+        });
+
+        var UserListSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'ID', type: 'string' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'DepartmentOID', type: 'number' },
+                    { name: 'DepartmentNm', type: 'string' },
+                    { name: 'Rank', type: 'string' },
+                    { name: 'Email', type: 'string' },
+                    { name: 'Phone', type: 'string' },
+                    { name: 'IsUse', type: 'number' },
+                    { name: 'EnterDt', type: 'date' },
+                ],
+            };
+
+        var userList$ = $('#userList');
+        userList$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: '84.5%',
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '아이디', dataField: 'ID', width: '15%', align: 'center', cellsalign: 'center', },
+                { text: '이름', dataField: 'Name', width: '15%', align: 'center', cellsalign: 'center', },
+                { text: '연락처', dataField: 'Phone', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '부서', dataField: 'DepartmentNm', width: '15%', align: 'center', cellsalign: 'center', },
+                { text: '직책', dataField: 'Rank', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '이메일', dataField: 'Email', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '입사일자', dataField: 'EnterDt', width: '13%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                {
+                    text: '사용유무', dataField: 'IsUse', width: '7%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        if (value == 1) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>Y</div>";
+                        } else {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>N</div>";
+                        }
+                    }
+                },
+            ],
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var personAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+                container.append(personAddButton);
+                container.append(deleteButton);
+
+                personAddButton.on('click', function () {
+                    var selectedItem = userTree$.jqxTree('selectedItem');
+                    if (selectedItem == null) {
+                        alert('부서를 선택해주세요.');
+                        return;
+                    }
+                    if (selectedItem.parentId == 0) {
+                        alert('회사에는 등록할 수 없습니다.');
+                        return;
+                    }
+
+                    OpenPersonDialog(function () {
+                        getPersonList(UserListSource, userList$, { DepartmentOID: selectedItem.id });
+                    }, null, { DepartmentOID: selectedItem.id, DepartmentNm: selectedItem.label }, '/Manage/EditPerson', '사용자 등록');
+                });
+
+                deleteButton.on('click', function () {
+                    if (!confirm('삭제하시겠습니까?')) {
+                        return;
+                    }
+                    var selectedItem = userTree$.jqxTree('selectedItem');
+
+                    var selectGridIdx = userList$.jqxGrid('getselectedrowindex');
+                    var selectGridData = userList$.jqxGrid('getrowdata', selectGridIdx);
+                    RequestData("/Manage/DelPerson", { OID: selectGridData.OID }, function (res) {
+                        getPersonList(UserListSource, userList$, { DepartmentOID: selectedItem != null ? selectedItem.id : null });
+                    });
+                });
+
+                toolBar.append(container);
+            }
+        });
+
+        userList$.on('celldoubleclick', function (event) {
+            var selectedItem = userTree$.jqxTree('selectedItem');
+
+            OpenPersonDialog(function () {
+                getPersonList(UserListSource, userList$, { DepartmentOID: selectedItem != null ? selectedItem.id : null });
+            }, null, { OID: event.args.row.bounddata.OID, DepartmentOID: selectedItem != null ? selectedItem.id : null, DepartmentNm: selectedItem != null ? selectedItem.label : null }, '/Manage/EditPerson', '사용자 수정');
+        });
+
+        getPersonList(UserListSource, userList$, null);
+    });
+
+    function getPersonList(_Source, _Grid$, _Param) {
+        RequestData("/Manage/SelPersons", _Param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+
+</script>

@@ -1,0 +1,129 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div style="width:100%; margin-right:20px;">
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;프로젝트 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="dlgSearchEPartOEM" class="searchEpartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="dlgSearchEPartCar" class="searchEpartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">프로젝트</div>
+                <div>
+                    <div id="dlgSearchEPartPms" class="searchEpartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div>품번</div>
+                <div><input id="dlgSearchEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>품명</div>
+                <div><input id="dlgSearchEPartTitle" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>EO No</div>
+                <div><input id="dlgSearchEPartEoNo" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>고객사 EO</div>
+                <div>
+                    <input id="dlgSearchEPartSelEo" type="text" class="txtBox" value="" />
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="checkBoxLabel">타입</div>
+                <div>
+                    <div id="dlgSearchEPartTypeAssy" class="custom-checkbox">
+                        Assy
+                    </div>
+                    <div id="dlgSearchEPartTypeSAssy" class="custom-checkbox">
+                        S/Assy
+                    </div>
+                    <div id="dlgSearchEPartTypeDetail" class="custom-checkbox">
+                        Detail
+                    </div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">작성일</div>
+                <div><div id="dlgSearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
+            </div>
+            <div class="searchButton">
+                <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="digSearchEBomStructureGrid"></div>
+
+<script>
+    $(function () {
+        $('#dlgSearchEPartTypeAssy').jqxRadioButton({ width: 100, height: 30, checked: false });
+        $('#dlgSearchEPartTypeSAssy').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#dlgSearchEPartTypeDetail').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('.searchEpartComboBox').jqxComboBox({ width: 180, height: 33 });
+        $('.searchEpartDateTimeInput').jqxDateTimeInput({ width: 240, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        var dlgSearchEPartOEMList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var dlgSearchEPartOEM$ = $('#dlgSearchEPartOEM');
+        var dlgSearchEPartCar$ = $('#dlgSearchEPartCar');
+        var dlgSearchEPartPms$ = $('#dlgSearchEPartPms');
+
+        var OEMSource =
+        {
+            localdata: dlgSearchEPartOEMList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var OEMdataAdapter = new $.jqx.dataAdapter(OEMSource);
+        dlgSearchEPartOEM$.jqxComboBox({ source: OEMdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        $(document).on('change', '#dlgSearchEPartOEM', function () {
+            dlgSearchChangeEPartLib($('#dlgSearchEPartOEM').jqxComboBox('getSelectedItem').value, $('#dlgSearchEPartCar'));
+        });
+
+    });
+
+    function dlgSearchChangeEPartLib(OID, ID) {
+        var comboBox$ = ID;
+        var param = {};
+        param.fromOID = OID;
+        var comboSource;
+        RequestData("/Manage/SelLibrary", param, function (res) {
+            if (res.length > 0) {
+                comboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var comboAdapter = new $.jqx.dataAdapter(comboSource);
+                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID" });
+            }
+        });
+    }
+</script>

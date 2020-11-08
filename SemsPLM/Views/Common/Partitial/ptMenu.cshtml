@@ -1,0 +1,23 @@
+﻿@{
+    Layout = null;
+}
+
+@for (int i = 0; i < ViewBag.Menu.Count; i++)
+{
+<li>
+    <span class="menu_h">@ViewBag.Menu[i].Name</span>
+    <ul class="sub">
+        @for (int j = 0; j < ViewBag.Menu[i].SubMenu.Count; j++)
+        {
+            if (ViewBag.Menu[i].SubMenu[j].Link != null && ViewBag.Menu[i].SubMenu[j].Link.Length > 0)
+            {
+                <li url="@ViewBag.Menu[i].SubMenu[j].Link">@Html.Raw(ViewBag.Menu[i].SubMenu[j].Name)</li>
+            }
+            else
+            {
+                <li>@ViewBag.Menu[i].SubMenu[j].Name</li>
+            }
+        }
+    </ul>
+</li>
+}

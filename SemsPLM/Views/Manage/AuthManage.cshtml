@@ -1,0 +1,172 @@
+﻿@{
+    Layout = null;
+}
+
+    <div class="authUserList">
+        <h4 class="authTitle"><i class="fas fa-user"></i> &nbsp;사용자</h4>
+        <div id="manageUserList"></div>
+    </div>
+    <div class="authSetting">
+        <h3>
+            <i class="fas fa-user"></i>
+            <span id=""><!--선택한 사용자 이름--></span>
+            <button class="custom-button"><i class="fas fa-check"></i> 저장</button>
+        </h3>
+        <div class="authRoleList">
+            <h4 class="authTitle"><i class="fas fa-shapes"></i> &nbsp;Role</h4>
+            <div id="manageRoleList"></div>
+        </div>
+        <div class="moduleList clearfix">
+            <h4 class="authTitle"><i class="fas fa-bars"></i> &nbsp;Module</h4>
+            <div id="manageMenuList"></div>
+        </div>
+        <div class="subList clearfix">
+            <h4 class="authTitle"><i class="fas fa-cube"></i> &nbsp;객체</h4>
+            <div class="manageObject">
+                <div class="authobjCheckbox" id=""> 조회</div>
+                <div class="authobjCheckbox" id=""> 관리</div>
+                <div class="authobjCheckbox" id=""> 오토뷰</div>
+                <div class="authobjCheckbox" id=""> 다운로드</div>
+            </div>
+            <h4 class="authTitle"><i class="fas fa-tasks"></i> &nbsp;메뉴</h4>
+            <div id="manageAuthList"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+
+            var UserListSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'ID', type: 'string' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'DepartmentOID', type: 'number' },
+                    { name: 'DepartmentNm', type: 'string' },
+                    { name: 'Rank', type: 'string' },
+                    { name: 'Email', type: 'string' },
+                    { name: 'Phone', type: 'string' },
+                    { name: 'IsUse', type: 'number' },
+                    { name: 'EnterDt', type: 'date' },
+                ],
+            };
+            const manageUserList$ = $('#manageUserList');
+            manageUserList$.jqxGrid({
+                width: "99.6%",
+                height: "95.4%",
+                altrows: true,
+                columns: [
+                    { text: '아이디', datafield: 'ID', width: "25%", align: 'center', cellsalign: 'center'},
+                    { text: '이름', datafield: 'Name', width: "35%", align: 'center', cellsalign: 'center'},
+                    { text: '부서', datafield: 'DepartmentNm', width: "20%", align: 'center', cellsalign: 'center'},
+                    { text: '직책', datafield: 'Rank', width: "20%", align: 'center', cellsalign: 'center'},
+                ],
+                pagerrenderer: function () {
+                    RequestData("/Manage/SelPersons", null, function (res) {
+                        PrintJqxGrid(UserListSource, manageUserList$, res);
+                    });
+                },
+            });
+            manageUserList$.jqxGrid('pagerrenderer');
+
+
+            var RoleListSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'IsChekced', type: 'bool' },
+                ],
+            };
+            const manageRoleList$ = $('#manageRoleList');
+            manageRoleList$.jqxGrid({
+                width: "99.4%",
+                height: 722,
+                altrows: true,
+                toolbarheight: 45,
+                showtoolbar: true,
+                editable: true,
+                columns: [
+                    { text: '이름', datafield: 'Name', width: "70%", align: 'center', cellsalign: 'center', editable: false, },
+                    { text: '사용', datafield: 'IsChekced', width: "30%", align: 'center', cellsalign: 'center', columntype: 'checkbox',},
+                ],
+                rendertoolbar: function (statusbar) {
+                    var container = $("<div class='rGridComponent'></div>");
+                    var btnAddCalendar = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 추가</button>").jqxButton();
+                    var btnDelCalendar = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 삭제</button>").jqxButton();
+                    container.append(btnAddCalendar);
+                    container.append(btnDelCalendar);
+                    statusbar.append(container);
+
+                    btnAddCalendar.on('click', function () {
+                        OpenRoleDialog(function () {
+                            manageRoleList$.jqxGrid('pagerrenderer');
+                        }, null, null, '/Manage/EditRole', 'Role 등록')
+                    });
+
+                    btnDelCalendar.on('click', function () {
+
+                    });
+                },
+                pagerrenderer: function () {
+                    RequestData("/Manage/SelRole", null, function (res) {
+                        PrintJqxGrid(RoleListSource, manageRoleList$, res);
+                    });
+                },
+            });
+            manageRoleList$.jqxGrid('pagerrenderer');
+
+            const manageMenuList$ = $('#manageMenuList');
+            manageMenuList$.jqxGrid({
+                width: "99.4%",
+                height: 722,
+                altrows: true,
+                columns: [
+                    { text: '이름', datafield: 'NAME', width: "70%", align: 'center', },
+                    { text: '사용', datafield: 'A', width: "30%", align: 'center', },
+                ],
+            });
+
+            /*
+            var gnbList$ = [
+                '프로젝트 관리',
+                '개발일정 관리',
+                '도면 E-BOM 관리',
+                '설계변경',
+                '일반문서관리',
+                '품질문제관리',
+                'E-Contents',
+                '관리자'
+            ]
+            manageMenuList$.jqxListBox({
+                width: 249,
+                height: "95.3%",
+                itemHeight: 40,
+                selectedIndex: 0,
+                source: gnbList$,
+            });
+            */
+            $('.authobjCheckbox').jqxCheckBox({
+                width: "17%",
+                boxSize: 20,
+            })
+
+            const manageAuthList$ = $('#manageAuthList');
+            manageAuthList$.jqxGrid({
+                width: "99.7%",
+                height: "80.7%",
+                columns: [
+                    { text: '메뉴', datafield: 'SUBMENU', width: "40%", },
+                    { text: '조회', datafield: 'CHECK', columntype: 'checkbox', width: "10%", align:'center', },
+                    { text: '추가', datafield: 'ADD', columntype: 'checkbox', width: "10%", align:'center', },
+                    { text: '수정', datafield: 'MODIFY', columntype: 'checkbox', width: "10%", align:'center', },
+                    { text: '삭제', datafield: 'DELETE', columntype: 'checkbox', width: "10%", align:'center', },
+                    { text: '출력', datafield: 'PRINT', columntype: 'checkbox', width: "10%", align:'center', },
+                    { text: '권한', datafield: 'AUTH', columntype: 'checkbox', width: "10%", align:'center', },
+                ],
+            });
+
+        });
+    </script>

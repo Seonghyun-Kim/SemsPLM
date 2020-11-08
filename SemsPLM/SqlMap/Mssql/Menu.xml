@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="Menu"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="BMenu" type="Common.Models.BMenu" />
+    <typeAlias alias="BSubMenu" type="Common.Models.BSubMenu" />
+  </alias>
+  
+  <statements>
+    
+    <select id="SelBMenu" parameterClass="BMenu" resultClass="BMenu">
+      SELECT *
+      FROM T_BMENU
+      WHERE IsUse = 1
+    </select>
+
+    <select id="SelBSubMenu" parameterClass="BSubMenu" resultClass="BSubMenu">
+      SELECT *
+      FROM T_BSUB_MENU
+      WHERE IsUse = 1
+      AND MenuOID = #MenuOID#
+    </select>
+
+  </statements>
+  
+</sqlMap>

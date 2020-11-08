@@ -1,0 +1,186 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;프로젝트 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div class="comboBoxLabel">구분</div>
+                    <div>
+                        <div id="projType" style="margin-left:5px;"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>프로젝트명</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtProjName" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>내용</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtContent" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>고객사</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtCustomer" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제품(검색)</div>
+                    <input type="text" class="txtBox" id="txtProduct" />
+                    &nbsp;<button id="schProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
+                </div>
+                <div class="searchData predecessorData" style="display:none;">
+                    <div>선행 프로젝트</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtProdecessorProject" />
+                        &nbsp;<button id="schProdecessorProject"><i class='fas fa-search-plus'></i></button>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtCuser" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+        </div>
+        <div id="grd"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        var ProjectSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'ProjectType' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'CreateUsNm' },
+                { name: 'EstStartDt', type: "date" },
+                { name: 'EstEndDt', type: "date" },
+                { name: 'ActEndDt', type: "date" },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+            ],
+        }
+
+        const Grd$ = $('#grd');
+        Grd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 680,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'ProjectType', width: "5%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "5%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '기준일', datafield: 'EstStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '예상 종료일', datafield: 'EstEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '실제 종료일', datafield: 'ActEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '생성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '내용', datafield: 'Description', width: "25%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (statusbar) {
+                var container = $("<div class='rGridComponent'></div>");
+                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 프로젝트 등록</button>").jqxButton();
+                var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 프로젝트 수정</button>").jqxButton();
+                var btnDelete = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 선택 삭제</button>").jqxButton();
+
+                container.append(btnAdd);
+                container.append(btnMod);
+                container.append(btnDelete);
+                statusbar.append(container);
+
+                btnAdd.on('click', function () {
+                    OpenPmsCreateDialog(function () {
+                        getPmsProjectList(ProjectSource, Grd$);
+                    }, null, null, '/Pms/CreateProject', '프로젝트 등록');
+                });
+
+                btnMod.on('click', function () {
+                    
+                });
+            },
+        });
+
+        Grd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Pms/InfoProject?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        $('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 33, });
+        getPmsProjectList(ProjectSource, Grd$);
+    });
+
+    function getPmsProjectList(_Source, _Grid$) {
+        RequestData("/Pms/SelProjects", null, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

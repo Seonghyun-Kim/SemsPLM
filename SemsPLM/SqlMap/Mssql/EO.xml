@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="EO"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="EO"  type="ChangeOrder.Models.EO" />
+  </alias>
+
+  <statements>
+
+    <insert id="InsEOContents" parameterClass="EO">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DEO_RELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DEO_RELATIONSHIP
+      (OID
+      ,RootOID
+      ,FromOID
+      ,ToOID
+      ,Count
+      ,Type
+      ,Ord
+      ,CreateDt
+      ,CreateUs
+      ,DeleteDt
+      ,DeleteUs
+      ,PNo
+      ,PName
+      ,BfThumbnail
+      ,AfThumbnail
+      ,Statement
+      ,Description
+      ,ProType)
+      VALUES
+      (#OID#
+      ,#RootOID#
+      ,#FromOID#
+      ,#ToOID#
+      ,#Count#
+      ,#Type#
+      ,#Ord#
+      , GETDATE()
+      ,#CreateUs#
+      ,#DeleteDt#
+      ,#DeleteUs#
+      ,#PNo#
+      ,#PName#
+      ,#BfThumbnail#
+      ,#AfThumbnail#
+      ,#Statement#
+      ,#Description#
+      ,#ProType#)
+    </insert>
+
+
+    <select id="SelEOContents" parameterClass="EO" resultClass="EO">
+      SELECT *
+      FROM T_DEO_RELATIONSHIP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+      </dynamic>
+      AND  DeleteDt IS NULL
+    </select>
+    
+    <delete id="delEOContents" parameterClass="EO">
+      DELETE FROM T_DEO_RELATIONSHIP
+       <dynamic prepend="where">
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotEmpty prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotEmpty>
+      </dynamic>
+    </delete>
+
+    <select id="partOIDList" parameterClass="EO" resultClass="int">
+      SELECT ToOID
+      FROM T_DEO_RELATIONSHIP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+      </dynamic>
+      AND  DeleteDt IS NULL
+    </select>
+
+
+    </statements>
+
+</sqlMap>

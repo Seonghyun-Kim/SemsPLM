@@ -1,0 +1,170 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;프로젝트 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>프로젝트명</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtTmpProjName" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>내용</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtTmpContent" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>고객사</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtTmpCustomer" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제품(검색)</div>
+                    <input type="text" class="txtBox" id="txtTmpProduct" />
+                    &nbsp;<button id="schTmpProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtTmpCuser" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="btnTmpSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+        </div>
+        <div id="TmpGrd"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        var TmpProjectSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'ProjectType' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'CreateUsNm' },
+                { name: 'EstStartDt', type: "date" },
+                { name: 'EstEndDt', type: "date" },
+                { name: 'ActEndDt', type: "date" },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+            ],
+        }
+
+        const TmpGrd$ = $('#TmpGrd');
+        TmpGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 680,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'ProjectType', width: "10%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "5%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '기준일', datafield: 'EstStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '예상 종료일', datafield: 'EstEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '생성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (statusbar) {
+                var container = $("<div class='rGridComponent'></div>");
+                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 프로젝트 등록</button>").jqxButton();
+                var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 프로젝트 수정</button>").jqxButton();
+                var btnDelete = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 선택 삭제</button>").jqxButton();
+
+                container.append(btnAdd);
+                container.append(btnMod);
+                container.append(btnDelete);
+                statusbar.append(container);
+
+                btnAdd.on('click', function () {
+                    OpenPmsTmpCreateDialog(function () {
+                        TmpGrd$.jqxGrid('pagerrenderer');
+                    }, null, null, '/Pms/CreateTmpProject', '프로젝트 템플릿 등록');
+                });
+
+                btnMod.on('click', function () {
+
+                });
+            },
+            pagerrenderer: function () {
+                RequestData("/Pms/SelProjects", { Type: '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP', IsTemplate: '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP' }, function (res) {
+                    PrintJqxGrid(TmpProjectSource, TmpGrd$, res);
+                });
+            },
+        });
+
+        TmpGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Pms/InfoTmpProject?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+        TmpGrd$.jqxGrid('pagerrenderer');
+    });
+
+</script>

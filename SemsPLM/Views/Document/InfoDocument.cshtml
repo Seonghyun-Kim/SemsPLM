@@ -1,0 +1,229 @@
+﻿
+@{
+    Layout = null;
+}
+<div id="InfoDocument_@ViewBag.docDetail.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>@ViewBag.docDetail.Name<!--Eo No--></h3>
+                <p>제 목 : <span>@ViewBag.docDetail.Title</span></p>
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                            <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                        </div>
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoDocument_defaultBtn_@ViewBag.docDetail.OID">
+                            <button id="InfoDocument_EditBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            @*<button id="InfoDocument_AppDrwEditBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                            <button id="InfoDocument_SaveBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoDocument_ApprovalBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="infoTable">
+                <colgroup>
+                    <col width="14%" />
+                    <col width="auto" />
+                    <col width="14%" />
+                    <col width="auto" />
+                    <col width="14%" />
+                    <col width="auto" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th class="reqVal">문서 구분</th>
+                        <td>
+                            <input type="text" readonly="readonly" id="InfoDocument_DocType_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType_KorNm" />
+                        </td>
+                        <th>작성자</th>
+                        <td colspan="3"><input type="text" readonly="readonly" id="InfoDocument_CreateUsNm_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.CreateUsNm" /></td>
+
+                    </tr>
+                    <tr id="dynamicTr_@ViewBag.docDetail.OID" hidden="hidden">
+                    </tr>
+                    <tr>
+                        <th class="reqVal">품번</th>
+                        <td><input type="text" class="Modifiable_@ViewBag.docDetail.OID" readonly="readonly" id="InfoDocument_Name_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.Name" /></td>
+                        <th>EO NO</th>
+                        <td><input type="text" class="Modifiable_@ViewBag.docDetail.OID" readonly="readonly" id="InfoDocument_Eo_No_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.Eo_No" /></td>
+                        <th>작성일</th>
+                        <td><input type="text" readonly="readonly" id="InfoDocument_CreateDt_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.CreateDt" /></td>
+                    </tr>
+                    <tr>
+                        <th class="reqVal">제목</th>
+                        <td colspan="5">
+                            <input type="text" class="Modifiable_@ViewBag.docDetail.OID" readonly="readonly" id="InfoDocument_Title_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.Title" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="vertical-align:top;">설명</th>
+                        <td colspan="5">
+                            <textarea  class="Modifiable_@ViewBag.docDetail.OID" id="InfoDocument_Description_@ViewBag.docDetail.OID" autocomplete="off" readonly="readonly" style="border:none;width:100%;height:200px;">@ViewBag.docDetail.Description</textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.docDetail.OID">
+            </div>
+        </div>
+
+        <div id="Downhis" class="basic_grid dective">
+            <div id="DownhisInfo_@ViewBag.docDetail.OID"></div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(function () {
+        var dyTr$ = $('#dynamicTr_'+'@ViewBag.docDetail.OID');
+        var tag;
+        var DocType = '@ViewBag.docDetail.DocType';
+        const DocOID = '@ViewBag.docDetail.OID';
+        const DocDiv$ = $('#InfoDocument_' + DocOID);
+
+        const current = @ViewBag.docDetail.BPolicyOID;
+        const headerStatus = $('#InfoDocument_' + DocOID + ' .pointer_wrap .pointer');
+
+        if (headerStatus != null && headerStatus.length > 0) {
+            headerStatus.removeClass('pointer_focus');
+            const currentStatus = headerStatus.filter(function (index, item) {
+                return item.getAttribute('data-Status') == current;
+            });
+            if (currentStatus != null && currentStatus.length > 0) {
+                currentStatus[0].className += ' ' + 'pointer_focus';
+            }
+        }
+        $('#InfoDocument_EditBtn_' + DocOID).on('click', function () {
+            $('.Modifiable_' + DocOID).removeAttr('readonly');
+
+              //수정 가능한 항목을 표시
+                    var modifyTag = document.createElement('div');
+                    modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + DocOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + DocOID).parent().append(modifyTag);
+
+        });
+
+        $('#InfoDocument_SaveBtn_' + DocOID).on('click', function () {
+             var param = {};
+             param.OID = DocOID;
+             param.Name = $('#InfoDocument_Name_' + DocOID).val();
+             param.Eo_No = $('#InfoDocument_Eo_No_' + DocOID).val();
+             param.Title = $('#InfoDocument_Title_' + DocOID).val();
+             param.Description = $('#InfoDocument_Description_' + DocOID).val();
+
+             if (param.Name == null || param.Name == '') {
+                 alert('품번을 입력해주세요');
+                 return false;
+             } else if (param.Title == null || param.Title == '') {
+                 alert('제목을 입력해주세요');
+                 return false;
+             }
+
+             RequestData('/Document/UdtDocument', param, function (response) {
+                 if (response.isError) {
+                     alert(response.resultMessage);
+                     return;
+                 }
+                 alert("수정되었습니다.");
+                 PageReload();
+             }).fail(function (err) {
+                 alert(err.responseText);
+             });
+        });
+
+        $('#InfoDocument_' + DocOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            DocDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            DocDiv$.find('[class="basic_grid"]').addClass('dective');
+            DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: DocOID }, function (res) {
+                    $('#ApphisInfo_' + DocOID).html(res);
+                });
+            } else if (infoValue == 'Downhis') {
+
+            }
+        });
+
+
+        if (DocType == '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') { //차종문서
+            tag = '';
+            tag += '<th class="reqVal">OEM</th><td><input type="text"  id="InfoDocument_Doc_Lib_Lev1_@ViewBag.docDetail.OID" readonly="readonly" value="" /></td>'
+            tag += '<th class="reqVal">차종</th><td><input type="text" id="InfoDocument_Doc_Lib_Lev2_@ViewBag.docDetail.OID" readonly="readonly" value="" /></td>';
+            tag += '<th class="reqVal">분류</th><td><input type="text" id="InfoDocument_Doc_Lib_Lev3_@ViewBag.docDetail.OID" readonly="readonly" value="" /></td>';
+            dyTr$.empty();
+            dyTr$.removeAttr('hidden');
+            dyTr$.append(tag);
+            if ('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != null && '@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != "") {
+                $('#InfoDocument_Doc_Lib_Lev1_@ViewBag.docDetail.OID').val('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm');
+            }
+            if ('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != null && '@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != "") {
+                $('#InfoDocument_Doc_Lib_Lev2_@ViewBag.docDetail.OID').val('@ViewBag.docDetail.Doc_Lib_Lev2_KorNm');
+            }
+            if ('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != null && '@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != "") {
+                $('#InfoDocument_Doc_Lib_Lev3_@ViewBag.docDetail.OID').val('@ViewBag.docDetail.Doc_Lib_Lev3_KorNm');
+            }
+        } else if (DocType == '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT') { //기술문서
+            tag = '';
+            tag += '<th class="reqVal">1Lv</th><td><input type="text"  id="InfoDocument_Doc_Lib_Lev1" readonly="readonly" value="" /></td>'
+            tag += '<th>2Lv</th><td colspan="3"><input type="text"  id="InfoDocument_Doc_Lib_Lev2" readonly="readonly" value="" /></td>';
+            //tag += '<th></th><td></td>';
+            dyTr$.empty();
+            dyTr$.removeAttr('hidden');
+            dyTr$.append(tag);
+            if ('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != null && '@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != "") {
+                $('#InfoDocument_Doc_Lib_Lev1_@ViewBag.docDetail.OID').val('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm');
+            }
+            if ('@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != null && '@ViewBag.docDetail.Doc_Lib_Lev1_KorNm' != "") {
+                $('#InfoDocument_Doc_Lib_Lev2_@ViewBag.docDetail.OID').val('@ViewBag.docDetail.Doc_Lib_Lev2_KorNm');
+            }
+        } else {
+            dyTr$.attr('hidden', 'hidden');
+            dyTr$.empty();
+        }
+
+        $('#InfoDocument_ApprovalBtn_' + DocOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: DocOID }, '/Common/Approval', '결재');
+        });
+
+    });
+
+</script>

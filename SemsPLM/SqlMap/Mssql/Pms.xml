@@ -1,0 +1,508 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="Pms"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="PmsProject" type="Pms.Models.PmsProject" />
+    <typeAlias alias="PmsProcess" type="Pms.Models.PmsProcess" />
+    <typeAlias alias="PmsRelationship" type="Pms.Models.PmsRelationship" />
+    
+    <typeAlias alias="PmsBaseLineProject" type="Pms.Models.PmsBaseLineProject" />
+    <typeAlias alias="PmsBaseLineProcess" type="Pms.Models.PmsBaseLineProcess" />
+    <typeAlias alias="PmsBaseLineRelationship" type="Pms.Models.PmsBaseLineRelationship" />
+  </alias>
+
+  <statements>
+
+    <insert id="InsPmsProject" parameterClass="PmsProject">
+      INSERT INTO T_DPMS_PROJECT
+      ( OID
+      , IsTemplate
+      , ProjectType
+      , EstStartDt
+      , EstEndDt
+      , EstDuration
+      , ActStartDt
+      , ActEndDt
+      , ActDuration
+      , WorkingDay
+      , CalendarOID
+      , Complete)
+      VALUES
+      ( #OID#
+      , #IsTemplate#
+      , #ProjectType#
+      , #EstStartDt#
+      , #EstEndDt#
+      , #EstDuration#
+      , #ActStartDt#
+      , #ActEndDt#
+      , #ActDuration#
+      , #WorkingDay#
+      , #CalendarOID#
+      , #Complete#)
+    </insert>
+    
+    <select id="SelPmsProject" parameterClass="PmsProject" resultClass="PmsProject">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_PROJECT B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="ProjectType">
+          B.ProjectType = #ProjectType#
+        </isNotNull>
+        <isNotNull prepend="and" property="IsTemplate">
+          IsTemplate IS NOT NULL
+        </isNotNull>
+        <isNull prepend="and" property="IsTemplate">
+          IsTemplate IS NULL
+        </isNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <update id="UdtPmsProject" parameterClass="PmsProject">
+      UPDATE T_DPMS_PROJECT SET
+      <dynamic prepend=" " close=" ">
+        <isNotNull prepend="," property="EstDuration">
+        EstDuration = #EstDuration#
+      </isNotNull>
+      <isNotNull prepend="," property="EstStartDt">
+        EstStartDt = #EstStartDt#
+      </isNotNull>
+      <isNotNull prepend="," property="EstEndDt">
+        EstEndDt = #EstEndDt#
+      </isNotNull>
+      <isNotNull prepend="," property="ActStartDt">
+        ActStartDt = #ActStartDt#
+      </isNotNull>
+      <isNotNull prepend="," property="ActEndDt">
+        ActEndDt = #ActEndDt#
+      </isNotNull>
+      <isNotNull prepend="," property="ActDuration">
+        ActDuration = #ActDuration#
+      </isNotNull>
+      <isNotNull prepend="," property="Complete">
+        Complete = #Complete#
+      </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsPmsProcess" parameterClass="PmsProcess">
+      INSERT INTO T_DPMS_PROCESS
+      ( OID
+      , ProcessType
+      , Id
+      , Dependency
+      , Level
+      , EstStartDt
+      , EstEndDt
+      , EstDuration
+      , ActStartDt
+      , ActEndDt
+      , ActDuration
+      , Complete)
+      VALUES
+      ( #OID#
+      , #ProcessType#
+      , #Id#
+      , #Dependency#
+      , #Level#
+      , #EstStartDt#
+      , #EstEndDt#
+      , #EstDuration#
+      , #ActStartDt#
+      , #ActEndDt#
+      , #ActDuration#
+      , #Complete# )
+    </insert>
+
+    <select id="SelPmsProcess" parameterClass="PmsProcess" resultClass="PmsProcess">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_PROCESS B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="ProcessType">
+          B.ProcessType = #ProcessType#
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <update id="UdtPmsProcess" parameterClass="PmsProcess">
+      UPDATE T_DPMS_PROCESS SET
+      <dynamic prepend=" " close=" ">
+        <isNotNull prepend="," property="ProcessType">
+          ProcessType = #ProcessType#
+        </isNotNull>
+        <isNotNull prepend="," property="Id">
+          Id = #Id#
+        </isNotNull>
+        <isNotNull prepend="," property="Dependency">
+          Dependency = #Dependency#
+        </isNotNull>
+        <isNull prepend="," property="Dependency">
+          Dependency = NULL
+        </isNull>
+        <isNotNull prepend="," property="Level">
+          Level = #Level#
+        </isNotNull>
+        <isNotNull prepend="," property="EstDuration">
+          EstDuration = #EstDuration#
+        </isNotNull>
+        <isNotNull prepend="," property="EstStartDt">
+          EstStartDt = #EstStartDt#
+        </isNotNull>
+        <isNotNull prepend="," property="EstEndDt">
+          EstEndDt = #EstEndDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActStartDt">
+          ActStartDt = #ActStartDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActEndDt">
+          ActEndDt = #ActEndDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActDuration">
+          ActDuration = #ActDuration#
+        </isNotNull>
+        <isNotNull prepend="," property="Complete">
+          Complete = #Complete#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsPmsRelationship" parameterClass="PmsRelationship">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DPMS_RELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DPMS_RELATIONSHIP
+      ( OID
+      , FromOID
+      , ToOID
+      , RootOID
+      , Count
+      , Type
+      , Ord
+      , RoleOID
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #ToOID#
+      , #RootOID#
+      , #Count#
+      , #Type#
+      , #Ord#
+      , #RoleOID#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <insert id="InsPmsRelationshipNotOrd" parameterClass="PmsRelationship">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DPMS_RELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DPMS_RELATIONSHIP
+      ( OID
+      , FromOID
+      , ToOID
+      , RootOID
+      , Count
+      , Type
+      , Ord
+      , RoleOID
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #ToOID#
+      , #RootOID#
+      , #Count#
+      , #Type#
+      , (SELECT ISNULL(MAX(Ord),0) + 1 AS OID FROM T_DPMS_RELATIONSHIP WHERE FromOID = #FromOID# AND Type = #Type#)
+      , #RoleOID#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <select id="SelPmsRelationship" parameterClass="PmsRelationship" resultClass="PmsRelationship">
+      SELECT *
+      FROM T_DPMS_RELATIONSHIP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="RoleOID">
+          RoleOID = #RoleOID#
+        </isNotNull>
+        AND DeleteDt IS NULL
+      </dynamic>
+      ORDER BY Ord
+    </select>
+
+    <update id="DelPmsRelationship" parameterClass="PmsRelationship">
+      UPDATE T_DPMS_RELATIONSHIP
+      SET DeleteDt = GETDATE()
+      , DeleteUs = #DeleteUs#
+      WHERE Type = #Type#
+      AND OID = #OID#
+    </update>
+
+    <update id="DelPmsRelationshipByData" parameterClass="PmsRelationship">
+      UPDATE T_DPMS_RELATIONSHIP
+      SET DeleteDt = GETDATE()
+      , DeleteUs = #DeleteUs#
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+      </dynamic>
+    </update>
+
+    <update id="UdtPmsRelationship" parameterClass="PmsRelationship">
+      UPDATE T_DPMS_RELATIONSHIP SET
+      <dynamic prepend=" " close=" ">
+        <isNotNull prepend="," property="Ord">
+          Ord = #Ord#
+        </isNotNull>
+        <isNotNull prepend="," property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="," property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="," property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="," property="RoleOID">
+          RoleOID = #RoleOID#
+        </isNotNull>
+        <isNotNull prepend="," property="Type">
+          Type = #Type#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsPmsBaseLineProject" parameterClass="PmsBaseLineProject">
+      INSERT INTO T_DPMS_BASE_LINE_PROJECT
+      ( ProjectBaseLineOID
+      , ProjectOID
+      , ProjectNm
+      , ProjectType
+      , EstStartDt
+      , EstEndDt
+      , EstDuration
+      , ActStartDt
+      , ActEndDt
+      , ActDuration
+      , WorkingDay
+      , CalendarOID
+      , Complete )
+      SELECT
+      #ProjectBaseLineOID#
+      , A.OID
+      , A.Name
+      , B.ProjectType
+      , B.EstStartDt
+      , B.EstEndDt
+      , B.EstDuration
+      , B.ActStartDt
+      , B.ActEndDt
+      , B.ActDuration
+      , B.WorkingDay
+      , B.CalendarOID
+      , B.Complete
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_PROJECT B ON A.OID = B.OID
+      WHERE A.OID = #TargetProjectOID#
+    </insert>
+
+    <select id="SelPmsBaseLineProject" parameterClass="PmsBaseLineProject" resultClass="PmsBaseLineProject">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_BASE_LINE_PROJECT B ON A.OID = B.ProjectBaseLineOID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="ProjectBaseLineOID">
+          B.ProjectBaseLineOID = #ProjectBaseLineOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="ProjectType">
+          B.ProjectType = #ProjectType#
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <insert id="InsPmsBaseLineProcess" parameterClass="PmsBaseLineProcess">
+      INSERT INTO T_DPMS_BASE_LINE_PROCESS
+      ( RootBaseLineOID
+      , ProcessOID
+      , ProcessNm
+      , ProcessType
+      , Id
+      , Dependency
+      , Level
+      , EstStartDt
+      , EstEndDt
+      , EstDuration
+      , ActStartDt
+      , ActEndDt
+      , ActDuration
+      , Complete )
+      SELECT
+      #RootBaseLineOID#
+      , A.OID
+      , A.Name
+      , B.ProcessType
+      , B.Id
+      , B.Dependency
+      , B.Level
+      , B.EstStartDt
+      , B.EstEndDt
+      , B.EstDuration
+      , B.ActStartDt
+      , B.ActEndDt
+      , B.ActDuration
+      , B.Complete
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_PROCESS B ON A.OID = B.OID
+      WHERE A.OID = #TargetPrcessOID#
+    </insert>
+
+    <select id="SelPmsBaseLineProcess" parameterClass="PmsBaseLineProcess" resultClass="PmsBaseLineProcess">
+      SELECT *
+      FROM T_DPMS_BASE_LINE_PROCESS
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="RootBaseLineOID">
+          RootBaseLineOID = #RootBaseLineOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ProcessOID">
+          ProcessOID = #ProcessOID#
+        </isNotNull>
+      </dynamic>
+    </select>
+
+    <insert id="InsPmsBaseLineRelationship" parameterClass="PmsBaseLineRelationship">
+      INSERT INTO T_DPMS_BASE_LINE_RELATIONSHIP
+      ( RootBaseLineOID
+      , OID
+      , Type
+      , FromOID
+      , ToOID
+      , RootOID
+      , Ord
+      , RoleOID
+      , Description
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #RootBaseLineOID#
+      , #BaseData.OID#
+      , #BaseData.Type#
+      , #BaseData.FromOID#
+      , #BaseData.ToOID#
+      , #BaseData.RootOID#
+      , #BaseData.Ord#
+      , #BaseData.RoleOID#
+      , #BaseData.Description#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <select id="SelPmsBaseLineRelationship" parameterClass="PmsBaseLineRelationship" resultClass="PmsBaseLineRelationship">
+      SELECT *
+      FROM T_DPMS_BASE_LINE_RELATIONSHIP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="RootBaseLineOID">
+          RootBaseLineOID = #RootBaseLineOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        AND DeleteDt IS NULL
+      </dynamic>
+      ORDER BY Ord
+    </select>
+
+
+  </statements>
+ 
+</sqlMap>

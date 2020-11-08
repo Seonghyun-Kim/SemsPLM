@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="ChangeOrder"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="ECO"  type="ChangeOrder.Models.ECO" />
+  </alias>
+
+  <statements>
+    <insert id="InsChangeOrder" parameterClass="ECO">
+      INSERT INTO T_DCHANGE_ORDER
+      (OID
+      ,EoDt
+      ,Title
+      ,Count
+      ,EPart_No
+      ,Oem_Lib_OID
+      ,Car_Lib_OID
+      ,Pms_OID
+      ,EoType
+      ,EoProType
+      ,EoID
+      ,IsService
+      ,DrwDt
+      ,DesignCost
+      ,WtChange
+      ,IsMold
+      ,DieQt
+      ,DieCost
+      ,EoClass
+      ,Eo_InvClr
+      ,Eo_Fault
+      ,TeamNm
+      ,ApprovDt
+      ,Oem_Eo
+      ,OemDt
+      ,OemUs
+      ,Oem_RecDt
+      ,Effective
+      ,Statement
+      ,Eo_Reason)
+      VALUES
+      (#OID#
+      ,#EoDt#
+      ,#Title#
+      ,#Count#
+      ,#EPart_No#
+      ,#Oem_Lib_OID#
+      ,#Car_Lib_OID#
+      ,#Pms_OID#
+      ,#EoType#
+      ,#EoProType#
+      ,#EoID#
+      ,#IsService#
+      ,#DrwDt#
+      ,#DesignCost#
+      ,#WtChange#
+      ,#IsMold#
+      ,#DieQt#
+      ,#DieCost#
+      ,#EoClass#
+      ,#Eo_InvClr#
+      ,#Eo_Fault#
+      ,#TeamNm#
+      ,#ApprovDt#
+      ,#Oem_Eo#
+      ,#OemDt#
+      ,#OemUs#
+      ,#Oem_RecDt#
+      ,#Effective#
+      ,#Statement#
+      ,#Eo_Reason#)
+    </insert>
+    
+    <select id="SelChangeOrder" parameterClass="ECO" resultClass="ECO">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DCHANGE_ORDER B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="EPart_No">
+          B.EPart_No = #EPart_No#
+        </isNotNull>
+        <isNotNull prepend="and" property="Title">
+          B.Title LIKE CONCAT('%',#Title#,'%')
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+
+
+    <select id="SelChangeOrderCheck" parameterClass="ECO" resultClass="ECO">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DCHANGE_ORDER B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name = #Name#
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+
+    <update id="UdtChangeOrder" parameterClass="ECO">
+      UPDATE T_DCHANGE_ORDER SET
+      EoDt        =  #EoDt#
+      ,EPart_No    =  #EPart_No#
+      ,Title       =  #Title#
+      ,Count       =  #Count#
+      ,DrwDt       =  #DrwDt#
+      ,EoType      =  #EoType#
+      ,EoID        =  #EoID#
+      ,EoProType   =  #EoProType#
+      ,IsService   =  #IsService#
+      ,DesignCost  =  #DesignCost#
+      ,WtChange    =  #WtChange#
+      ,IsMold      =  #IsMold#
+      ,DieQt       =  #DieQt#
+      ,DieCost     =  #DieCost#
+      ,EoClass     =  #EoClass#
+      ,Eo_InvClr   =  #Eo_InvClr#
+      ,Eo_Fault    =  #Eo_Fault#
+      ,TeamNm      =  #TeamNm#
+      ,Oem_Eo      =  #Oem_Eo#
+      ,OemDt       =  #OemDt#
+      ,OemUs       =  #OemUs#
+      ,Oem_RecDt   =  #Oem_RecDt#
+      ,Eo_Reason   =  #Eo_Reason#
+      ,Effective   =  #Effective#
+      ,Statement   =  #Statement#
+      WHERE OID   =  #OID#
+    </update>
+    
+    
+  </statements>
+
+</sqlMap>

@@ -1,0 +1,124 @@
+﻿@{
+    Layout = null;
+}
+
+<input type="hidden" id="hidCalendarOID" value="" />
+<input type="hidden" id="hidWorkingDay" value="" />
+<input type="hidden" id="hidTemplateOID" value="" />
+<input type="hidden" id="hidProdecessorProject" value="" />
+
+<div style="width:100%;text-align:right;padding-right:10px;">
+    <button id="btnDlgCreateProject" class="custom-button"><i class='fas fa-check-circle'></i> 등록</button>
+</div>
+
+<div class="dlg_table dlgCreateProject_table">
+    <table>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 구분</label></td>
+            <td colspan="3"><div id="dlgProjType" style="width:50%;"></div></td>
+        </tr>
+        <tr class="dlgPredecessorData" style="display:none;">
+            <td>
+                <label class="lbText"><i class="fa fa-caret-right"></i> 선행프로젝트</label>
+            </td>
+            <td colspan="3">
+                <input type="text" id="txtDlgProdecessorProject" class="txtBox large" style="width:70%;" readonly />
+                <button id="schDlgProdecessorProject" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgProdecessorProjectClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트명</label></td>
+            <td colspan="3"><input type="text" id="txtDlgProjName" class="txtBox large" style="width:99%;" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 복사 프로젝트</label></td>
+            <td colspan="3">
+                <div id="isCopyTemplate" class="custom-checkbox">&nbsp;템플릿</div>
+                <input type="text" id="txtDlgProjectTemplate" class="txtBox large" style="width:68.4%;" readonly />
+                <button id="schDlgProjectTemplate" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgProjectTemplateClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 템플릿 내용</label></td>
+            <td colspan="3">
+                <div id="isWbs" class="custom-checkbox">&nbsp;WBS</div>
+                <div id="isMember" class="custom-checkbox">&nbsp;멤버</div>
+                <div id="isRisk" class="custom-checkbox">&nbsp;리스크</div>
+                <div id="IsCheckList" class="custom-checkbox">&nbsp;체크리스트</div>
+                <div id="IsDocument" class="custom-checkbox">&nbsp;산출물</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 기준일</label></td>
+            <td>
+                <input type="text" id="txtDlgProjDate" class="txtBox large" readonly />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 근무일수</label></td>
+            <td>
+                <input type="text" id="txtWorkingDay" class="txtBox large" style="width:98%;" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align:baseline;"><label class="lbText"><i class="fa fa-caret-right"></i> 내용</label></td>
+            <td colspan="3"><textarea id="txtDlgContent" style="width:99%;height:50px;"></textarea></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 달력</label></td>
+            <td colspan="3">
+                <input type="text" id="txtDlgCalendar" class="txtBox large" style="width:84%;" readonly />
+                <button id="schDlgCalendar" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgCalendarClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 생성일</label></td>
+            <td>
+                <input type="text" id="txtDlgCreateDt" class="txtBox large" style="width:98%;" readonly />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 작성자</label></td>
+            <td>
+                <input type="text" id="txtDlgCreateUs" class="txtBox large" style="width:98%;" readonly value="" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        const dlgProjType$ = $('#dlgProjType');
+        dlgProjType$.jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 185, height: 30, });
+
+        $('#isCopyTemplate').jqxCheckBox({ width: 88, height: 25, checked: true });
+
+        $('#isWbs').jqxCheckBox({ width: 80, height: 25, locked: true });
+        $('#isMember').jqxCheckBox({ width: 80, height: 25, locked: true });
+        $('#isRisk').jqxCheckBox({ width: 100, height: 25, locked: true });
+        $('#IsCheckList').jqxCheckBox({ width: 130, height: 25, locked: true });
+        $('#IsDocument').jqxCheckBox({ width: 100, height: 25, locked: true });
+
+        const dlgProjDate$ = $('#txtDlgProjDate');
+        dlgProjDate$.jqxDateTimeInput(DateFormat);
+        dlgProjDate$.val(WebUtils.GetDate(-1, "m", "-"));
+        dlgProjDate$.jqxDateTimeInput({ width: "98%", height: 32 });
+
+        $("#txtDlgCreateDt").val(WebUtils.GetDate(0, "m", "-"));
+
+        $('#schDlgCalendar').on('click', function () {
+            OpenCreateProjectContentDialog(function (checkData) {
+                $('#txtDlgCalendar').val(checkData.Name);
+                $('#hidCalendarOID').val(checkData.OID);
+                $('#hidWorkingDay').val(checkData.WorkingDay);
+                $('#txtWorkingDay').val(checkData.WorkingDay);
+            }, null, "/Pms/CreateProjectContent", { Title: '달력 검색', Mode: 'Calendar' });
+        });
+
+        $('#schDlgCalendarClear').on('click', function () {
+            $('#txtDlgCalendar').val('');
+            $('#hidCalendarOID').val('');
+            $('#hidWorkingDay').val('');
+            $('#txtWorkingDay').val('');
+        });
+    });
+</script>

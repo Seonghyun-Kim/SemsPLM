@@ -1,0 +1,393 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 부품 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="CreateEPartBtn" class="custom-button"><i class="fas fa-plus-square"></i> 생성</button>
+                    <button id="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <input type="hidden" id="hidThumbnail" value="" />
+    <table class="createtable epart_create">
+        <tr>
+            <th><i class="fa fa-caret-right"></i> Thumnail</th>
+            <td colspan="5">
+                <div>
+                    <input type="file" name="file" multiple="true" id="imageDrag" style="display:none;">
+                    <div class="image_inputbox" id="dropZone">이미지<!--이미지 드래그 영역--></div>
+                    <ul class="image_thumbnail" id="uploadResult"><!--이미지 썸네일 영역--></ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 고객사</th>
+            <td>
+                <div id="CreateEPartOEM" class="createEpartComboBox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 차종</th>
+            <td>
+                <div id="CreateEPartCar" class="createEpartComboBox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 프로젝트</th>
+            <td>
+                <div id="CreateEPartPms" class="createEpartComboBox"></div>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 품번</th>
+            <td>
+                <input type="text" id="CreateEPartName" style="width:69.5%;" />
+                <button id="CreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 품명</th>
+            <td colspan="3"><input type="text" id="CreateEPartTitle" style="width:100%;" /></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 재질</th>
+            <td>
+                <div id="CreateEPartMaterial" class="createEpartComboBox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 표면처리</th>
+            <td><input type="text" id="CreateEPartSurface" /></td>
+            <th><i class="fa fa-caret-right"></i> C/O</th>
+            <td>
+                <div id="CreateEPartCO" class="custom-checkbox"></div>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> EO NO</th>
+            <td><input type="text" id="CreateEPartEo_No"></td>
+            <th><i class="fa fa-caret-right"></i> EO 일자</th>
+            <td>
+                <input type="text" id="CreateEPartEo_No_ApplyDt" class="txtBox large" readonly />
+            </td>
+            <th><i class="fa fa-caret-right"></i> C/N</th>
+            <td><input type="text" value="R00" class="readonly" readonly="readonly" /></td>
+
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> EO 내역</th>
+            <td colspan="5"><input type="text" id="CreateEPartEo_No_History"></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 사양</th>
+            <td colspan="5"><input type="text" id="CreateEPartSpec"></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 비고</th>
+            <td colspan="5"><input type="text" id="CreateEPartEtc"></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 타입</th>
+            <td>
+                <div id="CreateEPartTypeAssy" class="custom-checkbox">
+                    Assy
+                </div>
+                <div id="CreateEPartTypeSAssy" class="custom-checkbox">
+                    S/Assy
+                </div>
+                <div id="CreateEPartTypeDetail" class="custom-checkbox">
+                    Detail
+                </div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> S/ON 품번</th>
+            <td><input type="text" id="CreateEPartRep_Part_No" /></td>
+            <th><i class="fa fa-caret-right"></i> 대체 품번</th>
+            <td><input type="text" id="CreateEPartRep_Part_No2" /></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 제품계층1Lv</th>
+            <td>
+                <div id="CreateEPartProdLibLev1" class="createEpartComboBox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 제품계층2Lv</th>
+            <td>
+                <div id="CreateEPartProdLibLev2" class="createEpartComboBox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 제품계층3Lv</th>
+            <td>
+                <div id="CreateEPartProdLibLev3" class="createEpartComboBox"></div>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 별납품</th>
+            <td>
+                <div id="CreateEPartEctDelivery" class="custom-checkbox"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 고객사 EO</th>
+            <td><input type="text" id="CreateEPartSel_Eo" /></td>
+            <th><i class="fa fa-caret-right"></i> 고객 EO 일자</th>
+            <td>
+                <input type="text" id="CreateEPartSel_Eo_Dt" class="txtBox large" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 작성자</th>
+            <td><input type="text" value="" class="readonly" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 작성일</th>
+            <td><input type="text" class="readonly" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 상태</th>
+            <td><input type="text" value="작성중" class="readonly" readonly="readonly" /></td>
+        </tr>
+    </table>
+
+</div>
+
+<script>
+    var EPartThumbnailData = null;
+
+    $(function () {
+        var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var psizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
+        var prodstrList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.prodstrList))');
+
+        const CreEPartEoAppDt$ = $('#CreateEPartEo_No_ApplyDt');
+
+        CreEPartEoAppDt$.jqxDateTimeInput(DateFormat);
+        CreEPartEoAppDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        CreEPartEoAppDt$.jqxDateTimeInput({ width: "100%", height: 32});
+
+        const CreEPartSelEoDt$ = $('#CreateEPartSel_Eo_Dt');
+
+        CreEPartSelEoDt$.jqxDateTimeInput(DateFormat);
+        CreEPartSelEoDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        CreEPartSelEoDt$.jqxDateTimeInput({ width: "100%", height: 32, dropDownVerticalAlignment: "top" });
+
+        $('#CreateEPartCO').jqxCheckBox({ width: "30%", height: 24, checked: false });
+        $('#CreateEPartEctDelivery').jqxCheckBox({ width: 24, height: 24, checked: false });
+
+        $('#CreateEPartTypeAssy').jqxRadioButton({ width: "30%", height: 25, checked: false });
+        $('#CreateEPartTypeSAssy').jqxRadioButton({ width: "30%", height: 25, checked: false });
+        $('#CreateEPartTypeDetail').jqxRadioButton({ width: "30%", height: 25, checked: false });
+
+        CreateEPartOEM$ = $('#CreateEPartOEM');
+        var OEMSource =
+        {
+            localdata: oemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var OEMdataAdapter = new $.jqx.dataAdapter(OEMSource);
+        CreateEPartOEM$.jqxComboBox({ source: OEMdataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+        $(document).on('change', '#CreateEPartOEM', function () {
+            ChangeEPartLib($('#CreateEPartOEM').jqxComboBox('getSelectedItem').value, $('#CreateEPartCar'));
+        });
+
+        var EPartType;
+
+        $("#CreateEPartTypeAssy").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartType = "A";
+            }
+        });
+
+        $("#CreateEPartTypeSAssy").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartType = "S";
+            }
+        });
+
+        $("#CreateEPartTypeDetail").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartType = "D";
+            }
+        });
+
+        CreateEPartMaterial$ = $('#CreateEPartMaterial');
+        var MaterialSource =
+        {
+            localdata: psizeList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var MaterialdataAdapter = new $.jqx.dataAdapter(MaterialSource);
+        CreateEPartMaterial$.jqxComboBox({ source: MaterialdataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+
+        CreateEPartProdLibLev1$ = $('#CreateEPartProdLibLev1');
+        var ProdLibLev1Source =
+        {
+            localdata: prodstrList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ProdLibLev1dataAdapter = new $.jqx.dataAdapter(ProdLibLev1Source);
+        CreateEPartProdLibLev1$.jqxComboBox({ source: ProdLibLev1dataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+        $(document).on('change', '#CreateEPartProdLibLev1', function () {
+            ChangeEPartLib($('#CreateEPartProdLibLev1').jqxComboBox('getSelectedItem').value, $('#CreateEPartProdLibLev2'));
+        });
+
+        $(document).on('change', '#CreateEPartProdLibLev2', function () {
+            ChangeEPartLib($('#CreateEPartProdLibLev2').jqxComboBox('getSelectedItem').value, $('#CreateEPartProdLibLev3'));
+        });
+
+        $('.createEpartComboBox').jqxComboBox({ width: "100%", height: 32 });
+
+        var CreateEPartChk$ = false;
+
+        $('#CreateEPartChk').bind('change paste keyup', function () {
+            CreateEPartChk$ = true;
+        });
+
+        $('#CreateEPartChk').on('click', function () {
+            var param = {};
+            param.Name = $('#CreateEPartName').val();
+            if (param.Name == null || param.Name == "") {
+                CreateEPartChk$ = true;
+                alert("품번을 입력해주세요");
+                return;
+            }
+
+            RequestData('/EBom/CreateEPartChk', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                if (response == 1) {
+                    alert("이미 사용중인 품번입니다");
+                    CreateEPartChk$ = true;
+                } else {
+                    alert("사용 가능한 품번입니다.");
+                    CreateEPartChk$ = false;
+                }
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+
+        });
+
+
+        $('#CreateEPartBtn').on('click', function () {
+            if (CreateEPartChk$) {
+                alert('중복품번을 확인해주세요.');
+                return;
+            }
+
+            var param = {};
+            param.Name = $('#CreateEPartName').val();
+
+            param.Title = $('#CreateEPartTitle').val();
+            param.Rep_Part_No = $('#CreateEPartRep_Part_No').val();
+            param.Rep_Part_No2 = $('#CreateEPartRep_Part_No2').val();
+            param.Eo_No = $('#CreateEPartEo_No').val();
+            param.Eo_No_ApplyDt = $('#CreateEPartEo_No_ApplyDt').val();
+            param.Eo_No_History = $('#CreateEPartEo_No_History').val();
+            param.Etc = $('#CreateEPartEtc').val();
+
+            param.EPartType = EPartType;
+            param.Thumbnail = EPartThumbnailData;
+            param.Sel_Eo = $('#CreateEPartSel_Eo').val();
+            param.Sel_Eo_Dt = $('#CreateEPartSel_Eo_Dt').val();
+            param.Spec = $('#CreateEPartSpec').val();
+            param.Surface = $('#CreateEPartSurface').val();
+
+            param.Oem_Lib_OID = $('#CreateEPartOEM').val();
+            param.Car_Lib_OID = $('#CreateEPartCar').val();
+
+            param.CO = $('#CreateEPartCO').val();
+            param.Etc_Delivery = $('#CreateEPartEctDelivery').val();
+
+            param.Prod_Lib_Lev1_OID = $('#CreateEPartProdLibLev1').val();
+            param.Prod_Lib_Lev2_OID = $('#CreateEPartProdLibLev2').val();
+            param.Prod_Lib_Lev3_OID = $('#CreateEPartProdLibLev3').val();
+
+            param.Material_OID =  $('#CreateEPartMaterial').val();
+
+            RequestData('/EBom/InsEPart', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        $('#imageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#dropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#uploadResult').empty();
+            $('#uploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            EPartThumbnailData = data;
+           $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                    $('.img-thumbnail').removeClass('showbigimage');
+                });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+    });
+
+
+    function ChangeEPartLib(OID, ID) {
+        var comboBox$ = ID;
+        var param = {};
+        param.fromOID = OID;
+        var comboSource;
+        RequestData("/Manage/SelLibrary", param, function (res) {
+            if (res.length > 0) {
+                comboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var comboAdapter = new $.jqx.dataAdapter(comboSource);
+                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+            }
+        });
+    }
+
+</script>

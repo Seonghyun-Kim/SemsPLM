@@ -1,0 +1,47 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="width:100%;text-align:right;padding-right:10px;">
+    <button id="dlgLibraryManip_AddLib" class="custom-button"><i class='fas fa-check-circle'></i> 등록</button>
+    <button id="dlgLibraryManip_EditLib" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+</div>
+<div class="dlg_table dlgLibraryManip_table">
+    <table>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 코드</label></td>
+            <td><input type="text" id="dlgLibraryManip_Name" value="" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 이름</label></td>
+            <td><input type="text" id="dlgLibraryManip_KorNm" value="" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 순서</label></td>
+            <td><input type="text" id="dlgLibraryManip_Ord" value="" /></td>
+        </tr>
+        <tr>
+            <td style="vertical-align:baseline;"><label class="lbText"><i class="fa fa-caret-right"></i> 설명</label></td>
+            <td>
+                <textarea id="dlgLibraryManip_Description" style="width:100%;height:120px;"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용 여부</label></td>
+            <td>
+                <div id="dlgLibraryManip_IsYes" class="custom-checkbox">
+                    Yes
+                </div>
+                <div id="dlgLibraryManip_IsNo" class="custom-checkbox">
+                    No
+                </div>
+            </td>
+        </tr>
+        @*<tr>
+                <td>
+                    <input type="button" id="dlgLibraryManip_AddLib" value="등록" /><input type="button" id="dlgLibraryManip_EditLib" value="수정" />
+                </td>
+            </tr>*@
+    </table>
+
+</div>

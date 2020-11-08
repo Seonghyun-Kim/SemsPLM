@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="text-align:right;">
+    <button id="btnDlgSelContent" class="custom-button"><i class='fas fa-check-circle'></i>&nbsp;선택</button>
+</div>
+<div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;margin-top:10px;">
+    <div id="grdConetntList"></div>
+</div>
+
+<script type="text/javascript">
+    var checkData = null;
+    $(function () {
+        var calendarSource = {
+            datatype: "json",
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'WorkingDay' },
+                { name: 'CreateDt', type: "date" },
+                { name: 'CreateUs' },
+                { name: 'CreateUsNm' },
+            ],
+            id: 'OID',
+            url: "/Manage/SelectCalendar",
+            data: {},
+            type: "post"
+        };
+
+        var dataDlgSelCalendarAdapter = new $.jqx.dataAdapter(calendarSource);
+        $("#grdConetntList").jqxGrid({
+            width: "99.5%",
+            height: 550,
+            rowsheight: 28,
+            columnsheight: 30,
+            source: dataDlgSelCalendarAdapter,
+            sortable: false,
+            pageable: true,
+            pagesize: 15,
+            pagesizeoptions: ['15', '30', '45'],
+            showfilterrow: true,
+            filterable: true,
+            selectionmode: 'checkbox',
+            columns: [
+                { text: '제목', datafield: 'Name', width: "45%", align: 'center', cellsalign: 'center', },
+                { text: '근무일수', datafield: 'WorkingDay', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '생성일', datafield: 'CreateDt', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd' },
+                { text: '생성자', datafield: 'CreateUsNm', width: "16%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $('#grdConetntList').on('rowselect', function (event) {
+            var args = event.args;
+            var rowBoundIndex = args.rowindex;
+            var rowData = args.row;
+            if (checkData != null) {
+                $('#grdConetntList').jqxGrid('unselectrow', checkData.SelectRowIndex);
+            }
+            checkData = rowData;
+            checkData.SelectRowIndex = rowBoundIndex;
+        });
+
+        $('#grdConetntList').on('rowunselect', function (event) {
+            checkData = null;
+        });
+    });
+</script>

@@ -1,0 +1,242 @@
+﻿
+@{
+    Layout = null;
+}
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;ECO 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>EO NO</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchChangeOrder_Name" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>OEM EO No</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchChangeOrder_Oem_Eo" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>품명</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchChangeOrder_Title" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">OEM</div>
+                    <div>
+                        <div id="SearchChangeOrder_Oem_Lib"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">차종</div>
+                    <div>
+                        <div id="SearchChangeOrder_Car_Lib"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">프로젝트</div>
+                    <div>
+                        <div id="SearchChangeOrder_Pms_Lib"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchChangeOrder_CreatUs" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchChangeOrder_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="SearchChangeOrder_Grid"></div>
+</div>
+
+<script>
+    var SearchECO_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var SearchECO_OemLib$ = $('#SearchChangeOrder_Oem_Lib');
+    var SearchECO_CarLib$ = $('#SearchChangeOrder_Car_Lib');
+    var SearchECO_PmsLib$ = $('#SearchChangeOrder_Pms_Lib');
+    $(function () {
+        var SearchECO_dataAdapterOemSource =
+        {
+            localdata: SearchECO_OemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var SearchECO_DataAdapter = new $.jqx.dataAdapter(SearchECO_dataAdapterOemSource);
+        SearchECO_OemLib$.jqxComboBox({ source: SearchECO_DataAdapter, displayMember: "KorNm", valueMember: "OID", height:33,});
+
+        var SearchECO_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
+        SearchECO_CarLib$.jqxComboBox({ source: SearchECO_DefaultCar, displayMember: "KorNm", valueMember: "OID", height:33,});
+        SearchECO_CarLib$.jqxComboBox({ selectedIndex: 0 });
+
+        var SearchECO_DefaultPms = [{ KorNm: '등록 프로젝트 없음', OID: null }];
+        SearchECO_PmsLib$.jqxComboBox({ source: SearchECO_DefaultPms, displayMember: "KorNm", valueMember: "OID", height:33,});
+        SearchECO_PmsLib$.jqxComboBox({ selectedIndex: 0 });
+
+        SearchECO_OemLib$.on('change', function (event) {
+            changeSearchECOComboBox(2, SearchECO_OemLib$.jqxComboBox('getSelectedItem').value);
+        });
+
+        var SearchECOGrdSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'Oem_Eo' },
+                { name: 'EPart_No' },
+                { name: 'Title' },
+                { name: 'Count' },
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_OID_KorNm' },
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_OID_KorNm' },
+                { name: 'Pms_Lib_OID' },
+                { name: 'Pms_Lib_OID_KorNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'CreateUs' },
+                { name: 'Description' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'ApprovDt' },
+            ],
+        }
+
+        const SearchECOGrd$ = $('#SearchChangeOrder_Grid');
+        SearchECOGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 640,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ProjectSource,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '차종', datafield: 'Car_Lib_OID_KorNm', width: "9%", align: 'center', cellsalign: 'center', },
+                { text: 'EO NO', datafield: 'Name', width: "9%", align: 'center', cellsalign: 'center', },
+               
+                {
+                    text: '품번', width: "30%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        var SearchECO_rowdata = SearchECOGrd$.jqxGrid('getrowdata', row);
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + SearchECO_rowdata.EPart_No + " 외 " + SearchECO_rowdata.Count + "종</div>";
+                    }
+                },
+                { text: 'OEM EO NO', datafield: 'Oem_Eo', width: "10%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },          
+                { text: '작성자', datafield: 'CreatUsNm', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '승인일', datafield: 'ApprovDt', width: "9%", align: 'center', cellsalign: 'center', },
+                //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+
+        });
+
+        SearchECOGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/ChangeOrder/InfoChangeOrder?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+
+        getSearchECOList(SearchECOGrdSource, SearchECOGrd$, null);
+       
+
+
+
+    });
+
+    function getSearchECOList(_Source, _Grid$, _param) {
+        RequestData("/ChangeOrder/SelChangeOrder", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+
+    function changeSearchECOComboBox(ID, OID) {
+        var ChangeECOComboBox$ = SearchECO_CarLib$
+        var param = {};
+        param.fromOID = OID;
+        var ChangeECOComboSource;
+        RequestData("/Manage/SelLibrary", param, function (res) {
+            if (res.length > 0) {
+                ChangeECOComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID"});
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID"});
+                ChangeECOComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+</script>

@@ -13,9 +13,6 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# Mono auto generated files
-mono_crash.*
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -29,7 +26,6 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-[Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -43,10 +39,9 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# NUnit
+# NUNIT
 *.VisualState.xml
 TestResult.xml
-nunit-*.xml
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
@@ -127,6 +122,9 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
+# JustCode is a .NET coding add-in
+.JustCode
+
 # TeamCity is a build add-in
 _TeamCity*
 
@@ -184,8 +182,6 @@ PublishScripts/
 
 # NuGet Packages
 *.nupkg
-# NuGet Symbol Packages
-*.snupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
@@ -210,8 +206,6 @@ BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
 *.appx
-*.appxbundle
-*.appxupload
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
@@ -261,9 +255,7 @@ ServiceFabricBackup/
 *.bim.layout
 *.bim_*.settings
 *.rptproj.rsuser
-*- [Bb]ackup.rdl
-*- [Bb]ackup ([0-9]).rdl
-*- [Bb]ackup ([0-9][0-9]).rdl
+*- Backup*.rdl
 
 # Microsoft Fakes
 FakesAssemblies/
@@ -298,6 +290,10 @@ paket-files/
 
 # FAKE - F# Make
 .fake/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
 
 # CodeRush personal settings
 .cr/personal
@@ -342,9 +338,26 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-
-# Backup folder for Package Reference Convert tool in Visual Studio 2017
-MigrationBackup/
-
-# Ionide (cross platform F# VS Code tools) working folder
-.ionide/
+/yscPLM/Storage
+/yscPLM/PlmFileStorage/FileValut/변경요청/100013/zJ09rXrDzw8m0lXk0sPRiDgGRYKvMlZ9J4_swXUyRww=
+/yscPLM/PlmFileStorage/FileValut/변경요청/100013
+/yscPLM/PlmFileStorage/FileValut/기술문서/10104/100014/zJ09rXrDzw8m0lXk0sPRiDgGRYKvMlZ9J4_swXUyRww=
+/yscPLM/PlmFileStorage/FileValut/기술문서/10104/100014
+/yscPLM/PlmFileStorage/FileValut/기술문서/10104/1/zJ09rXrDzw8m0lXk0sPRiDgGRYKvMlZ9J4_swXUyRww=
+/yscPLM/PlmFileStorage/FileValut/기술문서/10104/1
+/yscPLM/PlmFileStorage/FileValut/기술문서/10104
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiMq4CrJDJUKcfb3927xI73lQgumJObdYGjy_p+mSeg7u
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiLRRH+l6eSVwVqA6CwU081XB9y08DwJI6B+OwOsKlEj7
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiI5QlpwD5T+z3uwKYCVF8cFB7Cf3iXqp+H2XgE_BDlOj
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiHl5mg_nC1V2Bq0Be+TRxAPG4hVRUd8Xq0dpDIBw9VDj
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiGTGGiqjZCSrRV80OjQwaqvy3K5G+5Ws9cIAgxzyZ8U7
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiDgGRYKvMlZ9J4_swXUyRww=
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/zJ09rXrDzw8m0lXk0sPRiCnCT+A_JHZDnirakq6qKX5rqg8WLnOxMP5Qs63QmH60
+/yscPLM/PlmFileStorage/FileValut/기술문서/1/q3Sbgo4xt9bY4zu+WekmXzu1FOmLxYluY22ObptzycGWC1Tce_0pfSn247LdAo6y
+/yscPLM/PlmFileStorage/FileValut/기술문서/1
+/yscPLM/PlmFileStorage/FileValut/기술문서
+/yscPLM/PlmFileStorage/FileValut
+/yscPLM/PlmFileStorage/FileTemp/zJ09rXrDzw8m0lXk0sPRiHl5mg_nC1V2Bq0Be+TRxAPG4hVRUd8Xq0dpDIBw9VDj
+/yscPLM/PlmFileStorage/FileTemp/zJ09rXrDzw8m0lXk0sPRiDgGRYKvMlZ9J4_swXUyRww=
+/yscPLM/PlmFileStorage/FileTemp
+/yscPLM/PlmFileStorage

@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="EBom"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="EBom"  type="EBom.Models.EBOM" />
+    <typeAlias alias="EPart" type="EBom.Models.EPart" />
+  </alias>
+
+  <statements>
+
+    <select id="SelEPart" parameterClass="EPart" resultClass="EPart">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DEPART B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'PART'
+      <isNotNull property="OID">
+        AND A.OID = #OID#
+      </isNotNull>
+      <isNotNull property="Name">
+        AND A.Name like '%' + #Name# + '%'
+      </isNotNull>
+      <isNotNull property="Title">
+        AND B.Title like '%' + #Title# + '%'
+      </isNotNull>
+      <isNotNull property="Rep_Part_No">
+        AND B.Rep_Part_No like '%' + #Rep_Part_No# + '%'
+      </isNotNull>
+      <isNotNull property="Rep_Part_No2">
+        AND B.Rep_Part_No2 like '%' + #Rep_Part_No2# + '%'
+      </isNotNull>
+      <isNotNull property="Eo_No">
+        AND B.Eo_No like '%' + #Eo_No# + '%'
+      </isNotNull>
+      <isNotNull property="Oem_Lib_OID">
+        AND B.Oem_Lib_OID = #Oem_Lib_OID#
+      </isNotNull>
+      <isNotNull property="Car_Lib_OID">
+        AND B.Car_Lib_OID = #Car_Lib_OID#
+      </isNotNull>
+      <isNotNull property="Pms_OID">
+        AND B.Pms_OID = #Pms_OID#
+      </isNotNull>
+      <isNotNull property="EPartType">
+        AND B.EPartType = #EPartType#
+      </isNotNull>
+      
+    </select>
+
+    <select id="ChkEPart" parameterClass="EPart" resultClass="EPart">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DEPART B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'PART'
+      AND A.Name = #Name#
+    </select>
+
+    <select id="SelEBom" parameterClass="EBom" resultClass="EBom">
+      SELECT A.*
+      FROM T_DEBOM_RELATIONSHIP A
+      LEFT OUTER JOIN T_DEPART B ON B.OID = A.ToOID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'PART'
+      <isNotNull property="OID">
+        AND A.OID = #OID#
+      </isNotNull>
+      <isNotNull property="FromOID">
+        AND A.FromOID = #FromOID#
+      </isNotNull>
+      <isNotNull property="ToOID">
+        AND A.ToOID = #ToOID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsEPart" parameterClass="EPart" >
+      INSERT INTO T_DEPART
+      ( OID
+      , Title
+      , Rep_Part_No
+      , Rep_Part_No2
+      , Eo_No
+      , Eo_No_ApplyDt
+      , Eo_No_History
+      , Etc
+      , EPartType
+      , Thumbnail
+      , Sel_Eo
+      , Sel_Eo_Dt
+      , Spec
+      , Surface
+      , Oem_Lib_OID
+      , Car_Lib_OID
+      , Pms_OID
+      , Prod_Lib_Lev1_OID
+      , Prod_Lib_Lev2_OID
+      , Prod_Lib_Lev3_OID
+      , Material_OID
+      , CO
+      , Etc_Delivery
+      )
+      VALUES
+      (#OID#
+      , #Title#
+      , #Rep_Part_No#
+      , #Rep_Part_No2#
+      , #Eo_No#
+      , #Eo_No_ApplyDt#
+      , #Eo_No_History#
+      , #Etc#
+      , #EPartType#
+      , #Thumbnail#
+      , #Sel_Eo#
+      , #Sel_Eo_Dt#
+      , #Spec#
+      , #Surface#
+      , #Oem_Lib_OID#
+      , #Car_Lib_OID#
+      , #Pms_OID#
+      , #Prod_Lib_Lev1_OID#
+      , #Prod_Lib_Lev2_OID#
+      , #Prod_Lib_Lev3_OID#
+      , #Material_OID#
+      , #CO#
+      , #Etc_Delivery#
+      )
+    </insert>
+
+    <update id="UpdateEPart" parameterClass="EPart">
+      UPDATE T_DEPART
+      SET
+      Title = #Title#
+      , Rep_Part_No = #Rep_Part_No#
+      , Rep_Part_No2 = #Rep_Part_No2#
+      , Eo_No = #Eo_No#
+      , Eo_No_ApplyDt = #Eo_No_ApplyDt#
+      , Eo_No_History = #Eo_No_History#
+      , Etc = #Etc#
+      , EPartType = #EPartType#
+      , Sel_Eo = #Sel_Eo#
+      , Sel_Eo_Dt = #Sel_Eo_Dt#
+      , Spec = #Spec#
+      , Surface = #Surface#
+      , Material_OID = #Material_OID#
+      , Prod_Lib_Lev1_OID = #Prod_Lib_Lev1_OID#
+      , Prod_Lib_Lev2_OID = #Prod_Lib_Lev2_OID#
+      , Prod_Lib_Lev3_OID = #Prod_Lib_Lev3_OID#
+      , CO = #CO#
+      , Etc_Delivery = #Etc_Delivery#
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelRootChildList" parameterClass="EPart" resultClass="EPart">
+      WITH RECURSIVE_QUERY(FromOID, ToOID) AS (
+      SELECT FromOID
+      ,ToOID
+      FROM T_DEBOM_RELATIONSHIP
+      WHERE FromOID = #FromOID#
+      UNION ALL
+      SELECT
+      B.FromOID
+      ,B.ToOID
+      FROM T_DEBOM_RELATIONSHIP B, RECURSIVE_QUERY C
+      WHERE B.FromOID = C.ToOID
+      )
+      SELECT
+      E.*
+      , F.*
+      FROM RECURSIVE_QUERY D
+      LEFT OUTER JOIN T_DOBJECT E ON E.OID = D.ToOID
+      LEFT OUTER JOIN T_DEPART F ON F.OID = D.ToOID
+    </select>
+
+    <insert id="InsEBomStructure" parameterClass="EBom" >
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DEBOM_RELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DEBOM_RELATIONSHIP
+      ( OID
+      , FromOID
+      , ToOID
+      , Count
+      , Type
+      , Ord
+      , CreateDt
+      , CreateUs
+      )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #ToOID#
+      , #Count#
+      , 'PART'
+      , #Ord#
+      , GETDATE()
+      , 1
+      )
+    </insert>
+
+    <delete id="delEBomStructure" parameterClass="EBom" >
+      DELETE FROM T_DEBOM_RELATIONSHIP
+      WHERE 1 = 1
+      AND OID = #OID#
+    </delete>
+
+    <update id="UdtEBomStructure" parameterClass="EBom">
+      UPDATE T_DEBOM_RELATIONSHIP
+      SET
+      FromOID = #FromOID#
+      , ToOID = #ToOID#
+      , Count = #Count#
+      , Ord = #Ord#
+      WHERE OID = #OldOID#
+    </update>
+
+    
+
+
+
+  </statements>
+  
+</sqlMap>

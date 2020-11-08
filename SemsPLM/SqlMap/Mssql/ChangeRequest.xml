@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="ChangeRequest"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="ECR"  type="ChangeRequest.Models.ECR" />
+  </alias>
+
+  <statements>
+    <insert id="InsChangeRequest" parameterClass="ECR">
+      INSERT INTO T_DCHANGE_REQUEST
+      (OID
+      ,Title
+      ,Count
+      ,EPart_No
+      ,Oem_Lib_OID
+      ,Car_Lib_OID
+      ,Pms_OID
+      ,EoType
+      ,EoProType
+      ,EoID
+      ,IsService
+      ,DesignCost
+      ,WtChange
+      ,IsMold
+      ,DieQt
+      ,DieCost
+      ,EoClass
+      ,Eo_InvClr
+      ,ApprovDt
+      ,Oem_Eo
+      ,OemDt
+      ,OemUs
+      ,Oem_RecDt
+      ,Effective
+      ,Statement
+      ,Eo_Reason)
+      VALUES
+      (#OID#
+      ,#Title#
+      ,#Count#
+      ,#EPart_No#
+      ,#Oem_Lib_OID#
+      ,#Car_Lib_OID#
+      ,#Pms_OID#
+      ,#EoType#
+      ,#EoProType#
+      ,#EoID#
+      ,#IsService#
+      ,#DesignCost#
+      ,#WtChange#
+      ,#IsMold#
+      ,#DieQt#
+      ,#DieCost#
+      ,#EoClass#
+      ,#Eo_InvClr#
+      ,#ApprovDt#
+      ,#Oem_Eo#
+      ,#OemDt#
+      ,#OemUs#
+      ,#Oem_RecDt#
+      ,#Effective#
+      ,#Statement#
+      ,#Eo_Reason#)
+    </insert>
+    
+    <select id="SelChangeRequest" parameterClass="ECR" resultClass="ECR">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DCHANGE_REQUEST B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="EPart_No">
+          B.EPart_No LIKE CONCAT('%',#EPart_No#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Title">
+          B.Title LIKE CONCAT('%',#Title#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Oem_Eo">
+          B.Oem_Eo LIKE CONCAT('%',#Oem_Eo#,'%')
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+      ORDER BY A.OID
+    </select>
+
+    <update id="UdtChangeRequest" parameterClass="ECR">
+      UPDATE T_DCHANGE_REQUEST
+      SET
+
+      Title = #Title#
+      , Count = #Count#
+      , EPart_No = #EPart_No#
+      , EoType = #EoType#
+      , EoProType = #EoProType#
+      , EoID = #EoID#
+      , IsService = #IsService#
+      , DesignCost = #DesignCost#
+      , WtChange = #WtChange#
+      , IsMold = #IsMold#
+      , DieQt = #DieQt#
+      , DieCost = #DieCost#
+      , EoClass = #EoClass#
+      , Eo_InvClr = #Eo_InvClr#
+      , Oem_Eo = #Oem_Eo#
+      , OemDt = #OemDt#
+      , OemUs = #OemUs#
+      , Oem_RecDt = #Oem_RecDt#
+      , Effective = #Effective#
+      , Statement = #Statement#
+      , Eo_Reason = #Eo_Reason#
+
+      WHERE OID = #OID#
+    </update>
+  </statements>
+</sqlMap>

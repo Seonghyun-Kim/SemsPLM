@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="display:flex;flex-direction:row;justify-content:space-between;">
+    <div id="wrapCalendar" style="width:49%;min-width:350px; text-align:left;">
+        <div id="calendarList"></div>
+    </div>
+    <div style="width:50%;">
+
+        <div class="treeButtonWrap" style="width:100%;">
+            <button id="btnSaveCalendarDetail" disabled data_oid="" class="custom-button"><i class='fas fa-plus-square'></i> 저장</button>
+            <span id="spanLabel" style="left:10px;"></span>
+        </div>
+        <iframe id="calendarDetail" style="border:1px solid #c4c4c4;width:100%;height:705px;" src="@Url.Content("/Manage/DetailCalendar")"></iframe>
+    </div>
+</div>
+
+<div id="dlgCalendar" style="display:none;">
+    <div id="dlgCalendarTitle"></div>
+    <div>
+        <div id="viewEditCalendar"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var calendarSource = {
+        datatype: "json",
+        datafields: [
+            { name: 'OID' },
+            { name: 'Name' },
+            { name: 'WorkingDay' },
+            { name: 'CreateDt', type: "date" },
+            { name: 'CreateUs' },
+            { name: 'CreateUsNm' },
+        ],
+        id: 'OID',
+        localdata: null
+    };
+
+    $(document).ready(function () {
+        $("#dlgCalendar").jqxWindow({ width: 400, height: 480, minWidth: 400, minHeight: 480, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true });
+        $("#calendarList").jqxGrid({
+            theme: 'base',
+            width: "100%",
+            height: "99.5%",
+            rowsheight: 28,
+            columnsheight: 30,
+            source: null,
+            sortable: false,
+            pageable: false,
+            showtoolbar: true,
+            toolbarheight:45,
+            rendertoolbar: function (statusbar) {
+                var container = $("<div class='rGridComponent'></div>");
+                var btnAddCalendar = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 추가</button>").jqxButton();
+                var btnDelCalendar = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 삭제</button>").jqxButton();
+                container.append(btnAddCalendar);
+                container.append(btnDelCalendar);
+                statusbar.append(container);
+
+                btnAddCalendar.on("click", function () {
+                    OpenDlgCalendarInfo();
+                });
+
+                btnDelCalendar.on("click", function () {
+                    var selectIndex = $("#calendarList").jqxGrid('getselectedrowindex');
+                    if (selectIndex < 0) {
+                        alert("선택된 캘린더가 없습니다.");
+                        return;
+                    }
+                    var selectData = $("#calendarList").jqxGrid('getrowdata', selectIndex);
+                    var param = {};
+                    param.CalendarOID = selectData.CalendarOID;
+                    $.ajaxSetup({ async: false });
+                    $.post('/Manage/DeleteCalendar', param, function (result) {
+                        if (result.isError) {
+                            alert(result.Message);
+                        } else {
+                            $('#spanLabel').html('');
+                            var btnSave = $('#btnSaveCalendarDetail');
+                            btnSave.attr('disabled', 'disabled');
+                            btnSave.attr('data_oid', '');
+                            alert('삭제되었습니다.');
+                        }
+                    });
+                    $.ajaxSetup({ async: true });
+                    GetCalendarInfo();
+                });
+
+            },
+            columns: [
+                {
+                    text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '제목',   datafield: 'Name', width: "40%", align: 'center', cellsalign: 'center', },
+                { text: '근무일수', datafield: 'WorkingDay', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '생성일', datafield: 'CreateDt', width: "25%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '생성자', datafield: 'CreateUsNm', width: "15%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $("#calendarList").on("rowdoubleclick", function (event) {
+            var clickData = event.args.row.bounddata;
+            console.log(clickData);
+            var iFrameObj = $('#calendarDetail').get(0).contentWindow;
+            iFrameObj.standard = clickData.WorkingDay == 5 ? 6 : 0;
+            iFrameObj.editable = true;
+            iFrameObj.loadCalender(clickData.OID);
+            $('#spanLabel').html(clickData.Name + ' 수정');
+            var btnSave = $('#btnSaveCalendarDetail');
+            btnSave.removeAttr('disabled');
+            btnSave.attr('data_oid', clickData.OID);
+        });
+
+        $('#btnSaveCalendarDetail').on('click', function () {
+            var iFrameObj = $('#calendarDetail').get(0).contentWindow;
+            iFrameObj.saveCanlender($(this).attr('data_oid'));
+            GetCalendarInfo();
+        });
+
+        GetCalendarInfo();
+    });
+
+    function GetCalendarInfo() {
+        RequestData('/Manage/SelectCalendar', {}, function (res) {
+            PrintJqxGrid(calendarSource, $("#calendarList"), res)
+        });
+    }
+
+    function OpenDlgCalendarInfo() {
+        $('#viewEditCalendar').load('/Manage/EditCalendarInfo', {}, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+            var posX = (winWidth / 2) - (400 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (480 / 2) + $(window).scrollTop();
+
+            $('#dlgCalendar').jqxWindow({ position: { x: posX, y: posY } });
+            $('#dlgCalendar').jqxWindow('setTitle', "캘린더 등록");
+            $('#dlgCalendar').jqxWindow("show");
+        });
+    }
+
+    function CloseDlgCalendarInfo() {
+        $('#dlgCalendar').jqxWindow('close');
+        GetCalendarInfo();
+    }
+
+</script>

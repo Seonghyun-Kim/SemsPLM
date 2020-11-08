@@ -1,0 +1,816 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    @Styles.Render("~/bundles/FontAwesome")
+    <link rel="stylesheet" type="text/css" href="~/Resource/Css/layout.css" />
+    <style type='text/css'>
+
+        body {
+            width: 100%;
+            /*height: 90%;*/
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        .monthly_calendar {
+            width: 100%;
+            height: 554px;
+            position: relative;
+            /*border: 1px solid #cbcbcb;*/
+        }
+
+            .monthly_calendar .month_table {
+                position: absolute;
+                top: 31px;
+                /*left: 14px;*/
+                left: 0;
+                right: 14px;
+                bottom: 0;
+                width: 100%;
+            }
+
+            .monthly_calendar .week {
+                width: 100%;
+                font-size: 12px;
+                table-layout: fixed;
+                padding: 0 14px;
+                color: #555;
+                border-top: 1px solid #dadada;
+                border-bottom: 1px solid #f1f1f1;
+                background: #f8f8f8;
+                height: 31px;
+            }
+
+                .monthly_calendar .week th {
+                    padding: 0 8px;
+                    text-align: left;
+                    font-weight: bold;
+                }
+
+                    .monthly_calendar .week th.sun {
+                        color: #ff000a;
+                    }
+
+            .monthly_calendar .month_row {
+                position: relative;
+                width: 100%;
+                border-bottom: 1px solid #e6e6e6;
+            }
+
+            .monthly_calendar .forth .month_row {
+                height: calc(25% - 1px);
+            }
+
+            .monthly_calendar .fifth .month_row {
+                height: calc(20% - 1px);
+            }
+
+            .monthly_calendar .sixth .month_row {
+                height: calc(16.66% - 1px);
+            }
+
+            .monthly_calendar .schedule_list {
+                width: 100%;
+                height: 100%;
+                table-layout: fixed;
+                color: #222;
+                font-size: 13px;
+            }
+
+                .monthly_calendar .schedule_list td {
+                    vertical-align: top;
+                    cursor: pointer;
+                    box-sizing: border-box;
+                    border: 1px solid #fff;
+                    background-color: #fff;
+                }
+
+                    .monthly_calendar .schedule_list td:hover {
+                        border: 1px solid #312e2e;
+                    }
+
+                    .monthly_calendar .schedule_list td.selected {
+                        border: 1px solid #3b8216;
+                    }
+
+                    .monthly_calendar .schedule_list td ~ td {
+                        border-left: 1px dotted #b1afaf;
+                    }
+
+                .monthly_calendar .schedule_list .date {
+                    display: inline-block;
+                    position: relative;
+                    width: 100%;
+                    padding-top: 4px;
+                    padding-left: 2px;
+                }
+
+                .monthly_calendar .schedule_list .dayTask {
+                    position: relative;
+                    overflow-y: auto;
+                    border: 0px solid #000;
+                    -ms-overflow-style: auto;
+                    padding: 0px 10px;
+                    font-family: Gulim;
+                }
+
+                    .monthly_calendar .schedule_list .dayTask > div.progress {
+                        color: #000000;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div.compleate {
+                        color: #1B8D5C;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div.cancle {
+                        color: #9c9c9c;
+                        text-decoration: line-through;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div.change {
+                        color: #9c9c9c;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div.delay {
+                        color: rgb(223, 77, 77);
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div > div {
+                        display: inline-block;
+                        font-size: 14px;
+                        text-decoration: inherit;
+                        color: inherit;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div :nth-child(1) {
+                        width: 25px;
+                        vertical-align: top;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div :nth-child(2) {
+                        width: 110px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .monthly_calendar .schedule_list .dayTask > div :nth-child(3) {
+                        float: right;
+                    }
+
+                .monthly_calendar .schedule_list .date.sun.disable, .schedule_list .holiday.disable {
+                    color: #f7bdbd;
+                }
+
+                .monthly_calendar .schedule_list .date.sun, .schedule_list .date .holiday, .date.holiday {
+                    color: #f00;
+                }
+
+                .monthly_calendar .schedule_list .date.disable {
+                    color: #ccc;
+                }
+
+                .monthly_calendar .schedule_list .date strong {
+                    font-family: Gulim;
+                    display: inline-block;
+                    float: left;
+                    padding: 1px 0 0 8px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    zoom: 1;
+                    vertical-align: top;
+                    cursor: pointer;
+                }
+
+        .custom-button {
+            border: 1px solid #aaa;
+            background: #efefef;
+            padding: 6px 12px;
+            text-align: center;
+            margin: 0;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 3px;
+        }
+
+        .boarddetail {
+            width: 90% !important;
+            margin:0 auto;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-collapse:collapse;
+        }
+
+            .boarddetail tr > td {
+                padding: 10px;
+            }
+
+            .boarddetail .th {
+                width: 15%;
+            }
+
+            .boarddetail .th > .lbText{
+                padding-left:0 !important;
+            }
+            
+        .boarddetail input[type=text], .boarddetail textarea {
+            border: 1px solid #aaa;
+            line-height: 25px;
+            border-radius: 3px;
+            text-indent: 8px;
+            margin-left:4%;
+        }
+
+        input[type=text]{
+            height:30px;
+        }
+
+        #year, #month, #day {
+            text-align: center;
+            text-indent: 0 !important;
+        }
+        #month, #day{
+            margin-left:0 !important;
+        }
+    </style>
+    <link href="~/Resource/Calendar/jQueryUI/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Resource/Calendar/calendar-style.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="calendar"></div>
+
+    <div class="monthly_calendar">
+        <table class="week">
+            <tbody>
+                <tr>
+                    <th title="일" class="sun">일</th>
+                    <th title="월">월</th>
+                    <th title="화">화</th>
+                    <th title="수">수</th>
+                    <th title="목">목</th>
+                    <th title="금">금</th>
+                    <th title="토">토</th>
+                </tr>
+            </tbody>
+        </table>
+        <div id="wrapCalendar" class="month_table fifth"></div>
+    </div>
+    <div id="dialog-Detail-structure" style="overflow: hidden; display: none;">
+        <div>
+            <div class="btnbox" style="text-align:right;">
+                <input type="hidden" id="schedule_seq" value="" />
+                <button id="create" onclick="saveSchedule()" class="custom-button"><i class="fas fa-check"></i> 등록</button>
+                <button id="edit" onclick="editSchedule()" hidden="hidden" class="custom-button"><i class="fas fa-check"></i> 수정</button>
+                <button id="delete" onclick="deleteSchedule()" hidden="hidden" class="custom-button"><i class="fas fa-minus"></i> 삭제</button>
+            </div>
+            <div class="dlg_table" style="margin:10px 0;">
+                <table class="boarddetail">
+                    <tr>
+                        <td class="th"><label class="lbText"><i class="fa fa-caret-right"></i> 날짜</label></td>
+                        <td style="width:160px;">
+                            <input type="text" style="width:48px" id="year" value="" /> -
+                            <input type="text" style="width:24px" id="month" /> -
+                            <input type="text" style="width:24px" id="day" />
+                            &nbsp;
+                            <label for="holiday">휴일</label>
+                            <input type="checkbox" id="holiday" value="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="th"><label class="lbText"><i class="fa fa-caret-right"></i> 제목</label></td>
+                        <td>
+                            <input type="text" id="schedule-title" style="width:96%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="th" style="vertical-align:baseline;"><label class="lbText"><i class="fa fa-caret-right"></i> 내용</label></td>
+                        <td>
+                            <textarea id="schedule-contents" style="width:96%;height:120px;"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Resource/JQuery/jquery-3.5.1.min.js"></script>
+    <script src="~/Resource/Calendar/jQueryUI/jquery-ui.min.js"></script>
+    <script src="~/Resource/Calendar/calendar.js" charset='euc-kr'></script>
+    <script type='text/javascript'>
+        var editable = false;
+        var data =[]; //ajax결과 모음
+        var dataList = []; //달별로 결과받음
+        var date = new Date();
+        var standard = 0; // 0은 주 6일, 6이 주 5일
+
+        window.onload = function () {
+            let c = $('.calendar');
+            let calendar = new Calendar(c);
+            printCalendar(date.getFullYear(), date.getMonth() + 1);
+        }
+
+        function printCalendar(vYear, vMonth) {
+            var fragment = document.createDocumentFragment();
+            var nowDate = new Date(); // 오늘 날짜
+
+            var isNow = false;
+
+            // 금일 날짜의 년, 월이 조회 할 년, 월 과 같은 지 유무 확인
+            if (nowDate.getFullYear() === Number(vYear) && nowDate.getMonth() === Number(vMonth) - 1) {
+                isNow = true;
+            }
+            dataList = [];
+            if (data == null || data == undefined) {
+            } else {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].Month == vMonth && data[i].Year == vYear) {
+                        data[i].CalendarDetailOID = i;
+                        dataList.push(data[i]);
+                    }
+                }
+
+            }
+            vMonth = vMonth - 1; // Javascript 에서 Month는 0 부터 시작
+            var vDate = new Date(vYear, vMonth, 1); // 조회 할 월의 1일 부터 계산
+            //var vDate = new Date(2009, 1, 1);
+
+            var vStartDay = vDate.getDay(); // 조회 한 월 1일의 요일
+
+            var prevDate = null;
+
+            if (vStartDay > 0) {
+                prevDate = new Date(vDate.getFullYear(), vDate.getMonth(), 0); // 이전 달 마지막 일
+            }
+
+            var vLastDate = new Date(vDate.getFullYear(), vDate.getMonth() + 1, 0).getDate(); //이번 달 마지막 일
+
+            // 주차 수
+            var WeekCnt = Math.ceil((vLastDate - (7 - vStartDay)) / 7) + 1;
+            var CalTableClass = "month_table ";
+            if (WeekCnt === 4) {
+                CalTableClass += "forth";
+            } else if (WeekCnt === 5) {
+                CalTableClass += "fifth";
+            } else if (WeekCnt === 6) {
+                CalTableClass += "sixth";
+            }
+
+            var wrapHeight = $("#wrapCalendar").height();
+
+            var rowHeight = wrapHeight / WeekCnt;
+
+
+            var printDay = 1;
+            var printWeekDay = 0;
+            for (var i = 0; i < WeekCnt;) {
+                printWeekDay = 0;
+                var divWeek = document.createElement("div");
+                divWeek.className = "month_row";
+
+                var tbWeek = document.createElement("table");
+                tbWeek.className = "schedule_list";
+                tbWeek.cellPadding = 0;
+                tbWeek.cellSpacing = 0;
+
+                var trTbody = document.createElement("Tbody");
+                var trWeek = document.createElement("tr");
+                if (standard == 6) { //주5일
+                    if (i === 0) {
+                        if (prevDate != null) {
+                            for (var iPrev = prevDate.getDate() - prevDate.getDay(); iPrev <= prevDate.getDate(); iPrev++) { //시작주?
+                                if (iPrev === prevDate.getDate() - prevDate.getDay()) {
+                                    trWeek.appendChild(CreateDay(iPrev, " sun disable"));
+                                } else if (iPrev === prevDate.getDate() - prevDate.getDay()) {
+                                    trWeek.appendChild(CreateDay(iPrev, " sun disable"));
+                                } else {
+                                    trWeek.appendChild(CreateDay(iPrev, " disable"));
+                                }
+                            }
+                        }
+                        for (var iOneWeek = vStartDay; iOneWeek < 7; iOneWeek++) {
+                            if (iOneWeek === 0 || iOneWeek === 6) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun"));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, ""));
+                            }
+
+                        }
+                    } else if ((i + 1) === WeekCnt) { //끝주?
+                        var clsNM = "";
+                        for (var iPrint = 0; iPrint < 7; iPrint++) {
+                            if (printWeekDay === 0 || printWeekDay === 6) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun" + clsNM));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, clsNM));
+                            }
+
+                            printWeekDay++;
+
+                            if (printDay > vLastDate) {
+                                printDay = 1;
+                                clsNM = " disable";
+                            }
+                        }
+                    } else {
+                        for (var iPrint = 0; iPrint < 7; iPrint++) { //중간주??
+                            if (printWeekDay === 0 || printWeekDay === 6) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun"));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, ""));
+                            }
+
+                            printWeekDay++;
+                        }
+                    }
+                } else if (standard == 0) { //주6일
+                    if (i === 0) {
+                        if (prevDate != null) {
+                            for (var iPrev = prevDate.getDate() - prevDate.getDay(); iPrev <= prevDate.getDate(); iPrev++) {
+                                if (iPrev === prevDate.getDate() - prevDate.getDay()) {
+                                    trWeek.appendChild(CreateDay(iPrev, " sun disable"));
+                                } else if (iPrev === prevDate.getDate() - prevDate.getDay()) {
+                                    trWeek.appendChild(CreateDay(iPrev, " sun disable"));
+                                } else {
+                                    trWeek.appendChild(CreateDay(iPrev, " disable"));
+                                }
+                            }
+                        }
+                        for (var iOneWeek = vStartDay; iOneWeek < 7; iOneWeek++) {
+                            if (iOneWeek === 0) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun"));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, ""));
+                            }
+
+                        }
+                    } else if ((i + 1) === WeekCnt) {
+                        var clsNM = "";
+                        for (var iPrint = 0; iPrint < 7; iPrint++) {
+                            if (printWeekDay === 0) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun" + clsNM));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, clsNM));
+                            }
+
+                            printWeekDay++;
+
+                            if (printDay > vLastDate) {
+                                printDay = 1;
+                                clsNM = " disable";
+                            }
+                        }
+                    } else {
+                        for (var iPrint = 0; iPrint < 7; iPrint++) {
+                            if (printWeekDay === 0) {
+                                trWeek.appendChild(CreateDay(printDay++, " sun"));
+                            } else {
+                                trWeek.appendChild(CreateDay(printDay++, ""));
+                            }
+
+                            printWeekDay++;
+                        }
+                    }
+                }
+                trTbody.appendChild(trWeek);
+                tbWeek.appendChild(trTbody);
+                divWeek.appendChild(tbWeek);
+                fragment.appendChild(divWeek);
+                i++;
+            }
+
+            $("#wrapCalendar").empty();
+            var wrap = document.getElementById("wrapCalendar");
+            wrap.className = CalTableClass;
+            wrap.appendChild(fragment);
+
+            if (isNow) {
+                $("#tdDay_" + nowDate.getDate().toString()).css("background", "#ACF0A8");
+            }
+
+            $(".dayTask").height(rowHeight - 28);
+            fragment = null;
+        }
+
+        function CreateDay(day, className) {
+            var tdDay = document.createElement("td");
+            tdDay.className = "tdDay";
+            $(tdDay).on("click", function () {
+                $("#HighlightArea").css("display", "none");
+                if (className.indexOf("disable") > 0) {
+                    $("#HighlightBtn").css("display", "none");
+                    $("#HighlightRemoveBtn").css("display", "none");
+                    return;
+                }
+
+                $(".tdDay").removeClass("selected");
+                $(tdDay).addClass("selected");
+
+                var dayString = day.toString().length == 1 ? "0" + day : day;
+                $("#selectedDay").val(dayString);
+
+                if ($(tdDay).css("background-color") == "rgb(249, 251, 107)") {
+                    $("#HighlightBtn").css("display", "none");
+                    $("#HighlightRemoveBtn").css("display", "inline-block");
+                } else {
+                    $("#HighlightBtn").css("display", "inline-block");
+                    $("#HighlightRemoveBtn").css("display", "none");
+                }
+
+            });
+            if (className === "") {
+                tdDay.id = "tdDay_" + day;
+            }
+
+            var divDay = document.createElement("div");
+            divDay.className = "date" + className;
+            if (className === "" || className === " sun") {
+                $(divDay).on("dblclick", function () {
+                    var dayString = day.toString().length == 1 ? "0" + day : day;
+
+                    $("#selectedDay").val(dayString);
+                    $('#dlgDailyPlan').dialog('open');
+                });
+            }
+            var param = {};
+            var divTask = document.createElement("div");  //내용부분 작성?하는부분?
+            if (dataList == null || dataList == undefined || dataList.length == 0) {
+
+                divTask.className = "dayTask";
+                if (className === "" || className === " sun") {
+                    divTask.id = "day_" + day;
+                }
+                var strongDay = document.createElement("strong");
+                strongDay.innerText = day;
+
+                divDay.appendChild(strongDay);
+
+                tdDay.appendChild(divDay);
+                tdDay.appendChild(divTask);
+            } else {
+               var month= $('.selected-month').attr('value');
+                for (var i = 0; i < dataList.length; i++) {
+                    if (dataList[i].Day == day && className.indexOf('disable') ==-1) {
+
+
+                        divTask.className = "dayTask";
+                        if (className === "" || className === " sun") {
+                            divTask.id = "day_" + day;
+                        }
+                        var strongDay = document.createElement("strong");
+                        strongDay.innerText = day;
+
+                       var span= CreateSpan(dataList[i]);
+
+                        divTask.appendChild(span);
+                        if (dataList[i].IsHoliday == 1 && divDay.className.indexOf("sun")==-1) {
+                            divDay.className = divDay.className + " holiday";
+                        }
+                    } else {
+                        divTask.className = "dayTask";
+                        if (className === "" || className === " sun") {
+                            divTask.id = "day_" + day;
+                        }
+                        var strongDay = document.createElement("strong");
+                        strongDay.innerText = day;
+                    }
+                }
+                divDay.appendChild(strongDay);
+                tdDay.appendChild(divDay);
+                tdDay.appendChild(divTask);
+            }
+            return tdDay;
+        }
+
+        function ChangeStandard() {
+            standard = $('#standard_changer').val();
+            var month = $('.selected-month').attr('value');
+            var year = $('.current-year').text();
+            console.log(standard);
+            printCalendar(year, month);
+        }
+
+        function CreateSpan(data) {
+            var span = document.createElement("span");
+            span.style.display = 'block';
+            span.setAttribute("CalendarDetailOID", data.CalendarDetailOID);
+            span.setAttribute("Title", data.Title);
+            span.setAttribute("Contents", data.Contents);
+            span.setAttribute("IsHoliday", data.IsHoliday);
+            span.setAttribute("Day", data.Day);
+            span.textContent = data.Title;
+            span.id = "span_" + data.CalendarDetailOID;
+            span.onclick = function () {
+                event.stopPropagation();
+                var spanData = {};
+                spanData.CalendarDetailOID = $(this).attr("CalendarDetailOID");
+                spanData.Title = $(this).attr("Title");
+                spanData.Contents = $(this).attr("Contents");
+                spanData.IsHoliday = $(this).attr("IsHoliday");
+                spanData.Day = $(this).attr("Day");
+                popSchedule("READ", spanData);
+            }
+            return span;
+        }
+        $(function () {
+            $(document).on('click','.up-btn, .down-btn', function () {
+                var year = $('.current-year').text();
+                var month = $('.selected-month').attr('value');
+                console.log($('.current-year').text() + " " + month);
+                    printCalendar(year, month);
+            });
+
+            $(document).on('click','.JAN, .FEB, .MAR, .APR, .MAY, .JUN, .JUL, .AUG, .SEP, .OCT, .NOV, .DEC', function () {
+                var month = $(this).attr('value');
+                var year = $('.current-year').text();
+                    printCalendar(year, month);
+            });
+
+            $(document).on('click', '.tdDay', function () {
+                if (editable) {
+                    popSchedule("WRITE");
+                }
+            });
+        });
+
+        function saveCanlender(_OID) {
+            var param = {};
+            param.OID = _OID;
+            param.CalendarDetails = data;
+            $.ajaxSetup({ async: false });
+            $.post('/Manage/InsertCalenderDetail', param, function (result) {
+                if (result.isError) {
+                    alert(result.Message);
+                } else {
+                    alert('등록되었습니다.');
+                }
+            });
+            $.ajaxSetup({ async: true });
+        }
+
+        function popSchedule(type, data) {
+            $("#year").val($('.current-year').text());
+            $("#month").val($('.selected-month').attr('value'));
+            $("#day").val($('.selected .date').text());
+            $('#schedule-contents').val('');
+            $('#schedule-title').val('');
+            if (type == "WRITE") {
+                $('#edit').css("display", 'none');
+                $('#create').css("display", 'inline');
+
+            } else if (type == "READ") {
+                $('#schedule_seq').val(data.CalendarDetailOID);
+                $('#create').css("display", 'none');
+                $('#edit').css("display", 'inline');
+                $('#delete').css("display", 'inline');
+                var param = {};
+                param.CalendarDetailOID = data.CalendarDetailOID;
+                $('#day').val(data.Day);
+                $('#schedule-contents').val(data.Contents);
+                $('#schedule-title').val(data.Title);
+                if (data.IsHoliday == 1) {
+                    $('#holiday').prop("checked", true);
+                } else {
+                    $('#holiday').prop("checked", false);
+                }
+            }
+
+            dialog_obj = $('#dialog-Detail-structure').dialog({
+                resizable: false,
+                draggable: false,
+                modal: true,
+                title: '일정 상세',
+                width: 640,            // 930 -> 750
+                height: 400,
+                buttons: {
+                },
+                open: function (ev, ui) {
+                },
+                close: function () {
+                },
+                beforeClose: function (event, ui) {
+                }
+            });
+        }
+
+        function close() {
+            $('#dialog-Detail-structure').dialog('close');
+        }
+
+        function saveSchedule() {
+            var param = {};
+            var title = $('#schedule-title').val();
+            var day = $('.selected  .date').text();
+         //   param.CALENDER_SEQ = $('#calender_seq').val();
+            param.Year = $('.current-year').text();
+            param.Month = $('.selected-month').attr('value');
+            param.Day = day;
+            param.Title = title
+            param.Contents = $('#schedule-contents').val();
+            if ($('#holiday').is(":checked") == true) {
+                param.IsHoliday = 1;
+                $('#day_' + day).closest("div").prev().addClass("holiday");
+            } else {
+                param.IsHoliday = 0;
+            }
+            if (data == null || data == undefined) {
+                param.CalendarDetailOID = 0;
+            } else {
+                param.CalendarDetailOID = data.length;
+            }
+            data.push(param);
+            var span = CreateSpan(param);
+            console.log(data);
+            $('#day_' + day).append(span);
+            close();
+        }
+
+        function editSchedule() {
+            var param = {};
+            var title = $('#schedule-title').val();
+            var day = $('#day').val();
+            param.Year = $('.current-year').text();
+            param.Month = $('.selected-month').attr('value');
+            param.Day = day;
+            param.Title = title
+            param.Contents = $('#schedule-contents').val();
+            param.CalendarDetailOID = $('#schedule_seq').val();
+            if ($('#holiday').is(":checked") == true) {
+                param.IsHoliday = 1;
+                $('#day_' + day).closest("div").prev().addClass("holiday");
+            } else {
+                param.IsHoliday = 0;
+            }
+            $.each(data, function (i) {
+                if (data[i].CalendarDetailOID == param.CalendarDetailOID) {
+                    data[i] = param;
+                    return false;
+                }
+            });
+            $('#span_' + param.CalendarDetailOID).html(param.Title);
+            $('#span_' + param.CalendarDetailOID).attr("TITLE", param.Title);
+            $('#span_' + param.CalendarDetailOID).attr("CONTENTS", param.Contents);
+            $('#span_' + param.CalendarDetailOID).attr("HOLIDAY", param.IsHoliday);
+            close();
+        }
+
+        function deleteSchedule() {
+            var seq = $('#schedule_seq').val();
+            if (confirm('삭제 하시겠습니까?')) {
+                var day;
+                $.each(data, function (i) {
+                    if (data[i].SEQ == seq) {
+                        day = data[i].DAY;
+                        data.splice(i, 1);
+                        $('#span_' + seq).remove();
+
+                        var child = $('#day_' + day).children("span");
+                        var len = child.length;
+                        var sflag = 0;
+                        for (var i = 0; i < len; i++) {
+                            if (child[i].getAttribute('HOLIDAY') == 1) {
+                                sflag = 1;
+                            }
+                        }
+                        if (sflag == 1) {
+                            $('#day_' + day).closest("div").prev().addClass("holiday");
+                        } else if (sflag == 0) {
+                            $('#day_' + day).closest("div").prev().removeClass("holiday");
+                        }
+                        return false;
+                    }
+                });
+            }
+            close();
+        }
+
+        function loadCalender(_OID) {
+            var param = {};
+            var month = $('.selected-month').attr('value');
+            var year = $('.current-year').text();
+            param.CalendarOID = _OID;
+            $.ajaxSetup({ async: false });
+            $.post('/Manage/SelectCalenderDetail', param, function (result) {
+                if (result.isError) {
+                    alert(result.Message);
+                } else {
+                    data = result;
+                }
+
+            });
+            $.ajaxSetup({ async: true });
+            console.log(data);
+            printCalendar(year, month);
+        }
+    </script>
+</body>
+</html>

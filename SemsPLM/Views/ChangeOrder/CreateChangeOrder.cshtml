@@ -1,0 +1,460 @@
+﻿@{
+    Layout = null;
+}
+
+    <div style="padding:20px;">
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td>
+                        <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
+                    </td>
+                    <td style="text-align: right;">
+                        <button id="CreateChangeOrder_createbtn" class="custom-button"><i class="fas fa-plus-square"></i> 저장</button>
+                        <button id="CreateChangeOrder_canclebtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="createChangeOrder_table">
+        <input type="hidden" id="CreateChangeOrder_checkFlag" value ="F" style="width:82%;" />
+        <h3><i class="fas fa-caret-square-down"></i> 기본정보</h3>
+        <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+            <tr>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> EO No.</th>
+                <td>
+                    <input type="text" id="CreateChangeOrder_Name" style="width:82%;" />
+                    <button class="custom-button" id="CreateChangeOrder_checkbtn"><i class="fas fa-check"></i> 중복 확인</button>
+                </td>
+                <th><i class="fa fa-caret-right"></i> EO 일자</th>
+                <td>
+                    <input type="text" class="" id="CreateChangeOrder_EoDt" value="" maxlength="10" />
+                </td>
+            </tr>
+            <tr>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 품번</th>
+                <td>
+                    <input type="text" id="CreateChangeOrder_EPart_No" style="width:75%;" />
+                    &nbsp;외&nbsp;
+                    <input type="text" id="CreateChangeOrder_Count" style="width:15%;" />&nbsp; 종
+                </td>
+                <th><i class="fa fa-caret-right"></i> 품명</th>
+                <td><input type="text" id="CreateChangeOrder_Title" /></td>
+            </tr>
+            <tr>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> OEM</th>
+                <td>
+                    <div id="CreateChangeOrder_Oem_Lib"></div>
+                </td>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 차종</th>
+                <td>
+                    <div id="CreateChangeOrder_Car_Lib"></div>
+                </td>
+            </tr>
+            <tr>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 프로젝트</th>
+                <td>
+                    <div id="CreateChangeOrder_Pms_Lib"></div>
+                </td>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 유형</th>
+                <td>
+                    <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_CUSTOMER" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_CUSTOMER_KorNm </label>
+                    <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_HOUSE" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_HOUSE_KorNm </label>
+                </td>
+            </tr>
+            <tr>
+                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 처리유형</th>
+                <td>
+                    <label><input type="radio" name="selEoProType" value="N" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_N</label>
+                    <label><input type="radio" name="selEoProType" value="R" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_R</label>
+                    <label><input type="radio" name="selEoProType" value="M" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_M</label>
+
+                </td>
+                <th><i class="fa fa-caret-right"></i> 도면접수일</th>
+                <td>
+                    <input type="text" class="inputdate" id="CreateChangeOrder_DrwDt" value="" maxlength="10" />
+                </td>
+
+            </tr>
+            <tr class="Rental">
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 서비스 지침</th>
+                <td>
+                    <label><input type="radio" name="selServiceInfo" value="Y" style="width:20px; height:15px;" /> YES</label>
+                    <label><input type="radio" name="selServiceInfo" value="N" style="width:20px; height:15px;" /> NO</label>
+                </td>
+                <th class="reqVal Rental"><i class="fa fa-caret-right"></i> EO ID</th>
+                <td class="">
+                    <label><input type="radio" name="selEoId" value="N" style="width:20px; height:15px;" /> N(@Common.Constant.EoConstant.ID_N)</label>
+                    <label><input type="radio" name="selEoId" value="D" style="width:20px; height:15px;" /> D(@Common.Constant.EoConstant.ID_D)</label>
+                    <label><input type="radio" name="selEoId" value="R" style="width:20px; height:15px;" /> R(@Common.Constant.EoConstant.ID_R)</label>
+                </td>
+               
+            </tr>
+            <tr class="Rental">
+                <th><i class="fa fa-caret-right"></i> 설계원가</th>
+                <td><input type="text" id="CreateChangeOrder_desingCost" class="readonly" readonly="readonly" /></td>
+                <th><i class="fa fa-caret-right"></i> 중량변경</th>
+                <td><input type="text" id="CreateChangeOrder_WtChange" class="readonly" readonly="readonly" /></td>
+            </tr>
+            <tr class="Rental">
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 금형 변경</th>
+                <td colspan="3">
+                    <label><input type="radio" name="selMoldChange" value="Y" style="width:20px; height:15px;" /> YES</label>
+                    <label><input type="radio" name="selMoldChange" value="N" style="width:20px; height:15px;" /> NO</label>
+                </td>
+            </tr>
+            <tr class="Rental">
+                <th><i class="fa fa-caret-right"></i> 금형 벌수</th>
+                <td><input type="text" id="CreateChangeOrder_DieQt" class="readonly" readonly="readonly" /></td>
+                <th><i class="fa fa-caret-right"></i> 금형비</th>
+                <td><input type="text" id="CreateChangeOrder_DieCost" class="readonly" readonly="readonly" /></td>
+            </tr>
+            <tr class="Rental">
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 변경사유부분<br />(E/C CLASS)</th>
+                <td colspan="3">
+                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_EMERGENCY" style="width:20px; height:15px;" /> EMERGENCY(@Common.Constant.EoConstant.CLASS_EMERGENCY_KorNm)</label>
+                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MPR" style="width:20px; height:15px;" /> M.P.R(@Common.Constant.EoConstant.CLASS_MPR_KorNm)</label>
+                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MAJOR" style="width:20px; height:15px;" /> MAJOR(@Common.Constant.EoConstant.CLASS_MAJOR_KorNm)</label>
+                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MINOR" style="width:20px; height:15px;" /> MINOR(@Common.Constant.EoConstant.CLASS_MINOR_KorNm)</label>
+                </td>
+            </tr>
+            <tr class="Rental">
+                <th class="reqVal"><i class="fa fa-caret-right"></i> 재고처리</th>
+                <td colspan="3">
+                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_NONE" style="width:20px; height:15px;" /> NONE(@Common.Constant.EoConstant.INV_NONE_KorNm)</label>
+                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_USE" style="width:20px; height:15px;" /> USE(@Common.Constant.EoConstant.INV_USE_KorNm)</label>
+                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_SCRAP" style="width:20px; height:15px;" /> SCRAP(@Common.Constant.EoConstant.INV_SCRAP_KorNm)</label>
+                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_REWORK" style="width:20px; height:15px;" /> REWORK(@Common.Constant.EoConstant.INV_REWORK_KorNm)</label>
+                </td>
+            </tr>
+            <tr class="Rental">
+                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 귀책</th>
+                <td>
+                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_CUST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_CUST_KorNm</label>
+                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_COMP" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_COMP_KorNm</label>
+                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_SELF" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_SELF_KorNm</label>
+                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_EMPTY" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_EMPTY_KorNm</label>
+                </td>
+                <th><i class="fa fa-caret-right"></i> 팀명</th>
+                <td><input type="text" id="CreateChangeOrder_TeamNm" class="readonly" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <th><i class="fa fa-caret-right"></i> 작성자</th>
+                <td><input type="text" id="CreateChangeOrder_CreateUs" value="" class="readonly" readonly="readonly" /></td>
+                <th><i class="fa fa-caret-right"></i> 작성일</th>
+                <td><input type="text" id="CreateChangeOrder_CreateDt" class="readonly" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <th><i class="fa fa-caret-right"></i> 승인일</th>
+                <td><input type="text" class="readonly" readonly="readonly" /></td>
+                <th><i class="fa fa-caret-right"></i> 상태</th>
+                <td><input type="text" id="CreateChangeOrder_State" value="작성중" class="readonly" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <th><i class="fa fa-caret-right"></i> C/N</th>
+                <td colspan="3"><input type="text" id="CreateChangeOrder_Revision" class="readonly" readonly="readonly" value="@Common.Constant.EoConstant.INIT_REIVISION" /></td>
+            </tr>
+        </table>
+    </div>
+
+        <input type="hidden" id="hidEcrIdx" />
+        <div class="Rental createChangeOrder_table">
+            <h3><i class="fas fa-caret-square-down"></i> 연관 ECR</h3>
+            <table width="100%" id="EcrRelation" class="createtable">
+                    <tr>
+                        <th><i class="fa fa-caret-right"></i> ECRNO</th>
+                        <td>
+                            <button id="ECRNO_Select" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                        </td>
+                        <td colspan="2">
+                            <button id="ECRNO_Reset" class="custom-button"><i class="fas fa-undo"></i> 초기화</button>
+                        </td>
+                    </tr>
+            </table>
+        </div>
+
+
+        <div class="createChangeOrder_table Rental">
+            <h3><i class="fas fa-caret-square-down"></i> OEM 정보</h3>
+            <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+                <tr>
+                    <th><i class="fa fa-caret-right"></i> OEM EO 번호</th>
+                    <td><input type="text" id="CreateChangeOrder_Oem_Eo" /><input type="hidden" id="txtselEo" /></td>
+                    <th><i class="fa fa-caret-right"></i> OEM EO 발생일</th>
+                    <td><input type="text" class="" id="CreateChangeOrder_OemDt" value="" maxlength="10" /></td>
+                </tr>
+                <tr>
+                    <th><i class="fa fa-caret-right"></i> OEM 담당자</th>
+                    <td><input type="text" id="CreateChangeOrder_OemUs" /></td>
+                    <th><i class="fa fa-caret-right"></i> 접수일자</th>
+                    <td><input type="text" class="" id="CreateChangeOrder_Oem_RecDt" value="" maxlength="10" /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="createChangeOrder_table">
+            <h3><i class="fas fa-caret-square-down"></i> 변경내역 정보</h3>
+            <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+                <tr class="Rental">
+                    <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 기술사양 변경사유</th>
+                    <td style="width:88%;">
+                        <label><input type="checkbox" name="selEoReason" value="SR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.SR</label>
+                        <label><input type="checkbox" name="selEoReason" value="PI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PI</label>
+                        <label><input type="checkbox" name="selEoReason" value="IC" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IC</label>
+                        <label><input type="checkbox" name="selEoReason" value="CS" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CS</label>
+                        <label><input type="checkbox" name="selEoReason" value="CR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CR</label>
+                        <label><input type="checkbox" name="selEoReason" value="QI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.QI</label>
+                        <label><input type="checkbox" name="selEoReason" value="ST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.ST</label>
+                        <label><input type="checkbox" name="selEoReason" value="IR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IR</label>
+                        <label><input type="checkbox" name="selEoReason" value="WD" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.WD</label>
+                        <label><input type="checkbox" name="selEoReason" value="LO" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.LO</label>
+                        <label><input type="checkbox" name="selEoReason" value="RA" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.RA</label>
+                        <label><input type="checkbox" name="selEoReason" value="GR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.GR</label>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="reqVal" style="vertical-align:top;"><i class="fa fa-caret-right"></i> 변경사유</th>
+                    <td style="width:88%;">
+                        <textarea id="CreateChangeOrder_Description" style="border:1px solid #59a3d5;height:120px;"></textarea>
+                    </td>
+                </tr>
+                <tr class="Rental">
+                    <th><i class="fa fa-caret-right"></i> 적용요구시점</th>
+                    <td style="width:88%;"><input type="text" id="CreateChangeOrder_Effective" /></td>
+                </tr>
+                <tr class="Rental">
+                    <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 기술사양변경내역서</th>
+                    <td style="width:88%;">
+                        <textarea id="CreateChangeOrder_Statement" style="border:1px solid #59a3d5;height:120px;"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script>
+    var CreateECO_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var CreateECO_OemLib$ = $('#CreateChangeOrder_Oem_Lib');
+    var CreateECO_CarLib$ = $('#CreateChangeOrder_Car_Lib');
+            var CreateECO_PmsLib$ = $('#CreateChangeOrder_Pms_Lib');
+            var checkFlag = $('#CreateChangeOrder_checkFlag');
+    $(function () {
+
+        $('input:radio[name=selEoType]').on('change',function () {
+            if ($("input[name='selEoType']:checked").val() == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
+                $('.Rental').attr('hidden', true);
+            }
+            if ($("input[name='selEoType']:checked").val() == '@Common.Constant.EoConstant.TYPE_HOUSE') {
+                $('.Rental').attr('hidden', false);
+            }
+        });
+
+        $('input:radio[name=selServiceInfo]').on('change',function () {
+            if ($("input[name='selServiceInfo']:checked").val() == 'Y') {
+                $('#CreateChangeOrder_WtChange').removeAttr('readonly');
+                $('#CreateChangeOrder_desingCost').removeAttr('readonly');
+            }
+             if ($("input[name='selServiceInfo']:checked").val() == 'N') {
+                $('#CreateChangeOrder_WtChange').attr('readonly','readonly');
+                $('#CreateChangeOrder_desingCost').attr('readonly','readonly');
+            }
+         });
+        $('input:radio[name=selMoldChange]').on('change',function () {
+            if ($("input[name='selMoldChange']:checked").val() == 'Y') {
+                $('#CreateChangeOrder_DieCost').removeAttr('readonly');
+                $('#CreateChangeOrder_DieQt').removeAttr('readonly');
+            }
+            if ($("input[name='selMoldChange']:checked").val() == 'N') {
+                $('#CreateChangeOrder_DieCost').attr('readonly','readonly');
+                $('#CreateChangeOrder_DieQt').attr('readonly','readonly');
+            }
+         });
+        $('input:radio[name=selEoFault]').on('change',function () {
+            if ($("input[name='selEoFault']:checked").val() == '@Common.Constant.EoConstant.FAULT_SELF') {
+                $('#CreateChangeOrder_TeamNm').removeAttr('readonly');
+            } else {
+                $('#CreateChangeOrder_TeamNm').attr('readonly', 'readonly');
+            }
+
+        });
+
+
+
+        var CreateOemSource =
+        {
+            localdata: CreateECO_OemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var CreateECO_DataAdapter = new $.jqx.dataAdapter(CreateOemSource);
+        CreateECO_OemLib$.jqxComboBox({ source: CreateECO_DataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+        var CreateECO_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
+        CreateECO_CarLib$.jqxComboBox({ source: CreateECO_DefaultCar, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, });
+        CreateECO_CarLib$.jqxComboBox({ selectedIndex: 0 });
+
+        var CreateECO_DefaultPms = [{ KorNm: '등록 프로젝트 없음', OID: null }];
+        CreateECO_PmsLib$.jqxComboBox({ source: CreateECO_DefaultPms, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, });
+        CreateECO_PmsLib$.jqxComboBox({ selectedIndex: 0 });
+
+        var CreateEoDt$ = $('#CreateChangeOrder_EoDt');
+
+        CreateEoDt$.jqxDateTimeInput(DateFormat);
+        CreateEoDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        CreateEoDt$.jqxDateTimeInput({ width: "100%", height: 32 });
+
+
+
+        var CreateDrwDt$ = $('#CreateChangeOrder_DrwDt');
+
+        CreateDrwDt$.jqxDateTimeInput(DateFormat);
+      //  DrwDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        CreateDrwDt$.jqxDateTimeInput({ width: "100%", height: 32 });
+
+        var CreateOemDt$ = $('#CreateChangeOrder_OemDt');
+
+        CreateOemDt$.jqxDateTimeInput(DateFormat);
+        CreateOemDt$.jqxDateTimeInput({ width: "100%", height: 32 });
+
+        var CreateRecDt$ = $('#CreateChangeOrder_Oem_RecDt');
+
+        CreateRecDt$.jqxDateTimeInput(DateFormat);
+        CreateRecDt$.jqxDateTimeInput({ width: "100%", height: 32 });
+
+        CreateECO_OemLib$.on('change', function (event) {
+            changeCreateECOComboBox(2, CreateECO_OemLib$.jqxComboBox('getSelectedItem').value);
+        });
+
+        $('#CreateChangeOrder_checkbtn').on('click', function () {
+            var param = {};
+            param.Name = $('#CreateChangeOrder_Name').val();
+            if (param.Name == null || param.Name == '') {
+                alert('EONO를 입력해주세요.');
+                return;
+            }
+
+            $.post('/ChangeOrder/SelChangeOrderCheck', param, function (response) {
+                if (response == 1) {
+                    alert("이미 존재하는 EONO 입니다.");
+                    checkFlag.val('F');
+                    return;
+                } else {
+                    alert("사용가능한 EONO 입니다.");
+                    checkFlag.val('T');
+                }
+
+            });
+
+        });
+
+        $('#CreateChangeOrder_Name').on('change paste keyup', function () {
+            checkFlag.val('F');
+        });
+
+        $('#CreateChangeOrder_createbtn').on('click', function () {
+            if (checkFlag.val() == 'F') {
+                alert('EONO 중복확인을 해주세요.');
+                return;
+            }
+            var param = {};
+            param.Name = $('#CreateChangeOrder_Name').val();
+            param.EoDt = $('#CreateChangeOrder_EoDt').jqxDateTimeInput('val');
+            param.Description = $('#CreateChangeOrder_Description').val();
+            param.EPart_No = $('#CreateChangeOrder_EPart_No').val();
+            param.Count = $('#CreateChangeOrder_Count').val();
+            param.Title = $('#CreateChangeOrder_Title').val();
+            param.Oem_Lib_OID =  CreateECO_OemLib$.jqxComboBox('getSelectedItem').value;
+            param.Car_Lib_OID =  CreateECO_CarLib$.jqxComboBox('getSelectedItem').value;
+        //    param.Pms_OID = $('#CreateChangeOrder_Pms_Lib').jqxComboBox('getSelectedItem').value;
+            param.EoProType = $("input[name='selEoProType']:checked").val(); //EO 처리유형
+            param.DrwDt = $('#CreateChangeOrder_DrwDt').jqxDateTimeInput('val');
+            param.EoType = $("input[name='selEoType']:checked").val(); //EO 유형
+            if (param.EoType == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
+
+            } else if (param.EoType == '@Common.Constant.EoConstant.TYPE_HOUSE') {
+
+                param.IsService = $("input[name='selServiceInfo']:checked").val(); //서비스 지침
+
+                if (param.IsService == "Y") {
+                    param.DesignCost = $('#CreateChangeOrder_desingCost').val(); //설계원가
+                    param.WtChange = $('#CreateChangeOrder_WtChange').val(); //중량변경
+                }
+
+                param.EoID = $("input[name='selEoId']:checked").val() //EOID            
+                param.IsMold = $("input[name='selMoldChange']:checked").val();  //금형변경
+
+                if (param.IsMold == "Y") {
+                    param.DieQt = $('#CreateChangeOrder_DieQt').val(); //금형벌수
+                    param.DieCost = $('#CreateChangeOrder_DieCost').val(); //금형비
+                }
+
+                param.EoClass = $("input[name='selEoClass']:checked").val() //변경사유부분
+                param.Eo_InvClr = $("input[name='selEoInvClr']:checked").val() //재고처리
+                param.Eo_Fault = $("input[name='selEoFault']:checked").val() //EO 귀책
+                if (param.Eo_Fault == '@Common.Constant.EoConstant.FAULT_SELF') {
+                    param.TeamNm = $('#CreateChangeOrder_TeamNm').val(); //팀명
+                }
+                param.Oem_Eo = $('#CreateChangeOrder_Oem_Eo').val(); //oem eo 번호
+                param.OemDt = $('#CreateChangeOrder_OemDt').val(); //oem eo 발생일
+                param.OemUs = $('#CreateChangeOrder_OemUs').val(); //oem eo 담당자
+                param.Oem_RecDt = $('#CreateChangeOrder_Oem_RecDt').val(); //oem eo 접수일
+                var chkReason = [];
+                _.each($('input[name="selEoReason"]:checked'), function (item) {
+                    chkReason.push(item.value);
+                });
+                //param.EO_REASON = $('input[name="selEoReason"]:checked').val();
+                param.Eo_Reason = chkReason.join(',');
+
+                param.Effective = $('#CreateChangeOrder_Effective').val(); //적용요구시점
+                param.Statement = $('#CreateChangeOrder_Statement').val(); //기술사양변경내역서
+            }
+                                
+            RequestData('/ChangeOrder/InsertChangeOrder', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+
+        });
+
+
+
+    });
+
+    function changeCreateECOComboBox(ID, OID) {
+        var CreateECOComboBox$ = CreateECO_CarLib$
+        var param = {};
+        param.fromOID = OID;
+        var CreateECOComboSource;
+        RequestData("/Manage/SelLibrary", param, function (res) {
+            if (res.length > 0) {
+                CreateECOComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CreateECOComboAdapter = new $.jqx.dataAdapter(CreateECOComboSource);
+                CreateECOComboBox$.jqxComboBox({ source: CreateECOComboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var CreateECOComboAdapter = new $.jqx.dataAdapter(CreateECOComboSource);
+                CreateECOComboBox$.jqxComboBox({ source: CreateECOComboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                CreateECOComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+        </script>

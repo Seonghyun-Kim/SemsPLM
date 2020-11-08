@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="Comm"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="BDefine" type="Common.Models.BDefine" />
+    <typeAlias alias="DObject" type="Common.Models.DObject" />
+    <typeAlias alias="BPolicy" type="Common.Models.BPolicy" />
+    <typeAlias alias="DRelationship" type="Common.Models.DRelationship" />
+    <typeAlias alias="Approval" type="Common.Models.Approval" />
+    <typeAlias alias="ApprovalStep" type="Common.Models.ApprovalStep" />
+    <typeAlias alias="ApprovalTask" type="Common.Models.ApprovalTask" />
+  </alias>
+
+  <statements>
+
+    <select id="SelBDefine" parameterClass="BDefine" resultClass="BDefine">
+      SELECT * FROM T_BDEFINE
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          Name = #Name#
+        </isNotNull>
+        <isNotNull prepend="and" property="Module">
+          Module = #Module#
+        </isNotNull>
+      </dynamic>
+      order by Ord
+    </select>
+
+    <select id="SelMaxTDMXOID" parameterClass="DObject" resultClass="string">
+      SELECT CONCAT(#Type#, '_', ISNULL(MAX(REPLACE(TdmxOID, CONCAT(#Type#, '_') ,'')),0) + 1 ) AS TdmxOID FROM T_DOBJECT WHERE Type = #Type#
+    </select>
+
+    <select id="SelNameSeq" parameterClass="DObject" resultClass="int">
+      SELECT ISNULL(COUNT(*),0) + 1 AS CNT FROM T_DOBJECT WHERE Name LIKE #Name# AND Type = #Type#
+    </select>
+
+    <select id="SelDObject" parameterClass="DObject" resultClass="DObject">
+      SELECT * FROM T_DOBJECT
+      WHERE DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        Name = #Name#
+      </isNotNull>
+      <isNotNull prepend="and" property="Type">
+        Type = #Type#
+      </isNotNull>
+      <isNotNull prepend="and" property="TableNm">
+        TableNm = #TableNm#
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateUs">
+        CreateUs = #CreateUs#
+      </isNotNull>
+    </select>
+
+    <insert id="InsDObject" parameterClass="DObject" >
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DOBJECT
+      </selectKey>
+      INSERT INTO T_DOBJECT
+      (OID
+      , Name
+      , Type
+      , Description
+      , TableNm
+      , BPolicyOID
+      , TdmxOID
+      , Revision
+      , IsLatest
+      , IsReleasedLatest
+      , Thumbnail
+      , CreateDt
+      , CreateUs )
+      VALUES
+      (#OID#
+      , #Name#
+      , #Type#
+      , #Description#
+      , #TableNm#
+      , #BPolicyOID#
+      , #TdmxOID#
+      , #Revision#
+      , #IsLatest#
+      , #IsReleasedLatest#
+      , #Thumbnail#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <update id="UdtLatestDObject" parameterClass="DObject">
+      UPDATE T_DOBJECT
+      SET IsLatest = 0
+      , ModifyUs = #ModifyUs#
+      , ModifyDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
+
+    <update id="UdtReleasedLatestDObject" parameterClass="DObject">
+      UPDATE T_DOBJECT
+      SET IsReleasedLatest = #IsReleasedLatest#
+      , ModifyUs = #ModifyUs#
+      , ModifyDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
+
+    <update id="UdtDObject" parameterClass="DObject" >
+      UPDATE T_DOBJECT
+      SET ModifyUs = #ModifyUs#
+      , ModifyDt = GETDATE()
+      <isNotNull prepend="," property="Name">
+        Name = #Name#
+      </isNotNull>
+      <isNotNull prepend="," property="Description">
+        Description = #Description#
+      </isNotNull>
+      <isNotNull prepend="," property="BPolicyOID">
+        BPolicyOID = #BPolicyOID#
+      </isNotNull>
+      <isNotNull prepend="," property="Revision">
+        Revision = #Revision#
+      </isNotNull>
+      <isNotNull prepend="," property="Thumbnail">
+        Thumbnail = #Thumbnail#
+      </isNotNull>
+      WHERE OID = #OID#
+    </update>
+
+    <update id="DelDObject" parameterClass="DObject" >
+      UPDATE T_DOBJECT
+      SET DeleteUs = #DeleteUs#
+      , DeleteDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelBPolicy" parameterClass="BPolicy" resultClass="BPolicy">
+      SELECT * FROM T_BPOLICY
+      <dynamic prepend="where">
+          <isNotNull prepend="and" property="OID">
+            OID = #OID#
+          </isNotNull>
+          <isNotNull prepend="and" property="Type">
+            Type = #Type#
+          </isNotNull>
+          <isNotNull prepend="and" property="Name">
+            Name = #Name#
+          </isNotNull>
+          <isNotNull prepend="and" property="StatusOID">
+            StatusOID = #StatusOID#
+          </isNotNull>
+          <isNotNull prepend="and" property="StatusNm">
+            StatusNm = #StatusNm#
+          </isNotNull>
+          <isNotNull prepend="and" property="StatusOrd">
+            StatusOrd = #StatusOrd#
+          </isNotNull>
+          <isNotNull prepend="and" property="BeforeActionOID">
+            BeforeActionOID = #BeforeActionOID#
+          </isNotNull>
+          <isNotNull prepend="and" property="NextActionOID">
+            NextActionOID = #NextActionOID#
+          </isNotNull>
+      </dynamic>
+    </select>
+
+    <insert id="InsDRelationshipNotOrd" parameterClass="DRelationship">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DRELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DRELATIONSHIP
+      ( OID
+      , FromOID
+      , ToOID
+      , Count
+      , Type
+      , Ord
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #ToOID#
+      , #Count#
+      , #Type#
+      , (SELECT ISNULL(MAX(ORD),0) + 1 AS ORD FROM T_DRELATIONSHIP WHERE Type = #Type# AND FromOID = #FromOID#)
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <insert id="InsDRelationship" parameterClass="DRelationship">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DRELATIONSHIP
+      </selectKey>
+      INSERT INTO T_DRELATIONSHIP
+      ( OID
+      , FromOID
+      , ToOID
+      , Count
+      , Type
+      , Ord
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #ToOID#
+      , #Count#
+      , #Type#
+      , #Ord#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <select id="SelDRelationship" parameterClass="DRelationship" resultClass="DRelationship">
+      SELECT * FROM T_DRELATIONSHIP
+      WHERE DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        FromOID = #FromOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="ToOID">
+        ToOID = #ToOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Type">
+        Type = #Type#
+      </isNotNull>
+    </select>
+    
+    <update id="DelDRelationship" parameterClass="DRelationship" >
+      UPDATE T_DRELATIONSHIP
+      SET DeleteUs = #DeleteUs#
+      , DeleteDt = GETDATE()
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+      </dynamic>
+    </update>
+    
+    <insert id="InsApproval" parameterClass="Approval">
+      INSERT INTO T_DAPPROVAL
+      ( OID
+      , TargetOID
+      , ApprovalCount
+      , Comment )
+      VALUES
+      ( #OID#
+      , #TargetOID#
+      , #ApprovalCount#
+      , #Comment# )
+    </insert>
+
+    <select id="SelApproval" parameterClass="Approval" resultClass="Approval">
+      SELECT *
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DAPPROVAL B ON A.OID = B.OID
+      WHERE A.DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name = #Name#
+      </isNotNull>
+      <isNotNull prepend="and" property="Type">
+        A.Type = #Type#
+      </isNotNull>
+      <isNotNull prepend="and" property="TargetOID">
+        B.TargetOID = #TargetOID#
+      </isNotNull>
+    </select>
+
+    <update id="UdtApproval" parameterClass="Approval" >
+      UPDATE T_DAPPROVAL SET
+      <dynamic prepend=" " close=" ">
+      <isNotNull prepend="," property="TargetOID">
+        TargetOID = #TargetOID#
+      </isNotNull>
+      <isNotNull prepend="," property="ApprovalCount">
+        ApprovalCount = #ApprovalCount#
+      </isNotNull>
+      <isNotNull prepend="," property="Comment">
+        Comment = #Comment#
+      </isNotNull>
+      <isNotNull prepend="," property="CurrentNum">
+        CurrentNum = #CurrentNum#
+      </isNotNull>
+      WHERE OID = #OID#
+    </dynamic>
+    </update>
+    
+    <insert id="InsApprovalStep" parameterClass="ApprovalStep">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DAPPROVAL_STEP
+      </selectKey>
+      INSERT INTO T_DAPPROVAL_STEP
+      ( OID
+      , ApprovalOID
+      , Ord
+      , ApprovalType )
+      VALUES
+      ( #OID#
+      , #ApprovalOID#
+      , (SELECT ISNULL(MAX(ORD),0) + 1 AS ORD FROM T_DAPPROVAL_STEP WHERE ApprovalOID = #ApprovalOID#)
+      , #ApprovalType# )
+    </insert>
+    
+    <select id="SelApprovalStep" parameterClass="ApprovalStep" resultClass="ApprovalStep">
+      SELECT *
+      FROM T_DAPPROVAL_STEP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ApprovalOID">
+          ApprovalOID = #ApprovalOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ApprovalType">
+          ApprovalType = #ApprovalType#
+        </isNotNull>
+      </dynamic>
+      ORDER BY Ord
+    </select>
+    
+    <insert id="InsApprovalTask" parameterClass="ApprovalTask">
+      INSERT INTO T_DAPPROVAL_TASK
+      ( OID
+      , ApprovalOID
+      , StepOID
+      , PersonOID
+      , ApprovalType
+      , Comment)
+      VALUES
+      ( #OID#
+      , #ApprovalOID#
+      , #StepOID#
+      , #PersonOID#
+      , #ApprovalType#
+      , #Comment# )
+    </insert>
+
+    
+    <select id="SelApprovalTask" parameterClass="ApprovalTask" resultClass="ApprovalTask">
+        SELECT *
+        FROM T_DOBJECT A
+        LEFT OUTER JOIN T_DAPPROVAL_TASK B ON A.OID = B.OID
+        WHERE A.DeleteDt IS NULL
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name = #Name#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+      <isNotNull prepend="and" property="ApprovalOID">
+          B.ApprovalOID = #ApprovalOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="StepOID">
+          B.StepOID = #StepOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="PersonOID">
+          B.PersonOID = #PersonOID#
+        </isNotNull>
+      </select>
+    
+  </statements>
+</sqlMap>

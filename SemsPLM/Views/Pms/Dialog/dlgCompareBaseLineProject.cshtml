@@ -1,0 +1,230 @@
+﻿@{
+    Layout = null;
+}
+
+<style>
+    .del {
+        color: white !important;
+        background-color: #900c3f !important;
+    }
+
+    .add {
+        color: white !important;
+        background-color: #127681 !important;
+    }
+
+    .mod {
+        color: black !important;
+        background-color: #edf492 !important;
+    }
+</style>
+
+
+<div id="baseLineCompare_@ViewBag.ProjectBaseLineOID"></div>
+
+<script type="text/javascript">
+    $(function () {
+        const baseLineCompareSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'Level', type: 'number' },
+                { name: 'RootBaseLineOID', type: 'number' },
+                { name: 'ProjectOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'CompareChildren', type: 'array' },
+                { name: 'expanded', type: 'bool' },
+                { name: 'Action', type: 'string' },
+
+                //Object Mandatory
+                { name: 'LName', type: 'string' },
+                { name: 'LType', type: 'string' },
+                { name: 'LId', type: 'number' },
+                { name: 'LDependency', type: 'string' },
+                { name: 'LComplete', type: 'number' },
+                { name: 'LEstDuration', type: 'number' },
+                { name: 'LEstStartDt', type: 'date' },
+                { name: 'LEstEndDt', type: 'date' },
+                { name: 'LActDuration', type: 'number' },
+                { name: 'LActStartDt', type: 'date' },
+                { name: 'LActEndDt', type: 'date' },
+                { name: 'LOrd', type: 'number' },
+
+                { name: 'RName', type: 'string' },
+                { name: 'RType', type: 'string' },
+                { name: 'RId', type: 'number' },
+                { name: 'RDependency', type: 'string' },
+                { name: 'RComplete', type: 'number' },
+                { name: 'REstDuration', type: 'number' },
+                { name: 'REstStartDt', type: 'date' },
+                { name: 'REstEndDt', type: 'date' },
+                { name: 'RActDuration', type: 'number' },
+                { name: 'RActStartDt', type: 'date' },
+                { name: 'RActEndDt', type: 'date' },
+                { name: 'ROrd', type: 'number' },
+            ],
+            hierarchy:
+            {
+                root: 'CompareChildren',
+            },
+            id: 'ToOID',
+            addRow: function (rowID, rowData, position, parentID, commit) {
+                commit(true);
+            },
+            deleteRow: function (rowID, commit) {
+                commit(true);
+            },
+            updateRow: function (rowID, rowData, commit) {
+                commit(true);
+            }
+        };
+
+         var baseLineCompareAdapter = new $.jqx.dataAdapter(baseLineCompareSource);
+        const baseLineCompareGrd$ = $("#baseLineCompare_" + @ViewBag.ProjectBaseLineOID);
+        baseLineCompareGrd$.jqxTreeGrid('render');
+        baseLineCompareGrd$.jqxTreeGrid({
+            theme: 'arctic',
+            width: "100%",
+            height: "99%",
+            source: baseLineCompareAdapter,
+            sortable: false,
+            pageable: false,
+            selectionMode: "custom",
+            editable: false,
+            editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+            showtoolbar: false,
+            columnsResize: true,
+            checkboxes: false,
+            columns: [
+                { text: '레벨', dataField: 'Level', width: '8%', align: 'center', editable: false, },
+                {
+                    text: '상태', dataField: 'Action', width: '5%', align: 'center', editable: false, cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null) {
+                            if (rowData.Action == 'DEL') {
+                                return 'del';
+                            } else if (rowData.Action == 'ADD') {
+                                return 'add';
+                            } else if (rowData.Action.indexOf('MODIFY') > -1) {
+                                return 'mod';
+                            }
+                        }
+                        return ''
+                    },
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null) {
+                            if (rowData.Action.indexOf('MODIFY') > -1) {
+                                return cellText.split('|')[0];
+                            }
+                        }
+                        return cellText;
+                    },
+                },
+                {
+                    text: '이름', dataField: 'LName', width: '14%', cellsalign: 'center', align: 'center', columnGroup: 'base',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Name') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                { text: '구분', dataField: 'LType', width: '6%', align: 'center', editable: false, columnGroup: 'base', cellsalign: 'center', },
+                {
+                    text: 'Ord', dataField: 'LOrd', width: '4%', align: 'center', editable: false, columnGroup: 'base', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Ord') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상시작일', dataField: 'LEstStartDt', width: '8%', align: 'center', editable: false, columnGroup: 'base', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('StartDt') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상완료일', dataField: 'LEstEndDt', width: '8%', align: 'center', editable: false, columnGroup: 'base', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('EndDt') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상기간', dataField: 'LEstDuration', width: '5%', align: 'center', editable: false, columnGroup: 'base', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Duration') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+
+                {
+                    text: '이름', dataField: 'RName', width: '14%', cellsalign: 'center', align: 'center', columnGroup: 'target',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Name') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                { text: '구분', dataField: 'RType', width: '6%', align: 'center', editable: false, columnGroup: 'target', cellsalign: 'center', },
+                {
+                    text: 'Ord', dataField: 'ROrd', width: '4%', align: 'center', editable: false, columnGroup: 'target', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Ord') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상시작일', dataField: 'REstStartDt', width: '8%', align: 'center', editable: false, columnGroup: 'target', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('StartDt') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상완료일', dataField: 'REstEndDt', width: '8%', align: 'center', editable: false, columnGroup: 'target', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('EndDt') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+                {
+                    text: '예상기간', dataField: 'REstDuration', width: '5%', align: 'center', editable: false, columnGroup: 'target', cellsalign: 'center',
+                    cellclassname: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.Action != null && rowData.Action.indexOf('MODIFY') > -1 && rowData.Action.indexOf('Duration') > -1) {
+                            return 'mod';
+                        }
+                        return ''
+                    }
+                },
+            ],
+            columnGroups: [
+                { text: '기준', name: 'base' },
+                { text: '비교', name: 'target' },
+            ],
+        });
+
+        RequestData('/Pms/SelectCompareWbs', { 'ProjectOID': @ViewBag.ProjectOID, 'ProjectBaseLineOID': @ViewBag.ProjectBaseLineOID }, function (res) {
+            baseLineCompareDatas = [];
+            baseLineCompareDatas.push(res);
+            PrintJqxTreeGrid(baseLineCompareSource, baseLineCompareGrd$, baseLineCompareDatas);
+        });
+    });
+</script>

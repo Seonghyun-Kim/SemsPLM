@@ -1,0 +1,217 @@
+﻿@{
+    Layout = null;
+}
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;문서 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div style="transform:translateY(-20px);">구분</div>
+                    <div>
+                        <div id="SearchDocument_DocType" style="margin-left:5px;"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>품번</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchDocument_Name" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제목</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchDocument_Title" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>EO NO</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchDocument_Eo_No" />
+                    </div>
+                </div>
+                
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchDocument_CreatUs" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchDocument_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+            @*<div class="searchData">
+                    <div>제품(검색)</div>
+                    <input type="text" class="txtBox" id="txtProduct" />
+                    &nbsp;<button id="schProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
+                </div>
+                <div class="searchData predecessorData" style="display:none;">
+                    <div>선행 프로젝트</div>
+                    <div>
+                        <input type="text" class="txtBox" id="txtProdecessorProject" />
+                        &nbsp;<button id="schProdecessorProject"><i class='fas fa-search-plus'></i></button>
+                    </div>
+                </div>*@
+            
+        </div>
+    </div>
+    <div id="SearchDocument_Grid"></div>
+</div>
+<script>
+    $(function () {
+        const docType$ = $('#SearchDocument_DocType');
+        const searchBtn$ = $('#SearchDocument_btnSearch');
+        var docTypeList = [{ doctype: '', value: null},
+            { doctype: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT' },
+        { doctype: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT' }];
+        var docSource =
+            {
+        localdata: docTypeList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'doctype', type: 'string' },
+                    { name: 'value', type: 'string' },
+                ]
+            };
+        var dataAdapter = new $.jqx.dataAdapter(docSource);
+        docType$.jqxComboBox({ source: dataAdapter, selectedIndex: 0, displayMember: "doctype", valueMember: "value", width: 200, height:32 });
+
+        var DocumentSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'DocType' },
+                { name: 'DocType_KorNm' },
+                { name: 'Name' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'Title' },
+                { name: 'Revision' },
+                { name: 'Eo_No' },
+                { name: 'CreateDt', type: 'date'  },
+                { name: 'CreateUs' },
+                { name: 'Description' },
+            ],
+        }
+
+        const DocGrd$ = $('#SearchDocument_Grid');
+        DocGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 680,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ProjectSource,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '구분', datafield: 'DocType_KorNm', width: "9%", align: 'center', cellsalign: 'center', },
+                { text: '품번', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '제목', datafield: 'Title', width: "27%", align: 'center', cellsalign: 'center', },
+                { text: 'EO NO', datafield: 'Eo_No', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: 'C/N', datafield: 'Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '작성자', datafield: 'CreatUsNm', width: "7%", align: 'center', cellsalign: 'center'},
+                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+             //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            //rendertoolbar: function (statusbar) {
+            //    var container = $("<div class='rGridComponent'></div>");
+            //    var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 프로젝트 등록</button>").jqxButton();
+            //    var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 프로젝트 수정</button>").jqxButton();
+            //    var btnDelete = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 선택 삭제</button>").jqxButton();
+
+            //    container.append(btnAdd);
+            //    container.append(btnMod);
+            //    container.append(btnDelete);
+            //    statusbar.append(container);
+
+            //    btnAdd.on('click', function () {
+            //        OpenPmsCreateDialog(function () {
+            //            getPmsProjectList(ProjectSource, Grd$);
+            //        }, null, null, '/Pms/CreateProject', '프로젝트 등록');
+            //    });
+            //},
+        });
+
+        DocGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Document/InfoDocument?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        getSearchDocList(DocumentSource, DocGrd$,null);
+
+
+
+        searchBtn$.on('click', function () {
+            var param = {};
+            if (docType$.jqxComboBox('getSelectedItem').value != null && docType$.jqxComboBox('getSelectedItem').value != undefined) {
+                param.DocType = docType$.jqxComboBox('getSelectedItem').value;
+            }
+
+            param.Name = $('#SearchDocument_Name').val();
+            param.Title = $('#SearchDocument_Title').val();
+            param.Eo_No = $('#SearchDocument_Eo_No').val();
+           // param.CreatUsNm = $('#CreateDocument_Name').val();
+            getSearchDocList(DocumentSource, DocGrd$, param);
+
+        });
+
+    });
+    function getSearchDocList(_Source, _Grid$,_param) {
+        RequestData("/Document/SelDoc", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+
+
+</script>

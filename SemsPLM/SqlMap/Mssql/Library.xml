@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="Library"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="Library" type="Common.Models.Library" />
+  </alias>
+  <statements>
+    <select id="SelLibrary" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DLIBRARY B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="KorNm">
+          B.KorNm = #KorNm#
+        </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          B.FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="IsUse">
+          B.IsUse = #IsUse#
+        </isNotNull>
+      
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <insert id="InsLibrary" parameterClass="Library">
+      INSERT INTO T_DLIBRARY
+      (OID
+      ,KorNm
+      ,FromOID
+      ,IsUse
+      ,Ord)
+      VALUES
+      (#OID#
+      ,#KorNm#
+      ,#FromOID#
+      ,#IsUse#
+      ,#Ord#)
+    </insert>
+
+    <update id="updateLibrary" parameterClass="Library">
+      UPDATE T_DLIBRARY SET
+      KorNm = #KorNm#
+      ,IsUse = #IsUse#
+      ,Ord = #Ord#
+      WHERE OID = #OID#
+    </update>
+    
+  </statements>
+</sqlMap>

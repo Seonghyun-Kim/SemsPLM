@@ -1,0 +1,170 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div id="example">
+    <button onclick="test()">test</button>
+    <div id="EBomTreeGrid"></div>
+</div>
+
+<div id="search-structure" style="overflow: hidden; display: none;">
+    <iframe id="search-structure-frm" frameborder="0" style="width:100%;height:700px;overflow:hidden;"<!--width="100%" height="100%" scrolling="auto"--></iframe>
+</div>
+    
+
+
+    <script>
+        var maxT = 1000;
+        var tdata;
+        var selrow;
+        var tree;
+        var rowCount;
+        var rowKey = null;
+        var employees;
+        var newRowID = null;
+        // var RootTree;
+        $(function () {
+            // prepare the data
+            var EBomsource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'FromOID', type: 'number' },
+                    { name: 'ToOID', type: 'number' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'Description', type: 'string' },
+                ],
+                hierarchy:
+                {
+                    keyDataField: { name: 'OID' },
+                    parentDataField: { name: 'FromOID' }
+                },
+                
+                addRow: function (rowID, rowData, position, parentID, commit) {
+                    commit(true);
+                    console.log("addRow : " + rowID);
+                    newRowID = rowID;
+                },
+                updateRow: function (rowID, rowData, commit) {
+                    commit(true);
+                    console.log("rowID  " + rowID);
+                    console.log(rowData);
+                    //popJqxSearchDialog(rowData);
+                }
+            };
+          //  var dataAdapter = new $.jqx.dataAdapter(EBomsource);
+            // create Tree Grid
+
+            const EBomTreeGrd$ = $('#EBomTreeGrid');
+            EBomTreeGrd$.jqxTreeGrid(
+                {
+                    width: "100%",
+                    theme: "kdnc",
+                   // source: dataAdapter,
+                    sortable: true,
+                    showToolbar: true,
+                    ready: function () {
+                        EBomTreeGrd$.jqxTreeGrid('expandAll');
+                    },
+                    columns: [
+                        { name: 'OID', dataField: 'OID', type: 'number' },
+                        { name: 'FromOID', dataField: 'FromOID', type: 'number' },
+                        { name: 'ToOID', dataField: 'ToOID', type: 'number' },
+                        { text: 'Name', dataField: 'Name' },
+                        { text: 'Description', dataField: 'Description' },
+                    ],
+                    editable: true,
+                    rendertoolbar: function (statusbar) {
+                        var container$ = $('<div style="padding:3px 5px;"></div>'),
+                            inAddBtn$ = $('<button style="height:28px;padding:0 20px; vertical-align:text-bottom;margin-right:12px;">추가</button>')
+                        statusbar.append(container$);
+                        container$.append(inAddBtn$);
+
+                        //행 추가
+                        inAddBtn$.on('click', function (e) {
+                            var datarow = {};
+                            EBomTreeGrd$.jqxTreeGrid('expandRow', rowKey);
+                            EBomTreeGrd$.jqxTreeGrid('addRow', null, {}, 'first', rowKey);
+                            EBomTreeGrd$.jqxTreeGrid('clearSelection');
+                            EBomTreeGrd$.jqxTreeGrid('selectRow', newRowID);
+                            EBomTreeGrd$.jqxTreeGrid('beginRowEdit', newRowID);
+                        });
+                    },
+
+                });
+
+            getEBomList(EBomsource, EBomTreeGrd$);
+
+            EBomTreeGrd$.on('rowSelect', function (event) {
+                var args = event.args;
+                
+                rowKey = args.key;
+                console.log(args);
+            });
+
+        });
+
+        function test() {
+            var rows = EBomTreeGrd$.jqxTreeGrid('getRows');
+            var rowsData = "";
+            console.log(rows.length);
+            var traverseTree = function (rows) {
+                for (var i = 0; i < rows.length; i++) {
+                    rowsData += rows[i].FirstName + " " + rows[i].LastName + "\n";
+                    console.log(rows[i]);
+                    if (rows[i].records) {
+                        traverseTree(rows[i].records);
+                        //    console.log(rows[i].records);
+                    } else {
+                        //  console.log("false " + rows[i].records);
+                    }
+                }
+            };
+            traverseTree(rows);
+            //alert(rowsData);
+            //console.log(rows);
+
+        }
+
+        function popJqxSearchDialog(obj) {
+            var obj = obj.FirstName;
+            var url = "../Manage/JqxUserSearch?obj=" + obj;
+            $('#search-structure-frm').attr('src', url);
+            $('#search-structure').dialog({
+                resizable: false,
+                draggable: false,
+                modal: true,
+                title: '사용자 검색',
+                width: 1600,            // 930 -> 750
+                height: 600,
+                //buttons: {
+                //    "닫기": function () {
+                //        $(this).dialog("close");
+                //    }
+                //},
+                open: function (ev, ui) {
+                    $('.ui-dialog').css('z-index', 100002);
+                    $('.ui-widget-overlay').css('z-index', 100001);
+                    var close$ = $('.ui-dialog-titlebar-close');
+                    close$.addClass('ui-button');
+                    close$.addClass('ui-corner-all');
+                    close$.addClass('ui-widget');
+                    close$.addClass('ui-button-icon-only');
+                    close$.append('<span class="ui-button-icon ui-icon ui-icon-closethick"></span>');
+
+                },
+                close: function () {
+                    //  $('#stock-inoutMngt-dialog-InOutEnroll-structure-frm').attr('src', "");
+                    // InOutMngtSearch();
+                }
+            });
+        }
+
+        function getEBomList(_Source, _Grid$) {
+            RequestData('/EBom/SelectEBom', {}, function (res) {
+                PrintJqxTreeGrid(_Source, _Grid$, res);
+            });
+        }
+    </script>

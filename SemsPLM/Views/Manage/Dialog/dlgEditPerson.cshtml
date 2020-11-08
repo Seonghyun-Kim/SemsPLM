@@ -1,0 +1,182 @@
+﻿@{
+    Layout = null;
+}
+<div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+    @if (ViewBag.OID != null)
+    {
+        <button id="btnDlgPwReset" class="custom-button"><i class="fas fa-sync"></i> 비밀번호 초기화</button>
+    }
+    <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+</div>
+
+<div class="dlg_table dlgEditPerson_table">
+    <input type="hidden" id="hidDepartmentId" value="@ViewBag.DepartmentOID" />
+    <input type="hidden" id="hidPersonOID" value="@(ViewBag.OID != null ? ViewBag.OID : "")" />
+    <input type="hidden" id="hidPersonJoinDt" value="@(ViewBag.OID != null ? ViewBag.Person.EnterDt : "")" />
+    <input type="hidden" id="hidPersonIsUse" value="@(ViewBag.OID != null ? ViewBag.Person.IsUse : "")" />
+    <input type="hidden" id="hidPersonImage" value="@(ViewBag.OID != null ? ViewBag.Person.Thumbnail != null ? ViewBag.Person.Thumbnail : "" : "")" />
+    <input type="hidden" id="hidPersonSign" value="@(ViewBag.OID != null ? ViewBag.Person.ImgSign != null ? ViewBag.Person.ImgSign : "" : "")" />
+    <table>
+        <tr>
+            <td rowspan="9">
+                <div class="imgPerson">
+                    <input type="file" multiple="true" id="imgPerson_@(ViewBag.OID != null ? ViewBag.OID : "")" style="display:none;">
+                    <div class="inputImg" style="z-index:100;" id="imgPersonZone_@(ViewBag.OID != null ? ViewBag.OID : "")"><span id="imghere">사용자 사진</span></div>
+                    <div class="showImg" id="imgPersonResult_@(ViewBag.OID != null ? ViewBag.OID : "")">
+                        @if (ViewBag.OID != null && ViewBag.Person.Thumbnail != null)
+                        {
+                            <img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")@ViewBag.Person.Thumbnail" />
+                        }
+                    </div>
+                    <button class="custom-button" id="btnDelPersonImg"><i class="fas fa-times"></i> 사진 삭제</button>
+                </div>
+
+                <div class="signPerson">
+                    <input type="file" multiple="true" id="imgSign_@(ViewBag.OID != null ? ViewBag.OID : "")" style="display:none;">
+                    <div class="inputSign" style="z-index:100" id="imgSignZone_@(ViewBag.OID != null ? ViewBag.OID : "")"><span id="signhere">사용자 서명</span></div>
+                    <div class="showSign" id="imgSignResult_@(ViewBag.OID != null ? ViewBag.OID : "")">
+                        @if (ViewBag.OID != null && ViewBag.Person.ImgSign != null)
+                        {
+                            <img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")@ViewBag.Person.ImgSign" />
+                        }
+                    </div>
+                    <button class="custom-button" id="btnDelSignImg"><i class="fas fa-times"></i> 서명 삭제</button>
+                </div>
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 이름</label></td>
+            <td><input type="text" id="txtDlgUsNm" value="@(ViewBag.OID != null ? ViewBag.Person.Name : "")" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 로그인 ID</label></td>
+            <td><input type="text" id="txtDlgLoginID" value="@(ViewBag.OID != null ? ViewBag.Person.ID : "")" @(ViewBag.OID != null ? "readonly" : "") /></td>
+        </tr>
+        @if (ViewBag.OID == null)
+        {
+            <tr>
+                <td><label class="lbText"><i class="fa fa-caret-right"></i> 패스워드</label></td>
+                <td style="position:relative;">
+                    <input type='password' id="txtDlgLoginPw" value="" /><i class="fas fa-eye" id="hideShowPw_toggleBtn"></i>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 부서</label></td>
+            <td><input type="text" id="cbDlgUsDepartment" value="@ViewBag.DepartmentNm" readonly /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 직급</label></td>
+            <td><div id="cbDlgUsTitle"></div></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 직책</label></td>
+            <td><div id="cbDlgUsPosition"></div></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 E-Mail</label></td>
+            <td><input type="text" id="txtDlgUsEmail" value="@(ViewBag.OID != null ? ViewBag.Person.Email : "")" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 입사일자</label></td>
+            <td><div id="dtDlgUsJoinDt"></div></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 사용자 사용 유무</label></td>
+            <td>
+                <div id="chkDlgUseFl_y" class="custom-checkbox">YES</div>
+                <div id="chkDlgUseFl_n" class="custom-checkbox">NO</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+            //비밀번호 표시 여부 변경 버튼
+            $('#hideShowPw_toggleBtn').click(function () {
+                if ($(this).hasClass('fa-eye')) {
+                    $(this).removeClass('fa-eye');
+                    $(this).addClass('fa-eye-slash');
+                    $('#txtDlgLoginPw').attr('type', 'text');
+                } else {
+                    $(this).removeClass('fa-eye-slash');
+                    $(this).addClass('fa-eye');
+                    $('#txtDlgLoginPw').attr('type', 'password');
+                }
+            });
+
+        if ($('.showImg').children().length == 1) {
+            $('#imghere').hide();
+        }
+        if ($('.showSign').children().length == 1) {
+            $('#signhere').hide();
+        }
+
+            $('#btnDelPersonImg').on('click', function () {
+                $('#imgPersonResult_@(ViewBag.OID != null ? ViewBag.OID : "")').empty();
+                $('#hidPersonImage').val('');
+                $('#imghere').show();
+            });
+
+            $('#btnDelSignImg').on('click', function () {
+                $('#imgSignResult_@(ViewBag.OID != null ? ViewBag.OID : "")').empty();
+                $('#hidPersonSign').val('');
+                $('#signhere').show();
+            });
+
+            $('#btnDlgPwReset').on('click', function () {
+                RequestData('/Manage/UdtPwPerson', { OID: $('#hidPersonOID').val() }, function () {
+                    alert('변경되었습니다.');
+                });
+            });
+            $('#imgPerson_@(ViewBag.OID != null ? ViewBag.OID : "")').simpleUpload({
+                url: '/Common/ImgUploadFile',
+                params: { },
+                method: 'post',
+                maxFileNum: 1,
+                maxFileSize: 1000000,
+                allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+                dropZone: '#imgPersonZone_@(ViewBag.OID != null ? ViewBag.OID : "")',
+            }).on('upload:over', function (e, files) {
+                alert('Number of files is over');
+            }).on('upload:invalid', function (e, files) {
+                for (var i = 0; i < files.length; i++) {
+                    alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+                }
+            }).on('upload:done', function (e, file, index, data, xhr) {
+                var imgPersonResult$ = $('#imgPersonResult_@(ViewBag.OID != null ? ViewBag.OID : "")');
+                imgPersonResult$.empty();
+                imgPersonResult$.append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />');
+                $('#hidPersonImage').val(data);
+                $('#imghere').hide();
+                $('.img-thumbnail').next().on('click', function () {
+                    $(this).parent('li').remove();
+                });
+            });
+
+            $('#imgSign_@(ViewBag.OID != null ? ViewBag.OID : "")').simpleUpload({
+                url: '/Common/ImgUploadFile',
+                params: { },
+                method: 'post',
+                maxFileNum: 1,
+                maxFileSize: 1000000,
+                allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+                dropZone: '#imgSignZone_@(ViewBag.OID != null ? ViewBag.OID : "")',
+            }).on('upload:over', function (e, files) {
+                alert('Number of files is over');
+            }).on('upload:invalid', function (e, files) {
+                for (var i = 0; i < files.length; i++) {
+                    alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+                }
+            }).on('upload:done', function (e, file, index, data, xhr) {
+                var imgSignResult$ = $('#imgSignResult_@(ViewBag.OID != null ? ViewBag.OID : "")');
+                imgSignResult$.empty();
+                imgSignResult$.append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />');
+                $('#hidPersonSign').val(data);
+                $('#signhere').hide();
+                $('.img-thumbnail').next().on('click', function () {
+                    $(this).parent('li').remove();
+                });
+            });
+        });
+</script>
