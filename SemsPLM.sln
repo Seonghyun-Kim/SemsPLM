@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeOrder", "ChangeOrder\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeRequest", "ChangeRequest\ChangeRequest.csproj", "{010348AF-7FF9-4D0B-8368-49B24DB4E99F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qms", "Qms\Qms.csproj", "{F74E1C61-1E8B-4665-A15C-9AD2D305898B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{010348AF-7FF9-4D0B-8368-49B24DB4E99F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{010348AF-7FF9-4D0B-8368-49B24DB4E99F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{010348AF-7FF9-4D0B-8368-49B24DB4E99F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F74E1C61-1E8B-4665-A15C-9AD2D305898B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F74E1C61-1E8B-4665-A15C-9AD2D305898B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F74E1C61-1E8B-4665-A15C-9AD2D305898B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F74E1C61-1E8B-4665-A15C-9AD2D305898B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,9 +70,10 @@ Global
 		{37D30513-FFFE-472B-97C5-7BB8A2AE709D} = {521CAED1-C99B-4F6B-90C8-1EF7136A40D9}
 		{D61F4251-482E-4D88-902B-5C2137A55883} = {521CAED1-C99B-4F6B-90C8-1EF7136A40D9}
 		{010348AF-7FF9-4D0B-8368-49B24DB4E99F} = {521CAED1-C99B-4F6B-90C8-1EF7136A40D9}
+		{F74E1C61-1E8B-4665-A15C-9AD2D305898B} = {521CAED1-C99B-4F6B-90C8-1EF7136A40D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {DFDBD948-EF51-47C0-88C6-91D92BA5A72F}
 		VisualSVNWorkingCopyRoot = .
+		SolutionGuid = {DFDBD948-EF51-47C0-88C6-91D92BA5A72F}
 	EndGlobalSection
 EndGlobal

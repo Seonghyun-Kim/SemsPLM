@@ -39,6 +39,7 @@ namespace SemsPLM
             arrDllList.Add(Path.Combine(assemblyPath + @"\Pms.dll"));
             arrDllList.Add(Path.Combine(assemblyPath + @"\ChangeOrder.dll"));
             arrDllList.Add(Path.Combine(assemblyPath + @"\ChangeRequest.dll"));
+            arrDllList.Add(Path.Combine(assemblyPath + @"\Qms.dll"));
 
             foreach (var data in arrDllList)
             {
