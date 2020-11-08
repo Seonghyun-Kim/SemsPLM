@@ -99,6 +99,7 @@
     <Compile Include="Constant\EBomConstant.cs" />
     <Compile Include="Constant\EoConstant.cs" />
     <Compile Include="Constant\PmsConstant.cs" />
+    <Compile Include="Constant\QmsConstant.cs" />
     <Compile Include="Factory\DaoFactory.cs" />
     <Compile Include="Interface\IDObject.cs" />
     <Compile Include="Models\Approval\Approval.cs" />
