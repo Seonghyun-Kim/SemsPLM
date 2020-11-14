@@ -2801,6 +2801,8 @@
     <Content Include="Views\EBom\CompareEPart.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPart.cshtml" />
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
+    <Content Include="Views\Qms\CreateWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\CreateQuickValidation.cshtml" />
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
   </ItemGroup>

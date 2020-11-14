@@ -1,0 +1,99 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-Create"></i> 작업자 교육 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnCreateWorkerEducation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
+                    <button id="btnCancelWorkerEducation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 작업자교육</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 교육일자</th>
+            <td>
+                <div id="dtCreateWorkerEducationProcess" />
+            </td>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 교육내용</th>
+            <td>
+                <input id="txtCreateWorkerEducationDesc" style="width:100%;"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 교육계획</th>
+            <td>
+                <input id="txtCreateWorkerEducationPlan" style="width:100%;" />
+            </td>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 담당자</th>
+            <td>
+                <div style="display:flex;">
+                    <input id="txtCreateWorkerEducationUserNo" style="width:80px; margin-right:5px;" />
+                    <input id="txtCreateWorkerEducationUserNm" style="width:120px;" />
+                    <button id="btnCreateWorkerEducationUserSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 교육자료</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal">
+                <i class="fa fa-caret-right"></i>
+                <button id="btnCreateWorkerEducationFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </th>
+            <td>
+                <div id="txtCreateWorkerEducationFileNm"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal" style="width:180px;">
+            </th>
+            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
+        </tr>
+        <tr>
+            <td><button id="btnCreateWorkerEducationApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
+            <td>
+                <div id="listCreateWorkerEducationApprovalconfirm" />
+            </td>
+            <td>
+                <div id="listCreateWorkerEducationApprovalcomplete" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        var dtCreateWorkerEducationProcess$ = $("#dtCreateWorkerEducationProcess");
+        var listCreateWorkerEducationApprovalconfirm$ = $("#listCreateWorkerEducationApprovalconfirm");
+        var listCreateWorkerEducationApprovalcomplete = $("#listCreateWorkerEducationApprovalcomplete");
+
+        dtCreateWorkerEducationProcess$.jqxDateTimeInput(DateFormat);
+        dtCreateWorkerEducationProcess$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateWorkerEducationProcess$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        listCreateWorkerEducationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+        listCreateWorkerEducationApprovalcomplete.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+    });
+</script>
+

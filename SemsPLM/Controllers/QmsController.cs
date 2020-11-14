@@ -196,12 +196,21 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 유효성 검증 
+        public ActionResult CreateQuickValidation()
+        {
+            return View();
+        }
+
         #endregion
 
         #region -- 표준화
         #endregion
 
         #region -- 교육
+        public ActionResult CreateWorkerEducation()
+        {
+            return View();
+        }
         #endregion
     }
 }
