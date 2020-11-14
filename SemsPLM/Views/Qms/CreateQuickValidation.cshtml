@@ -1,0 +1,290 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 유효성검증 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnCreateQuickValidation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
+                    <button id="btnCancelQuickValidation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 기본정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 신속대응No</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 공장</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 품번/품명</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> LOT NO</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 고객사</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작업자</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 발생유형</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성일자</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 작업수량</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 불량수량</th>
+            <td>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 문제요약</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 제목</th>
+            <td colspan="3">
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 발생처</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 결함정도</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 귀책구문</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 귀책처</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 요약</th>
+            <td>
+            </td>
+            <th></th>
+            <td></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 불량내용상세</th>
+            <td>
+            </td>
+            <th></th>
+            <td></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 재발여부</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 발생장소</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 발생일자</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 책임업체/부서</th>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 시정판정</th>
+            <td>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 유발공정</th>
+            <td>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 유효성검증</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 구분</th>
+            <th><i class="fa fa-caret-right"></i> 1차 유효성검증</th>
+            <th><i class="fa fa-caret-right"></i> 2차 유효성검증</th>
+            <th><i class="fa fa-caret-right"></i> 3차 유효성검증</th>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 검증시작일</th>
+            <td>
+                <div id="dtCreateQuickValidationOneConfirmSt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationTwoConfirmSt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationThreeConfirmSt" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 검증완료일</th>
+            <td>
+                <div id="dtCreateQuickValidationOneConfirmEt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationTwoConfirmEt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationThreeConfirmEt" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 담당자</th>
+            <td>
+                <div id="txtCreateQuickValidationOneUserNm" />
+            </td>
+            <td>
+                <div id="txtCreateQuickValidationTwoUserNm" />
+            </td>
+            <td>
+                <div id="txtCreateQuickValidationThreeUserNm" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 검증일</th>
+            <td>
+                <div id="dtCreateQuickValidationOneConfirmBaseDt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationTwoConfirmBaseDt" />
+            </td>
+            <td>
+                <div id="dtCreateQuickValidationThreeConfirmBaseDt" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 판정</th>
+            <td>
+                <input type="radio" name="radioOneConfirm" value="1" />OK
+                <input type="radio" name="radioOneConfirm" value="0" />NG
+            </td>
+            <td>
+                <input type="radio" name="radioTwoConfirm" value="1" />OK
+                <input type="radio" name="radioTwoConfirm" value="0" />NG
+            </td>
+            <td>
+                <input type="radio" name="radioThreeConfirm" value="1" />OK
+                <input type="radio" name="radioThreeConfirm" value="0" />NG
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 검증내용요약</th>
+            <td>
+                <input type="text" id="txtCreateQuickValidationOneConfirmDesc" style="width:100%" />
+            </td>
+            <td>
+                <input type="text" id="txtCreateQuickValidationTwoConfirmDesc" style="width:100%" />
+            </td>
+            <td>
+                <input type="text" id="txtCreateQuickValidationThreeConfirmDesc" style="width:100%" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 종료여부</th>
+            <td>
+                <input type="radio" name="radioOneEnd" value="1" />지속
+                <input type="radio" name="radioOneEnd" value="0" />종료
+            </td>
+            <td>
+                <input type="radio" name="radioTwoEnd" value="1" />지속
+                <input type="radio" name="radioTwoEnd" value="0" />종료
+            </td>
+            <td>
+                <input type="radio" name="radioThreeEnd" value="1" />지속
+                <input type="radio" name="radioThreeEnd" value="0" />종료
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 종료사유</th>
+            <td>
+                <input type="text" id="txtCreateQuickValidationOneEndDesc" style="width:100%" />
+            </td>
+            <td>
+                <input type="text" id="txtCreateQuickValidationTwoEndDesc" style="width:100%" />
+            </td>
+            <td>
+                <input type="text" id="txtCreateQuickValidationThreeEndDesc" style="width:100%" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        var dtCreateQuickValidationCreateDt$ = $("#dtCreateQuickValidationCreateDt");
+        var dtCreateQuickValidationOccurDt$ = $("#dtCreateQuickValidationOccurDt");
+        var dtCreateQuickValidationOneConfirmSt$ = $("#dtCreateQuickValidationOneConfirmSt");
+        var dtCreateQuickValidationTwoConfirmSt$ = $("#dtCreateQuickValidationTwoConfirmSt");
+        var dtCreateQuickValidationThreeConfirmSt$ = $("#dtCreateQuickValidationThreeConfirmSt");
+        var dtCreateQuickValidationOneConfirmEt$ = $("#dtCreateQuickValidationOneConfirmEt");
+        var dtCreateQuickValidationTwoConfirmEt$ = $("#dtCreateQuickValidationTwoConfirmEt");
+        var dtCreateQuickValidationThreeConfirmEt$ = $("#dtCreateQuickValidationThreeConfirmEt");
+        var dtCreateQuickValidationOneConfirmBaseDt$ = $("#dtCreateQuickValidationOneConfirmBaseDt");
+        var dtCreateQuickValidationTwoConfirmBaseDt$ = $("#dtCreateQuickValidationTwoConfirmBaseDt");
+        var dtCreateQuickValidationThreeConfirmBaseDt$ = $("#dtCreateQuickValidationThreeConfirmBaseDt");
+
+
+        @*dtCreateQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));*@
+
+        // 검증 시작일
+        dtCreateQuickValidationOneConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationTwoConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationThreeConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+
+        // 검증 완료일
+        dtCreateQuickValidationOneConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationTwoConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationThreeConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+
+        // 검증일
+        dtCreateQuickValidationOneConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationTwoConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtCreateQuickValidationThreeConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+    });
+</script>
+

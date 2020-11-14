@@ -166,3 +166,43 @@ WebUtils.ToDate = function (date_str) {
     //alert("sYear :"+sYear +"   sMonth :"+sMonth + "   sDate :"+sDate);
     return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate));
 }
+
+WebUtils.ConvComboData = function (data, valField, txtField, isAll) {
+    var retData = data.map(function (v, i, a) {
+        var valueData = v[valField];
+        var textData = v[txtField];
+        return { value: valueData, text: textData, thisData: v };
+    });
+
+    if (data === undefined || data.length === 0) {
+        var NoData = {
+            value: null,
+            text: "내용 없음"
+        };
+
+        retData.push(NoData);
+    }
+
+    if (isAll) {
+        var allViewData = {
+            value: "",
+            text: ""
+        };
+
+        retData.unshift(allViewData);
+    }
+
+    return retData;
+};
+
+WebUtils.GetComboValue = function (ComponentID) {
+    if (!($("#" + ComponentID).jqxComboBox('getSelectedItem') === undefined || $("#" + ComponentID).jqxComboBox('getSelectedItem').value === null || $("#" + ComponentID).jqxComboBox('getSelectedItem').value === "")) {
+        return $("#" + ComponentID).jqxComboBox('getSelectedItem').value;
+    } else {
+        return null;
+    }
+};
+
+WebUtils.GetCheckBoxValue = function (ComponentID) {
+    return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;
+};

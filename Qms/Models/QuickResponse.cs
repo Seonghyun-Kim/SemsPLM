@@ -12,46 +12,80 @@ namespace Qms.Models
     public class QuickResponse : DObject, IDObject
     {
         // 공장구분 
-        public int PlantLibOID { get; set; }
+        public int? PlantLibOID { get; set; }
 
-        // 검사유형 
-        public int InspectLibOID { get; set; }
+        public string PlantNm { get; set; }
+
+        // 발생유형 
+        public int? OccurrenceLibOID { get; set; }
+
+        public string OccurrenceNm { get; set; }
 
         // 품번 
-        public int PartOID { get; set; }
+        public int? PartOID { get; set; }
+
+        public string PartNo { get; set; }
+
+        public string PartNm { get; set; }
+
+        public string CarCode { get; set; }
+
+        public string PartGrpNm { get; set; }
 
         // LOT NO 
         public string LotNo { get; set; }
 
         // 고객사 
-        public int OemLibOID { get; set; }
+        public int? OemLibOID { get; set; }
+
+        public string OemNm { get; set; }
 
         // 작업자 
-        public int WorkUserOID { get; set; }
+        public int? WorkUserOID { get; set; }
+
+        public string WorkUserNm { get; set; }
+        
 
         // 작성일자 
-        public DateTime WriteDt { get; set; }
+        public DateTime? WriteDt { get; set; }
 
         // 불량수량 
         public int PoorCnt { get; set; }
 
+        public string Title { get; set; }
+
         // 발생처 
-        public int OccurrenceAreaLibOID { get; set; }
+        public int? OccurrenceAreaLibOID { get; set; }
+
+        public string OccurrenceAreaNm { get; set; }
 
         // 유발공정 
-        public int InduceLibOID { get; set; }
+        public int? InduceLibOID { get; set; }
+
+        public string InduceNm { get; set; }
 
         // 결함정도 
-        public int DefectDegreeLibOID { get; set; }
+        public int? DefectDegreeLibOID { get; set; }
+
+        public string DefectDegreeNm { get; set; }
 
         // 귀책구분 
-        public int ImputeLibOID { get; set; }
+        public int? ImputeLibOID { get; set; }
+
+        public string ImputeNm { get; set; }
 
         // 귀책처(자체) 
         public int? ImputeDepartmentOID { get; set; }
 
+        public string ImputeDepartmentNm { get; set; }
+
         // 귀책처(협력사) 
         public int? ImputeSupplierOID { get; set; }
+
+        public string ImputeSupplierNm { get; set; }
+
+        // 요약
+        public string Summary { get; set; }
 
         // 불량내용상세 
         public string PoorDetail { get; set; }
@@ -63,13 +97,15 @@ namespace Qms.Models
         public string OccurrencePlace { get; set; }
 
         // 발생일자 
-        public DateTime OccurrenceDt { get; set; }
+        public DateTime? OccurrenceDt { get; set; }
 
         // 시정판정 
-        public int CorrectDecisionLibOID { get; set; }
+        public int? CorrectDecisionLibOID { get; set; }
+
+        public string CorrectDecisionNm { get; set; }
 
         // 대책서회신요구일자 
-        public DateTime MeasureResponseDt { get; set; }
+        public DateTime? MeasureResponseDt { get; set; }
 
         // QA(의견) 
         public string Qa { get; set; }
@@ -93,10 +129,49 @@ namespace Qms.Models
         public bool? BlockadeShipProductFl { get; set; }
 
         // 일정계획담당자 
-        public int PlanUserOID { get; set; }
+        public int? PlanUserOID { get; set; }
+
+        public string PlanUserNm { get; set; }
 
         // 고품사진 
         public string PoorPicture { get; set; }
+    }
+
+    public class QuickResponseView
+    {
+        public int? OID { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTime? OccurrenceDt { get; set; }
+
+        public string OccurrenceNm { get; set; }
+        
+        public string PartNm { get; set; }
+
+        public string CarCode { get; set; }
+
+        public string PartGrpNm { get; set; }
+
+        public string Summary { get; set; }
+
+        public string CreateUsNm { get; set; }
+
+        public string PlanUserNm { get; set; }
+
+        public QuickResponseView(QuickResponse response)
+        {
+            this.OID = response.OID;
+            this.Name = response.Name;
+            this.OccurrenceDt = response.OccurrenceDt;
+            this.OccurrenceNm = response.OccurrenceNm;
+            this.PartNm = response.PartNm;
+            this.CarCode = response.CarCode;
+            this.PartGrpNm = response.PartGrpNm;
+            this.Summary = response.Summary;
+            this.CreateUsNm = response.CreateUsNm;
+            this.PlanUserNm = response.PlanUserNm;
+        }
     }
 
     public static class QuickResponseRepository
@@ -140,10 +215,10 @@ namespace Qms.Models
         public bool ModuleFl { get; set; }
 
         // 완료예정일 
-        public DateTime EstEndDt { get; set; }
+        public DateTime? EstEndDt { get; set; }
 
         // 처리담당자 
-        public int ChargeUserOID { get; set; }
+        public int? ChargeUserOID { get; set; }
     }
 
     public static class QuickResponseModuleRepository
