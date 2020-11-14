@@ -5,11 +5,270 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <alias>
+    <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
    
   </alias>
   
   <statements>
-   
+    <insert id="InsQuickResponse" parameterClass="QuickResponse">
+      INSERT INTO T_DQMS_QUICK
+      (OID,
+      PlantLibOID,
+      OccurrenceLibOID,
+      PartOID,
+      LotNo,
+      OemLibOID,
+      WorkUserOID,
+      WriteDt,
+      PoorCnt,
+      Title,
+      OccurrenceAreaLibOID,
+      InduceLibOID,
+      DefectDegreeLibOID,
+      ImputeLibOID,
+      ImputeDepartmentOID,
+      ImputeSupplierOID,
+      Summary,
+      PoorDetail,
+      RecurrenceFl,
+      OccurrencePlace,
+      OccurrenceDt,
+      CorrectDecisionLibOID,
+      MeasureResponseDt,
+      Qa,
+      BlockadeMaterialFl,
+      BlockadeOutProductFl,
+      BlockadeProcessProductFl,
+      BlockadeFinishProductFl,
+      BlockadeStorageProductFl,
+      BlockadeShipProductFl,
+      PlanUserOID,
+      PoorPicture)
+      VALUES
+      (#OID#,
+      #PlantLibOID#,
+      #OccurrenceLibOID#,
+      #PartOID#,
+      #LotNo#,
+      #OemLibOID#,
+      #WorkUserOID#,
+      #WriteDt#,
+      #PoorCnt#,
+      #Title#,
+      #OccurrenceAreaLibOID#,
+      #InduceLibOID#,
+      #DefectDegreeLibOID#,
+      #ImputeLibOID#,
+      #ImputeDepartmentOID#,
+      #ImputeSupplierOID#,
+      #Summary#,
+      #PoorDetail#,
+      #RecurrenceFl#,
+      #OccurrencePlace#,
+      #OccurrenceDt#,
+      #CorrectDecisionLibOID#,
+      #MeasureResponseDt#,
+      #Qa#,
+      #BlockadeMaterialFl#,
+      #BlockadeOutProductFl#,
+      #BlockadeProcessProductFl#,
+      #BlockadeFinishProductFl#,
+      #BlockadeStorageProductFl#,
+      #BlockadeShipProductFl#,
+      #PlanUserOID#,
+      #PoorPicture#)
+
+    </insert>
+
+    <update id="UdtQuickResponse" parameterClass="QuickResponse">
+      UPDATE T_DQMS_QUICK
+      SET
+      OID = #OID#
+      <isNotNull prepend="," property="PlantLibOID">
+        PlantLibOID = #PlantLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="Title">
+        Title = #Title#
+      </isNotNull>
+      
+      <isNotNull prepend="," property="OccurrenceLibOID">
+        OccurrenceLibOID = #OccurrenceLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="PartOID">
+        PartOID = #PartOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="LotNo">
+        LotNo = #LotNo#
+      </isNotNull>
+
+      <isNotNull prepend="," property="OemLibOID">
+        OemLibOID = #OemLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="WorkUserOID">
+        WorkUserOID = #WorkUserOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="WriteDt">
+        WriteDt = #WriteDt#
+      </isNotNull>
+
+      <isNotNull prepend="," property="PoorCnt">
+        PoorCnt = #PoorCnt#
+      </isNotNull>
+
+      <isNotNull prepend="," property="OccurrenceAreaLibOID">
+        OccurrenceAreaLibOID = #OccurrenceAreaLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="InduceLibOID">
+        InduceLibOID = #InduceLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="DefectDegreeLibOID">
+        DefectDegreeLibOID = #DefectDegreeLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="ImputeLibOID">
+        ImputeLibOID = #ImputeLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="ImputeDepartmentOID">
+        ImputeDepartmentOID = #ImputeDepartmentOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="ImputeSupplierOID">
+        ImputeSupplierOID = #ImputeSupplierOID#
+      </isNotNull>
+       
+      <isNotNull prepend="," property="Summary">
+        Summary = #Summary#
+      </isNotNull>
+
+      <isNotNull prepend="," property="PoorDetail">
+        PoorDetail = #PoorDetail#
+      </isNotNull>
+
+      <isNotNull prepend="," property="RecurrenceFl">
+        RecurrenceFl = #RecurrenceFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="OccurrencePlace">
+        OccurrencePlace = #OccurrencePlace#
+      </isNotNull>
+
+      <isNotNull prepend="," property="OccurrenceDt">
+        OccurrenceDt = #OccurrenceDt#
+      </isNotNull>
+
+      <isNotNull prepend="," property="CorrectDecisionLibOID">
+        CorrectDecisionLibOID = #CorrectDecisionLibOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="MeasureResponseDt">
+        MeasureResponseDt = #MeasureResponseDt#
+      </isNotNull>
+
+      <isNotNull prepend="," property="Qa">
+        Qa = #Qa#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeMaterialFl">
+        BlockadeMaterialFl = #BlockadeMaterialFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeOutProductFl">
+        BlockadeOutProductFl = #BlockadeOutProductFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeProcessProductFl">
+        BlockadeProcessProductFl = #BlockadeProcessProductFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeFinishProductFl">
+        BlockadeFinishProductFl = #BlockadeFinishProductFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeStorageProductFl">
+        BlockadeStorageProductFl = #BlockadeStorageProductFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="BlockadeShipProductFl">
+        BlockadeShipProductFl = #BlockadeShipProductFl#
+      </isNotNull>
+
+      <isNotNull prepend="," property="PlanUserOID">
+        PlanUserOID = #PlanUserOID#
+      </isNotNull>
+
+      <isNotNull prepend="," property="PoorPicture">
+        PoorPicture = #PoorPicture#
+      </isNotNull>
+
+      <isNotNull prepend="," property="FinishDt">
+        FinishDt = #FinishDt#
+      </isNotNull>
+
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
+      SELECT A.OID, AO.Name, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
+      , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
+      , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
+      , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
+      , A.BlockadeShipProductFl, A.PlanUserOID, A.PoorPicture
+      FROM T_DQMS_QUICK A
+      LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
+      LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
+      LEFT JOIN T_DLIBRARY C ON A.PlantLibOID = C.OID
+      LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
+      LEFT JOIN T_DLIBRARY E ON A.OemLibOID = E.OID
+      LEFT JOIN T_DLIBRARY F ON A.OccurrenceAreaLibOID = F.OID
+      LEFT JOIN T_DLIBRARY G ON A.InduceLibOID = G.OID
+      LEFT JOIN T_DLIBRARY H ON A.DefectDegreeLibOID = H.OID
+      LEFT JOIN T_DLIBRARY I ON A.ImputeLibOID = I.OID
+      LEFT JOIN T_DLIBRARY J ON A.OccurrencePlace = J.OID
+      LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID
+      LEFT JOIN T_DOBJECT L ON A.ImputeDepartmentOID = L.OID AND L.Type = 'DEPARTMENT'
+      LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
+      LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND M.Type = 'PERSON'
+      LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="PlanUserOID">
+          A.PlanUserOID = #PlanUserOID#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="Title">
+          A.Title LIKE '%' + #Title# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="PartOID">
+          A.PartOID = #PartOID#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="PartNo">
+          B.Name = #PartNo#
+        </isNotNull>
+      </dynamic>
+    </select>
+
+    <select id="SelQuickResponseGridView">
+      SELECT
+      A.OccurrenceDt, D.KorNm AS OccurrenceNm, B.Name AS PartNo, 'PART_NM' AS PartNm, 'CAR_CODE' AS CarCode, 'PART_GRP_NM' AS PartGrpNm, A.Summary. B.CreateUsNm
+
+      FROM T_DQMS_QUICK A
+      LEFT JOIN V_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN V_DOBJECT C ON A.PartOID = C.OID AND C.Type = 'PART'
+      LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
+    </select>
   </statements>
   
 </sqlMap>

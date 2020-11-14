@@ -1,0 +1,240 @@
+﻿@{
+    Layout = null;
+}
+
+    <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+    </div>
+
+    <div class="dlg_table dlgEditPerson_table">
+        <table class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th><label class="lbText">공장 구분</label></th>
+                    <td><div id="cbDlgPlant"></div></td>
+                    <th><label class="lbText">검사유형</label></th>
+                    <td><div id="cbDlgOccurrence"></div></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">품번</label></th>
+                    <td><input type="text" id="txtDlgPartNo" value="" /></td>
+                    <th><label class="lbText">LOT번호</label></th>
+                    <td><input type="text" id="txtDlgLotNo" value="" /></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">고객사</label></th>
+                    <td><div id="cbDlgOem"></div></td>
+                    <th><label class="lbText">작업자</label></th>
+                    <td><input type="text" id="txtDlg" value="" /></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">작성일시</label></th>
+                    <td><input type="text" id="txtDlgWriteDt" value="" /></td>
+                    <th><label class="lbText">불량수량</label></th>
+                    <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
+                </tr>
+
+
+                <tr>
+                    <th><label class="lbText"><i class="fa fa-caret-right"></i>봉쇄조치 </label></th>
+                    <td colspan="3">
+                        <div style="display:flex;flex-direction:row;">
+                            <div id="chkDlgBlockadeMaterial">원재료</div>
+                            <div id="chkDlgBlockadeOutProduct">외주품</div>
+                            <div id="chkDlgBlockadeProcessProduct">공정품</div>
+                            <div id="chkDlgBlockadeFinishProduct">완성품</div>
+                            <div id="chkDlgBlockadeStorageProduct">창고재고</div>
+                            <div id="chkDlgBlockadeShipProduct">고객출하</div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                  
+                    <th><label class="lbText">일정계획담당자</label></th>
+                    <td>
+                        <input type="text" id="txtPlanUserNm" value="" />
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+        <table class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th><label class="lbText">제목</label></th>
+                    <td colspan="3">
+                        <input type="text" id="txtDlgTitle" style="width:98%;" />
+                    </td>
+                <tr>
+                    <th><label class="lbText">발생처</label></th>
+                    <td><div id="cbDlgOccurrenceArea"></div></td>
+                    <th><label class="lbText">유발공정</label></th>
+                    <td><div id="cbDlgInduce"></div></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">발생장소</label></th>
+                    <td><input type="text" id="txtDlgOccurrencePlace" value="" /></td>
+                    <th><label class="lbText">발생일자</label></th>
+                    <td><input type="text" id="txtDlgOccurrenceDt" value="" /></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">귀책구분</label></th>
+                    <td colspan="3">
+                        <div id="cbDlgImpute"></div>
+                        <div id="cbDlgImputeDepartment" style="display:none;"></div>
+                        <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">결함정도</label></th>
+                    <td><div id="cbDlgDefectDegree"></div></td>
+                    <th><label class="lbText">재발여부 </label></th>
+                    <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">요약</label></th>
+                    <td colspan="3">
+                        <input type="text" id="txtDlgSummary" style="width:98%;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">불량내용상세</label></th>
+                    <td colspan="3">
+                        <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
+                    </td>
+                </tr>
+                <tr>
+
+                    <th><label class="lbText">시정판정</label></th>
+                    <td><div id="cbDlgCorrectDecision"></div></td>
+                    <th><label class="lbText">대책서회신요구일자</label></th>
+                    <td><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
+                </tr>
+                <tr>
+                    <th><label class="lbText">QA</label></th>
+                    <td colspan="3">
+                        <textarea id="txtDlgQa" style="width:98%;"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+                <col style="width:190px;" />
+                <col style="width:auto;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th><label class="lbText">고품사진</label></th>
+                    <td colspan="3">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });        
+        $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });        
+        $("#cbDlgDefectDegree").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
+        $("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+       
+        $("#txtDlgWriteDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgWriteDt").jqxDateTimeInput({
+            width: 160,
+            theme: "Light"
+        });
+
+        $("#txtDlgOccurrenceDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgOccurrenceDt").jqxDateTimeInput({
+            width: 160,
+            theme: "Light"
+        });
+
+        $("#txtDlgMeasureResponseDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgMeasureResponseDt").jqxDateTimeInput({
+            width: 160,
+            theme: "Light"
+        });
+        
+        $("#chkDlgRecurrenceFl").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeMaterial").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeOutProduct").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeProcessProduct").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeFinishProduct").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeStorageProduct").jqxCheckBox({ width: 130, checked: false });
+        $("#chkDlgBlockadeShipProduct").jqxCheckBox({ width: 130, checked: false });
+
+        var btnDlgSave$ = $("#btnDlgSave").jqxButton();
+        btnDlgSave$.on("click", function () {
+            var param = {};
+            
+            param.OID = "@Model.OID";     
+            param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
+            param.OccurrenceLibOID =WebUtils.GetComboValue("cbDlgOccurrence");
+            param.PartOID = 156;
+            param.LotNo = "ABC";
+            param.OemLibOID = WebUtils.GetComboValue("cbDlgOem");
+            param.WorkUserOID = 83;
+            param.WriteDt = $("#txtDlgWriteDt").val();
+            param.PoorCnt = $("#txtDlgPoorCnt").val();
+            param.Title = $("#txtDlgTitle").val();
+            param.OccurrenceAreaLibOID = WebUtils.GetComboValue("cbDlgOccurrenceArea");
+            param.InduceLibOID = WebUtils.GetComboValue("cbDlgInduce");
+            param.DefectDegreeLibOID = WebUtils.GetComboValue("cbDlgDefectDegree");
+            param.ImputeLibOID = WebUtils.GetComboValue("cbDlgImpute");
+            param.ImputeDepartmentOID = null;
+            param.ImputeSupplierOID = null;
+            param.Summary = $("#txtDlgSummary").val();
+            param.PoorDetail = $("#txtDlgPoorDetail").val();
+            param.RecurrenceFl = WebUtils.GetCheckBoxValue("chkDlgRecurrenceFl");
+            param.OccurrencePlace = $("#txtDlgOccurrencePlace").val();
+            param.OccurrenceDt = $("#txtDlgOccurrenceDt").val();
+            param.CorrectDecisionLibOID = WebUtils.GetComboValue("cbDlgCorrectDecision");
+            param.MeasureResponseDt = $("#txtDlgMeasureResponseDt").val();
+            param.Qa = $("#txtDlgQa").val();
+            param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeMaterial");
+            param.BlockadeOutProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeOutProduct");
+            param.BlockadeProcessProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeProcessProduct");
+            param.BlockadeFinishProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeFinishProduct");
+            param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeStorageProduct");
+            param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeShipProduct");
+            param.PlanUserOID = 83;
+            param.PoorPicture = "";
+
+            $.post('/Qms/InsQuickResponse', param, function (response) {
+                  if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+                CloseDlgQuickResponse();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+    })
+</script>

@@ -2801,12 +2801,13 @@
     <Content Include="Views\EBom\CompareEPart.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPart.cshtml" />
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
+    <Content Include="Views\Qms\QuickResponseList.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Qms\Dialog\" />
     <Folder Include="Views\Qms\Partitial\" />
   </ItemGroup>
   <ItemGroup>
@@ -2846,6 +2847,10 @@
     <ProjectReference Include="..\Pms\Pms.csproj">
       <Project>{8c5b7b0a-6f2b-41ba-94ee-9bbf75ad6800}</Project>
       <Name>Pms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Qms\Qms.csproj">
+      <Project>{F74E1C61-1E8B-4665-A15C-9AD2D305898B}</Project>
+      <Name>Qms</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
