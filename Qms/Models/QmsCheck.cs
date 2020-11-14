@@ -14,6 +14,12 @@ namespace Qms.Models
         // N차 
         public int? Cnt { get; set; }
 
+        // 검증시작일
+        public DateTime? ConfirmSt { get; set; }
+
+        // 검증완료일
+        public DateTime? ConfirmEt { get; set; }
+
         // 검증일 
         public DateTime? CheckDt { get; set; }
 

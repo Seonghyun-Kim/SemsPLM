@@ -13,6 +13,9 @@ namespace Qms.Models
         // 교육내용 
         public string EduDetail { get; set; }
 
+        // 교육계획
+        public string EduPlan { get; set; }
+
         // 교육일자 
         public DateTime? EduDt { get; set; }
 

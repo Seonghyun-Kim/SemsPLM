@@ -2801,13 +2801,13 @@
     <Content Include="Views\EBom\CompareEPart.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPart.cshtml" />
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
+    <Content Include="Views\Qms\CreateWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\CreateQuickValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Qms\Dialog\" />
-    <Folder Include="Views\Qms\Partitial\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
