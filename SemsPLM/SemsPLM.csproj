@@ -134,6 +134,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PmsController.cs" />
+    <Compile Include="Controllers\QmsController.cs" />
     <Compile Include="Controllers\VaultController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -2738,6 +2739,7 @@
     <Content Include="SqlMap\Mssql\EO.xml" />
     <Content Include="SqlMap\Mssql\Library.xml" />
     <Content Include="SqlMap\Mssql\Manage.xml" />
+    <Content Include="SqlMap\Mssql\Qms.xml" />
     <Content Include="SqlMap\Mssql\Menu.xml" />
     <Content Include="SqlMap\Mssql\Pms.xml" />
     <Content Include="SqlMap\Mssql\Users.xml" />
@@ -2804,6 +2806,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Qms\Dialog\" />
+    <Folder Include="Views\Qms\Partitial\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
