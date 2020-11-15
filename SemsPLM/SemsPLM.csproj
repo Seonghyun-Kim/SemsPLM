@@ -2805,12 +2805,13 @@
     <Content Include="Views\Qms\CreateQuickValidation.cshtml" />
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
+    <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickResponsePlan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Qms\Partitial\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
