@@ -9,7 +9,7 @@
                     <h2><i class="fas fa-edit"></i> 유효성검증 등록</h2>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btnCreateQuickValidation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
+                    <button id="btnEditQuickValidation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
                     <button id="btnCancelQuickValidation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
                 </td>
             </tr>
@@ -151,49 +151,49 @@
         <tr>
             <th><i class="fa fa-caret-right"></i> 검증시작일</th>
             <td>
-                <div id="dtCreateQuickValidationOneConfirmSt" />
+                <div id="dtEditQuickValidationOneConfirmSt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationTwoConfirmSt" />
+                <div id="dtEditQuickValidationTwoConfirmSt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationThreeConfirmSt" />
+                <div id="dtEditQuickValidationThreeConfirmSt" />
             </td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 검증완료일</th>
             <td>
-                <div id="dtCreateQuickValidationOneConfirmEt" />
+                <div id="dtEditQuickValidationOneConfirmEt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationTwoConfirmEt" />
+                <div id="dtEditQuickValidationTwoConfirmEt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationThreeConfirmEt" />
+                <div id="dtEditQuickValidationThreeConfirmEt" />
             </td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 담당자</th>
             <td>
-                <div id="txtCreateQuickValidationOneUserNm" />
+                <div id="txtEditQuickValidationOneUserNm" />
             </td>
             <td>
-                <div id="txtCreateQuickValidationTwoUserNm" />
+                <div id="txtEditQuickValidationTwoUserNm" />
             </td>
             <td>
-                <div id="txtCreateQuickValidationThreeUserNm" />
+                <div id="txtEditQuickValidationThreeUserNm" />
             </td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 검증일</th>
             <td>
-                <div id="dtCreateQuickValidationOneConfirmBaseDt" />
+                <div id="dtEditQuickValidationOneConfirmBaseDt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationTwoConfirmBaseDt" />
+                <div id="dtEditQuickValidationTwoConfirmBaseDt" />
             </td>
             <td>
-                <div id="dtCreateQuickValidationThreeConfirmBaseDt" />
+                <div id="dtEditQuickValidationThreeConfirmBaseDt" />
             </td>
         </tr>
         <tr>
@@ -214,13 +214,13 @@
         <tr>
             <th><i class="fa fa-caret-right"></i> 검증내용요약</th>
             <td>
-                <input type="text" id="txtCreateQuickValidationOneConfirmDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationOneConfirmDesc" style="width:100%" />
             </td>
             <td>
-                <input type="text" id="txtCreateQuickValidationTwoConfirmDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationTwoConfirmDesc" style="width:100%" />
             </td>
             <td>
-                <input type="text" id="txtCreateQuickValidationThreeConfirmDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationThreeConfirmDesc" style="width:100%" />
             </td>
         </tr>
         <tr>
@@ -241,13 +241,13 @@
         <tr>
             <th><i class="fa fa-caret-right"></i> 종료사유</th>
             <td>
-                <input type="text" id="txtCreateQuickValidationOneEndDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationOneEndDesc" style="width:100%" />
             </td>
             <td>
-                <input type="text" id="txtCreateQuickValidationTwoEndDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationTwoEndDesc" style="width:100%" />
             </td>
             <td>
-                <input type="text" id="txtCreateQuickValidationThreeEndDesc" style="width:100%" />
+                <input type="text" id="txtEditQuickValidationThreeEndDesc" style="width:100%" />
             </td>
         </tr>
     </table>
@@ -255,36 +255,36 @@
 
 <script>
     $(function () {
-        var dtCreateQuickValidationCreateDt$ = $("#dtCreateQuickValidationCreateDt");
-        var dtCreateQuickValidationOccurDt$ = $("#dtCreateQuickValidationOccurDt");
-        var dtCreateQuickValidationOneConfirmSt$ = $("#dtCreateQuickValidationOneConfirmSt");
-        var dtCreateQuickValidationTwoConfirmSt$ = $("#dtCreateQuickValidationTwoConfirmSt");
-        var dtCreateQuickValidationThreeConfirmSt$ = $("#dtCreateQuickValidationThreeConfirmSt");
-        var dtCreateQuickValidationOneConfirmEt$ = $("#dtCreateQuickValidationOneConfirmEt");
-        var dtCreateQuickValidationTwoConfirmEt$ = $("#dtCreateQuickValidationTwoConfirmEt");
-        var dtCreateQuickValidationThreeConfirmEt$ = $("#dtCreateQuickValidationThreeConfirmEt");
-        var dtCreateQuickValidationOneConfirmBaseDt$ = $("#dtCreateQuickValidationOneConfirmBaseDt");
-        var dtCreateQuickValidationTwoConfirmBaseDt$ = $("#dtCreateQuickValidationTwoConfirmBaseDt");
-        var dtCreateQuickValidationThreeConfirmBaseDt$ = $("#dtCreateQuickValidationThreeConfirmBaseDt");
+        var dtEditQuickValidationCreateDt$ = $("#dtEditQuickValidationCreateDt");
+        var dtEditQuickValidationOccurDt$ = $("#dtEditQuickValidationOccurDt");
+        var dtEditQuickValidationOneConfirmSt$ = $("#dtEditQuickValidationOneConfirmSt");
+        var dtEditQuickValidationTwoConfirmSt$ = $("#dtEditQuickValidationTwoConfirmSt");
+        var dtEditQuickValidationThreeConfirmSt$ = $("#dtEditQuickValidationThreeConfirmSt");
+        var dtEditQuickValidationOneConfirmEt$ = $("#dtEditQuickValidationOneConfirmEt");
+        var dtEditQuickValidationTwoConfirmEt$ = $("#dtEditQuickValidationTwoConfirmEt");
+        var dtEditQuickValidationThreeConfirmEt$ = $("#dtEditQuickValidationThreeConfirmEt");
+        var dtEditQuickValidationOneConfirmBaseDt$ = $("#dtEditQuickValidationOneConfirmBaseDt");
+        var dtEditQuickValidationTwoConfirmBaseDt$ = $("#dtEditQuickValidationTwoConfirmBaseDt");
+        var dtEditQuickValidationThreeConfirmBaseDt$ = $("#dtEditQuickValidationThreeConfirmBaseDt");
 
 
-        @*dtCreateQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));*@
+        @*dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));*@
 
         // 검증 시작일
-        dtCreateQuickValidationOneConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationTwoConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationThreeConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationOneConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationTwoConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationThreeConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
 
         // 검증 완료일
-        dtCreateQuickValidationOneConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationTwoConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationThreeConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationOneConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationTwoConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationThreeConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
 
         // 검증일
-        dtCreateQuickValidationOneConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationTwoConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtCreateQuickValidationThreeConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationOneConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationTwoConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationThreeConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
     });
 </script>
 

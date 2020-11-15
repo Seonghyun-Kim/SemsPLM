@@ -153,7 +153,7 @@ namespace Qms.Models
 
         public string PartGrpNm { get; set; }
 
-        public string Summary { get; set; }
+        public string Title { get; set; }
 
         public string CreateUsNm { get; set; }
 
@@ -168,7 +168,7 @@ namespace Qms.Models
             this.PartNm = response.PartNm;
             this.CarCode = response.CarCode;
             this.PartGrpNm = response.PartGrpNm;
-            this.Summary = response.Summary;
+            this.Title = response.Title;
             this.CreateUsNm = response.CreateUsNm;
             this.PlanUserNm = response.PlanUserNm;
         }
@@ -209,10 +209,12 @@ namespace Qms.Models
     public class QuickResponseModule : DObject, IDObject
     {
         // 신속대응 OID 
-        public int QuickOID { get; set; }
+        public int? QuickOID { get; set; }
 
         // 모듈 사용유무 
         public bool ModuleFl { get; set; }
+
+        public string ModuleType { get; set; }
 
         // 완료예정일 
         public DateTime? EstEndDt { get; set; }
