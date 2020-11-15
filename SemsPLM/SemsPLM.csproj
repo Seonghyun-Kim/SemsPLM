@@ -2801,12 +2801,14 @@
     <Content Include="Views\EBom\CompareEPart.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPart.cshtml" />
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
-    <Content Include="Views\Qms\CreateWorkerEducation.cshtml" />
-    <Content Include="Views\Qms\CreateQuickValidation.cshtml" />
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
     <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponsePlan.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickValidation.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditStandardFollowUp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

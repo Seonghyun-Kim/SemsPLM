@@ -1,0 +1,180 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 표준화 & Follow-Up 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnEditWorkerEducation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
+                    <button id="btnCancelWorkerEducation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</h3>
+    <table id="test" width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 범위</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 반영내용</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 완료일</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 기술표준문서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 첨부파일</th>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> P-FMEA</th>
+            <td>
+                <input id="txtEditStandardFollowUpPFMEADesc" style="width:100%;" />
+            </td>
+            <td>
+                <input id="dtEditStandardFollowUpPFMEAComplete" style="width:100%;" />
+            </td>
+            <td>
+                <input id="txtEditStandardFollowUpPFMEADocument" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpPFMEASearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+            </td>
+            <td>
+                <input id="fileEditStandardFollowUpPFMEA" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpPFMEAFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 도면</th>
+            <td>
+                <input id="txtEditStandardFollowUpDrawingDesc" style="width:100%;" />
+            </td>
+            <td>
+                <input id="dtEditStandardFollowUpDrawingComplete" style="width:100%;" />
+            </td>
+            <td>
+                <input id="txtEditStandardFollowUpDrawingDocument" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpDrawingSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+            </td>
+            <td>
+                <input id="fileEditStandardFollowUpDrawing" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpDrawingFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 관리계획서</th>
+            <td>
+                <input id="txtEditStandardFollowUpManagePlanDesc" style="width:100%;" />
+            </td>
+            <td>
+                <input id="dtEditStandardFollowUpManagePlanComplete" style="width:100%;" />
+            </td>
+            <td>
+                <input id="txtEditStandardFollowUpManagePlanDocument" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpManagePlanSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+            </td>
+            <td>
+                <input id="fileEditStandardFollowUpManagePlan" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpManagePlanFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 작업표준서</th>
+            <td>
+                <input id="txtEditStandardFollowUpWorkDocDesc" style="width:100%;" />
+            </td>
+            <td>
+                <input id="dtEditStandardFollowUpWorkDocComplete" style="width:100%;" />
+            </td>
+            <td>
+                <input id="txtEditStandardFollowUpWorkDocDocument" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpWorkDocSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+            </td>
+            <td>
+                <input id="fileEditStandardFollowUpWorkDoc" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpWorkDocFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 검사기준서</th>
+            <td>
+                <input id="txtEditStandardFollowUpInspecDesc" style="width:100%;" />
+            </td>
+            <td>
+                <input id="dtEditStandardFollowUpInspecComplete" style="width:100%;" />
+            </td>
+            <td>
+                <input id="txtEditStandardFollowUpInspecDocument" style="width:300px;" />
+                <button id="btnEditStandardFollowUpInspecSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+            </td>
+            <td>
+                <input id="fileEditStandardFollowUpInspec" style="width: 300px;" />
+                <button id="btnEditStandardFollowUpInspecFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 회의내용</th>
+            <td colspan="4">
+                <input id="txtEditStandardFollowUpDesc" style="width:100%;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal" style="width:180px;">
+            </th>
+            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
+        </tr>
+        <tr>
+            <td><button id="btnEditStandardFollowUpApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
+            <td>
+                <div id="listEditStandardFollowUpApprovalconfirm" />
+            </td>
+            <td>
+                <div id="listEditStandardFollowUpApprovalcomplete" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        var dtEditStandardFollowUpPFMEAComplete$ = $("#dtEditStandardFollowUpPFMEAComplete");
+        var dtEditStandardFollowUpDrawingComplete$ = $("#dtEditStandardFollowUpDrawingComplete");
+        var dtEditStandardFollowUpManagePlanComplete$ = $("#dtEditStandardFollowUpManagePlanComplete");
+        var dtEditStandardFollowUpWorkDocComplete$ = $("#dtEditStandardFollowUpWorkDocComplete");
+        var dtEditStandardFollowUpInspecComplete$ = $("#dtEditStandardFollowUpInspecComplete");
+
+        var listEditStandardFollowUpApprovalconfirm$ = $("#listEditStandardFollowUpApprovalconfirm");
+        var listEditStandardFollowUpApprovalcomplete$ = $("#listEditStandardFollowUpApprovalcomplete");
+
+        dtEditStandardFollowUpPFMEAComplete$.jqxDateTimeInput(DateFormat);
+        dtEditStandardFollowUpPFMEAComplete$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEditStandardFollowUpPFMEAComplete$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        dtEditStandardFollowUpDrawingComplete$.jqxDateTimeInput(DateFormat);
+        dtEditStandardFollowUpDrawingComplete$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEditStandardFollowUpDrawingComplete$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        dtEditStandardFollowUpManagePlanComplete$.jqxDateTimeInput(DateFormat);
+        dtEditStandardFollowUpManagePlanComplete$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEditStandardFollowUpManagePlanComplete$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        dtEditStandardFollowUpWorkDocComplete$.jqxDateTimeInput(DateFormat);
+        dtEditStandardFollowUpWorkDocComplete$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEditStandardFollowUpWorkDocComplete$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        dtEditStandardFollowUpInspecComplete$.jqxDateTimeInput(DateFormat);
+        dtEditStandardFollowUpInspecComplete$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEditStandardFollowUpInspecComplete$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        // 결재선지정
+        listEditStandardFollowUpApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+        listEditStandardFollowUpApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+    });
+</script>
+

@@ -1,0 +1,107 @@
+﻿@{
+    Layout = null;
+}
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;내처리문서현황</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>작업영역</div>
+                    <div>
+                        <div id="SearchMyProcessDocument_WorkType"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>담당자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchMyProcessDocument_UserNm" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>문서단계</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchMyProcessDocument_DocumentType" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>처리여부</div>
+                    <div>
+                        <div id="SearchMyProcessDocument_isProcess"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchMyProcessDocument_CreatUs" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>부가정보</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchMyProcessDocument_Desc" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchMyProcessDocument_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SearchMyProcessDocument_Grid"></div>
+</div>
+<script>
+    var MyProcessDocumentSource =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'OID', type: 'number' },
+            { name: 'Name', type: 'string' },
+            { name: 'WorkType', type: 'string' },
+            { name: 'UserOID', type: 'number' },
+            { name: 'UserNm', type: 'string' },
+            { name: 'DocumentType', type: 'string' },
+            { name: 'isProcess', type: 'number' },
+            { name: 'CreateUsNm', type: 'string' },
+            { name: 'Description', type: 'string' }
+        ],
+        type: "POST",
+        @*url: "/Qms/SelMyProcessDocumentGridList"*@
+    };
+
+    $(function () {
+        var myProcessDocumentList$ = $('#SearchMyProcessDocument_Grid');
+
+        myProcessDocumentList$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: '84.5%',
+            rowsheight: 28,
+            columnsheight: 30,
+            source: new $.jqx.dataAdapter(MyProcessDocumentSource),
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '작업영역', dataField: 'WorkType', width: '15%', align: 'center', cellsalign: 'center', },
+                { text: '담당자', dataField: 'Name', width: '15%', align: 'center', cellsalign: 'center', },
+                { text: '문서단계', dataField: 'DocumentType', width: '13%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '처리여부', dataField: 'isProcess', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '작성자', dataField: 'CreateUsNm', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '부가정보', dataField: 'Description', width: '15%', align: 'center', cellsalign: 'center', }
+            ]
+        });
+    });
+</script>
+

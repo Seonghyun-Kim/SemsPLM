@@ -273,21 +273,37 @@ namespace SemsPLM.Controllers
         #region -- LPA 대책서 
         #endregion
 
-        #region -- 유효성 검증 
-        public ActionResult CreateQuickValidation()
+        #region -- 유효성 검증
+        public ActionResult QuickMyProcessDocumentList()
         {
             return View();
+        }
+
+        /// <summary>
+        /// 2020.11.15
+        /// 유효성 검증 등록
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditQuickValidation()
+        {
+            return View("Dialog/dlgEditQuickValidation");
         }
 
         #endregion
 
         #region -- 표준화
+
         #endregion
 
         #region -- 교육
-        public ActionResult CreateWorkerEducation()
+        /// <summary>
+        /// 2020.11.15
+        /// 작업자 교육 등록
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditWorkerEducation()
         {
-            return View();
+            return View("Dialog/dlgEditWorkerEducation");
         }
         #endregion
     }
