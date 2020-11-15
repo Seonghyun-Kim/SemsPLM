@@ -2803,6 +2803,8 @@
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
+    <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickResponsePlan.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickValidation.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditWorkerEducation.cshtml" />
     <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
@@ -2812,7 +2814,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Qms\Partitial\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

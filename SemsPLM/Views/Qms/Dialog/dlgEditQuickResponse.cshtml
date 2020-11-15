@@ -6,7 +6,8 @@
         <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
     </div>
 
-    <div class="dlg_table dlgEditPerson_table">
+    <div>
+        <label>기본정보</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -30,7 +31,7 @@
                 <tr>
                     <th><label class="lbText">고객사</label></th>
                     <td><div id="cbDlgOem"></div></td>
-                    <th><label class="lbText">작업자</label></th>
+                    <th><label class="lbText">품질담당자</label></th>
                     <td><input type="text" id="txtDlg" value="" /></td>
                 </tr>
                 <tr>
@@ -39,8 +40,6 @@
                     <th><label class="lbText">불량수량</label></th>
                     <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
                 </tr>
-
-
                 <tr>
                     <th><label class="lbText"><i class="fa fa-caret-right"></i>봉쇄조치 </label></th>
                     <td colspan="3">
@@ -56,15 +55,16 @@
                     </td>
                 </tr>
                 <tr>
-                  
                     <th><label class="lbText">일정계획담당자</label></th>
-                    <td>
+                    <td colspan="3">
                         <input type="text" id="txtPlanUserNm" value="" />
                     </td>
                 </tr>
             </tbody>
 
         </table>
+
+        <label>문제요약</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -105,12 +105,6 @@
                     <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
                 </tr>
                 <tr>
-                    <th><label class="lbText">요약</label></th>
-                    <td colspan="3">
-                        <input type="text" id="txtDlgSummary" style="width:98%;" />
-                    </td>
-                </tr>
-                <tr>
                     <th><label class="lbText">불량내용상세</label></th>
                     <td colspan="3">
                         <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
@@ -132,6 +126,7 @@
             </tbody>
         </table>
 
+        <label>고품사진</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -208,7 +203,7 @@
             param.ImputeLibOID = WebUtils.GetComboValue("cbDlgImpute");
             param.ImputeDepartmentOID = null;
             param.ImputeSupplierOID = null;
-            param.Summary = $("#txtDlgSummary").val();
+            //param.Summary = $("#txtDlgSummary").val();
             param.PoorDetail = $("#txtDlgPoorDetail").val();
             param.RecurrenceFl = WebUtils.GetCheckBoxValue("chkDlgRecurrenceFl");
             param.OccurrencePlace = $("#txtDlgOccurrencePlace").val();

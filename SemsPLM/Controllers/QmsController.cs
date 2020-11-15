@@ -27,6 +27,15 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public PartialViewResult QuickResponseSummary(QuickResponse quickResponse)
+        {
+            if (quickResponse == null || quickResponse.OID == null)
+            {
+                throw new Exception("잘못된 호출입니다.");
+            }
+            return PartialView("Partitial/QuickResponseSummary", QuickResponseRepository.SelQuickResponse(quickResponse));
+        }
+
         public ActionResult EditQuickResponse(QuickResponse quickResponse)
         {
             Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
@@ -175,6 +184,75 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 신속대응 일정관리 
+        public ActionResult EditQuickResponsePlan(QuickResponse quickResponse)
+        {
+            if(quickResponse == null || quickResponse.OID == null)
+            {
+                throw new Exception("잘못된 호출입니다.");
+            }
+
+            List<QuickResponseModule> list = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = quickResponse.OID });
+
+            list.ForEach(v =>
+            {               
+                if (v.ModuleType == QmsConstant.TYPE_BLOCKADE)
+                {
+                    ViewBag.Blockade = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
+                {
+                    ViewBag.OccurrenceCause = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
+                {
+                    ViewBag.ImproveCountermeasure = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
+                {
+                    ViewBag.ErrorPrrof = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
+                {
+                    ViewBag.Lpa = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
+                {
+                    ViewBag.Check = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_STANDARD)
+                {
+                    ViewBag.Standard = v;
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_WORKER_EDU)
+                {
+                    ViewBag.WorkerEdu = v;
+                }
+            });
+
+            return View("Dialog/dlgEditQuickResponsePlan", QuickResponseRepository.SelQuickResponse(quickResponse));
+        }
+
+        public JsonResult SaveQuickResponseModule(List<QuickResponseModule> _params)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                _params.ForEach(v =>
+                {
+                    QuickResponseModuleRepository.UdtQuickResponseModule(v);
+                });
+
+                DaoFactory.Commit();
+                return Json("1");
+            }
+            catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+           
+        }
         #endregion
 
         #region -- 봉쇄조치 

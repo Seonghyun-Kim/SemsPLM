@@ -1,0 +1,417 @@
+﻿@{
+    Layout = null;
+}
+
+    <div>
+        <input type="hidden" id="hiddenDlgQuickOID" value="@Model.OID" />
+        <input type="hidden" id="hiddenDlgBlockadeOID" value="@ViewBag.Blockade.OID" />
+        <input type="hidden" id="hiddenDlgOccurrenceCauseOID" value="@ViewBag.OccurrenceCause.OID" />
+        <input type="hidden" id="hiddenDlgImproveCountermeasureOID" value="@ViewBag.ImproveCountermeasure.OID" />
+        <input type="hidden" id="hiddenDlgErrorPrrofOID" value="@ViewBag.ErrorPrrof.OID" />
+        <input type="hidden" id="hiddenDlgLpaOID" value="@ViewBag.Lpa.OID" />
+        <input type="hidden" id="hiddenDlgCheckOID" value="@ViewBag.Check.OID" />
+        <input type="hidden" id="hiddenDlgStandardOID" value="@ViewBag.Standard.OID" />
+        <input type="hidden" id="hiddenDlgWorkerEduOID" value="@ViewBag.WorkerEdu.OID" />
+    </div>
+<div>
+    <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+        <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 확정</button>
+    </div>
+    @{Html.RenderAction("QuickResponseSummary", "Qms");}
+    <label>신속대응</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        
+        <colgroup>
+            <col style="width:120px;" />
+            <col style="width:auto;" />
+            <col style="width:160px;" />
+            <col style="width:230px;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th>Yes/No</th>
+                <th>항목명</th>
+                <th>예정일자</th>
+                <th>처리담당자</th>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
+                        <div id="btnBlockadeUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">봉쇄조치</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgBloackAdePlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgBlockAdePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgBlockAdePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgBlockAdePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
+                        <div id="btnOccurrenceCauseUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">발생원인분석</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgOccurrenceCausePlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgOccurrenceCausePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgOccurrenceCausePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgOccurrenceCausePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnImproveCountermeasureUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">개선대책</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgImproveCountermeasurePlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgImproveCountermeasurePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgImproveCountermeasurePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgImproveCountermeasurePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnErrorProofUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">Eroor Proof</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgErrorProofPlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnLpaUnfitUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">LPA 확인</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgLpaUnfitPlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgLpaUnfitPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgLpaUnfitPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgLpaUnfitPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnCheckUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">유효성 검증</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgCheckPlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgCheckPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgCheckPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgCheckPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnStandardUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">표준화 & Follow-Up </label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgStandardPlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgStandardPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgStandardPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgStandardPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                        <div id="btnWorkerEduUseFl"></div>
+                    </div>
+                </td>
+                <td>
+                    <label class="lbText">작업자 교육</label>
+                </td>
+                <td>
+                    <input type="text" id="txtDlgWorkerEduPlanDt" />
+                </td>
+                <td>
+                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                        <input type="text" id="txtDlgWorkerEduPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <input type="text" id="txtDlgWorkerEduPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
+                        <button id="btnDlgWorkerEduPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnDlgBlockAdePlanUserSearch").jqxButton();
+        $("#btnDlgOccurrenceCausePlanUserSearch").jqxButton();
+        $("#btnDlgImproveCountermeasurePlanUserSearch").jqxButton();
+        $("#btnDlgErrorProofPlanUserSearch").jqxButton();
+        $("#btnDlgLpaUnfitPlanUserSearch").jqxButton();
+        $("#btnDlgCheckPlanUserSearch").jqxButton();
+        $("#btnDlgStandardPlanUserSearch").jqxButton();
+        $("#btnDlgWorkerEduPlanUserSearch").jqxButton();
+
+        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 27, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
+        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnErrorProofUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnCheckUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnStandardUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+
+        $("#txtDlgBloackAdePlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgBloackAdePlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.Blockade.EstEndDt == null)
+        {
+            <text>$("#txtDlgBloackAdePlanDt").val(WebUtils.GetDate(0, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgBloackAdePlanDt").val("@ViewBag.Blockade.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+        
+        $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.OccurrenceCause.EstEndDt == null)
+        {
+            <text>$("#txtDlgOccurrenceCausePlanDt").val(WebUtils.GetDate(7, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgOccurrenceCausePlanDt").val("@ViewBag.OccurrenceCause.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.ImproveCountermeasure.EstEndDt == null)
+        {
+            <text>$("#txtDlgImproveCountermeasurePlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgImproveCountermeasurePlanDt").val("@ViewBag.ImproveCountermeasure.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgErrorProofPlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgErrorProofPlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.ErrorPrrof.EstEndDt == null)
+        {
+            <text>$("#txtDlgErrorProofPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.ErrorPrrof.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.Lpa.EstEndDt == null)
+        {
+            <text>$("#txtDlgErrorProofPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.Lpa.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgCheckPlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgCheckPlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.Check.EstEndDt == null)
+        {
+            <text>$("#txtDlgCheckPlanDt").val(WebUtils.GetDate(21, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgCheckPlanDt").val("@ViewBag.Check.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgStandardPlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgStandardPlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.Standard.EstEndDt == null)
+        {
+            <text>$("#txtDlgStandardPlanDt").val(WebUtils.GetDate(22, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgStandardPlanDt").val("@ViewBag.Standard.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput(DateFormat);
+        $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        @if(ViewBag.WorkerEdu.EstEndDt == null)
+        {
+            <text>$("#txtDlgWorkerEduPlanDt").val(WebUtils.GetDate(27, "d", "-"))</text>
+        }
+        else
+        {
+            <text>$("#txtDlgWorkerEduPlanDt").val("@ViewBag.WorkerEdu.EstEndDt.ToString("yyyy-MM-dd")")</text>
+        }
+
+        $("#btnDlgSave").on("click", function () {
+            SaveQuickResponse();
+        })
+    });
+
+    var SaveQuickResponse = function () {
+        var params = [];
+
+        var blockadd = {};
+        blockadd.QuickOID = $("#hiddenDlgQuickOID").val();
+        blockadd.OID = $("#hiddenDlgBlockadeOID").val();
+        blockadd.ModuleFl = $("#btnBlockadeUseFl").val();
+        blockadd.EstEndDt = $("#txtDlgBloackAdePlanDt").val();
+        blockadd.ChargeUserOID = "75";
+        params.push(blockadd);
+
+        var occurrenceCause = {};
+        occurrenceCause.QuickOID = $("#hiddenDlgQuickOID").val();
+        occurrenceCause.OID = $("#hiddenDlgOccurrenceCauseOID").val();
+        occurrenceCause.ModuleFl = $("#btnOccurrenceCauseUseFl").val();
+        occurrenceCause.EstEndDt = $("#txtDlgOccurrenceCausePlanDt").val();
+        occurrenceCause.ChargeUserOID = "75";
+        params.push(occurrenceCause);
+
+        var ImproveCountermeasure = {};
+        ImproveCountermeasure.QuickOID = $("#hiddenDlgQuickOID").val();
+        ImproveCountermeasure.OID = $("#hiddenDlgImproveCountermeasureOID").val();
+        ImproveCountermeasure.ModuleFl = $("#btnImproveCountermeasureUseFl").val();
+        ImproveCountermeasure.EstEndDt = $("#txtDlgImproveCountermeasurePlanDt").val();
+        ImproveCountermeasure.ChargeUserOID = "75";
+        params.push(ImproveCountermeasure);
+
+        var errorprrof = {};
+        errorprrof.QuickOID = $("#hiddenDlgQuickOID").val();
+        errorprrof.OID = $("#hiddenDlgErrorPrrofOID").val();
+        errorprrof.ModuleFl = $("#btnErrorProofUseFl").val();
+        errorprrof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
+        errorprrof.ChargeUserOID = "75";
+        params.push(errorprrof);
+
+        var lpa = {};
+        lpa.QuickOID = $("#hiddenDlgQuickOID").val();
+        lpa.OID = $("#hiddenDlgLpaOID").val();
+        lpa.ModuleFl = $("#btnLpaUnfitUseFl").val();
+        lpa.EstEndDt = $("#txtDlgLpaUnfitPlanDt").val();
+        lpa.ChargeUserOID = "75";
+        params.push(lpa);
+
+        var check = {};
+        check.QuickOID = $("#hiddenDlgQuickOID").val();
+        check.OID = $("#hiddenDlgCheckOID").val();
+        check.ModuleFl = $("#btnCheckUseFl").val();
+        check.EstEndDt = $("#txtDlgCheckPlanDt").val();
+        check.ChargeUserOID = "75";
+        params.push(check);
+
+        var standard = {};
+        standard.QuickOID = $("#hiddenDlgQuickOID").val();
+        standard.OID = $("#hiddenDlgStandardOID").val();
+        standard.ModuleFl = $("#btnStandardUseFl").val();
+        standard.EstEndDt = $("#txtDlgStandardPlanDt").val();
+        standard.ChargeUserOID = "75";
+        params.push(standard);
+
+        var workeredu = {};
+        workeredu.QuickOID = $("#hiddenDlgQuickOID").val();
+        workeredu.OID = $("#hiddenDlgWorkerEduOID").val();
+        workeredu.ModuleFl = $("#btnWorkerEduUseFl").val();
+        workeredu.EstEndDt = $("#txtDlgWorkerEduPlanDt").val();
+        workeredu.ChargeUserOID = "75";
+        params.push(workeredu);
+        
+        $.post('/Qms/SaveQuickResponseModule', { _params: params }, function (response) {
+                if (response.isError) {
+                alert(response.resultMessage);
+                return;
+            }
+            alert("저장되었습니다.");
+        }).fail(function (err) {
+            alert(err.responseText);
+        });
+        
+    }
+</script>

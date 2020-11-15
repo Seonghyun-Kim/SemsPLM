@@ -6,7 +6,7 @@
 
   <alias>
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
-   
+    <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
   </alias>
   
   <statements>
@@ -268,6 +268,40 @@
       LEFT JOIN V_DOBJECT B ON A.OID = B.OID
       LEFT JOIN V_DOBJECT C ON A.PartOID = C.OID AND C.Type = 'PART'
       LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
+    </select>
+
+    <insert id="InsQuickResponseModule" parameterClass="QuickResponseModule">
+      INSERT INTO T_DQMS_QUICK_MODULE
+      (OID,
+      QuickOID,
+      ModuleFl)
+      VALUES
+      (#OID#,
+      #QuickOID#,
+      1)
+    </insert>
+    
+    <update id="UdtQuickResponseModule" parameterClass="QuickResponseModule">
+      UPDATE T_DQMS_QUICK_MODULE
+      SET
+      ModuleFl = #ModuleFl#,
+      EstEndDt = #EstEndDt#,
+      ChargeUserOID = #ChargeUserOID#
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelQuickResponseModule" parameterClass="QuickResponseModule" resultClass="QuickResponseModule">
+      SELECT A.*, B.Type AS ModuleType FROM T_DQMS_QUICK_MODULE A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="QuickOID">
+          QuickOID = #QuickOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          OID = #OID#
+        </isNotNull>
+      </dynamic>
+
     </select>
   </statements>
   
