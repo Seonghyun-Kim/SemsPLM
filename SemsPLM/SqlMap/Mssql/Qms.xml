@@ -7,6 +7,7 @@
   <alias>
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
     <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
+    <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
   </alias>
   
   <statements>
@@ -303,6 +304,39 @@
       </dynamic>
 
     </select>
+    
+    <!-- WorkerEdu SQL-->
+    <select id="SelWorkerEdu" parameterClass="WorkerEdu" resultClass="WorkerEdu">
+      SELECT A.*
+      FROM T_DQMS_WORKER_EDU A
+      <dynamic prepend="where">
+      </dynamic>
+    </select>
+
+    <insert id="InsWorkerEdu" parameterClass="WorkerEdu">
+      INSERT INTO T_DQMS_WORKER_EDU
+      (ModuleOID,
+      EduDetail,
+      EduPlan,
+      EduDt,
+      EduUserOID)
+      VALUES
+      (#ModuleOID#,
+      #EduDetail#,
+      #EduPlan#,
+      #EduDt#,
+      #EduUserOID#)
+    </insert>
+
+    <update id="UdtWorkerEdu" parameterClass="WorkerEdu">
+      UPDATE T_DQMS_WORKER_EDU
+      SET
+      EduDetail = #EduDetail#,
+      EduPlan = #EduPlan#,
+      EduDt = #EduDt#,
+      EduUserOID = #EduUserOID#
+      WHERE ModuleOID = #ModuleOID#
+    </update>
   </statements>
   
 </sqlMap>

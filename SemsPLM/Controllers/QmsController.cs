@@ -301,9 +301,40 @@ namespace SemsPLM.Controllers
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditWorkerEducation()
+        public ActionResult EditWorkerEducation(WorkerEdu workerEdu)
         {
-            return View("Dialog/dlgEditWorkerEducation");
+            return View("Dialog/dlgEditWorkerEducation", (workerEdu.OID == null ? workerEdu : WorkerEduRepository.SelWorkerEdu(workerEdu)));
+        }
+
+        public JsonResult InsWorkerEducation(WorkerEdu _param)
+        {
+            int ModuleOID = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObject dobj = new DObject();
+                dobj.Type = QmsConstant.TYPE_WORKER_EDU;
+                dobj.Name = QmsConstant.TYPE_WORKER_EDU;
+                ModuleOID = DObjectRepository.InsDObject(dobj);
+
+                if(ModuleOID == 0)
+                {
+                    throw new Exception("작업자교육을 등록 할 수가 없습니다.");
+                }
+
+                _param.ModuleOID = ModuleOID;
+                int returnValue = WorkerEduRepository.InsWorkerEdu(_param);
+
+                DaoFactory.Commit();
+
+                return Json(ModuleOID);
+            }
+            catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
         }
         #endregion
     }
