@@ -10,6 +10,7 @@ namespace Qms.Models
 {
     public class WorkerEdu : QuickResponseModule, IDObject
     {
+        public int? ModuleOID { get; set; }
         // 교육내용 
         public string EduDetail { get; set; }
 

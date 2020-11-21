@@ -44,6 +44,32 @@ namespace Common.Constant
 
         public static string TYPE_BLOCKADE_ITEM { get { return "BLOCKADE_ITEM"; } }
 
+        public static string TYPE_BLOCKADE_ITEM_MATERIAL { get { return "BLOCKADE_ITEM_MATERIAL"; } }
+
+        public static string TYPE_BLOCKADE_ITEM_OUT_PRODUCT { get { return "BLOCKADE_ITEM_OUT_PRODUCT"; } }
+
+        public static string TYPE_BLOCKADE_ITEM_PROCESS_PRODUCT { get { return "BLOCKADE_ITEM_PROCESS_PRODUCT"; } }
+
+        public static string TYPE_BLOCKADE_ITEM_FINISH_PRODUCT { get { return "BLOCKADE_ITEM_FINISH_PRODUCT"; } }
+
+        public static string TYPE_BLOCKADE_ITEM_STORAGE_PRODUCT { get { return "BLOCKADE_ITEM_STORAGE_PRODUCT"; } }
+
+        public static string TYPE_BLOCKADE_ITEM_SHIP_PRODUCT { get { return "BLOCKADE_ITEM_SHIP_PRODUCT"; } }
+
+        public static string NAME_BLOCKADE_ITEM_MATERIAL { get { return "원재료"; } }
+
+        public static string NAME_BLOCKADE_ITEM_OUT_PRODUCT { get { return "외주품"; } }
+
+        public static string NAME_BLOCKADE_ITEM_PROCESS_PRODUCT { get { return "공정품"; } }
+
+        public static string NAME_BLOCKADE_ITEM_FINISH_PRODUCT { get { return "완성품"; } }
+
+        public static string NAME_BLOCKADE_ITEM_STORAGE_PRODUCT { get { return "창고재고"; } }
+
+        public static string NAME_BLOCKADE_ITEM_SHIP_PRODUCT { get { return "고객출하"; } }
+
+
+
         public static string TYPE_OCCURRENCE_CAUSE_ITEM { get { return "OCCURRENCE_CAUSE_ITEM"; } }
 
         public static string TYPE_WHY { get { return "WHY"; } }

@@ -1,0 +1,296 @@
+﻿@{
+    Layout = null;
+}
+
+    <div>
+        <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+            <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+            <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
+        </div>
+
+        @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
+        <label>봉쇄조치</label>
+        <table id="tbBlockadeList" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:9%" />
+                <col style="width:18%" />
+                <col style="width:18%" />
+                <col style="width:9%" />
+                <col style="width:16%" />
+                <col style="width:13%" />
+                <col style="width:30%" />
+            </colgroup>
+            <tr>
+                <th>범위</th>
+                <th>대상범위</th>
+                <th>조치방법</th>
+                <th>대상수량</th>
+                <th>조치부서</th>
+                <th>담당자</th>
+                <th>기한</th>
+            </tr>
+        </table>
+
+        <label>시정</label>
+        <table id="tbCorrectiveAction" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:9%" />
+                <col style="width:11%" />
+                <col style="width:11%" />
+                <col style="width:11%" />
+                <col style="width:11%" />
+                <col style="width:11%" />
+                <col style="width:11%" />
+                <col style="width:25%" />
+            </colgroup>
+            <tr>
+                <th rowspan="2">범위</th>
+                <th colspan="2">선별</th>
+                <th rowspan="2">재작업</th>
+                <th rowspan="2">폐기</th>
+                <th rowspan="2">특채</th>
+                <th rowspan="2">기타</th>
+                <th rowspan="2">비고</th>
+            </tr>
+            <tr>
+                <th>적합</th>
+                <th>부적합</th>
+            </tr>
+        </table>
+
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var BlockadeList = @Html.Raw(Json.Encode(Model));
+
+        BlockadeList.forEach(function (v, i) {
+            PrintBlockade(v);
+            PrintCorrectiveAction(v);
+        });
+
+        $("#btnDlgSave").on("click", function () {
+            SaveBlockade();
+        });
+    });
+
+    function PrintBlockade(v) {
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("BlockadeType", v.Type);
+        tr$.setAttribute("OID", v.OID);
+        tr$.setAttribute("Data", "Y");
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+
+        var tdTargetScope$ = document.createElement("td");
+        var txtTargetScope$ = document.createElement("input");
+        txtTargetScope$.setAttribute("name", "TargetScope");
+        txtTargetScope$.setAttribute("type", "text");
+        txtTargetScope$.style.width = "100%";
+        txtTargetScope$.value = v.TargetScope;
+        txtTargetScope$.className = "txtBox";            
+        tdTargetScope$.appendChild(txtTargetScope$);
+
+        var tdAct$ = document.createElement("td");
+        var txtAct$ = document.createElement("input");
+        txtAct$.setAttribute("type", "text");
+        txtAct$.setAttribute("name", "Act");
+        txtAct$.style.width = "100%";
+        txtAct$.value = v.Act;
+        txtAct$.className = "txtBox";            
+        tdAct$.appendChild(txtAct$);
+
+        var tdTargetCnt$ = document.createElement("td");
+        var txtTargetCnt$ = document.createElement("input");
+        txtTargetCnt$.setAttribute("type", "text");
+        txtTargetCnt$.setAttribute("name", "TargetCnt");
+        txtTargetCnt$.style.width = "100%";
+        txtTargetCnt$.value = v.TargetCnt;
+        txtTargetCnt$.className = "txtBox";            
+        tdTargetCnt$.appendChild(txtTargetCnt$);
+
+        // 사용자하고 부서 선택해야함.
+        var tdActDepartmentOID = document.createElement("td");
+        tdActDepartmentOID.innerText = v.ActDepartmentNm;
+        var tdActUserOID$ = document.createElement("td");
+        tdActUserOID$.innerText = v.ActUserNm;
+
+        var tdActDt$ = document.createElement("td");
+        var divActDt$ = document.createElement("div");
+        divActDt$.style.display = "flex";
+        divActDt$.style.flexDirection = "row";
+        var txtActStartDt$ = document.createElement("div");
+        txtActStartDt$.setAttribute("name", "ActStartDt");
+        $(txtActStartDt$).jqxDateTimeInput(DateFormat);
+        $(txtActStartDt$).jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });   
+        if (v.ActStartDt === null) {
+            $(txtActStartDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = v.ActStartDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(txtActStartDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        var txtActEndDt$ = document.createElement("div");
+        txtActEndDt$.setAttribute("name", "ActEndDt");
+        $(txtActEndDt$).jqxDateTimeInput(DateFormat);
+        $(txtActEndDt$).jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });   
+        if (v.ActEndDt === null) {
+            $(txtActEndDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = v.ActEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(txtActEndDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        var lbActDtRange$ = document.createElement("label");
+        lbActDtRange$.innerText = "~";
+            
+        divActDt$.appendChild(txtActStartDt$);
+        divActDt$.appendChild(lbActDtRange$);
+        divActDt$.appendChild(txtActEndDt$);
+        tdActDt$.appendChild(divActDt$);
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdTargetScope$);
+        tr$.appendChild(tdAct$);
+        tr$.appendChild(tdTargetCnt$);
+        tr$.appendChild(tdActDepartmentOID);
+        tr$.appendChild(tdActUserOID$);
+        tr$.appendChild(tdActDt$);
+
+        document.getElementById("tbBlockadeList").appendChild(tr$);
+    }
+
+    function PrintCorrectiveAction(v) {
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("BlockadeType", v.Type);
+        tr$.setAttribute("OID", v.OID);
+
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+        
+        var tdSortSuitableCnt$ = document.createElement("td");
+        var txtSortSuitableCnt$ = document.createElement("input");
+        txtSortSuitableCnt$.setAttribute("type", "text");
+        txtSortSuitableCnt$.setAttribute("name", "SortSuitableCnt");
+        txtSortSuitableCnt$.style.width = "100%";
+        txtSortSuitableCnt$.value = v.SortSuitableCnt;
+        txtSortSuitableCnt$.className = "txtBox";            
+        tdSortSuitableCnt$.appendChild(txtSortSuitableCnt$);
+
+        var tdSortIncongruityCnt$ = document.createElement("td");
+        var txtSortIncongruityCnt$ = document.createElement("input");
+        txtSortIncongruityCnt$.setAttribute("type", "text");
+        txtSortIncongruityCnt$.setAttribute("name", "SortIncongruityCnt");
+        txtSortIncongruityCnt$.style.width = "100%";
+        txtSortIncongruityCnt$.value = v.SortIncongruityCnt;
+        txtSortIncongruityCnt$.className = "txtBox";            
+        tdSortIncongruityCnt$.appendChild(txtSortIncongruityCnt$);
+
+        var tdReworkCnt$ = document.createElement("td");
+        var txtReworkCnt$ = document.createElement("input");
+        txtReworkCnt$.setAttribute("type", "text");
+        txtReworkCnt$.setAttribute("name", "ReworkCnt");
+        txtReworkCnt$.style.width = "100%";
+        txtReworkCnt$.value = v.ReworkCnt;
+        txtReworkCnt$.className = "txtBox";            
+        tdReworkCnt$.appendChild(txtReworkCnt$);
+
+        var tdDisuseCnt$ = document.createElement("td");
+        var txtDisuseCnt$ = document.createElement("input");
+        txtDisuseCnt$.setAttribute("type", "text");
+        txtDisuseCnt$.setAttribute("name", "DisuseCnt");
+        txtDisuseCnt$.style.width = "100%";
+        txtDisuseCnt$.value = v.DisuseCnt;
+        txtDisuseCnt$.className = "txtBox";            
+        tdDisuseCnt$.appendChild(txtDisuseCnt$);
+
+        var tdSpecialCnt$ = document.createElement("td");
+        var txtSpecialCnt$ = document.createElement("input");
+        txtSpecialCnt$.setAttribute("type", "text");
+        txtSpecialCnt$.setAttribute("name", "SpecialCnt");
+        txtSpecialCnt$.style.width = "100%";
+        txtSpecialCnt$.value = v.SpecialCnt;
+        txtSpecialCnt$.className = "txtBox";            
+        tdSpecialCnt$.appendChild(txtSpecialCnt$);
+
+        var tdEtcCnt$ = document.createElement("td");
+        var txtEtcCnt$ = document.createElement("input");
+        txtEtcCnt$.setAttribute("type", "text");
+        txtEtcCnt$.setAttribute("name", "EtcCnt");
+        txtEtcCnt$.style.width = "100%";
+        txtEtcCnt$.value = v.EtcCnt;
+        txtEtcCnt$.className = "txtBox";            
+        tdEtcCnt$.appendChild(txtEtcCnt$);
+
+        var tdDesc$ = document.createElement("td");
+        var txtDesc$ = document.createElement("input");
+        txtDesc$.setAttribute("type", "text");
+        txtDesc$.setAttribute("name", "Description");
+        txtDesc$.style.width = "100%";
+        txtDesc$.value = v.Description;
+        txtDesc$.className = "txtBox";            
+        tdDesc$.appendChild(txtDesc$);
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdSortSuitableCnt$);
+        tr$.appendChild(tdSortIncongruityCnt$);
+        tr$.appendChild(tdReworkCnt$);
+        tr$.appendChild(tdDisuseCnt$);
+        tr$.appendChild(tdSpecialCnt$);
+        tr$.appendChild(tdEtcCnt$);
+        tr$.appendChild(tdDesc$);
+
+        document.getElementById("tbCorrectiveAction").appendChild(tr$);
+    }
+
+    function SaveBlockade() {
+        var params = [];
+        var tr$ = $("#tbBlockadeList tr[Data='Y']");
+        
+        tr$.each(function (i, v) {           
+            var param = {};
+            param.OID = $(v).attr("OID");
+            param.TargetScope = $($(v).find("[name='TargetScope']")[0]).val();
+            param.Act =  $($(v).find("[name='Act']")[0]).val();
+            param.TargetCnt =  $($(v).find("[name='TargetCnt']")[0]).val();
+            param.ActDepartmentOID = 70; //$($(v).find("[name='ActDepartmentOID']")[0]).val();
+            param.ActUserOID = 75; //$($(v).find("[name='ActUserOID']")[0]).val();
+            param.ActStartDt =  $($(v).find("[name='ActStartDt']")[0]).val();
+            param.ActEndDt = $($(v).find("[name='ActEndDt']")[0]).val();
+
+            var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + param.OID + "']")[0];
+
+            param.SortSuitableCnt =  $($(trCorrectiveAction$).find("[name='SortSuitableCnt']")[0]).val();
+            param.SortIncongruityCnt =  $($(trCorrectiveAction$).find("[name='SortIncongruityCnt']")[0]).val();
+            param.ReworkCnt =  $($(trCorrectiveAction$).find("[name='ReworkCnt']")[0]).val();
+            param.DisuseCnt =  $($(trCorrectiveAction$).find("[name='DisuseCnt']")[0]).val();
+            param.SpecialCnt =  $($(trCorrectiveAction$).find("[name='SpecialCnt']")[0]).val();
+            param.EtcCnt =  $($(trCorrectiveAction$).find("[name='EtcCnt']")[0]).val();
+            param.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
+
+            params.push(param);
+        });
+
+        $.post('/Qms/SaveQuickBlockade', { _params: params }, function (response) {
+            if (response.isError) {
+                alert(response.resultMessage);
+                return;
+            }
+            alert("저장되었습니다.");
+        }).fail(function (err) {
+            alert(err.responseText);
+        });
+    }
+</script>

@@ -1,0 +1,196 @@
+﻿@{
+    Layout = null;
+}
+
+    <div>
+        <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+            <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+            <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
+        </div>
+
+        @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
+
+        <label>원인분석</label>
+        <table id="tbOccurrenceCause" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:20%" />
+                <col style="width:69%" />
+                <col style="width:11%" />
+            </colgroup>
+            <tr>
+                <th>발생원인</th>
+                <th>발생원인 내역</th>
+                <th><button id="btnCauseAdd">원인추가</button></th>
+            </tr>
+        </table>
+
+        <label>검출대책</label>
+        <table id="tbOccurrenceCause" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:15%" />
+                <col style="width:10%" />
+                <col style="width:25%" />
+                <col style="width:15%" />
+                <col style="width:35%" />
+            </colgroup>
+            <tr>
+                <th>검출장소</th>
+                <th>Yes/No</th>
+                <th colspan="3">해당공정 내용(상세위치, 작업자, 검사원 등)</th>
+            </tr>
+            <tr>
+                <th>제조공정</th>
+                <td><div id="btnDetectMFl"></div></td>
+                <td colspan="3">
+                    <input type="text" id="txtDetectMDetail" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>품질</th>
+                <td><div id="btnDetectSFl"></div></td>
+                <td colspan="3">
+                    <input type="text" id="txtDetectSDetail" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>출하단계</th>
+                <td><div id="btnDetectQFl"></div></td>
+                <td colspan="3">
+                    <input type="text" id="txtDetectQDetail" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>기타</th>
+                <td><div id="btnDetectEFl"></div></td>
+                <td colspan="3">
+                    <input type="text" id="txtDetectEDetail" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>유출원인1</th>
+                <td colspan="4">
+                    <input type="text" id="txtLeakCause1" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>유출원인2</th>
+                <td colspan="4">
+                    <input type="text" id="txtLeakCause2" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>유출원인3</th>
+                <td colspan="4">
+                    <input type="text" id="txtLeakCause3" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <th>검출일</th>
+                <td colspan="4">
+                    <div id="dtDetectDt"></div>
+                </td>
+            </tr>
+            <tr>
+                <th>검출대책</th>
+                <td colspan="4">
+                    <input type="text" id="txtmeasure" class="txtBox" style="width:100%" />
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnCauseAdd").jqxButton();
+        $('#btnDetectMFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectSFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectQFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectEFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+
+        $("#dtDetectDt").jqxDateTimeInput(DateFormat);
+        $("#dtDetectDt").jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });   
+
+        AddOccurrenceCause();
+
+        $("#btnCauseAdd").on("click", function () {
+            AddOccurrenceCause();
+        })
+    });
+    
+    var AddOccurrenceCause = function () {
+        var table$ = document.getElementById("tbOccurrenceCause");
+
+        var tr$ = document.createElement("tr");
+        var tdOccurrenceCause$ = document.createElement("td");
+        var cbOccurrenceCause$ = document.createElement("div");
+        tdOccurrenceCause$.appendChild(cbOccurrenceCause$);
+        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceCauseList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 180, height: 25 });       
+        
+        var tdOccurrenceCauseDetail$ = document.createElement("td");
+        var divOccurrenceCauseDetail$ = document.createElement("div");
+
+        var tbWhy$ = document.createElement("table");        tbWhy$.style.width = "100%";
+
+
+        for (var i = 0; i < 5; i++) {
+           AddWhy(tbWhy$);
+        }        
+
+        divOccurrenceCauseDetail$.appendChild(tbWhy$);
+
+        tdOccurrenceCauseDetail$.appendChild(divOccurrenceCauseDetail$);
+
+        var tdBtn$ = document.createElement("td");
+        var btnWhyAdd = document.createElement("button");
+        btnWhyAdd.innerText = "Why추가";
+        tdBtn$.appendChild(btnWhyAdd);
+        $(btnWhyAdd).jqxButton();
+
+        $(btnWhyAdd).on("click", function () {
+            AddWhy(tbWhy$);
+        })
+         
+        
+        tr$.appendChild(tdOccurrenceCause$);
+        tr$.appendChild(tdOccurrenceCauseDetail$);
+        tr$.appendChild(tdBtn$);
+
+        table$.appendChild(tr$);
+    }
+
+    var AddWhy = function (tbWhy$) {
+        var trWhy$ = document.createElement("tr");
+        var tdWhy$ = document.createElement("td");
+        tdWhy$.style.width = "10%";
+        tdWhy$.innerText = "why" + ($(tbWhy$).children().length + 1).toString();
+
+        var tdWhyDetail$ = document.createElement("td");
+        tdWhyDetail$.style.width = "79%";
+        var txtWhyDetail$ = document.createElement("input");
+        txtWhyDetail$.setAttribute("type", "text");
+        txtWhyDetail$.style.width = "100%";
+        txtWhyDetail$.className = "txtBox";
+        tdWhyDetail$.appendChild(txtWhyDetail$);
+
+        var tdWhyBtn$ = document.createElement("td");
+        var btnWhyDelAdd$ = document.createElement("button");
+        btnWhyDelAdd$.innerText = "삭제";
+        tdWhyBtn$.appendChild(btnWhyDelAdd$);
+        $(btnWhyDelAdd$).jqxButton();
+
+        $(btnWhyDelAdd$).on("click", function () {
+            $(trWhy$).remove();
+        });
+
+        trWhy$.appendChild(tdWhy$);
+        trWhy$.appendChild(tdWhyDetail$);
+        trWhy$.appendChild(tdWhyBtn$);
+
+        tbWhy$.appendChild(trWhy$);
+    }
+</script>

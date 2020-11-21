@@ -7,6 +7,9 @@
   <alias>
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
     <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
+    <typeAlias alias="BlockadeItem" type="Qms.Models.BlockadeItem" />
+    <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
+    <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
   </alias>
   
   <statements>
@@ -270,6 +273,7 @@
       LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
     </select>
 
+    <!-- Module -->
     <insert id="InsQuickResponseModule" parameterClass="QuickResponseModule">
       INSERT INTO T_DQMS_QUICK_MODULE
       (OID,
@@ -303,6 +307,140 @@
       </dynamic>
 
     </select>
+
+    <!-- Blockade -->
+    <insert id="InsBlockadeItem" parameterClass="BlockadeItem">
+      INSERT INTO T_DQMS_BLOCKADE
+      (OID,
+      ModuleOID)
+      VALUES
+      (#OID#,
+      #ModuleOID#)
+
+    </insert>
+
+    <update id="UdtBlockadeItem" parameterClass="BlockadeItem">
+      UPDATE T_DQMS_BLOCKADE
+      SET
+      TargetScope = #TargetScope#,
+      Act = #Act#,
+      TargetCnt = #TargetCnt#,
+      ActDepartmentOID = #ActDepartmentOID#,
+      ActUserOID = #ActUserOID#,
+      ActStartDt = #ActStartDt#,
+      ActEndDt = #ActEndDt#,
+      SortSuitableCnt = #SortSuitableCnt#,
+      SortIncongruityCnt = #SortIncongruityCnt#,
+      ReworkCnt = #ReworkCnt#,
+      DisuseCnt = #DisuseCnt#,
+      SpecialCnt = #SpecialCnt#,
+      EtcCnt = #EtcCnt#
+      WHERE OID = #OID#
+    </update>
+    
+    <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
+      SELECT A.OID, B.Type, B.Name, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
+      , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
+      FROM T_DQMS_BLOCKADE A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.ActDepartmentOID = C.OID
+      LEFT JOIN T_DOBJECT D ON A.ActUserOID = D.OID
+
+      <dynamic prepend="where">
+        <isNotNull prepend="AND" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="AND" property="ModuleOID">
+          A.ModuleOID = #ModuleOID#
+        </isNotNull>
+        <isNotNull prepend="AND" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+      </dynamic>
+
+    </select>
+    
+    <!-- WorkerEdu SQL-->
+    <select id="SelWorkerEdu" parameterClass="WorkerEdu" resultClass="WorkerEdu">
+      SELECT A.*
+      FROM T_DQMS_WORKER_EDU A
+      <dynamic prepend="where">
+      </dynamic>
+    </select>
+
+    <insert id="InsWorkerEdu" parameterClass="WorkerEdu">
+      INSERT INTO T_DQMS_WORKER_EDU
+      (ModuleOID,
+      EduDetail,
+      EduPlan,
+      EduDt,
+      EduUserOID)
+      VALUES
+      (#ModuleOID#,
+      #EduDetail#,
+      #EduPlan#,
+      #EduDt#,
+      #EduUserOID#)
+    </insert>
+
+    <update id="UdtWorkerEdu" parameterClass="WorkerEdu">
+      UPDATE T_DQMS_WORKER_EDU
+      SET
+      EduDetail = #EduDetail#,
+      EduPlan = #EduPlan#,
+      EduDt = #EduDt#,
+      EduUserOID = #EduUserOID#
+      WHERE ModuleOID = #ModuleOID#
+    </update>
+
+    <!-- QuickValidation SQL-->
+    <select id="SelQmsCheck" parameterClass="QmsCheck" resultClass="QmsCheck">
+      SELECT A.*
+      FROM T_DQMS_CHECK A
+      <dynamic prepend="where">
+      </dynamic>
+    </select>
+
+    <insert id="InsQmsCheck" parameterClass="QmsCheck">
+      INSERT INTO T_DQMS_CHECK
+      (OID,
+      ModuleOID,
+      Cnt,
+      CheckSt,
+      CheckEt,
+      CheckUserOID,
+      CheckDt,
+      CheckFl,
+      CheckDetail,
+      FinishFl,
+      FinishDetail)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #Cnt#,
+      #CheckSt#,
+      #CheckEt#,
+      #CheckUserOID#,
+      #CheckDt#,
+      #CheckFl#,
+      #CheckDetail#,
+      #FinishFl#,
+      #FinishDetail#);
+    </insert>
+
+    <update id="UdtQmsCheck" parameterClass="QmsCheck">
+      UPDATE T_DQMS_WORKER_EDU
+      SET
+      CheckSt = #CheckSt#,
+      CheckEt = #CheckEt#,
+      CheckUserOID = #CheckUserOID#,
+      CheckDt = #CheckDt#,
+      CheckFl = #CheckFl#,
+      CheckDetail = #CheckDetail#,
+      FinishFl = #FinishFl#,
+      FinishDetail = #FinishDetail#
+      WHERE ModuleOID = #ModuleOID#;
+    </update>
   </statements>
   
 </sqlMap>
