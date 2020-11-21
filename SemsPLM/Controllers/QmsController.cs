@@ -372,9 +372,50 @@ namespace SemsPLM.Controllers
         /// 유효성 검증 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditQuickValidation()
+        public ActionResult EditQuickValidation(QmsCheck qmsCheck)
         {
-            return View("Dialog/dlgEditQuickValidation");
+            return View("Dialog/dlgEditQuickValidation", (qmsCheck.OID == null ? qmsCheck : QmsCheckRepository.SelQmsCheck(qmsCheck)));
+        }
+
+        /// <summary>
+        /// 2020.11.21
+        /// 유효성 검증 저장
+        /// </summary>
+        /// <param name="_param"></param>
+        /// <returns></returns>
+        public JsonResult InsQuickValidation(QmsCheck _param)
+        {
+            int ModuleOID = 0;
+            int returnValue = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                foreach (QmsCheck qmsCheck in _param.QmsCheckList)
+                {
+                    /*qmsCheck.OID = qmsCheck.Cnt;
+                    qmsCheck.ModuleOID = qmsCheck.Cnt;*/
+
+                    returnValue = QmsCheckRepository.InsQmsCheck(qmsCheck);
+                    if (qmsCheck.ModuleOID == null)
+                    {
+                        returnValue = QmsCheckRepository.InsQmsCheck(_param);
+                    }
+                    else
+                    {
+                        QmsCheckRepository.UdtQmsCheck(_param);
+                    }
+                }
+
+                DaoFactory.Commit();
+
+                return Json(returnValue);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
         }
 
         #endregion

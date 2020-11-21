@@ -11,29 +11,38 @@ namespace Qms.Models
 {
     public class QmsCheck : DObject, IDObject
     {
+        public int? ModuleOID { get; set; }
         // N차 
         public int? Cnt { get; set; }
 
         // 검증시작일
-        public DateTime? ConfirmSt { get; set; }
+        public DateTime? CheckSt { get; set; }
 
         // 검증완료일
-        public DateTime? ConfirmEt { get; set; }
+        public DateTime? CheckEt { get; set; }
 
         // 검증일 
         public DateTime? CheckDt { get; set; }
 
+        // 담당자
+        public int? CheckUserOID { get; set; }
+
         // 판정 
-        public bool? CheckFl { get; set; }
+        public int? CheckFl { get; set; }
 
         // 검증내용요약 
         public string CheckDetail { get; set; }
 
         // 종료여부 
-        public bool? FinishFl { get; set; }
+        public int? FinishFl { get; set; }
 
         // 종료사유 
         public string FinishDetail { get; set; }
+
+        #region -- 저장용
+        // 1차, 2차, 3차 유효성 검증 등록
+        public List<QmsCheck> QmsCheckList { get; set; }
+        #endregion
     }
 
     public static class QmsCheckRepository
