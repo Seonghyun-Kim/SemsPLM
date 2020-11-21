@@ -148,143 +148,254 @@
             <th><i class="fa fa-caret-right"></i> 2차 유효성검증</th>
             <th><i class="fa fa-caret-right"></i> 3차 유효성검증</th>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmSt">
             <th><i class="fa fa-caret-right"></i> 검증시작일</th>
-            <td>
-                <div id="dtEditQuickValidationOneConfirmSt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationTwoConfirmSt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationThreeConfirmSt" />
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmEt">
             <th><i class="fa fa-caret-right"></i> 검증완료일</th>
-            <td>
-                <div id="dtEditQuickValidationOneConfirmEt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationTwoConfirmEt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationThreeConfirmEt" />
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationUser">
             <th><i class="fa fa-caret-right"></i> 담당자</th>
-            <td>
-                <div id="txtEditQuickValidationOneUserNm" />
-            </td>
-            <td>
-                <div id="txtEditQuickValidationTwoUserNm" />
-            </td>
-            <td>
-                <div id="txtEditQuickValidationThreeUserNm" />
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmBaseDt">
             <th><i class="fa fa-caret-right"></i> 검증일</th>
-            <td>
-                <div id="dtEditQuickValidationOneConfirmBaseDt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationTwoConfirmBaseDt" />
-            </td>
-            <td>
-                <div id="dtEditQuickValidationThreeConfirmBaseDt" />
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmJudgment">
             <th><i class="fa fa-caret-right"></i> 판정</th>
-            <td>
-                <input type="radio" name="radioOneConfirm" value="1" />OK
-                <input type="radio" name="radioOneConfirm" value="0" />NG
-            </td>
-            <td>
-                <input type="radio" name="radioTwoConfirm" value="1" />OK
-                <input type="radio" name="radioTwoConfirm" value="0" />NG
-            </td>
-            <td>
-                <input type="radio" name="radioThreeConfirm" value="1" />OK
-                <input type="radio" name="radioThreeConfirm" value="0" />NG
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmDesc">
             <th><i class="fa fa-caret-right"></i> 검증내용요약</th>
-            <td>
-                <input type="text" id="txtEditQuickValidationOneConfirmDesc" style="width:100%" />
-            </td>
-            <td>
-                <input type="text" id="txtEditQuickValidationTwoConfirmDesc" style="width:100%" />
-            </td>
-            <td>
-                <input type="text" id="txtEditQuickValidationThreeConfirmDesc" style="width:100%" />
-            </td>
         </tr>
-        <tr>
+        <tr id="EditQuickValidationConfirmEnd">
             <th><i class="fa fa-caret-right"></i> 종료여부</th>
-            <td>
-                <input type="radio" name="radioOneEnd" value="1" />지속
-                <input type="radio" name="radioOneEnd" value="0" />종료
-            </td>
-            <td>
-                <input type="radio" name="radioTwoEnd" value="1" />지속
-                <input type="radio" name="radioTwoEnd" value="0" />종료
-            </td>
-            <td>
-                <input type="radio" name="radioThreeEnd" value="1" />지속
-                <input type="radio" name="radioThreeEnd" value="0" />종료
-            </td>
+        </tr>
+        <tr id="EditQuickValidationEndDesc">
+            <th><i class="fa fa-caret-right"></i> 종료사유</th>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal" style="width:180px;">
+            </th>
+            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
         </tr>
         <tr>
-            <th><i class="fa fa-caret-right"></i> 종료사유</th>
+            <td><button id="btnEditQuickValidationApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
             <td>
-                <input type="text" id="txtEditQuickValidationOneEndDesc" style="width:100%" />
+                <div id="listEditQuickValidationApprovalconfirm" />
             </td>
             <td>
-                <input type="text" id="txtEditQuickValidationTwoEndDesc" style="width:100%" />
-            </td>
-            <td>
-                <input type="text" id="txtEditQuickValidationThreeEndDesc" style="width:100%" />
+                <div id="listEditQuickValidationApprovalcomplete" />
             </td>
         </tr>
     </table>
 </div>
 
+
 <script>
+    var Cnt = 3; // 유효성 검증 카운트
     $(function () {
         var dtEditQuickValidationCreateDt$ = $("#dtEditQuickValidationCreateDt");
         var dtEditQuickValidationOccurDt$ = $("#dtEditQuickValidationOccurDt");
-        var dtEditQuickValidationOneConfirmSt$ = $("#dtEditQuickValidationOneConfirmSt");
-        var dtEditQuickValidationTwoConfirmSt$ = $("#dtEditQuickValidationTwoConfirmSt");
-        var dtEditQuickValidationThreeConfirmSt$ = $("#dtEditQuickValidationThreeConfirmSt");
-        var dtEditQuickValidationOneConfirmEt$ = $("#dtEditQuickValidationOneConfirmEt");
-        var dtEditQuickValidationTwoConfirmEt$ = $("#dtEditQuickValidationTwoConfirmEt");
-        var dtEditQuickValidationThreeConfirmEt$ = $("#dtEditQuickValidationThreeConfirmEt");
-        var dtEditQuickValidationOneConfirmBaseDt$ = $("#dtEditQuickValidationOneConfirmBaseDt");
-        var dtEditQuickValidationTwoConfirmBaseDt$ = $("#dtEditQuickValidationTwoConfirmBaseDt");
-        var dtEditQuickValidationThreeConfirmBaseDt$ = $("#dtEditQuickValidationThreeConfirmBaseDt");
 
+        dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
+        dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));
 
-        @*dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));*@
+        // 결재선 지정
+        var listEditQuickValidationApprovalconfirm$ = $("#listEditQuickValidationApprovalconfirm");
+        var listEditQuickValidationApprovalcomplete$ = $("#listEditQuickValidationApprovalcomplete");
+        listEditQuickValidationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+        listEditQuickValidationApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+        InitDlgValidation();
 
-        // 검증 시작일
-        dtEditQuickValidationOneConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationTwoConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationThreeConfirmSt$.text(WebUtils.GetDate(-1, "m", "-"));
+        // 저장
+        var btnDlgSave$ = $("#btnEditQuickValidation").jqxButton();
+        btnDlgSave$.on("click", function () {
+            var param = {};
+            param.QmsCheckList = [];
 
-        // 검증 완료일
-        dtEditQuickValidationOneConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationTwoConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationThreeConfirmEt$.text(WebUtils.GetDate(-1, "m", "-"));
+            for (var i = 0; i < Cnt; i++) {
+                var data = {};
+                var validationClass = $(".ValidationClass_" + (i + 1));
+
+                data.OID = $(validationClass[0]).attr("OID"); // ModuleOID
+                data.ModuleOID = $(validationClass[0]).attr("ModuleOID"); // ModuleOID
+                data.Cnt = $(validationClass[0]).attr("Cnt"); // N차수
+                data.CheckSt = $(validationClass[1]).jqxDateTimeInput("val"); // 검증시작일
+                data.CheckSt = $(validationClass[1]).jqxDateTimeInput("val"); // 검증시작일
+                data.CheckEt = $(validationClass[2]).jqxDateTimeInput("val"); // 검증종료일
+                data.CheckUserOID = $(validationClass[3]).attr("UserOID"); // 담당자 OID
+                data.CheckDt = $(validationClass[4]).jqxDateTimeInput("val"); // 검증일
+                data.CheckFl = $(validationClass[5]).jqxRadioButton('checked') ? 1 : 0; // CheckFl
+                data.CheckDetail = $(validationClass[7]).val(); // 검증내용요약
+                data.FinishFl = $(validationClass[8]).jqxRadioButton('checked') ? 1 : 0; // FinishFl
+                data.FinishDetail = $(validationClass[10]).val(); // 종료사유
+
+                if (data.CheckUserOID === undefined || data.CheckUserOID === null) {
+                    alert("담당자를 지정 해주세요.");
+                    return;
+                }
+
+                param.QmsCheckList.push(data);
+            }
+
+            console.log(param.QmsCheckList);
+
+            $.post('/Qms/InsQuickValidation', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+
+                alert("저장되었습니다.");
+                CloseDlgQuickValidation();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        // 취소
+        var btnDlgCancel$ = $("#btnCancelQuickValidation").jqxButton();
+        btnDlgCancel$.on("click", function () {
+            CloseDlgQuickValidation();
+        });
+    });
+
+    /**
+     * 유효성 검증 테이블 구성
+     * */
+    function InitDlgValidation() {
+        var innerHtml = "";
+        var ValidationClassNm = "ValidationClass";
+        var ModuleOID = "@Model.ModuleOID";
+        var OID = "@Model.OID";
+
+        // 검증시작일
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div class='ValidationClass_" + (i + 1) + "' OID='" + OID + "' ModuleOID='" + ModuleOID + "' style='display:none;' Cnt='" + (i + 1)+"'></div>"
+            innerHtml += "<div id='dtEditQuickValidationConfirmSt_" + (i + 1) + "' class='ValidationClass_" + (i + 1)+"' data-Cnt=" + (i + 1)+"></div>";
+            innerHtml += "</td>";
+            $("#EditQuickValidationConfirmSt").append(innerHtml);
+
+            $("#dtEditQuickValidationConfirmSt_" + (i + 1)).jqxDateTimeInput(DateFormat);
+            $("#dtEditQuickValidationConfirmSt_" + (i + 1)).val(WebUtils.GetDate(-1, "m", "-"));
+            $("#dtEditQuickValidationConfirmSt_" + (i + 1)).jqxDateTimeInput({ width: 150, height: 32 });
+
+            innerHtml = "";
+        }
+
+        // 검증완료일
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div id='dtEditQuickValidationConfirmEt_" + (i + 1) + "' class='ValidationClass_" + (i + 1) +"' data-Cnt=" + (i + 1) + "></div>";
+            innerHtml += "</td>";
+            $("#EditQuickValidationConfirmEt").append(innerHtml);
+
+            $("#dtEditQuickValidationConfirmEt_" + (i + 1)).jqxDateTimeInput(DateFormat);
+            $("#dtEditQuickValidationConfirmEt_" + (i + 1)).val(WebUtils.GetDate(-1, "m", "-"));
+            $("#dtEditQuickValidationConfirmEt_" + (i + 1)).jqxDateTimeInput({ width: 150, height: 32 });
+
+            innerHtml = "";
+        }
+
+        // 담당자
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<input type='text' id='txtEditQuickValidationUser_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' style='width: 80px; margin - right: 5px;' data-Cnt=" + (i + 1) + " readOnly></input>";
+            innerHtml += "<button id='btnEditQuickValidationUserSearch_" + (i + 1) + "' class='custom-button'><i class='fas fa-search'></i>검색</button>"
+            innerHtml += "</td>";
+
+            $("#EditQuickValidationUser").append(innerHtml);
+            innerHtml = "";
+
+            $("#btnEditQuickValidationUserSearch_" + (i + 1)).attr("onclick", "DlgQuickValidationSelectUser(" + (i + 1) + ")");
+
+        }
 
         // 검증일
-        dtEditQuickValidationOneConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationTwoConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
-        dtEditQuickValidationThreeConfirmBaseDt$.text(WebUtils.GetDate(-1, "m", "-"));
-    });
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div id='dtEditQuickValidationConfirmBaseDt_" + (i + 1) + "' class='ValidationClass_" + (i + 1) +"' data-Cnt=" + (i + 1) + "></div>";
+            innerHtml += "</td>";
+            $("#EditQuickValidationConfirmBaseDt").append(innerHtml);
+
+            $("#dtEditQuickValidationConfirmBaseDt_" + (i + 1)).jqxDateTimeInput(DateFormat);
+            $("#dtEditQuickValidationConfirmBaseDt_" + (i + 1)).val(WebUtils.GetDate(-1, "m", "-"));
+            $("#dtEditQuickValidationConfirmBaseDt_" + (i + 1)).jqxDateTimeInput({ width: 150, height: 32 });
+
+            innerHtml = "";
+        }
+
+        // 판정
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div style='display:flex;'>"
+            innerHtml += "<div id='radioEditQuickValidationConfirmJudgmentOk_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>OK</spen></div>";
+            innerHtml += "<div id='radioEditQuickValidationConfirmJudgmentNg_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>NG</spen></div>";
+            innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#EditQuickValidationConfirmJudgment").append(innerHtml);
+            innerHtml = "";
+
+            $("#radioEditQuickValidationConfirmJudgmentOk_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("Judgment" + (i + 1)), checked: true });
+            $("#radioEditQuickValidationConfirmJudgmentNg_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("Judgment" + (i + 1)), checked: false });
+        }
+
+        // 검증내용요약
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<input type='text' id='txtEditQuickValidationConfirmDesc_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' style='\"100%\"' data-Cnt=" + (i + 1) + "></input>";innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#EditQuickValidationConfirmDesc").append(innerHtml);
+            innerHtml = "";
+        }
+
+        // 종료여부
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div style='display:flex;'>"
+            innerHtml += "<div id='radioEditQuickValidationConfirmConti_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>OK</spen></div>";
+            innerHtml += "<div id='radioEditQuickValidationConfirmEnd_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>NG</spen></div>";
+            innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#EditQuickValidationConfirmEnd").append(innerHtml);
+            innerHtml = "";
+
+            $("#radioEditQuickValidationConfirmConti_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("ConfirmEnd" + (i + 1)), checked: true });
+            $("#radioEditQuickValidationConfirmEnd_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("ConfirmEnd" + (i + 1)), checked: false });
+        }
+
+        // 종료사유
+        for (var i = 0; i < Cnt; i++) {
+            innerHtml += "<td>";
+            innerHtml += "<div style='display:flex;'>"
+            innerHtml += "<input type='text' id='txtEditQuickValidationEndDesc_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' style='width:\"100%\"' data-Cnt=" + (i + 1) + "></input>";innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#EditQuickValidationEndDesc").append(innerHtml);
+            innerHtml = "";
+        }
+    }
+
+    function DlgQuickValidationSelectUser(cnt) {
+        OpenApprovalPersonDialog(function (res) {
+            if (res.length > 1) {
+                alert("담당자는 한명만 지정 할 수 있습니다.");
+                return;
+            }
+            $("#txtEditQuickValidationUser_" + cnt).val(res[0].Name);
+            $("#txtEditQuickValidationUser_" + cnt).attr("UserOID", res[0].OID);
+
+        }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+    }
 </script>
 

@@ -85,15 +85,14 @@
     $(function () {
         var dtEditWorkerEducationProcess$ = $("#dtEditWorkerEducationProcess");
         var listEditWorkerEducationApprovalconfirm$ = $("#listEditWorkerEducationApprovalconfirm");
-        var listEditWorkerEducationApprovalcomplete = $("#listEditWorkerEducationApprovalcomplete");
+        var listEditWorkerEducationApprovalcomplete$ = $("#listEditWorkerEducationApprovalcomplete");
 
         dtEditWorkerEducationProcess$.jqxDateTimeInput(DateFormat);
         dtEditWorkerEducationProcess$.val(WebUtils.GetDate(-1, "m", "-"));
         dtEditWorkerEducationProcess$.jqxDateTimeInput({ width: 150, height: 32 });
 
         listEditWorkerEducationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
-        listEditWorkerEducationApprovalcomplete.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
-
+        listEditWorkerEducationApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
 
         var btnDlgUserSearch$ = $("#btnEditWorkerEducationUserSearch").jqxButton();
         btnDlgUserSearch$.on("click", function () {
@@ -117,7 +116,6 @@
             param.EduDetail = $("#txtEditWorkerEducationDesc").val();
             param.EduPlan = $("#txtEditWorkerEducationDesc").val();
             param.EduUserOID = $("#txtEditWorkerEducationUser").attr("EduUserOID");
-            param.EduUserOID = $("#txtEditWorkerEducationUser").attr("EduUserOID");
             param.EduDt = dtEditWorkerEducationProcess$.val();
 
             if (param.EduUserOID == undefined || param.EduUserOID == null) {
@@ -135,6 +133,11 @@
             }).fail(function (err) {
                 alert(err.responseText);
             });
+        });
+
+        var btnDlgCancel$ = $("#btnCancelWorkerEducation").jqxButton();
+        btnDlgCancel$.on("click", function () {
+            CloseDlgWorkerEducation();
         });
     });
 </script>

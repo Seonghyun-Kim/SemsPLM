@@ -8,6 +8,7 @@
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
     <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
+    <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
   </alias>
   
   <statements>
@@ -336,6 +337,55 @@
       EduDt = #EduDt#,
       EduUserOID = #EduUserOID#
       WHERE ModuleOID = #ModuleOID#
+    </update>
+
+    <!-- QuickValidation SQL-->
+    <select id="SelQmsCheck" parameterClass="QmsCheck" resultClass="QmsCheck">
+      SELECT A.*
+      FROM T_DQMS_CHECK A
+      <dynamic prepend="where">
+      </dynamic>
+    </select>
+
+    <insert id="InsQmsCheck" parameterClass="QmsCheck">
+      INSERT INTO T_DQMS_CHECK
+      (OID,
+      ModuleOID,
+      Cnt,
+      CheckSt,
+      CheckEt,
+      CheckUserOID,
+      CheckDt,
+      CheckFl,
+      CheckDetail,
+      FinishFl,
+      FinishDetail)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #Cnt#,
+      #CheckSt#,
+      #CheckEt#,
+      #CheckUserOID#,
+      #CheckDt#,
+      #CheckFl#,
+      #CheckDetail#,
+      #FinishFl#,
+      #FinishDetail#);
+    </insert>
+
+    <update id="UdtQmsCheck" parameterClass="QmsCheck">
+      UPDATE T_DQMS_WORKER_EDU
+      SET
+      CheckSt = #CheckSt#,
+      CheckEt = #CheckEt#,
+      CheckUserOID = #CheckUserOID#,
+      CheckDt = #CheckDt#,
+      CheckFl = #CheckFl#,
+      CheckDetail = #CheckDetail#,
+      FinishFl = #FinishFl#,
+      FinishDetail = #FinishDetail#
+      WHERE ModuleOID = #ModuleOID#;
     </update>
   </statements>
   
