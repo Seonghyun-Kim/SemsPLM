@@ -106,7 +106,7 @@ namespace SemsPLM.Controllers
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
 
 
-                void SetQuickModule(string Type)
+                int SetQuickModule(string Type)
                 {
                     DObject dobjModule = new DObject();
                     dobjModule.Type = Type;
@@ -119,11 +119,59 @@ namespace SemsPLM.Controllers
                     dRelModule.FromOID = _param.OID;
                     dRelModule.ToOID = ModuleOID;
                     DRelationshipRepository.InsDRelationshipNotOrd(dRelModule);
+
+                    return ModuleOID;
+                }
+
+                void SetBloackadeItem(int ModuleOID, string type, string name)
+                {
+                    DObject dobjModule = new DObject();
+                    dobjModule.Type = type;
+                    dobjModule.Name = name;
+                    int ItemOID = DObjectRepository.InsDObject(dobjModule);
+
+                    BlockadeItemRepository.InsBlockadeItem(new BlockadeItem() { ModuleOID = ModuleOID, OID = ItemOID });
+                    
+                    DRelationship dRelModule = new DRelationship();
+                    dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
+                    dRelModule.FromOID = ModuleOID;
+                    dRelModule.ToOID = ItemOID;
+                    DRelationshipRepository.InsDRelationshipNotOrd(dRelModule);
                 }
 
                 // 봉쇄조치
-                SetQuickModule(QmsConstant.TYPE_BLOCKADE);
+                int blockadeOID = SetQuickModule(QmsConstant.TYPE_BLOCKADE);
 
+                if(_param.BlockadeMaterialFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_MATERIAL, QmsConstant.NAME_BLOCKADE_ITEM_MATERIAL);
+                }
+
+                if (_param.BlockadeOutProductFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_OUT_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_OUT_PRODUCT);
+                }
+
+                if (_param.BlockadeProcessProductFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_PROCESS_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_PROCESS_PRODUCT);
+                }
+
+                if (_param.BlockadeFinishProductFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_FINISH_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_FINISH_PRODUCT);
+                }
+
+                if (_param.BlockadeStorageProductFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_STORAGE_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_STORAGE_PRODUCT);
+                }
+
+                if (_param.BlockadeShipProductFl == true)
+                {
+                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_SHIP_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_SHIP_PRODUCT);
+                }
+                               
                 // 원인분석
                 SetQuickModule(QmsConstant.TYPE_OCCURRENCE_CAUSE);
 
@@ -256,9 +304,49 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 봉쇄조치 
+        public ActionResult EditQuickBlockade(QuickResponseModule _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            return View("Dialog/dlgEditQuickBlockade", BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = _param.OID }));
+        }
+
+        public JsonResult SaveQuickBlockade(List<BlockadeItem> _params)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                _params.ForEach(v =>
+                {
+                    DObjectRepository.UdtDObject(v);
+                    BlockadeItemRepository.UdtBlockadeItem(v);
+                });
+
+                DaoFactory.Commit();
+                return Json("1");
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+        }
+
         #endregion
 
         #region -- 발생원인분석 
+        public ActionResult EditQuickOccurrenceCause(QuickResponseModule _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            Library occurrenceCauseKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_CAUSE" });
+            List<Library> occurrenceCauseList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceCauseKey.OID });  // 검사유형
+            ViewBag.occurrenceCauseList = occurrenceCauseList;
+
+            return View("Dialog/dlgEditQuickOccurrenceCause");
+        }
         #endregion
 
         #region -- 개선대책 
