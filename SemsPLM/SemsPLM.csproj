@@ -2809,6 +2809,8 @@
     <Content Include="Views\Qms\Dialog\dlgEditWorkerEducation.cshtml" />
     <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditStandardFollowUp.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickBlockade.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickOccurrenceCause.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

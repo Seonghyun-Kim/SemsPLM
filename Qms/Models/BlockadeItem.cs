@@ -12,10 +12,7 @@ namespace Qms.Models
     public class BlockadeItem : DObject, IDObject
     {        
         // 모듈 OID (일정수립) 
-        public int ModuleOID { get; set; }
-
-        // 범위타입(원재료, 공정품 등) 
-        public string BlockadeType { get; set; }
+        public int? ModuleOID { get; set; }
 
         // 대상범위 
         public string TargetScope { get; set; }
@@ -28,9 +25,12 @@ namespace Qms.Models
 
         // 조치부서 
         public int? ActDepartmentOID { get; set; }
+        public string ActDepartmentNm { get; set; }
 
         // 조치담당자 
         public int? ActUserOID { get; set; }
+
+        public string ActUserNm { get; set; }
 
         // 기한-시작일 
         public DateTime? ActStartDt { get; set; }
