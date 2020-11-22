@@ -47,13 +47,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="IBatisNet.DataMapper, Version=1.6.2.666, Culture=neutral, PublicKeyToken=ed781d9fc396c6ca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dll\IBatisNet.DataMapper.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -131,6 +149,7 @@
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\EBomController.cs" />
+    <Compile Include="Controllers\EcontentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PmsController.cs" />
@@ -151,6 +170,7 @@
     <Content Include="images\group.png" />
     <Content Include="images\inbox.png" />
     <Content Include="images\left_arrow.png" />
+    <Content Include="images\logo_.png" />
     <Content Include="images\right_arrow.png" />
     <Content Include="images\status_h.png" />
     <Content Include="images\status_over.png" />
@@ -2614,17 +2634,6 @@
     <Content Include="Resource\jqwidgets-ver10.1.2\styles\font\jqx-icons.ttf" />
     <Content Include="Resource\jqwidgets-ver10.1.2\styles\font\jqx-icons.woff" />
     <Content Include="Resource\jqwidgets-ver10.1.2\styles\font\jqx-icons.woff2" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\colorpicker\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\darkness\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\le-frog\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\lightness\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\overcast\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\redmond\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\smoothness\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\start\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\sunny\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\images\Thumbs.db" />
-    <Content Include="Resource\jqwidgets-ver10.1.2\styles\Thumbs.db" />
     <Content Include="Resource\underscore-master\.eslintrc" />
     <Content Include="Resource\underscore-master\.gitignore" />
     <Content Include="Resource\underscore-master\.travis.yml" />
@@ -2736,12 +2745,13 @@
     <Content Include="SqlMap\Mssql\Comm.xml" />
     <Content Include="SqlMap\Mssql\Doc.xml" />
     <Content Include="SqlMap\Mssql\EBom.xml" />
+    <Content Include="SqlMap\Mssql\Econtents.xml" />
     <Content Include="SqlMap\Mssql\EO.xml" />
     <Content Include="SqlMap\Mssql\Library.xml" />
     <Content Include="SqlMap\Mssql\Manage.xml" />
-    <Content Include="SqlMap\Mssql\Qms.xml" />
     <Content Include="SqlMap\Mssql\Menu.xml" />
     <Content Include="SqlMap\Mssql\Pms.xml" />
+    <Content Include="SqlMap\Mssql\Qms.xml" />
     <Content Include="SqlMap\Mssql\Users.xml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -2801,21 +2811,33 @@
     <Content Include="Views\EBom\CompareEPart.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPart.cshtml" />
     <Content Include="Views\Common\Partitial\ptApprovalHistory.cshtml" />
-    <Content Include="Views\Qms\QuickResponseList.cshtml" />
+    <Content Include="Views\Common\MyApproval.cshtml" />
+    <Content Include="Views\Pms\ResourceDashboard.cshtml" />
+    <Content Include="Views\Econtents\CreateProblemsLibrary.cshtml" />
+    <Content Include="Views\Common\Dialog\dlgApprovalContent.cshtml" />
+    <Content Include="Views\Econtents\SearchProblemsLibrary.cshtml" />
+    <Content Include="Views\Econtents\SearchOptimalDesign.cshtml" />
+    <Content Include="Views\Econtents\CreateOptimalDesign.cshtml" />
+    <Content Include="Views\Manage\CodeLibrary.cshtml" />
+    <Content Include="Views\Manage\Dialog\dlgCodeLibraryManip.cshtml" />
+    <Content Include="Views\Econtents\InfoProblemsLibrary.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickBlockade.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickImproveCounterMeasure.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickOccurrenceCause.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponse.cshtml" />
-    <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickResponsePlan.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickValidation.cshtml" />
-    <Content Include="Views\Qms\Dialog\dlgEditWorkerEducation.cshtml" />
-    <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditStandardFollowUp.cshtml" />
-    <Content Include="Views\Qms\Dialog\dlgEditQuickBlockade.cshtml" />
-    <Content Include="Views\Qms\Dialog\dlgEditQuickOccurrenceCause.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
+    <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
+    <Content Include="Views\Qms\QuickResponseList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
+    <Folder Include="TmpFile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -2851,12 +2873,16 @@
       <Project>{61f2c527-d399-4980-9278-f68e94d1ade7}</Project>
       <Name>EBom</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Econtents\Econtents.csproj">
+      <Project>{3C1092FB-26A1-4002-A77B-B7BBAEB1D91D}</Project>
+      <Name>Econtents</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pms\Pms.csproj">
       <Project>{8c5b7b0a-6f2b-41ba-94ee-9bbf75ad6800}</Project>
       <Name>Pms</Name>
     </ProjectReference>
     <ProjectReference Include="..\Qms\Qms.csproj">
-      <Project>{F74E1C61-1E8B-4665-A15C-9AD2D305898B}</Project>
+      <Project>{f74e1c61-1e8b-4665-a15c-9ad2d305898b}</Project>
       <Name>Qms</Name>
     </ProjectReference>
   </ItemGroup>

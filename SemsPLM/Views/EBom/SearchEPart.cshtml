@@ -11,11 +11,111 @@
             <label><i class="fas fa-folder-open"></i> &nbsp;E-BOM 검색</label>
         </div>
         <div class="searchContent">
-            <div class="searchData">
-                <div class="comboBoxLabel">고객사</div>
-                <div>
-                    <div id="SearchEPartOEM" class="searchEpartComboBox"></div>
+            @*<div class="searchData">
+                    <div class="comboBoxLabel">고객사</div>
+                    <div>
+                        <div id="SearchEPartOEM" class="searchEpartComboBox"></div>
+                    </div>
                 </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">차종</div>
+                    <div>
+                        <div id="SearchEPartCar" class="searchEpartComboBox"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">프로젝트</div>
+                    <div>
+                        <div id="SearchEPartPms" class="searchEpartComboBox"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">프로젝트 라이브러리</div>
+                    <div>
+                        <div id="" class="searchEpartComboBox"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>품번</div>
+                    <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>S/ON 품번</div>
+                    <div><input id="SearchEPartRepPartNo" type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>대체 품번</div>
+                    <div><input id="SearchEPartRepPartNo2" type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div>품명</div>
+                    <div><input id="SearchEPartTitle" type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">재질</div>
+                    <div>
+                        <div id="" class="searchEpartComboBox"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>EO No</div>
+                    <div><input id="SearchEPartEoNo" type="text" class="txtBox" value="" /></div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">EO 일자</div>
+                    <div>
+                        <div id="SearchEPartEoNoApplyDt" class="searchEpartDateTimeInput"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>고객사 EO</div>
+                    <div>
+                        <input id="SearchEPartSelEo" type="text" class="txtBox" value="" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="checkBoxLabel">타입</div>
+                    <div>
+                        <div id="SearchEPartTypeAssy" class="custom-checkbox">
+                            Assy
+                        </div>
+                        <div id="SearchEPartTypeSAssy" class="custom-checkbox">
+                            S/Assy
+                        </div>
+                        <div id="SearchEPartTypeDetail" class="custom-checkbox">
+                            Detail
+                        </div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">작성일</div>
+                    <div><div id="SearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
+                </div>
+                <div class="searchData">
+                    <div class="checkBoxLabel">별납품</div>
+                    <div><div id="searchEpart_isSeperate" class="custom-checkbox"></div></div>
+                </div>*@
+            <div class="searchData">
+                <div>부품번호</div>
+                <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="checkBoxLabel">구분</div>
+                <div>
+                    <div id="SearchEPartAssemble" class="custom-checkbox">
+                        조립도
+                    </div>
+                    <div id="SearchEPartSingle" class="custom-checkbox">
+                        단품도
+                    </div>
+                    <div id="SearchEPartStandard" class="custom-checkbox">
+                        스탠다드
+                    </div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_NO</div>
+                <div> <div id="SearchEPartItemNo" class="searchEpartComboBox"></div></div>
             </div>
             <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
@@ -24,87 +124,18 @@
                 </div>
             </div>
             <div class="searchData">
-                <div class="comboBoxLabel">프로젝트</div>
-                <div>
-                    <div id="SearchEPartPms" class="searchEpartComboBox"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">프로젝트 라이브러리</div>
-                <div>
-                    <div id="" class="searchEpartComboBox"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div>품번</div>
-                <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>S/ON 품번</div>
-                <div><input id="SearchEPartRepPartNo" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>대체 품번</div>
-                <div><input id="SearchEPartRepPartNo2" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>품명</div>
-                <div><input id="SearchEPartTitle" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">재질</div>
-                <div>
-                    <div id="" class="searchEpartComboBox"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div>EO No</div>
-                <div><input id="SearchEPartEoNo" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">EO 일자</div>
-                <div>
-                    <div id="SearchEPartEoNoHistory" class="searchEpartDateTimeInput"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div>고객사 EO</div>
-                <div>
-                    <input id="SearchEPartSelEo" type="text" class="txtBox" value="" />
-                </div>
-            </div>
-            <div class="searchData">
-                <div class="checkBoxLabel">타입</div>
-                <div>
-                    <div id="SearchEPartTypeAssy" class="custom-checkbox">
-                        Assy
-                    </div>
-                    <div id="SearchEPartTypeSAssy" class="custom-checkbox">
-                        S/Assy
-                    </div>
-                    <div id="SearchEPartTypeDetail" class="custom-checkbox">
-                        Detail
-                    </div>
-                </div>
-            </div>
-            <div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div><div id="SearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
             </div>
-            <div class="searchData">
-                <div class="checkBoxLabel">별납품</div>
-                <div><div id="searchEpart_isSeperate" class="custom-checkbox"></div></div>
-            </div>
-            <div class="searchButton" >
+            <div class="searchButton">
                 <button id="SearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="SearchEPartGrid"></div>
-        
-<script type="text/javascript">
+        <div id="SearchEPartGrid"></div>
+        <script type="text/javascript">
 
     $(function () {
         //const CreEPartEoAppDate$ = $('#CreateEPartEo_No_ApplyDate');
@@ -119,14 +150,13 @@
         //CreEPartSelEoDate$.val(WebUtils.GetDate(-1, "m", "-"));
         //CreEPartSelEoDate$.jqxDateTimeInput({ width: "98%", height: 32 });
 
-        var SearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-        var SearchEPartOemLib$ = $('#SearchEPartOEM');
+        var SearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var SearchEPartCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEPartItemLib$ = $('#SearchEPartItemNo');
         var SearchEPartCarLib$ = $('#SearchEPartCar');
-        var SearchEPartPmsLib$ = $('#SearchEPartPms');
-
-        var OEMSource =
+        var CarSource =
         {
-            localdata: SearchEPartOemList,
+            localdata: SearchEPartCarList,
             datatype: "json",
             datafields:
                 [
@@ -134,20 +164,32 @@
                     { name: 'OID', type: 'int' },
                 ]
         };
-        var OEMdataAdapter = new $.jqx.dataAdapter(OEMSource);
-        SearchEPartOemLib$.jqxComboBox({ source: OEMdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+        SearchEPartCarLib$.jqxComboBox({width: 250, height: 32, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        var ItemSource =
+        {
+            localdata: SearchEPartItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        SearchEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
 
         $(document).on('change', '#SearchEPartOEM', function () {
-            SearchChangeEPartLib($('#SearchEPartOEM').jqxComboBox('getSelectedItem').value, $('#SearchEPartCar'));
+            //   SearchChangeEPartLib($('#SearchEPartOEM').jqxComboBox('getSelectedItem').value, $('#SearchEPartCar'));
             //SearchChangeEPartLib(SearchEPartOemLib$.jqxComboBox('getSelectedItem').value, SearchEPartCarLib$);
         });
 
-        $('#SearchEPartTypeAssy').jqxRadioButton({ width: 100, height: 30, checked: true });
-        $('#SearchEPartTypeSAssy').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#SearchEPartTypeDetail').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#searchEpart_isSeperate').jqxCheckBox({width:25, height:30, checked:false });
-        $('.searchEpartComboBox').jqxComboBox({ width: 180, height: 33 });
-        $('.searchEpartDateTimeInput').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+        $('#SearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: true });
+        $('#SearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#SearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchEPartSource = {
             datatype: 'json',
@@ -158,22 +200,19 @@
                 { name: 'BPolicy'},
                 { name: 'CreateUsNm' },
                 { name: 'CreateDt', type: 'date' },
-                { name: 'Description' },
-                { name: 'Title' },
                 { name: 'Car_Lib_OID' },
-                { name: 'Car_Lib_NM'},
-                { name: 'Rep_Part_No' },
-                { name: 'Rep_Part_No2' },
-                { name: 'Eo_No' },
-                { name: 'Eo_No_ApplyDt', type: 'date' },
-                { name: 'Etc' },
+                { name: 'Car_Lib_Nm' },
+                { name: 'ITEM_No' },
+                { name: 'ITEM_NoNm' },
+                { name: 'Block_No' },
+                { name: 'Block_NoNm' },
+                { name: 'Material_OID' },
+                { name: 'Material_Nm' },
                 { name: 'EPartType' },
                 { name: 'Sel_Eo' },
                 { name: 'Sel_Eo_Dt', type: 'date' },
-                { name: 'Spec' },
                 { name: 'Thumbnail' },
                 { name: 'Revision' },
-                { name: 'Surface' }
             ],
         }
 
@@ -194,19 +233,16 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '차종', datafield: 'Car_Lib_NM', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: 'S/NO 품번', datafield: 'Rep_Part_No', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '재질', datafield: 'Spec', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '표면처리', datafield: 'Surface', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: 'EO NO', datafield: 'Eo_No', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: 'EO 일자', datafield: 'Eo_No_ApplyDt', width: "7%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd',},
-                { text: 'C/N', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
-                { text: '작성일', datafield: 'CreateDt', width: "7%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '품번', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '재질', datafield: 'Material_Nm', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: 'Block_No', datafield: 'Block_NoNm', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: 'Rev', datafield: 'Revision', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "8%", align: 'center', cellsalign: 'center', },
                 {
-                    text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                    text: '상태', datafield: 'BPolicy', width: "8%", align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                     }
@@ -258,33 +294,41 @@
         //$('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 33, });
         getSearchEPartList(SearchEPartSource, SearchEPartGrid$, {});
 
+        var SearchDivision=null;
+        $("#SearchEPartAssemble").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+            }
+        });
+
+        $("#SearchEPartSingle").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+            }
+        });
+
+        $("#SearchEPartStandard").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+            }
+        });
 
         $('#SearchEPartbtn').on('click', function () {
+            var SearchEPartCreateDt = $('#SearchEPartCreateDt').val();
+            var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+
             var param = {};
-           
-            param.Oem_Lib_OID = $("#SearchEPartOEM").jqxComboBox('val');
-            param.Car_Lib_OID = $("#SearchEPartCar").jqxComboBox('val');
-            param.Pms_OID = SearchEPartPms.value;
-
-            param.Name = SearchEPartName.value;
-
-            param.Rep_Part_No = SearchEPartRepPartNo.value;
-            param.Rep_Part_No2 = SearchEPartRepPartNo2.value;
-            param.Title = SearchEPartTitle.value;
-            param.Eo_No = SearchEPartEoNo.value;
-            param.Eo_No_History = SearchEPartEoNoHistory.value;
-            param.Sel_Eo = SearchEPartSelEo.value;
-            //param.Name = SearchEPartTypeAssy.value;
-            //param.Name = SearchEPartTypeAssy.value;
-            //param.Name = SearchEPartTypeAssy.value;
-            //param.Name = searchEpart_isSeperate.value;
-            param.CreateDt = SearchEPartCreateDt.value;
-
-
+            param.Name = $('#SearchEPartName').val();          
+            param.Division = SearchDivision;
+            param.Car_Lib_OID = SearchEPartCarLib$.val();
+            param.ITEM_No = SearchEPartItemLib$.val();
+            param.StartCreateDt = SearchEPartCreateDtArray[0];
+            param.EndCreateDt = SearchEPartCreateDtArray[1]+" 23:59:59";
+            console.log(param);
             getSearchEPartList(SearchEPartSource, SearchEPartGrid$, param);
-            //RequestData("/Ebom/SelEPart", null, function (res) {
-            //    PrintJqxGrid(SearchEPartSource, SearchEPartGrid$, res);
-            //});
         });
     });
 
@@ -295,26 +339,26 @@
     }
 
 
-    function SearchChangeEPartLib(OID, ID) {
-        var comboBox$ = ID;
-        var param = {};
-        param.fromOID = OID;
-        var comboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                comboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var comboAdapter = new $.jqx.dataAdapter(comboSource);
-                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID"});
-            }
-        });
-    }
-</script>
+    //function SearchChangeEPartLib(OID, ID) {
+    //    var comboBox$ = ID;
+    //    var param = {};
+    //    param.fromOID = OID;
+    //    var comboSource;
+    //    RequestData("/Manage/SelLibrary", param, function (res) {
+    //        if (res.length > 0) {
+    //            comboSource =
+    //            {
+    //                localdata: res,
+    //                datatype: "json",
+    //                datafields:
+    //                    [
+    //                        { name: 'KorNm', type: 'string' },
+    //                        { name: 'OID', type: 'int' },
+    //                    ]
+    //            };
+    //            var comboAdapter = new $.jqx.dataAdapter(comboSource);
+    //            comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID"});
+    //        }
+    //    });
+    //}
+        </script>

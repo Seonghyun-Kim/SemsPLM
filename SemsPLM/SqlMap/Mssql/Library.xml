@@ -28,15 +28,14 @@
           A.Description LIKE CONCAT('%',#Description#,'%')
         </isNotNull>
         <isNotNull prepend="and" property="KorNm">
-          B.KorNm = #KorNm#
+          B.KorNm  LIKE CONCAT('%',#KorNm#,'%')
         </isNotNull>
         <isNotNull prepend="and" property="FromOID">
           B.FromOID = #FromOID#
         </isNotNull>
         <isNotNull prepend="and" property="IsUse">
           B.IsUse = #IsUse#
-        </isNotNull>
-      
+        </isNotNull>  
       </dynamic>
       AND A.DeleteDt IS NULL
     </select>
@@ -59,6 +58,79 @@
     <update id="updateLibrary" parameterClass="Library">
       UPDATE T_DLIBRARY SET
       KorNm = #KorNm#
+      ,IsUse = #IsUse#
+      ,Ord = #Ord#
+      WHERE OID = #OID#
+    </update>
+
+
+    <select id="SelCodeLibrary" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DCODELIBRARY A
+      WHERE 1=1
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="KorNm">
+          A.KorNm  LIKE CONCAT('%',#KorNm#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          A.FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="IsUse">
+          A.IsUse = #IsUse#
+        </isNotNull>
+        <isNotNull prepend="and" property="Code1">
+          A.Code1  LIKE CONCAT('%',#Code1#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Code2">
+          A.Code2  LIKE CONCAT('%',#Code2#,'%')
+        </isNotNull>
+      AND A.DeleteDt IS NULL
+      ORDER BY Ord
+    </select>
+
+    <insert id="InsCodeLibrary" parameterClass="Library">
+       <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DCODELIBRARY
+      </selectKey>
+        INSERT INTO T_DCODELIBRARY
+      (OID
+      ,KorNm
+      ,FromOID
+      ,IsUse
+      ,Ord
+      ,DeleteDt
+      ,DeleteUs
+      ,Code1
+      ,Code2
+      ,CreateDt
+      ,CreateUs
+      ,Description)
+      VALUES
+      (#OID#
+      ,#KorNm#
+      ,#FromOID#
+      ,#IsUse#
+      ,#Ord#
+      ,#DeleteDt#
+      ,#DeleteUs#
+      ,#Code1#
+      ,#Code2#
+      ,#CreateDt#
+      ,#CreateUs#
+      ,#Description#)
+    </insert>
+    
+  <update id="updateCodeLibrary" parameterClass="Library">
+      UPDATE T_DCODELIBRARY SET
+      Code1 = #Code1#
+      ,Code2 = #Code2#
+      ,KorNm = #KorNm#
       ,IsUse = #IsUse#
       ,Ord = #Ord#
       WHERE OID = #OID#

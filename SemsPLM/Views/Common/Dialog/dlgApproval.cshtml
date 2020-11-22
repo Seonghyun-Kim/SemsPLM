@@ -38,7 +38,7 @@
     <div class="doc_editor">
         <h4>
             <span><i class="fas fa-pen"></i> &nbsp;제목</span>
-            <input type="text" value="" placeholder="문서 제목을 입력하세요" />
+            <input type="text" value="" placeholder="문서 제목을 입력하세요" id="txtTitle" />
         </h4>
         <div id="docEditor"></div>
     </div>
@@ -287,16 +287,16 @@
     });
 
     var fbActionApprov = function (mode, target$, selPersons) {
-            var result = false;
-            var approv$ = $('span[data-type="' + mode + '"]');
+        var result = false;
+        var approv$ = $('span[data-type="' + mode + '"]');
 
-            approv$.each(function (idx, val) {
-                if (selPersons.filter(function (innerVal, innerIdx) { return innerVal.id == val.getAttribute('data-id'); }).length > 0) {
-                    result = true;
-                }
-            });
+        approv$.each(function (idx, val) {
+            if (selPersons.filter(function (innerVal, innerIdx) { return innerVal.id == val.getAttribute('data-id'); }).length > 0) {
+                result = true;
+            }
+        });
 
-            return result;
+        return result;
     }
 
     var foDataApprov = function () {
@@ -305,6 +305,8 @@
         approval.Name = $("#approvalLineComboBox").jqxComboBox('val');
         approval.InboxStep = [];
         approval.TargetOID = @ViewBag.TargetOID;
+        approval.Description = $('#txtTitle').val();
+        approval.Comment = $('#docEditor').jqxEditor('val');
 
         approv$.each(function (idx, val) {
             var inboxStep = {};

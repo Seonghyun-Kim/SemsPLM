@@ -2,24 +2,36 @@
 @{
     Layout = null;
 }
-<input type="hidden" value="" id="LOID"/>
-<input type="text" />
-<input type="button" value="검색" id="SelLOID"/>
-<input type="hidden" value="" id="ROID" />
-<input type="text" />
-<input type="button" value="검색" id="SelROID"/>
-<input type="button" value="비교"/>
+
+    <table class="tableTopButtonBox" style="width:1902px;">
+        <tr>
+            <td style="width:720px;border-right:1px solid #aaa;">
+                <input type="hidden" value="" id="LOID" />
+                <input type="text" id="LName" placeholder="L" />
+                <button class="custom-button" id="SelLOID"><i class="fas fa-search"></i> 검색</button>
+                &nbsp;&nbsp;
+                <!--<input type="button" value="검색" id="SelLOID" />-->
+                <input type="hidden" value="" id="ROID" />
+                <input type="text" id="RName" placeholder="R" />
+                <button class="custom-button" id="SelROID"><i class="fas fa-search"></i> 검색</button>
+                <!--<input type="button" value="검색" id="SelROID" />-->
+            </td>
+            <td style="padding-left:20px;">
+                <button class="custom-button" id="CompareEPartBtn"><i class="fas fa-balance-scale"></i> 비교</button>
+                <!--<input type="button" value="비교" id="CompareEPartBtn" />-->
+            </td>
+        </tr>
+    </table>
+
 <div id="CompareEPartGrid"></div>
 
 <script type="text/javascript">
     $(function () {
-        const CompareEPartSource = {
+        var CompareEPartSource = {
             datatype: 'json',
             datafields: [
                 //System Mandatory
                 { name: 'Level', type: 'number' },
-                { name: 'RootBaseLineOID', type: 'number' },
-                { name: 'ProjectOID', type: 'number' },
                 { name: 'FromOID', type: 'number' },
                 { name: 'ToOID', type: 'number' },
                 { name: 'CompareChildren', type: 'array' },
@@ -28,8 +40,18 @@
 
                 //Object Mandatory
                 { name: 'LName', type: 'string' },
+                { name: 'LRevision', type: 'string' },
+                { name: 'LCar_Lib_OID', type: 'number' },
+                { name: 'LCar_Lib_NM', type: 'string' },
+                { name: 'LThumbnail', type: 'string' },
+                { name: 'LOrd', type: 'number' },
 
                 { name: 'RName', type: 'string' },
+                { name: 'RRevision', type: 'string' },
+                { name: 'RCar_Lib_OID', type: 'number' },
+                { name: 'RCar_Lib_NM', type: 'string' },
+                { name: 'RThumbnail', type: 'string' },
+                { name: 'ROrd', type: 'number' },
             ],
             hierarchy:
             {
@@ -53,7 +75,7 @@
         CompareEPartGrid$.jqxTreeGrid({
             theme: 'arctic',
             width: "100%",
-            //height: "99%",
+            height: 774,
             source: CompareEPartAdapter,
             sortable: false,
             pageable: false,
@@ -65,9 +87,17 @@
             checkboxes: false,
             columns: [
                 { text: '레벨', dataField: 'Level', width: '8%', align: 'center', editable: false, },
-                { text: 'L품번', dataField: 'LName', width: '8%', align: 'center', editable: false, },
-                { text: 'R품번', dataField: 'RName', width: '8%', align: 'center', editable: false, },
-
+                { text: 'L차종', columnGroup: 'base', dataField: 'LCar_Lib_NM', width: '10%', align: 'center', editable: false, },
+                { text: 'L품번', columnGroup: 'base', dataField: 'LName', width: '12%', align: 'center', editable: false, },
+                { text: 'LRev', columnGroup: 'base', dataField: 'LRevision', width: '6%', align: 'center', editable: false, },
+                { text: 'Ord', columnGroup: 'base', dataField: 'LOrd', width: '6%', align: 'center', editable: false, },
+                { text: '이미지', columnGroup: 'base', dataField: 'LThumbnail', width: '8%', align: 'center', editable: false, },
+                { text: 'R차종', columnGroup: 'target', dataField: 'RCar_Lib_NM', width: '10%', align: 'center', editable: false, },
+                { text: 'R품번', columnGroup: 'target', dataField: 'RName', width: '12%', align: 'center', editable: false, },
+                { text: 'RRev', columnGroup: 'target', dataField: 'RRevision', width: '6%', align: 'center', editable: false, },
+                { text: 'Ord', columnGroup: 'target', dataField: 'ROrd', width: '6%', align: 'center', editable: false, },
+                { text: '이미지', columnGroup: 'target', dataField: 'RThumbnail', width: '8%', align: 'center', editable: false, },
+                { text: '액션', dataField: 'Action', width: '8%', align: 'center', editable: false, },
             ],
             columnGroups: [
                 { text: '기준', name: 'base' },
@@ -75,20 +105,37 @@
             ],
         });
 
-        //RequestData('/EBom/SelectCompare', { 'ProjectOID': @ViewBag.ProjectOID, 'ProjectBaseLineOID': @ViewBag.ProjectBaseLineOID }, function (res) {
-        //    baseLineCompareDatas = [];
-        //    baseLineCompareDatas.push(res);
-        //    PrintJqxTreeGrid(baseLineCompareSource, baseLineCompareGrd$, baseLineCompareDatas);
-        //});
-
-
         $('#SelLOID').on('click', function () {
-            OpenSearchEBomOIDDialog(null, null, null, '/EBom/dlgSearchEPart', 'EPART 검색');
+            OpenSearchEBomOIDDialog(null, null, null, '/EBom/dlgSearchEPart', 'EPART 검색', 'L');
         });
 
+        $('#SelROID').on('click', function () {
+            OpenSearchEBomOIDDialog(null, null, null, '/EBom/dlgSearchEPart', 'EPART 검색', 'R');
+        });
 
-
+        $('#CompareEPartBtn').on('click', function () {
+            var LOID = $('#LOID').val();
+            var ROID = $('#ROID').val();
+            if (LOID == null || LOID == "") {
+                alert('L품목을 선택하여주세요');
+                return;
+            }
+            if (ROID == null || ROID == "") {
+                alert('R품목을 선택하여주세요');
+                return;
+            }
+            //CompareEPart(LOID, ROID);
+            RequestData('/EBom/EPartCompare', { 'LOID': LOID, 'ROID': ROID }, function (res) {
+                PrintJqxTreeGrid(CompareEPartSource, CompareEPartGrid$, [res]);
+                CompareEPartGrid$.jqxTreeGrid('expandAll');
+            });
+        })
     });
 
+    //function CompareEPart(LOID, ROID) {
+    //    RequestData('/EBom/EPartCompare', { 'LOID': LOID, 'ROID' : ROID }, function (res) {
+    //        PrintJqxTreeGrid(CompareEPartSource, CompareEPartGrid$, [res]);
+    //    });
+    //}
 
 </script>

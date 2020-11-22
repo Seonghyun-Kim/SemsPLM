@@ -1,0 +1,165 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div id="InfoProblemsLibrary_@ViewBag.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="project_content">
+
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>@Model.Name</h3>
+                @*<p>품명 : <span>@ViewBag.ECRDetail.Title</span></p>*@
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                            <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                        </div>
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <div class="propertiesInfo">
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3 style="padding-left:8px;"><i class="fas fa-file-alt"></i> &nbsp;과거차 문제 라이브러리 PROFILE</h3>
+                            </td>
+                            <td style="text-align: right;">
+                                <button id="EditBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="EditSaveBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-check-square"></i> 저장</button>
+                                <button id="EditCancelBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="infoTable">
+                    <tr>
+                        <th>차종</th>
+                        <td colspan="3">1</td>
+                        <th>제품</th>
+                        <td>1</td>
+                        <th>부품</th>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <th>발생처</th>
+                        <td>1</td>
+                        <th>발생단계</th>
+                        <td>1</td>
+                        <th>고장유형</th>
+                        <td>1</td>
+                        <th>구분</th>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <th>기타</th>
+                        <td colspan="5">1</td>
+                        <th>Revision</th>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <th>첨부파일</th>
+                        <td colspan="7">1</td>
+                    </tr>
+                    <tr>
+                        <th>Issues(문제점)</th>
+                        <td colspan="3">
+                            <textarea id="CreateProblemIssues"></textarea>
+                            <div>
+                                <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
+                                <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
+                                <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
+                            </div>
+                        </td>
+                        <th>Cause(원인)</th>
+                        <td colspan="3">
+                            <textarea id="CreateProblemCause"></textarea>
+                            <div>
+                                <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
+                                <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
+                                <ul class="image_thumbnail floatL" id="CauseUploadResult"><!--이미지 썸네일 영역--></ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Countermeasures<br />(대책)</th>
+                        <td colspan="7">
+                            <textarea id="CreateProblemCountermeasures"></textarea>
+                            <div>
+                                <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
+                                <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
+                                <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult"><!--이미지 썸네일 영역--></ul>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.OID">
+            </div>
+        </div>
+
+        <div id="Downhis" class="basic_grid dective">
+            <div id="DownhisInfo_@ViewBag.OID">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(function () {
+        var ProblemsLibraryOID = @ViewBag.OID;
+        const DocDiv$ = $('#InfoProblemsLibrary_' + ProblemsLibraryOID);
+        const headerStatus = $('#InfoProblemsLibrary_' + ProblemsLibraryOID + ' .pointer_wrap .pointer');
+        const current = @ViewBag.ProblemsLibraryDetail.BPolicyOID;
+
+
+        if (headerStatus != null && headerStatus.length > 0) {
+            headerStatus.removeClass('pointer_focus');
+            const currentStatus = headerStatus.filter(function (index, item) {
+                return item.getAttribute('data-Status') == current;
+            });
+            if (currentStatus != null && currentStatus.length > 0) {
+                currentStatus[0].className += ' ' + 'pointer_focus';
+            }
+        }
+
+        $('#InfoProblemsLibrary_' + ProblemsLibraryOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            DocDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            DocDiv$.find('[class="basic_grid"]').addClass('dective');
+            DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+            }
+        });
+    });
+
+</script>

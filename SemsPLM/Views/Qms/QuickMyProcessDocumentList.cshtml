@@ -82,7 +82,7 @@
         myProcessDocumentList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: '84.5%',
+            height: 680,
             rowsheight: 28,
             columnsheight: 30,
             source: new $.jqx.dataAdapter(MyProcessDocumentSource),
@@ -107,17 +107,20 @@
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");
-                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>작업자교육 등록</button>").jqxButton();
-                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>유효성검증 등록</button>").jqxButton();
-                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i>표준화&Follow-Up 등록</button>").jqxButton();
-                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i>봉쇄조치 등록</button>").jqxButton();
-                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i>발생원인 등록</button>").jqxButton();
-                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i>삭제</button>").jqxButton();
+                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 작업자교육 등록</button>").jqxButton();
+                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 유효성검증 등록</button>").jqxButton();
+                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 표준화&Follow-Up 등록</button>").jqxButton();
+                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 봉쇄조치 등록</button>").jqxButton();
+                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 발생원인 등록</button>").jqxButton();
+                var addImproveCounterMeasureButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 개선대책</button>").jqxButton();
+                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
                 container.append(addWorkerEducationButton);
                 container.append(addQuickValidationButton);
                 container.append(addStandardFollowUpButton);
                 container.append(addBlockadeButton);
                 container.append(addOccurrenceCauseButton);
+                container.append(addImproveCounterMeasureButton);
+                
                 container.append(deleteButton);
 
                 addWorkerEducationButton.on('click', function () {
@@ -141,9 +144,12 @@
                 })
 
                 addOccurrenceCauseButton.on("click", function () {
-                    OpenDlgOccurrenceCause(625, 633)
+                    OpenDlgOccurrenceCause(625, 633);
                 });
 
+                addImproveCounterMeasureButton.on("click", function () {
+                    OpenImproveCounterMeasure(625, 633);
+                })
                 toolBar.append(container);
             }
         });
@@ -380,6 +386,50 @@
 
     function CloseDlgOccurrenceCause() {
         $("#dlgEditOccurrenceCausee").jqxWindow("close");
+    }
+
+    function OpenImproveCounterMeasure(QuickOID, ModuleOID) {
+        var popTitle = "개선대책 등록";  
+
+        var dlgDivWrap = document.createElement("div");
+
+        dlgDivWrap.id = "dlgEditImproveCounterMeasure";
+        var dlgDivTitle = document.createElement("div");
+        var dlgDivView = document.createElement("div");
+
+        dlgDivWrap.appendChild(dlgDivTitle);
+        dlgDivWrap.appendChild(dlgDivView);
+
+        var param = {};
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
+
+        $(dlgDivView).load("/Qms/EditQuickImproveCounterMeasure", param, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+            $(dlgDivWrap).jqxWindow({
+                width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+                initContent: function () {
+
+                }
+            });
+            $(dlgDivWrap).jqxWindow('setTitle', popTitle);
+            $(dlgDivWrap).jqxWindow("show");
+        });
+
+        $(dlgDivWrap).on('close', function (event) {
+            //_DlgAttributeItem();
+            $(dlgDivWrap).jqxWindow('modalDestory');
+            //GetAttributeItemList();
+        });
+    }
+
+    function CloseDlgImproveCounterMeasure() {
+        $("#dlgEditImproveCounterMeasure").jqxWindow("close");
     }
 </script>
 

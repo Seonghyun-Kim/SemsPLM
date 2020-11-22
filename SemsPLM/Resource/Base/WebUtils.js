@@ -167,6 +167,14 @@ WebUtils.ToDate = function (date_str) {
     return new Date(Number(sYear), Number(sMonth) - 1, Number(sDate));
 }
 
+WebUtils.isPopupOpen = function (popupId) {
+    if ($("#" + popupId).length > 0 || $("#" + popupId).length > 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 WebUtils.ConvComboData = function (data, valField, txtField, isAll) {
     var retData = data.map(function (v, i, a) {
         var valueData = v[valField];
@@ -202,6 +210,15 @@ WebUtils.GetComboValue = function (ComponentID) {
         return null;
     }
 };
+
+WebUtils.GetComboObjectValue = function (Component) {
+    if (!($(Component).jqxComboBox('getSelectedItem') === undefined || $(Component).jqxComboBox('getSelectedItem').value === null || $(Component).jqxComboBox('getSelectedItem').value === "")) {
+        return $(Component).jqxComboBox('getSelectedItem').value;
+    } else {
+        return null;
+    }
+};
+
 
 WebUtils.GetCheckBoxValue = function (ComponentID) {
     return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;

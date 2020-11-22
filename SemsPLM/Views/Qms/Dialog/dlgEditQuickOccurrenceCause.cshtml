@@ -2,7 +2,7 @@
     Layout = null;
 }
 
-    <div>
+    <div class="qmsDlgTable">
         <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
             <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
             <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
@@ -10,8 +10,8 @@
 
         @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
 
-        <label>원인분석</label>
-        <table id="tbOccurrenceCause" class="infoTable" style="table-layout:fixed;">
+        <label><i class="fas fa-search-plus"></i> 원인분석</label>
+        <table id="tbOccurrenceCause" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:20%" />
                 <col style="width:69%" />
@@ -24,8 +24,8 @@
             </tr>
         </table>
 
-        <label>검출대책</label>
-        <table id="tbOccurrenceCause" class="infoTable" style="table-layout:fixed;">
+        <label><i class="fas fa-tools"></i> 검출대책</label>
+        <table id="tbDetectCounterMeasure" class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:15%" />
                 <col style="width:10%" />
@@ -42,46 +42,46 @@
                 <th>제조공정</th>
                 <td><div id="btnDetectMFl"></div></td>
                 <td colspan="3">
-                    <input type="text" id="txtDetectMDetail" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtDetectMDetail" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectMDetail" />
                 </td>
             </tr>
             <tr>
                 <th>품질</th>
                 <td><div id="btnDetectSFl"></div></td>
                 <td colspan="3">
-                    <input type="text" id="txtDetectSDetail" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtDetectSDetail" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectSDetail"/>
                 </td>
             </tr>
             <tr>
                 <th>출하단계</th>
                 <td><div id="btnDetectQFl"></div></td>
                 <td colspan="3">
-                    <input type="text" id="txtDetectQDetail" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtDetectQDetail" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectQDetail"/>
                 </td>
             </tr>
             <tr>
                 <th>기타</th>
                 <td><div id="btnDetectEFl"></div></td>
                 <td colspan="3">
-                    <input type="text" id="txtDetectEDetail" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtDetectEDetail" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectEDetail"/>
                 </td>
             </tr>
             <tr>
                 <th>유출원인1</th>
                 <td colspan="4">
-                    <input type="text" id="txtLeakCause1" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtLeakCause1" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause1"/>
                 </td>
             </tr>
             <tr>
                 <th>유출원인2</th>
                 <td colspan="4">
-                    <input type="text" id="txtLeakCause2" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtLeakCause2" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause2"/>
                 </td>
             </tr>
             <tr>
                 <th>유출원인3</th>
                 <td colspan="4">
-                    <input type="text" id="txtLeakCause3" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtLeakCause3" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause3"/>
                 </td>
             </tr>
             <tr>
@@ -93,7 +93,7 @@
             <tr>
                 <th>검출대책</th>
                 <td colspan="4">
-                    <input type="text" id="txtmeasure" class="txtBox" style="width:100%" />
+                    <input type="text" id="txtmeasure" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.Measure"/>
                 </td>
             </tr>
 
@@ -101,46 +101,86 @@
 
     </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
         $("#btnCauseAdd").jqxButton();
-        $('#btnDetectMFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectSFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectQFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectEFl').jqxSwitchButton({ height: 27, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectMFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectM" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectSFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectS" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectQFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectQ" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectEFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectE" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
 
         $("#dtDetectDt").jqxDateTimeInput(DateFormat);
         $("#dtDetectDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
-        });   
+        });
+        @if(ViewBag.DetectCounterMeasure.DetectDt == null)
+        {
+        <text>
+        $("#dtDetectDt").val(WebUtils.GetDate(0, "d", "-"));
+        </text>
+        }
+        else
+        {
+        <text>
+        $("#dtDetectDt").val("@ViewBag.DetectCounterMeasure.DetectDt.ToString("yyyy-MM-dd")");
+        </text>
+        }
 
-        AddOccurrenceCause();
+        var OccurrenceCauseItems = @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseItems));
+
+        if (OccurrenceCauseItems.length === 0) {
+            AddOccurrenceCause(null);
+        } else {
+            OccurrenceCauseItems.forEach(function (v, i) {
+                AddOccurrenceCause(v);
+            });
+        }
 
         $("#btnCauseAdd").on("click", function () {
-            AddOccurrenceCause();
+            AddOccurrenceCause(null);
+        });
+
+        $("#btnDlgSave").on("click", function () {
+            SaveOccurrenceCause();
         })
     });
-    
-    var AddOccurrenceCause = function () {
+
+    var AddOccurrenceCause = function (data) {
+        var OID = data == null ? null : data.OID;
         var table$ = document.getElementById("tbOccurrenceCause");
 
         var tr$ = document.createElement("tr");
+        tr$.setAttribute("Data", "Y");
+        tr$.setAttribute("OID", OID);
+
         var tdOccurrenceCause$ = document.createElement("td");
         var cbOccurrenceCause$ = document.createElement("div");
+        cbOccurrenceCause$.setAttribute("DataId", "cbOccurrenceCause");
         tdOccurrenceCause$.appendChild(cbOccurrenceCause$);
-        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceCauseList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 180, height: 25 });       
-        
+        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceCauseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 180, height: 30 });
+        if (data != null) {
+             $(cbOccurrenceCause$).jqxComboBox('selectItem', data.OccurrenceCauseLibOID);
+        }
         var tdOccurrenceCauseDetail$ = document.createElement("td");
         var divOccurrenceCauseDetail$ = document.createElement("div");
 
-        var tbWhy$ = document.createElement("table");        tbWhy$.style.width = "100%";
+        var tbWhy$ = document.createElement("table");
+        tbWhy$.style.width = "100%";
+        tbWhy$.setAttribute("TableType", "Why");
+        tbWhy$.setAttribute("CauseOID", OID);
 
-
-        for (var i = 0; i < 5; i++) {
-           AddWhy(tbWhy$);
-        }        
-
+        if (data != null) {
+            data.OccurrenceWhys.forEach(function (v, i) {
+                AddWhy(tbWhy$, v);
+            })
+        } else {
+            for (var i = 0; i < 5; i++) {
+                AddWhy(tbWhy$, null);
+            }
+        }
+        
         divOccurrenceCauseDetail$.appendChild(tbWhy$);
 
         tdOccurrenceCauseDetail$.appendChild(divOccurrenceCauseDetail$);
@@ -153,9 +193,8 @@
 
         $(btnWhyAdd).on("click", function () {
             AddWhy(tbWhy$);
-        })
-         
-        
+        });
+
         tr$.appendChild(tdOccurrenceCause$);
         tr$.appendChild(tdOccurrenceCauseDetail$);
         tr$.appendChild(tdBtn$);
@@ -163,8 +202,13 @@
         table$.appendChild(tr$);
     }
 
-    var AddWhy = function (tbWhy$) {
+    var AddWhy = function (tbWhy$, data) {
         var trWhy$ = document.createElement("tr");
+        if (data != null) {
+            trWhy$.setAttribute("OID", data.OID);
+        } else {
+            trWhy$.setAttribute("OID", null);
+        }
         var tdWhy$ = document.createElement("td");
         tdWhy$.style.width = "10%";
         tdWhy$.innerText = "why" + ($(tbWhy$).children().length + 1).toString();
@@ -175,6 +219,11 @@
         txtWhyDetail$.setAttribute("type", "text");
         txtWhyDetail$.style.width = "100%";
         txtWhyDetail$.className = "txtBox";
+        txtWhyDetail$.setAttribute("DataId", "WhyDetail");
+        if (data != null) {
+            txtWhyDetail$.value = data.OccurrenceCauseDetail;
+        }
+        
         tdWhyDetail$.appendChild(txtWhyDetail$);
 
         var tdWhyBtn$ = document.createElement("td");
@@ -184,7 +233,8 @@
         $(btnWhyDelAdd$).jqxButton();
 
         $(btnWhyDelAdd$).on("click", function () {
-            $(trWhy$).remove();
+            trWhy$.setAttribute("Remove", "Y");
+            trWhy$.style.display = "none";
         });
 
         trWhy$.appendChild(tdWhy$);
@@ -193,4 +243,69 @@
 
         tbWhy$.appendChild(trWhy$);
     }
-</script>
+
+    function SaveOccurrenceCause() {
+        var OccurrenceCause = [];
+        var DetectCounterMeasure = {};
+
+        var trOccurrenceCauses$ = $("#tbOccurrenceCause tr[Data='Y']");
+        var errMsg = "";
+
+        trOccurrenceCauses$.each(function (i, v) {
+            var data = {};
+            var cbOccurrenceCause$ = $(v).find("[DataId='cbOccurrenceCause']")[0];
+            data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
+            data.ModuleOID = "@ViewBag.ModuleOID";
+            data.OccurrenceCauseLibOID = WebUtils.GetComboObjectValue(cbOccurrenceCause$);
+            if (data.OccurrenceCauseLibOID === null) {
+                errMsg += "[" + (i + 1).toString() + "] 발생 원인이 선택되지 않았습니다.\n";
+            }
+            data.OccurrenceWhys = [];
+
+            var tbWhys$ = $(v).find("[TableType='Why'][CauseOID='" + data.OID + "']")[0];
+            var trWhys$ = $(tbWhys$).children();
+
+            trWhys$.each(function (index, value) {
+                var why = {};
+                why.OID = $(value).attr("OID") === "null" ? null : $(value).attr("OID");
+                why.OccurrenceCauseDetail = $($(value).find("[DataId='WhyDetail']")[0]).val();
+
+                if ($(value).attr("Remove") === "Y" && why.OID !== null) {
+                    why.IsRemove = "Y";
+                }
+
+                data.OccurrenceWhys.push(why);
+            })
+
+            OccurrenceCause.push(data);
+        });
+
+        if (errMsg.length != 0) {
+            alert(errMsg); return;
+        }
+        DetectCounterMeasure.ModuleOID = "@ViewBag.ModuleOID";
+        DetectCounterMeasure.DetectM = $("#btnDetectMFl").val();
+        DetectCounterMeasure.DetectMDetail = $("#txtDetectMDetail").val();
+        DetectCounterMeasure.DetectS = $("#btnDetectSFl").val();
+        DetectCounterMeasure.DetectSDetail = $("#txtDetectSDetail").val();
+        DetectCounterMeasure.DetectQ = $("#btnDetectQFl").val();
+        DetectCounterMeasure.DetectQDetail = $("#txtDetectQDetail").val();
+        DetectCounterMeasure.DetectE = $("#btnDetectEFl").val();
+        DetectCounterMeasure.DetectEDetail = $("#txtDetectEDetail").val();
+        DetectCounterMeasure.LeakCause1 = $("#txtLeakCause1").val();
+        DetectCounterMeasure.LeakCause2 = $("#txtLeakCause2").val();
+        DetectCounterMeasure.LeakCause3 = $("#txtLeakCause3").val();
+        DetectCounterMeasure.DetectDt = $("#dtDetectDt").val();
+        DetectCounterMeasure.Measure = $("#txtmeasure").val();
+
+        $.post('/Qms/SaveQuickOccurrenceCause', { occurrenceCauses: OccurrenceCause, measure : DetectCounterMeasure  }, function (response) {
+            if (response.isError) {
+                alert(response.resultMessage);
+                return;
+            }
+            alert("저장되었습니다.");
+        }).fail(function (err) {
+            alert(err.responseText);
+        });
+    }
+    </script>

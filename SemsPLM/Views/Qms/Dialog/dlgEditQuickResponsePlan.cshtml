@@ -13,13 +13,13 @@
         <input type="hidden" id="hiddenDlgStandardOID" value="@ViewBag.Standard.OID" />
         <input type="hidden" id="hiddenDlgWorkerEduOID" value="@ViewBag.WorkerEdu.OID" />
     </div>
-<div>
+<div class="qmsDlgTable">
     <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
-        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
         <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 확정</button>
     </div>
     @{Html.RenderAction("QuickResponseSummary", "Qms");}
-    <label>신속대응</label>
+<label><i class="fas fa-toggle-on"></i> 신속대응</label>
     <table class="infoTable" style="table-layout:fixed;">
         
         <colgroup>
@@ -210,18 +210,19 @@
         $("#btnDlgStandardPlanUserSearch").jqxButton();
         $("#btnDlgWorkerEduPlanUserSearch").jqxButton();
 
-        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 27, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
-        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnErrorProofUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnCheckUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnStandardUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 30, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
+        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnErrorProofUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnCheckUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnStandardUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
 
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Blockade.EstEndDt == null)
@@ -236,6 +237,7 @@
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.OccurrenceCause.EstEndDt == null)
@@ -250,6 +252,7 @@
         $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.ImproveCountermeasure.EstEndDt == null)
@@ -264,6 +267,7 @@
         $("#txtDlgErrorProofPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgErrorProofPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.ErrorPrrof.EstEndDt == null)
@@ -278,6 +282,7 @@
         $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Lpa.EstEndDt == null)
@@ -292,6 +297,7 @@
         $("#txtDlgCheckPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgCheckPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Check.EstEndDt == null)
@@ -306,6 +312,7 @@
         $("#txtDlgStandardPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgStandardPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Standard.EstEndDt == null)
@@ -320,6 +327,7 @@
         $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.WorkerEdu.EstEndDt == null)

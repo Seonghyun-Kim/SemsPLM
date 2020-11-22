@@ -1,0 +1,180 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div style="width:100%; margin-right:20px;">
+    <!--검색창-->
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;최적설계 반영서 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="" class="searchEcontentsComboBox"></div>
+                </div>
+                <div class="comboBoxLabel">작성자</div>
+                <div>
+                    <div id="" class="searchEpartComboBox"></div>
+                </div>
+                <div class="comboBoxLabel">작성일</div>
+                <div>
+                    <div id="" class="searchEpartComboBox"></div>
+                </div>
+            </div>
+
+            <div class="searchButton">
+                <button id="" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="SearchOptimalDesignGrid"></div>
+<script type="text/javascript">
+    $(function () {
+
+        var SearchOptimalDesignSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+                { name: 'Title' },
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_NM' },
+                { name: 'Rep_Part_No' },
+                { name: 'Rep_Part_No2' },
+                { name: 'Eo_No' },
+                { name: 'Eo_No_ApplyDt', type: 'date' },
+                { name: 'Etc' },
+                { name: 'EPartType' },
+                { name: 'Sel_Eo' },
+                { name: 'Sel_Eo_Dt', type: 'date' },
+                { name: 'Spec' },
+                { name: 'Thumbnail' },
+                { name: 'Revision' },
+                { name: 'Surface' }
+            ],
+        }
+
+        const SearchOptimalDesignGrid$ = $('#SearchOptimalDesignGrid');
+        SearchOptimalDesignGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 580,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '차종', datafield: 'Car_Lib_NM', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '제품', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'Rep_Part_No', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '반영단계', datafield: 'Title', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '반영(건)', datafield: 'Spec', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '미반영(건)', datafield: 'Surface', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '합계(건)', datafield: 'Eo_No', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "9%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', }
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var CreateButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 최적설계 반영서 작성</button>").jqxButton();
+                container.append(CreateButton);
+                toolBar.append(container);
+
+                CreateButton.click(function (event) {
+                    const CreatelinkUrl = '/Econtents/CreateOptimalDesign';
+                    if ($("div[tabUrl='" + CreatelinkUrl + "']").length > 0) {
+                        var tabDiv = $("div[tabUrl='" + CreatelinkUrl + "']")[0].parentNode;
+                        $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                        return;
+                    }
+                    const loading$ = $('#loading');
+                    const tabContent$ = $('#tabContent');
+                    loading$.css('display', 'block');
+                    var linkName = "최적설계 반영서 등록";
+                    tabContent$.jqxTabs('addLast', linkName, "");
+                    var tabLength = tabContent$.jqxTabs('length');
+                    $.ajax({
+                        url: CreatelinkUrl,
+                        type: 'get',
+                        dataType: 'html',
+                        async: true,
+                        success: function (resHtml) {
+                            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                            $(content).html("<div class='wrapPage' tabUrl='" + CreatelinkUrl + "'>" + resHtml + "</div>");
+                        }, error: function (res) {
+                            if (res.status === 404) {
+                                alert("현재 개발중인 화면입니다.");
+                                return false;
+                            }
+                            alert(res.responseText);
+                        }
+                        , complete: function () {
+                            loading$.css('display', 'none');
+                        }
+                    });
+                });
+            }
+        });
+
+        //SearchEcontentsGrid$.on('celldoubleclick', function (e) {
+        //    const linkUrl = '/Econtents/InfoEPart?OID=' + e.args.row.bounddata.OID;
+        //    if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+        //        var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+        //        $('#tabContent').jqxTabs('select', $(tabDiv).index());
+        //        return;
+        //    }
+        //
+        //    const loading$ = $('#loading');
+        //    const tabContent$ = $('#tabContent');
+        //    loading$.css('display', 'block');
+        //    var linkName = e.args.row.bounddata.Name;
+        //    tabContent$.jqxTabs('addLast', linkName, "");
+        //    var tabLength = tabContent$.jqxTabs('length');
+        //    $.ajax({
+        //        url: linkUrl,
+        //        type: 'get',
+        //        dataType: 'html',
+        //        async: true,
+        //        success: function (resHtml) {
+        //            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+        //            $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+        //        }, error: function (res) {
+        //            if (res.status === 404) {
+        //                alert("현재 개발중인 화면입니다.");
+        //                return false;
+        //            }
+        //            alert(res.responseText);
+        //        }
+        //        , complete: function () {
+        //            loading$.css('display', 'none');
+        //        }
+        //    });
+        //});
+
+        //$('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 33, });
+        getSearchOptimalDesignList(SearchOptimalDesignSource, SearchOptimalDesignGrid$, {});
+    });
+    function getSearchOptimalDesignList(_Source, _Grid$, param) {
+        RequestData("/Ebom/SelEPart", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

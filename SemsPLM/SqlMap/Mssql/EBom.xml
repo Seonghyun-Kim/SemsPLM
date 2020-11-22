@@ -25,29 +25,23 @@
       <isNotNull property="Name">
         AND A.Name like '%' + #Name# + '%'
       </isNotNull>
-      <isNotNull property="Title">
-        AND B.Title like '%' + #Title# + '%'
-      </isNotNull>
-      <isNotNull property="Rep_Part_No">
-        AND B.Rep_Part_No like '%' + #Rep_Part_No# + '%'
-      </isNotNull>
-      <isNotNull property="Rep_Part_No2">
-        AND B.Rep_Part_No2 like '%' + #Rep_Part_No2# + '%'
-      </isNotNull>
-      <isNotNull property="Eo_No">
-        AND B.Eo_No like '%' + #Eo_No# + '%'
-      </isNotNull>
-      <isNotNull property="Oem_Lib_OID">
-        AND B.Oem_Lib_OID = #Oem_Lib_OID#
-      </isNotNull>
       <isNotNull property="Car_Lib_OID">
         AND B.Car_Lib_OID = #Car_Lib_OID#
       </isNotNull>
-      <isNotNull property="Pms_OID">
-        AND B.Pms_OID = #Pms_OID#
-      </isNotNull>
       <isNotNull property="EPartType">
         AND B.EPartType = #EPartType#
+      </isNotNull>
+      <isNotNull property="Division">
+        AND B.Division = #Division#
+      </isNotNull>
+      <isNotNull property="ITEM_No">
+        AND B.ITEM_No = #ITEM_No#
+      </isNotNull>
+        <isNotNull property="StartCreateDt">
+          AND A.CreateDt &gt;= #StartCreateDt#
+        </isNotNull>
+      <isNotNull property="EndCreateDt">
+        AND A.CreateDt &lt;= #EndCreateDt#
       </isNotNull>
       
     </select>
@@ -83,53 +77,30 @@
     <insert id="InsEPart" parameterClass="EPart" >
       INSERT INTO T_DEPART
       ( OID
-      , Title
-      , Rep_Part_No
-      , Rep_Part_No2
-      , Eo_No
-      , Eo_No_ApplyDt
-      , Eo_No_History
-      , Etc
-      , EPartType
-      , Thumbnail
-      , Sel_Eo
-      , Sel_Eo_Dt
-      , Spec
-      , Surface
-      , Oem_Lib_OID
       , Car_Lib_OID
-      , Pms_OID
-      , Prod_Lib_Lev1_OID
-      , Prod_Lib_Lev2_OID
-      , Prod_Lib_Lev3_OID
       , Material_OID
-      , CO
-      , Etc_Delivery
+      , Division
+      , EPartType
+      , ITEM_No
+      , ITEM_Middle
+      , Production_Place
+      , Block_No
+      , Serial
+      , Sel_Revision
+
       )
       VALUES
       (#OID#
-      , #Title#
-      , #Rep_Part_No#
-      , #Rep_Part_No2#
-      , #Eo_No#
-      , #Eo_No_ApplyDt#
-      , #Eo_No_History#
-      , #Etc#
-      , #EPartType#
-      , #Thumbnail#
-      , #Sel_Eo#
-      , #Sel_Eo_Dt#
-      , #Spec#
-      , #Surface#
-      , #Oem_Lib_OID#
       , #Car_Lib_OID#
-      , #Pms_OID#
-      , #Prod_Lib_Lev1_OID#
-      , #Prod_Lib_Lev2_OID#
-      , #Prod_Lib_Lev3_OID#
       , #Material_OID#
-      , #CO#
-      , #Etc_Delivery#
+      , #Division#
+      , #EPartType#
+      , #ITEM_No#
+      , #ITEM_Middle#
+      , #Production_Place#
+      , #Block_No#
+      , #Serial#
+      , #Sel_Revision#
       )
     </insert>
 
@@ -210,7 +181,7 @@
       AND OID = #OID#
     </delete>
 
-    <update id="UdtEBomStructure" parameterClass="EBom">
+    <update id="RuEBomStructure" parameterClass="EBom">
       UPDATE T_DEBOM_RELATIONSHIP
       SET
       FromOID = #FromOID#
@@ -220,8 +191,41 @@
       WHERE OID = #OldOID#
     </update>
 
-    
+    <update id="UdtEBomStructure" parameterClass="EBom">
+      UPDATE T_DEBOM_RELATIONSHIP
+      SET
+      Count = #Count#
+      , Ord = #Ord#
+      WHERE 1 = 1 
+      AND FromOID = #FromOID#
+      AND ToOID = #ToOID#
+    </update>
 
+    <select id="SelRootChildEBomList" parameterClass="EBom" resultClass="EBom">
+      WITH RECURSIVE_QUERY(OID, FromOID, ToOID, Type, Count, Ord) AS (
+      SELECT
+      OID
+      , FromOID
+      , ToOID
+      , Type
+      , Count
+      , Ord
+      FROM T_DEBOM_RELATIONSHIP
+      WHERE FromOID = #FromOID#
+      UNION ALL
+      SELECT
+      B.OID
+      , B.FromOID
+      , B.ToOID
+      , B.Type
+      , B.Count
+      , B.Ord
+      FROM T_DEBOM_RELATIONSHIP B, RECURSIVE_QUERY C
+      WHERE B.FromOID = C.ToOID
+      )
+      SELECT *
+      FROM RECURSIVE_QUERY
+    </select>
 
 
   </statements>

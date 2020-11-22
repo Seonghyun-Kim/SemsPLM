@@ -9,15 +9,15 @@
                     <h2><i class="fas fa-edit"></i> 표준화 & Follow-Up 등록</h2>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btnEditStandardFollowUp" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
-                    <button id="btnCancelStandardFollowUp" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                    <button id="btnEditStandardFollowUp" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnCancelStandardFollowUp" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
 <div>
-    <h3><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</h3>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</h3>
     <table id="test" width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <colgroup>
             <col style="width:150px;" />
@@ -27,10 +27,10 @@
         </colgroup>
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 범위</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 반영내용</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 완료일</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 기술표준문서</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <th class="reqVal">반영내용</th>
+            <th class="reqVal">완료일</th>
+            <th class="reqVal">기술표준문서</th>
+            <th class="reqVal">첨부파일</th>
         </tr>
         <tr id="EditStandardFollowUpPFMEA">
             <th class="reqVal"><i class="fa fa-caret-right"></i> P-FMEA</th>
@@ -50,23 +50,23 @@
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 회의내용</th>
             <td colspan="4">
-                <input id="txtEditStandardFollowUpDesc" style="width:100%;" />
+                <input id="txtEditStandardFollowUpDesc" type="text" style="width:100%;" />
             </td>
         </tr>
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <tr>
             <th class="reqVal" style="width:180px;">
             </th>
-            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
+            <th class="reqVal"> <i class="fa fa-caret-right"></i> 검토자결재순서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 승인자결재순서</th>
         </tr>
         <tr>
-            <td><button id="btnEditStandardFollowUpApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
+            <td><button id="btnEditStandardFollowUpApprovalLine" class="custom-button"><i class="fas fa-search"></i> 결재선지정</button></td>
             <td>
                 <div id="listEditStandardFollowUpApprovalconfirm" />
             </td>
@@ -153,12 +153,12 @@
         innerHtml += "<div id='dtEditStandardFollowUpComplete_" + datafield +"'data-field='" + datafield + "'></div>";
         innerHtml += "</td>";
         innerHtml += "<td>";
-        innerHtml += "<input type='text' style='width:65%' id='txtEditStandardFollowUpDocument_" + datafield + "' data-field='" + datafield + "' readOnly>";
-        innerHtml += "<button id='btnEditStandardFollowUpSearch_" + datafield + "' class='custom-button' onclick='EditStandardFollowUpDocumentSearch()'><i class='fas fa-search'></i>검색</button>";
+        innerHtml += "<input type='text' style='width:62%;height:32px;margin-right:5px;' id='txtEditStandardFollowUpDocument_" + datafield + "' data-field='" + datafield + "' readOnly>";
+        innerHtml += "<button id='btnEditStandardFollowUpSearch_" + datafield + "' class='custom-button' onclick='EditStandardFollowUpDocumentSearch()'><i class='fas fa-search'></i> 검색</button>";
         innerHtml += "</td>";
         innerHtml += "<td>";
-        innerHtml += "<input type='text' style='width:55%' id='txtEditStandardFollowUpFile_" + datafield + "' data-field='" + datafield + "' readOnly>";
-        innerHtml += "<button id='btnEditStandardFollowUpSearchFile_" + datafield + "' class='custom-button' onclick='EditStandardFollowUpFileSearch()'><i class='fas fa-search'></i>파일등록</button>";
+        innerHtml += "<input type='text' style='width:52%;height:32px;margin-right:5px;' id='txtEditStandardFollowUpFile_" + datafield + "' data-field='" + datafield + "' readOnly>";
+        innerHtml += "<button id='btnEditStandardFollowUpSearchFile_" + datafield + "' class='custom-button' onclick='EditStandardFollowUpFileSearch()'><i class='fas fa-search'></i> 파일등록</button>";
         innerHtml += "</td>";
 
 

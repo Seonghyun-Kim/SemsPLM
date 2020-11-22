@@ -343,13 +343,141 @@ namespace SemsPLM.Controllers
 
             Library occurrenceCauseKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_CAUSE" });
             List<Library> occurrenceCauseList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceCauseKey.OID });  // 검사유형
-            ViewBag.occurrenceCauseList = occurrenceCauseList;
+            ViewBag.occurrenceCauseLibList = occurrenceCauseList;
+
+            List<OccurrenceCauseItem> OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = _param.OID });
+            OccurrenceCauseItems.ForEach(v =>
+            {
+                v.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = v.OID });
+            });
+            ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
+            
+            DetectCounterMeasure detectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = _param.OID });
+            ViewBag.DetectCounterMeasure = detectCounterMeasure == null ? new DetectCounterMeasure() { ModuleOID = _param.OID } : detectCounterMeasure;
 
             return View("Dialog/dlgEditQuickOccurrenceCause");
+        }
+
+        public JsonResult SaveQuickOccurrenceCause(List<OccurrenceCauseItem> occurrenceCauses, DetectCounterMeasure measure)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                occurrenceCauses.ForEach(v =>
+                {
+                    int? CauseOID = v.OID;
+                    if (v.OID == null)
+                    {
+                        DObject dobj = new DObject();
+                        dobj.Type = QmsConstant.TYPE_OCCURRENCE_CAUSE_ITEM;
+                        dobj.Name = QmsConstant.TYPE_OCCURRENCE_CAUSE_ITEM;
+                        v.OID = DObjectRepository.InsDObject(dobj);
+                        CauseOID = v.OID;
+                        OccurrenceCauseItemRepository.InsOccurrenceCauseItem(v);
+                    }
+                    else
+                    {
+                        OccurrenceCauseItemRepository.UdtOccurrenceCauseItem(v);
+                    }
+
+                    //int WhyCnt = 1;
+                    v.OccurrenceWhys.ForEach(w =>
+                    {
+                        if (w.OID == null)
+                        {
+                            DObject dobj = new DObject();
+                            dobj.Type = QmsConstant.TYPE_WHY;
+                            dobj.Name = "WHY";
+                            w.OID = DObjectRepository.InsDObject(dobj);
+                            w.CauseOID = v.OID;
+
+                            OccurrenceWhyRepository.InsOccurrenceWhy(w);
+                        }
+                        else
+                        {
+                            if(w.IsRemove == "Y")
+                            {      
+                                w.DeleteUs = 73;
+                                DObjectRepository.DelDObject(w);
+                            }
+                            else
+                            {
+                                w.ModifyUs = 73;
+                                OccurrenceWhyRepository.UdtOccurrenceWhy(w);
+                                DObjectRepository.UdtDObject(w);
+                            }
+                        }
+                    });
+                });
+
+                DetectCounterMeasureRepository.UdtDetectCounterMeasure(measure);
+
+                DaoFactory.Commit();
+                return Json("1");
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
         }
         #endregion
 
         #region -- 개선대책 
+        public ActionResult EditQuickImproveCounterMeasure(QuickResponseModule _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            ViewBag.ImproveCounterMeasures = ImproveCounterMeasureRepository.SelImproveCounterMeasures(new ImproveCounterMeasure() { ModuleOID = _param.OID });
+
+            return View("Dialog/dlgEditQuickImproveCounterMeasure");
+        }
+
+        public JsonResult SavetQuickImproveCounterMeasure(List<ImproveCounterMeasure> _params)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                _params.ForEach(v =>
+                {
+                    if(v.OID == null)
+                    {
+                        DObject dobj = new DObject();
+                        dobj.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
+                        dobj.Name = "WHY";
+                        v.OID = DObjectRepository.InsDObject(dobj);
+                       
+                        ImproveCounterMeasureRepository.InsImproveCounterMeasure(v);
+                    }
+                    else
+                    {
+                        if (v.IsRemove == "Y")
+                        {
+                            v.DeleteUs = 73;
+                            DObjectRepository.DelDObject(v);
+                        }
+                        else
+                        {
+                            v.ModifyUs = 73;
+                            ImproveCounterMeasureRepository.UdtImproveCounterMeasure(v);
+                            DObjectRepository.UdtDObject(v);
+                        }
+                    }
+                });
+
+                DaoFactory.Commit();
+                return Json("1");
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+        }
         #endregion
 
         #region -- Error Proof  

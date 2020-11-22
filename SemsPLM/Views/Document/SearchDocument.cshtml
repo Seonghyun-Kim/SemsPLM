@@ -194,8 +194,8 @@
 
         searchBtn$.on('click', function () {
             var param = {};
-            if (docType$.jqxComboBox('getSelectedItem').value != null && docType$.jqxComboBox('getSelectedItem').value != undefined) {
-                param.DocType = docType$.jqxComboBox('getSelectedItem').value;
+            if (docType$.val() != null && docType$.val() != undefined) {
+                param.DocType = docType$.val();
             }
 
             param.Name = $('#SearchDocument_Name').val();

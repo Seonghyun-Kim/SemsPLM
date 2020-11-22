@@ -2,7 +2,7 @@
     Layout = null;
 }
 
-    <div style="padding:20px;">
+    @*<div style="padding:20px;">
         <table width="100%">
             <tbody>
                 <tr>
@@ -81,7 +81,7 @@
                 <th class="reqVal"><i class="fa fa-caret-right"></i> 서비스 지침</th>
                 <td>
                     <label><input type="radio" name="selServiceInfo" value="Y" style="width:20px; height:15px;" /> YES</label>
-                    <label><input type="radio" name="selServiceInfo" value="N" style="width:20px; height:15px;" /> NO</label>
+                    <label><input type="radio" name="selServiceInfo" checked="checked" value="N" style="width:20px; height:15px;" /> NO</label>
                 </td>
                 <th class="reqVal Rental"><i class="fa fa-caret-right"></i> EO ID</th>
                 <td class="">
@@ -101,7 +101,7 @@
                 <th class="reqVal"><i class="fa fa-caret-right"></i> 금형 변경</th>
                 <td colspan="3">
                     <label><input type="radio" name="selMoldChange" value="Y" style="width:20px; height:15px;" /> YES</label>
-                    <label><input type="radio" name="selMoldChange" value="N" style="width:20px; height:15px;" /> NO</label>
+                    <label><input type="radio" name="selMoldChange"checked="checked" value="N" style="width:20px; height:15px;" /> NO</label>
                 </td>
             </tr>
             <tr class="Rental">
@@ -230,7 +230,162 @@
                     </td>
                 </tr>
             </table>
+        </div>*@
+
+    <div class="eBomChangeTopMenu">
+        <ul>
+            <li class="tab"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
+            <li class="tab"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
+            <li class="tab"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
+            <li class="tab"><i class="fas fa-stream"></i> 설계변경 내역서</li>
+        </ul>
+    </div>
+
+    <div class="eBomChangeContents">
+        <div id="ECOprofile">
+            <h3>기본정보</h3>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>설계변경번호</th>
+                        <td class="required"></td>
+                        <th>품목그룹</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>제목</th>
+                        <td class="required"></td>
+                        <th>설계변경일자</th>
+                        <td class="required"></td>
+                    </tr>
+                    <tr>
+                        <th>변경사유</th>
+                        <td class="required"></td>
+                        <th>호환성</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>금형수정</th>
+                        <td></td>
+                        <th>등록사유</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>보안여부</th>
+                        <td></td>
+                        <th>변경내용</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>재고처리</th>
+                        <td></td>
+                        <th>메모사양</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>유첨자료</th>
+                        <td></td>
+                        <th>고객요구일자</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>고객품번</th>
+                        <td></td>
+                        <th>E-BOM</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>개발/양산 구분</th>
+                        <td class="required"></td>
+                        <th>차종</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>세부설명</th>
+                        <td colspan="3"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>연관ECR 정보</h3>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>ECR_NO</th>
+                        <td></td>
+                        <th>상태</th>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table>
+                <tr>
+                    <th>첨부파일</th>
+                    <td></td>
+                </tr>
+            </table>
         </div>
+
+        <div id="ECOEffectAssess">
+            <table>
+                <tr>
+                    <td>
+                        <h4>공용부품에 대한 검토 (연구소)</h4>
+                        <ul></ul>
+                    </td>
+                    <td>
+                        <h4>원가변동에 대한 검토 (원가팀)</h4>
+                        <ul></ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4>변경 자재에 대한 재고검토 (구매,생관)</h4>
+                        <ul></ul>
+                    </td>
+                    <td>
+                        <h4>고객 승인에 대한 검토 (QC,QA)</h4>
+                        <ul></ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4>성능에 대한 검토 (연구소)</h4>
+                        <ul></ul>
+                    </td>
+                    <td>
+                        <h4>공정에 대한 검토 (QC,QA)</h4>
+                        <ul></ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4>변경 자재에 대한 재고검토 (자관,제관)</h4>
+                        <ul></ul>
+                    </td>
+                    <td>
+                        <h4>재고처리에 대한 검토 (영업,제관)</h4>
+                        <ul></ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="ECOList">
+            <div id="ECOListGrid"></div>
+        </div>
+
+        <div id="ECOBreakdown">
+            <div id="ECOBreakdownGrid"></div>
+        </div>
+
+    </div>
+
+
+
+
+
         <script>
     var CreateECO_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
     var CreateECO_OemLib$ = $('#CreateChangeOrder_Oem_Lib');
@@ -325,7 +480,7 @@
         CreateRecDt$.jqxDateTimeInput({ width: "100%", height: 32 });
 
         CreateECO_OemLib$.on('change', function (event) {
-            changeCreateECOComboBox(2, CreateECO_OemLib$.jqxComboBox('getSelectedItem').value);
+            changeCreateECOComboBox(2, CreateECO_OemLib$.val());
         });
 
         $('#CreateChangeOrder_checkbtn').on('click', function () {
@@ -366,17 +521,49 @@
             param.EPart_No = $('#CreateChangeOrder_EPart_No').val();
             param.Count = $('#CreateChangeOrder_Count').val();
             param.Title = $('#CreateChangeOrder_Title').val();
-            param.Oem_Lib_OID =  CreateECO_OemLib$.jqxComboBox('getSelectedItem').value;
-            param.Car_Lib_OID =  CreateECO_CarLib$.jqxComboBox('getSelectedItem').value;
+            param.Oem_Lib_OID =  CreateECO_OemLib$.val();
+            param.Car_Lib_OID = CreateECO_CarLib$.val();
         //    param.Pms_OID = $('#CreateChangeOrder_Pms_Lib').jqxComboBox('getSelectedItem').value;
             param.EoProType = $("input[name='selEoProType']:checked").val(); //EO 처리유형
             param.DrwDt = $('#CreateChangeOrder_DrwDt').jqxDateTimeInput('val');
             param.EoType = $("input[name='selEoType']:checked").val(); //EO 유형
+
+            if (param.Oem_Lib_OID == "" || param.Oem_Lib_OID == null) {
+                alert('OEM을 선택하여 주세요.');
+                return;
+            }
+            if (param.Car_Lib_OID == "" || param.Car_Lib_OID == null) {
+                alert('차종을 선택하여 주세요.');
+                return;
+            }
+            if (param.EoProType == "" || param.EoProType == null) {
+                alert('EO 처리유형을 선택하여 주세요.');
+                return;
+            }
+            if (param.Description == "" || param.Description == null) {
+                alert('변경사유을 입력하여 주세요.');
+                return;
+            }
+
+
+
+
             if (param.EoType == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
+
+                if (param.DrwDt == "" || param.DrwDt == null) {
+                    alert('도면접수일을 입력하여 주세요.');
+                    return;
+                }
+
 
             } else if (param.EoType == '@Common.Constant.EoConstant.TYPE_HOUSE') {
 
                 param.IsService = $("input[name='selServiceInfo']:checked").val(); //서비스 지침
+
+                if (param.IsService == "" || param.IsService == null) {
+                    alert('서비스지침을 입력하여 주세요.');
+                    return;
+                }
 
                 if (param.IsService == "Y") {
                     param.DesignCost = $('#CreateChangeOrder_desingCost').val(); //설계원가
@@ -386,14 +573,37 @@
                 param.EoID = $("input[name='selEoId']:checked").val() //EOID            
                 param.IsMold = $("input[name='selMoldChange']:checked").val();  //금형변경
 
+                if (param.IsMold == "" || param.IsMold == null) {
+                    alert('금형 변경을 입력하여 주세요.');
+                    return;
+                }
+
                 if (param.IsMold == "Y") {
                     param.DieQt = $('#CreateChangeOrder_DieQt').val(); //금형벌수
                     param.DieCost = $('#CreateChangeOrder_DieCost').val(); //금형비
                 }
 
                 param.EoClass = $("input[name='selEoClass']:checked").val() //변경사유부분
+
+                if (param.EoClass == "" || param.EoClass == null) {
+                    alert('변경사유부분을 선택하여 주세요.');
+                    return;
+                }
+
                 param.Eo_InvClr = $("input[name='selEoInvClr']:checked").val() //재고처리
+
+                if (param.Eo_InvClr == "" || param.Eo_InvClr == null) {
+                    alert('재고처리를 선택하여 주세요.');
+                    return;
+                }
+
                 param.Eo_Fault = $("input[name='selEoFault']:checked").val() //EO 귀책
+
+                if (param.Eo_Fault == "" || param.Eo_Fault == null) {
+                    alert('EO 귀책을 선택하여 주세요.');
+                    return;
+                }
+
                 if (param.Eo_Fault == '@Common.Constant.EoConstant.FAULT_SELF') {
                     param.TeamNm = $('#CreateChangeOrder_TeamNm').val(); //팀명
                 }

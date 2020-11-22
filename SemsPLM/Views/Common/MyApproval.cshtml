@@ -1,0 +1,148 @@
+﻿@{
+    Layout = null;
+}
+
+<div>
+    <div id="myApprovalList"></div>
+</div>
+
+<script type="text/javascript">
+        $(function () {
+            const ApprovTypes = @Html.Raw(Json.Encode(ViewBag.Types));
+            const ApprovStatus = @Html.Raw(Json.Encode(ViewBag.Status));
+            const myApprovalList$ = $('#myApprovalList');
+            var appStateComboBox$;
+
+            const myApprovalSource = {
+                datatype: 'json',
+                dafafields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'ApprovalOID', type: 'number' },
+                    { name: 'StepOID', type: 'number' },
+                    { name: 'PersonOID', type: 'number' },
+                    { name: 'PersonObj' },
+                    { name: 'BPolicyOID', type: 'number' },
+                    { name: 'BPolicy' },
+                    { name: 'ApprovalBPolicy' },
+
+                    { name: 'ApprovalType', type: 'string' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'PersonNm', type: 'string' },
+                    { name: 'DepartmentNm', type: 'string' },
+                    { name: 'Comment', type: 'string' },
+                    { name: 'ApprovalDt', type: 'date' },
+                    { name: 'ActionType', type: 'string' },
+                    { name: 'Comment', type: 'string' },
+                    { name: 'DocOID', type: 'number' },
+                    { name: 'DocType', type: 'string' },
+                    { name: 'DocNm', type: 'string' },
+                    { name: 'DocCreateUs', type: 'number' },
+                    { name: 'DocCreateNm', type: 'string' },
+                ],
+            }
+
+            var ApprovStatusSource =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'OID' },
+                    { name: 'StatusNm' }
+                ],
+                async: false
+            };
+
+            myApprovalList$.jqxGrid({
+                width: "99.5%",
+                height: 820,
+                theme: "kdc",
+                //source:,
+                sortable: true,
+                showtoolbar: true,
+                toolbarheight:44,
+                ready: function () {
+
+                },
+                columns: [
+                    {
+                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    {
+                        text: '구분', width: '10%', type: 'string', align: 'center', datafield: 'ApprovalType', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var txtVal = '';
+                            if (value == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV') {
+                                txtVal = '결재';
+                            } else if (value == '@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE') {
+                                txtVal = '합의';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + txtVal + "</div>";
+                        }
+                    },
+                    { text: '결재명', width: '15%', type: 'string', align: 'center', datafield: 'Name', cellsalign: 'center',},
+                    {
+                        text: '타입', width: '10%', type: 'string', align: 'center', datafield: 'DocType', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + ApprovTypes.filter(item => item.Name == value)[0].Description + "</div>";
+                        }
+                    },
+                    {
+                        text: '상태', width: '10%', type: 'string', align: 'center', datafield: 'BPolicy', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                        }
+                    },
+                    { text: '문서명', width: '15%', type: 'string', align: 'center', datafield: 'DocNm', cellsalign: 'center', },
+                    { text: '작성자', width: '10%', type: 'string', align: 'center', datafield: 'DocCreateNm', cellsalign: 'center', },
+                    { text: '승인일', width: '10%', type: 'string', align: 'center', datafield: 'ApprovalDt', cellsalign: 'center',},
+                    { text: '의견', width: '17%', type: 'string', align: 'left', datafield: 'Comment', },
+                ],
+                rendertoolbar: function (statusbar) {
+                    var container = $("<div class='lGridComponent' style='position:relative;'></div>");
+                    appButton$ = $("<button class='custom-button'>승인</button>");
+                    rejButton$ = $("<button class='custom-button'>반려</button>");
+                    appStateComboBox$ = $("<div style='position:absolute;right:5px;top:4px;'></div>").jqxComboBox({ width: 100, height: 33, displayMember: "StatusNm", valueMember: "OID", });
+                    PrintJqxCombo(ApprovStatusSource, appStateComboBox$, ApprovStatus);
+                    appStateComboBox$.on('select', function (event) {
+                        myApprovalList$.jqxGrid('pagerrenderer');
+                    });
+                    appStateComboBox$.jqxComboBox('selectIndex', 1);
+
+                    appButton$.on('click', function () {
+                        var selData = myApprovalList$.jqxGrid('getrowdata', myApprovalList$.jqxGrid('selectedrowindex'));
+                        selData.ActionType = '@Common.Constant.CommonConstant.ACTION_PROMOTE';
+                        RequestData("/Common/PromoteApprovalTask", selData, function (res) {
+                            myApprovalList$.jqxGrid('pagerrenderer');
+                        });
+                    });
+
+                    rejButton$.on('click', function () {
+                        var selData = myApprovalList$.jqxGrid('getrowdata', myApprovalList$.jqxGrid('selectedrowindex'));
+                        selData.ActionType = '@Common.Constant.CommonConstant.ACTION_REJECT';
+                        RequestData("/Common/PromoteApprovalTask", selData, function (res) {
+                            myApprovalList$.jqxGrid('pagerrenderer');
+                        });
+                    });
+
+                    container.append(appButton$);
+                    container.append(rejButton$);
+                    container.append(appStateComboBox$);
+                    statusbar.append(container);
+                },
+                pagerrenderer: function () {
+                    RequestData("/Common/SelMyApproval", { BPolicyOID: appStateComboBox$.jqxComboBox('getSelectedItem') == null ? null: appStateComboBox$.jqxComboBox('getSelectedItem').value }, function (res) {
+                        PrintJqxGrid(myApprovalSource, myApprovalList$, res);
+                    });
+                },
+            });
+            myApprovalList$.jqxGrid('pagerrenderer');
+
+            myApprovalList$.on('celldoubleclick', function (e) {
+                OpenApprovalContentDialog(null, null, e.args.row.bounddata, '/Common/ApprovalContent', e.args.row.bounddata.DocNm);
+            });
+            
+        });
+
+</script>

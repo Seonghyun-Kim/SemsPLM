@@ -1,0 +1,228 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="fixedCreateTop">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 과거차 문제점 반영서 작성</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="CreateProblemsLibraryBtn" class="custom-button"><i class="fas fa-plus-square"></i> 생성</button>
+                    <button id="CreateDocument_canclebtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<table class="createtable" style="margin-top:82px;">
+    <colgroup>
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+        <col style="width: 12.5%" />
+    </colgroup>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 제목</th>
+        <td colspan="7"><input type="text" id="CreateProblemName"></td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 차종</th>
+        <td colspan="3"><select></select></td>
+        <th><i class="fa fa-caret-right"></i> 제품</th>
+        <td><select></select></td>
+        <th><i class="fa fa-caret-right"></i> 부품</th>
+        <td><select></select></td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 발생처</th>
+        <td>
+            <div>
+                <select style="width:45%"></select>
+                &nbsp;<select style="width:45%"></select>
+            </div>
+        </td>
+        <th><i class="fa fa-caret-right"></i> 발생단계</th>
+        <td><select></select></td>
+        <th><i class="fa fa-caret-right"></i> 고장유형</th>
+        <td><select></select></td>
+        <th><i class="fa fa-caret-right"></i> 구분</th>
+        <td><select></select></td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 기타</th>
+        <td colspan="5"><input type="text" id="CreateProblemDescription" /></td>
+        <th><i class="fa fa-caret-right"></i> 리비전</th>
+        <td></td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+        <td colspan="7"></td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> Issues(문제점)</th>
+        <td colspan="3">
+            <textarea id="CreateProblemIssues"></textarea>
+            <div>
+                <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
+                <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
+                <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
+            </div>
+        </td>
+        <th><i class="fa fa-caret-right"></i> Cause(원인)</th>
+        <td colspan="3">
+            <textarea id="CreateProblemCause"></textarea>
+            <div>
+                <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
+                <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
+                <ul class="image_thumbnail floatL" id="CauseUploadResult"><!--이미지 썸네일 영역--></ul>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> Countermeasures<br />(대책)</th>
+        <td colspan="7">
+            <textarea id="CreateProblemCountermeasures"></textarea>
+            <div>
+                <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
+                <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
+                <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult"><!--이미지 썸네일 영역--></ul>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+        var CreateProblemLibIssues;
+        var CreateProblemLibCause;
+        var CreateProblemLibCountermeasures;
+
+        $('#CreateProblemsLibraryBtn').on('click', function () {
+            var param = {};
+
+            //param.Car_Lib_OID = $('#CreateProblemCar_Lib').val(); //차종
+            //param.Product = $('#CreateProblemProduct').val(); //제품 
+            //param.Part = $('#CreateProblemPart').val(); //부품
+            //param.Occurrence = $('#CreateProblemOccurrence').val(); //발생처
+            //param.Stage_Occurrence = $('#CreateProblemStage_Occurrence').val();
+            //param.Failure_Type = $('#CreateProblemFailure_Type').val(); //고장유형
+            //param.Division = $('#CreateProblemDivision').val(); //구분
+            param.Issues = $('#CreateProblemIssues').val();
+            param.Issues_Thumbnai = CreateProblemLibIssues;
+            param.Cause = $('#CreateProblemCause').val();
+            param.Cause_Thumbnail = CreateProblemLibCause;
+            param.Countermeasures = $('#CreateProblemCountermeasures').val();
+            param.Countermeasures_Thumbnail = CreateProblemLibCountermeasures;
+
+            param.Name = $('#CreateProblemName').val(); //번호
+            param.Description = $('#CreateProblemDescription').val(); //기타
+
+
+            RequestData('/Econtents/InsProblemsLibrary', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+                PageReload();
+            });
+        });
+
+        $('#IssuesImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#IssuesDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#IssuesUploadResult').empty();
+            $('#IssuesUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            CreateProblemLibIssues = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+        $('#CauseImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#CauseDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#CauseUploadResult').empty();
+            $('#CauseUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            CreateProblemLibCause = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+        $('#CountermeasuresImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#CountermeasuresDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#CountermeasuresUploadResult').empty();
+            $('#CountermeasuresUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            CreateProblemLibCountermeasures = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+    });
+</script>

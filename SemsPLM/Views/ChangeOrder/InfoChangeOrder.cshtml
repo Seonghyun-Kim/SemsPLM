@@ -406,16 +406,16 @@
             $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').attr('hidden', false);
 
             //수정 가능한 항목을 표시
-                    var modifyTag = document.createElement('div');
-                    modifyTag.className = "modifyTag";
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
 
-                    $('.Modifiable_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
-                    $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
-                    $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
+            $('.Modifiable_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
+            $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
+            $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
 
-                    $('.Modifiable_@ViewBag.ECODetail.OID').parent().append(modifyTag);
-                    $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
-                    $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
+            $('.Modifiable_@ViewBag.ECODetail.OID').parent().append(modifyTag);
+            $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
+            $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
 
 
 
@@ -458,34 +458,34 @@
                 }
             });
 
-             $('input:radio[name=selServiceInfo]').on('change',function () {
-            if ($("input[name='selServiceInfo']:checked").val() == 'Y') {
-                $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').removeAttr('readonly');
-            }
-             if ($("input[name='selServiceInfo']:checked").val() == 'N') {
-                 $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').attr('readonly','readonly');
-                 $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').attr('readonly','readonly');
-            }
-         });
-        $('input:radio[name=selMoldChange]').on('change',function () {
-            if ($("input[name='selMoldChange']:checked").val() == 'Y') {
-                $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').removeAttr('readonly');
-            }
-            if ($("input[name='selMoldChange']:checked").val() == 'N') {
-                $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').attr('readonly','readonly');
-                $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').attr('readonly','readonly');
-            }
-         });
-        $('input:radio[name=selEoFault]').on('change',function () {
-            if ($("input[name='selEoFault']:checked").val() == '@Common.Constant.EoConstant.FAULT_SELF') {
-                $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').removeAttr('readonly');
-            } else {
-                $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-            }
+            $('input:radio[name=selServiceInfo]').on('change', function () {
+                if ($("input[name='selServiceInfo']:checked").val() == 'Y') {
+                    $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
+                    $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').removeAttr('readonly');
+                }
+                if ($("input[name='selServiceInfo']:checked").val() == 'N') {
+                    $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
+                    $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
+                }
+            });
+            $('input:radio[name=selMoldChange]').on('change', function () {
+                if ($("input[name='selMoldChange']:checked").val() == 'Y') {
+                    $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
+                    $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').removeAttr('readonly');
+                }
+                if ($("input[name='selMoldChange']:checked").val() == 'N') {
+                    $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
+                    $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
+                }
+            });
+            $('input:radio[name=selEoFault]').on('change', function () {
+                if ($("input[name='selEoFault']:checked").val() == '@Common.Constant.EoConstant.FAULT_SELF') {
+                    $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').removeAttr('readonly');
+                } else {
+                    $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
+                }
 
-        });
+            });
 
             var eoReason = '@ViewBag.ECODetail.Eo_Reason';
             if (eoReason != null && eoReason != undefined && eoReason.length > 0) {
@@ -519,7 +519,7 @@
                     return;
                 } else {
                     alert("사용가능한 EONO 입니다.");
-                  $('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val('T');
+                    $('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val('T');
                 }
             });
 
@@ -650,7 +650,7 @@
                     pageable: false,
                     columns: [
                         {
-                            
+
                             text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
@@ -746,8 +746,8 @@
                         ebomListUpBtn$.on('click', function (e) {
                             var datarowIdx = ebomListGrid$.jqxGrid('getselectedrowindexes');
 
-                            var  row = ebomListGrid$.jqxGrid('getrowdata', datarowIdx[0]);
-                            var idx = row.boundindex-1;
+                            var row = ebomListGrid$.jqxGrid('getrowdata', datarowIdx[0]);
+                            var idx = row.boundindex - 1;
                             if (row.OID == ECOOID) {
                                 return;
                             }
@@ -763,14 +763,14 @@
                         });
                         ebomListDownBtn$.on('click', function (e) {
                             var datarowIdx = ebomListGrid$.jqxGrid('getselectedrowindexes');
-                           var  row = ebomListGrid$.jqxGrid('getrowdata', datarowIdx[0]);
-                            var idx = row.boundindex +1;
+                            var row = ebomListGrid$.jqxGrid('getrowdata', datarowIdx[0]);
+                            var idx = row.boundindex + 1;
 
                             if (row.OID == ECOOID) {
                                 return;
                             }
                             const ebomDataSource = ebomListGrid$.jqxGrid("source").loadedData;
-                            var midx = ebomDataSource.length-1;
+                            var midx = ebomDataSource.length - 1;
                             fMoveGridRecusive(ebomDataSource, row.OID, 'DOWN');
                             ebomListGrid$.jqxGrid('updatebounddata');
                             ebomListGrid$.jqxGrid('clearselection');
@@ -809,11 +809,14 @@
             } else if (infoValue == 'ebomStatement') {
                 var selRow;
                 var rowKey = null;
+                var rowDataField = null;
                 var param = {};
+              
                 param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
                 param.RootOID = @ViewBag.ECODetail.OID;
 
                 var ebomStatementSource = {
+                    unboundmode: true,
                     datatype: 'json',
                     datafields: [
                         { name: 'OID' },
@@ -867,42 +870,37 @@
                             text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
-                                    var div = '<div class="basic_image changeOrderImg">';
-                                    div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
-                                    div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                                    div += '<ul class="image_thumbnail" id="uploadResult1_' + uid+'"></div>';
-                                    $(htmlElement).append(div);
+                                var div = '<div class="basic_image changeOrderImg">';
+                                div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
+                                $(htmlElement).append(div);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone1_' + uid).empty();
+                                    $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
                             },
                             initwidget: function (row, column, value, htmlElement) {
-                                if (ebomStatementGrid$.jqxGrid('getrowdata', row) != null && ebomStatementGrid$.jqxGrid('getrowdata', row) != undefined) {
-                                    var uid = ebomStatementGrid$.jqxGrid('getrowdata', row).uid;
-                                    if (value != null && value != '') {
-                                        $(htmlElement).find('#dropZone1_' + uid).empty();
-                                        $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
 
-                                    }
-                                }
                             }
                         },
                         {
                             text: '변경 후', datafield: 'AfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
-                                    var div = '<div class="basic_image changeOrderImg">';
-                                    div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
-                                    div += '<div class="image_inputbox" id="dropZone2_' + uid+'"><span class="imgPlaceholder">이미지</span></div>';
-                                    div += '<ul class="image_thumbnail" id="uploadResult2_' + uid+'"></div>';
-                                    $(htmlElement).append(div);
+                                var div = '<div class="basic_image changeOrderImg">';
+                                div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
+                                $(htmlElement).append(div);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone2_' + uid).empty();
+                                    $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
                                 dropImage(uid);
                             },
                             initwidget: function (row, column, value, htmlElement) {
-                                if (ebomStatementGrid$.jqxGrid('getrowdata', row) != null && ebomStatementGrid$.jqxGrid('getrowdata', row) != undefined) {
-                                    var uid = ebomStatementGrid$.jqxGrid('getrowdata', row).uid;
-                                    if (value != null && value != '') {
-                                        $(htmlElement).find('#dropZone2_' + uid).empty();
-                                        $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                                    }
-                                }
+
                             }
                         },
                         { text: '변경 내역', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
@@ -928,6 +926,7 @@
                         statusbar.append(container$);
                         //행 추가
                         ebomStatementAddBtn$.on('click', function (e) {
+                            ebomStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
                             var rowData = {};
                             rowData.RootOID = @ViewBag.ECODetail.OID;
                             rowData.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
@@ -935,14 +934,13 @@
                             ebomStatementGrid$.jqxGrid({ editable: true });
                         });
                         ebomStatementSaveBtn$.on('click', function (e) {
+                            ebomStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
                             var data = ebomStatementGrid$.jqxGrid('getrows');
                             for (var i = 0; i < data.length; i++) {
                                 var cellData = ebomStatementGrid$.jqxGrid('getcelltext', i, 'PNo');
                                 console.log(cellData);
                                 if (cellData == null || cellData == undefined || cellData == '') {
                                     alert('P/NO를 입력해주세요');
-                                    //ebomStatementGrid$.jqxGrid('selectrow', i);
-                                   // ebomStatementGrid$.jqxGrid('selectcell',i, 'PNo');
                                     return false;
                                 }
                             }
@@ -961,6 +959,14 @@
                                 });
                             }
                         });
+                        ebomStatementGrid$.on('cellclick', function (event) {
+                            // event arguments.
+                            var args = event.args;
+
+                            rowKey = args.rowindex;
+                            rowDataField = args.datafield;
+
+                        });
 
                         ebomStatementDelBtn$.on('click', function (e) {
                             var rowindex = ebomStatementGrid$.jqxGrid('selectedrowindexes');
@@ -977,15 +983,12 @@
                             }
                         });
                     }
-
-
                 });
                 getBomList(ebomStatementSource, ebomStatementGrid$, param);
-
             }
         });
-
     });
+
     function getBomList(_Source, _Grid$, _param) {
         RequestData("/ChangeOrder/SelEOContents", _param, function (res) {
             PrintJqxGrid(_Source, _Grid$, res);
