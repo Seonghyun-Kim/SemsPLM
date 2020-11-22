@@ -203,6 +203,15 @@ WebUtils.GetComboValue = function (ComponentID) {
     }
 };
 
+WebUtils.GetComboObjectValue = function (Component) {
+    if (!($(Component).jqxComboBox('getSelectedItem') === undefined || $(Component).jqxComboBox('getSelectedItem').value === null || $(Component).jqxComboBox('getSelectedItem').value === "")) {
+        return $(Component).jqxComboBox('getSelectedItem').value;
+    } else {
+        return null;
+    }
+};
+
+
 WebUtils.GetCheckBoxValue = function (ComponentID) {
     return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;
 };

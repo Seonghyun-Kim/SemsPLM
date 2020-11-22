@@ -12,7 +12,7 @@ namespace Qms.Models
     public class ImproveCounterMeasure : DObject, IDObject
     {     
         // 개선대책 ModuleOID 
-        public int ModuleOID { get; set; }
+        public int? ModuleOID { get; set; }
 
         // 근본원인 
         public string RootCause { get; set; }
@@ -22,6 +22,8 @@ namespace Qms.Models
 
         // 처리일자 
         public DateTime? ProcessDt { get; set; }
+
+        public string IsRemove { get; set; }
     }
 
     public static class ImproveCounterMeasureRepository

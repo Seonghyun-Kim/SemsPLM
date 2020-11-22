@@ -2811,6 +2811,7 @@
     <Content Include="Views\Qms\Dialog\dlgEditStandardFollowUp.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickBlockade.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditQuickOccurrenceCause.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditQuickImproveCounterMeasure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

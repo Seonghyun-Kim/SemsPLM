@@ -74,7 +74,7 @@ namespace Common.Constant
 
         public static string TYPE_WHY { get { return "WHY"; } }
 
-        public static string IMPROVE_COUNTERMEASURE_ITEM { get { return "IMPROVE_COUNTERMEASURE"; } }
+        public static string TYPE_IMPROVE_COUNTERMEASURE_ITEM { get { return "IMPROVE_COUNTERMEASURE"; } }
 
         public static string TYPE_LPA_UNFIT_CHECK_ITEM { get { return "LPA_UNFIT_CHECK_ITEM"; } }
 
