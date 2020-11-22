@@ -524,8 +524,7 @@ namespace SemsPLM.Controllers
                     /*qmsCheck.OID = qmsCheck.Cnt;
                     qmsCheck.ModuleOID = qmsCheck.Cnt;*/
 
-                    returnValue = QmsCheckRepository.InsQmsCheck(qmsCheck);
-                    if (qmsCheck.ModuleOID == null)
+                    if (qmsCheck.OID == null)
                     {
                         returnValue = QmsCheckRepository.InsQmsCheck(_param);
                     }
@@ -549,7 +548,49 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 표준화
+        /// <summary>
+        /// 2020.11.15
+        /// 작업자 교육 등록
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditStandardFollowUp(StandardDoc standardDoc)
+        {
+            return View("Dialog/dlgEditStandardFollowUp", (standardDoc.OID == null ? standardDoc : StandardDocRepository.SelStandardDoc(standardDoc)));
+        }
 
+        public JsonResult InsStandardFollowUp(StandardDoc _param)
+        {
+            int ModuleOID = 0;
+            int returnValue = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
+                {
+                    /*qmsCheck.OID = qmsCheck.Cnt;
+                    qmsCheck.ModuleOID = qmsCheck.Cnt;*/
+
+                    if (standardDoc.OID == null)
+                    {
+                        returnValue = StandardDocRepository.InsStandardDoc(_param);
+                    }
+                    else
+                    {
+                        StandardDocRepository.UdtStandardDoc(_param);
+                    }
+                }
+
+                DaoFactory.Commit();
+
+                return Json(ModuleOID);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
         #endregion
 
         #region -- 교육
