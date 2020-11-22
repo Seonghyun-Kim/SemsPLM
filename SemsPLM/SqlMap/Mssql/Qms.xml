@@ -10,6 +10,7 @@
     <typeAlias alias="BlockadeItem" type="Qms.Models.BlockadeItem" />
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
     <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
+    <typeAlias alias="StandardDoc" type="Qms.Models.StandardDoc" />
   </alias>
   
   <statements>
@@ -440,6 +441,41 @@
       FinishFl = #FinishFl#,
       FinishDetail = #FinishDetail#
       WHERE ModuleOID = #ModuleOID#;
+    </update>
+    
+    <!-- StdDoc SQL -->
+    <select id="SelStandardDoc" parameterClass="StandardDoc" resultClass="StandardDoc">
+      SELECT A.*
+      FROM T_DQMS_STANDARD_DOC A
+      <dynamic prepend="where">
+      </dynamic>
+    </select>
+
+    <insert id="InsStandardDoc" parameterClass="StandardDoc">
+      INSERT INTO T_DQMS_STANDARD_DOC
+      (OID,
+      ModuleOID,
+      DocType,
+      DocOID,
+      DocSummary,
+      DocCompleteDt)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #DocType#,
+      #DocOID#,
+      #DocSummary#,
+      #DocCompleteDt#);
+    </insert>
+
+    <update id="UdtStandardDoc" parameterClass="StandardDoc">
+      UPDATE T_DQMS_STANDARD_DOC
+      SET
+      DocType = #DocType#,
+      DocOID = #DocOID#,
+      DocSummary = #DocSummary#,
+      DocCompleteDt = #DocCompleteDt#
+      WHERE OID = #OID# AND ModuleOID = #ModuleOID#;
     </update>
   </statements>
   
