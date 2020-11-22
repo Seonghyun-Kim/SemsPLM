@@ -11,6 +11,7 @@ namespace Qms.Models
 {
     public class DetectCounterMeasure : QuickResponseModule, IDObject
     {
+        public int? ModuleOID { get { return OID; } set { OID = value; } }
         // 검출장소-제조공정 
         public bool DetectM { get; set; }
 
@@ -63,15 +64,8 @@ namespace Qms.Models
             return DaoFactory.GetList<DetectCounterMeasure>("Qms.SelDetectCounterMeasure", _param);
         }
 
-        public static int InsDetectCounterMeasure(DetectCounterMeasure _param)
-        {
-            _param.CreateUs = 1;
-            return DaoFactory.SetInsert("Qms.InsDetectCounterMeasure", _param);
-        }
-
         public static int UdtDetectCounterMeasure(DetectCounterMeasure _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtDetectCounterMeasure", _param);
         }
     }

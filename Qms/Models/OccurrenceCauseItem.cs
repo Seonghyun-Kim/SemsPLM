@@ -12,10 +12,14 @@ namespace Qms.Models
     public class OccurrenceCauseItem : DObject, IDObject
     {
         // 발생원인OID 
-        public int ModuleOID { get; set; }
+        public int? ModuleOID { get; set; }
 
         // 발생원인 
         public int OccurrenceCauseLibOID { get; set; }
+
+        public string OccurrenceCauseLibText { get; set; }
+
+        public List<OccurrenceWhy> OccurrenceWhys { get; set; }
 
     }
 
@@ -53,12 +57,15 @@ namespace Qms.Models
     public class OccurrenceWhy : DObject, IDObject
     {
         // 발생원인 OID 
-        public int CauseOID { get; set; }
+        public int? CauseOID { get; set; }
 
         // 발생원인 내역 
         public string OccurrenceCauseDetail { get; set; }
 
+        public string IsRemove { get; set; }
+
     }
+
     public static class OccurrenceWhyRepository
     {
         public static OccurrenceWhy SelOccurrenceWhy(OccurrenceWhy _param)

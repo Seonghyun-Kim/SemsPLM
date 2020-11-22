@@ -1,0 +1,166 @@
+﻿@{
+    Layout = null;
+}
+
+    <div>
+        <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+            <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+            <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
+        </div>
+
+        @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
+
+        <label>근본원인 개선대책</label>
+        <table id="tbImproveCounterMeasure" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:37%" />
+                <col style="width:37%" />
+                <col style="width:15%" />
+                <col style="width:11%" />
+            </colgroup>
+            <tr>
+                <th>근본원인</th>
+                <th>개선대책</th>
+                <th>처리일자</th>
+                <th><button id="btnImproveCounterMeasureAdd">원인추가</button></th>
+            </tr>
+        </table>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnDlgSave").jqxButton();
+        $("#btnDlgSave").on("click", function () {
+            SaveImproveCounterMeasure();
+        })
+
+        $("#btnImproveCounterMeasureAdd").jqxButton();
+        $("#btnImproveCounterMeasureAdd").on("click", function () {
+            AddImproveCounterMeasureAdd(null);
+        });
+
+        var ImproveCounterMeasures = @Html.Raw(Json.Encode(ViewBag.ImproveCounterMeasures));
+
+        if (ImproveCounterMeasures.length === 0) {
+            AddImproveCounterMeasureAdd(null);
+        } else {
+            ImproveCounterMeasures.forEach(function (v, i) {
+                AddImproveCounterMeasureAdd(v);
+            });
+        }
+    });
+
+    function AddImproveCounterMeasureAdd(data) {
+        var OID = data == null ? null : data.OID;
+        var table$ = document.getElementById("tbImproveCounterMeasure");
+
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("Data", "Y");
+        tr$.setAttribute("OID", OID);
+
+        var tdRootCause$ = document.createElement("td");
+        var txtRootCause$ = document.createElement("input");
+        txtRootCause$.setAttribute("type", "text");
+        txtRootCause$.setAttribute("name", "RootCause");
+        txtRootCause$.style.width = "100%";
+        if (data !== null) {
+            txtRootCause$.value = data.RootCause;
+        }        
+        txtRootCause$.className = "txtBox";            
+        tdRootCause$.appendChild(txtRootCause$);
+
+        var tdImproveCountermeasure$ = document.createElement("td");
+        var txtImproveCountermeasure$ = document.createElement("input");
+        txtImproveCountermeasure$.setAttribute("type", "text");
+        txtImproveCountermeasure$.setAttribute("name", "ImproveCountermeasure");
+        txtImproveCountermeasure$.style.width = "100%";
+         if (data !== null) {
+            txtImproveCountermeasure$.value = data.ImproveCountermeasure;
+        }     
+        txtImproveCountermeasure$.className = "txtBox";            
+        tdImproveCountermeasure$.appendChild(txtImproveCountermeasure$);
+
+        var tdProcessDt$ = document.createElement("td");
+        var dtProcessDt$ = document.createElement("div");
+        dtProcessDt$.setAttribute("name", "ProcessDt");
+        $(dtProcessDt$).jqxDateTimeInput(DateFormat);
+        $(dtProcessDt$).jqxDateTimeInput({
+            width: 140,
+            theme: "Light"
+        });
+        if (data === null) {
+            $(dtProcessDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = data.ProcessDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(dtProcessDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        tdProcessDt$.appendChild(dtProcessDt$);
+
+        var tdBtn$ = document.createElement("td");
+        var btnDel = document.createElement("button");
+        btnDel.innerText = "행 삭제";
+        tdBtn$.appendChild(btnDel);
+        $(btnDel).jqxButton();
+
+        $(btnDel).on("click", function () {
+            tr$.setAttribute("Remove", "Y");
+            tr$.style.display = "none";
+        });
+        
+        tr$.appendChild(tdRootCause$);
+        tr$.appendChild(tdImproveCountermeasure$);
+        tr$.appendChild(tdProcessDt$);
+        tr$.appendChild(tdBtn$);
+
+        table$.appendChild(tr$);
+    }
+
+    function SaveImproveCounterMeasure() {
+        var params = [];
+        var trImproveCounterMeasure$ = $("#tbImproveCounterMeasure tr[Data='Y']");
+        var errMsg = "";
+
+        trImproveCounterMeasure$.each(function (i, v) {
+            var data = {};
+            data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
+            data.ModuleOID = "@ViewBag.ModuleOID";
+            data.RootCause = $($(v).find("[name='RootCause']")[0]).val();
+            data.ImproveCountermeasure = $($(v).find("[name='ImproveCountermeasure']")[0]).val();
+            data.ProcessDt = $($(v).find("[name='ProcessDt']")[0]).val();
+
+            if ($(v).attr("Remove") === "Y") {
+                data.IsRemove = "Y";
+            }
+
+            if (WebUtils.isBlank(data.RootCause)) {
+                errMsg += "[" + (i + 1).toString() + "] 행의 근본원인이 입력되지 않았습니다.\n";
+            }
+
+            if (WebUtils.isBlank(data.ImproveCountermeasure)) {
+                errMsg += "[" + (i + 1).toString() + "] 행의 개선대책이 입력되지 않았습니다.\n";
+            }
+
+            if (WebUtils.isBlank(data.ProcessDt)) {
+                errMsg += "[" + (i + 1).toString() + "] 행의 처리일자가 입력되지 않았습니다.\n";
+            }
+
+            params.push(data);
+        });
+
+        if (errMsg.length != 0) {
+            alert(errMsg); return;
+        }
+
+        $.post('/Qms/SavetQuickImproveCounterMeasure', { _params: params }, function (response) {
+            if (response.isError) {
+                alert(response.resultMessage);
+                return;
+            }
+            alert("저장되었습니다.");
+        }).fail(function (err) {
+            alert(err.responseText);
+        });
+    }
+</script>

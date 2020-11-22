@@ -8,6 +8,11 @@
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
     <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
     <typeAlias alias="BlockadeItem" type="Qms.Models.BlockadeItem" />
+    <typeAlias alias="OccurrenceCauseItem" type="Qms.Models.OccurrenceCauseItem" />
+    <typeAlias alias="OccurrenceWhy" type="Qms.Models.OccurrenceWhy" />
+    <typeAlias alias="DetectCounterMeasure" type="Qms.Models.DetectCounterMeasure" />
+    <typeAlias alias="ImproveCounterMeasure" type="Qms.Models.ImproveCounterMeasure" />
+    
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
     <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
   </alias>
@@ -358,6 +363,200 @@
         </isNotNull>
       </dynamic>
 
+    </select>
+
+    <!-- OccurrenceCauseItem -->
+    <insert id="InsOccurrenceCauseItem" parameterClass="OccurrenceCauseItem">
+      INSERT INTO T_DQMS_OCCURRENCE_CAUSE
+      (OID,
+      ModuleOID,
+      OccurrenceCauseLibOID)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #OccurrenceCauseLibOID#)
+    </insert>
+
+    <update id="UdtOccurrenceCauseItem" parameterClass="OccurrenceCauseItem">
+      UPDATE T_DQMS_OCCURRENCE_CAUSE
+      SET     
+      OccurrenceCauseLibOID = #OccurrenceCauseLibOID#
+      WHERE OID = #OID#
+    </update>
+
+    <delete id="DelOccurrenceCauseItem" parameterClass="OccurrenceCauseItem">
+      DELETE T_DQMS_OCCURRENCE_CAUSE WHERE OID = #OID#
+    </delete>
+
+    <select id="SelOccurrenceCauseItem" parameterClass="OccurrenceCauseItem" resultClass="OccurrenceCauseItem">
+      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.OccurrenceCauseLibOID, C.KorNm AS OccurrenceCauseLibText
+      FROM T_DQMS_OCCURRENCE_CAUSE A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN T_DLIBRARY C ON A.OccurrenceCauseLibOID = C.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="ModuleOID">
+          A.ModuleOID = #ModuleOID#
+        </isNotNull>        
+    </dynamic>
+    </select>
+    <!-- OccurrenceWhy -->
+    <insert id="InsOccurrenceWhy" parameterClass="OccurrenceWhy">
+      INSERT INTO T_DQMS_OCCURRENCE_WHY
+      (OID,
+      CauseOID,
+      OccurrenceCauseDetail)
+      VALUES
+      (#OID#,
+      #CauseOID#,
+      #OccurrenceCauseDetail#)
+    </insert>
+
+    <update id="UdtOccurrenceWhy" parameterClass="OccurrenceWhy">
+      UPDATE T_DQMS_OCCURRENCE_WHY
+      SET
+      OccurrenceCauseDetail = #OccurrenceCauseDetail#
+      WHERE OID = #OID#
+
+    </update>
+
+    <delete id="DelOccurrenceWhy" parameterClass="OccurrenceWhy">
+      DELETE FROM T_DQMS_OCCURRENCE_WHY
+      WHERE OID = #OID#
+
+    </delete>
+
+    <select id="SelOccurrenceWhy" parameterClass="OccurrenceWhy" resultClass="OccurrenceWhy">
+      SELECT A.OID, B.Name, B.Description, A.CauseOID, A.OccurrenceCauseDetail
+      FROM T_DQMS_OCCURRENCE_WHY A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+
+      <isNotNull prepend="and" property="CauseOID">
+        A.CauseOID = #CauseOID#
+      </isNotNull>  
+    </select>
+    <!-- DetectCounterMeasure -->   
+    <update id="UdtDetectCounterMeasure" parameterClass="DetectCounterMeasure">
+      MERGE INTO T_DQMS_DETECT_COUNTERMEASURE AS T
+      USING (
+      SELECT
+      #ModuleOID# AS ModuleOID
+      , #DetectM# AS DetectM
+      , #DetectMDetail# AS DetectMDetail
+      , #DetectS# AS DetectS
+      , #DetectSDetail# AS DetectSDetail
+      , #DetectQ# AS DetectQ
+      , #DetectQDetail# AS DetectQDetail
+      , #DetectE# AS DetectE
+      , #DetectEDetail# AS DetectEDetail
+      , #LeakCause1# AS LeakCause1
+      , #LeakCause2# AS LeakCause2
+      , #LeakCause3# AS LeakCause3
+      , #DetectDt# AS DetectDt
+      , #Measure# AS Measure) B
+      ON T.ModuleOID = B.ModuleOID
+      WHEN MATCHED THEN
+      UPDATE SET
+      DetectM = B.DetectM,
+      DetectMDetail = B.DetectMDetail,
+      DetectS = B.DetectS,
+      DetectSDetail = B.DetectSDetail,
+      DetectQ = B.DetectQ,
+      DetectQDetail = B.DetectQDetail,
+      DetectE = B.DetectE,
+      DetectEDetail = B.DetectEDetail,
+      LeakCause1 = B.LeakCause1,
+      LeakCause2 = B.LeakCause2,
+      LeakCause3 = B.LeakCause3,
+      DetectDt = B.DetectDt,
+      Measure = B.Measure
+      WHEN NOT MATCHED THEN
+      INSERT (
+      ModuleOID,
+      DetectM,
+      DetectMDetail,
+      DetectS,
+      DetectSDetail,
+      DetectQ,
+      DetectQDetail,
+      DetectE,
+      DetectEDetail,
+      LeakCause1,
+      LeakCause2,
+      LeakCause3,
+      DetectDt,
+      Measure)
+      VALUES (
+      #ModuleOID#,
+      #DetectM#,
+      #DetectMDetail#,
+      #DetectS#,
+      #DetectSDetail#,
+      #DetectQ#,
+      #DetectQDetail#,
+      #DetectE#,
+      #DetectEDetail#,
+      #LeakCause1#,
+      #LeakCause2#,
+      #LeakCause3#,
+      #DetectDt#,
+      #Measure#);
+    </update>
+
+    <select id="SelDetectCounterMeasure" parameterClass="DetectCounterMeasure" resultClass="DetectCounterMeasure">
+      SELECT A.ModuleOID, A.DetectM, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
+      FROM T_DQMS_DETECT_COUNTERMEASURE A    
+      <dynamic prepend="where">      
+        <isNotNull prepend="and" property="ModuleOID">
+          A.ModuleOID = #ModuleOID#
+        </isNotNull>
+      </dynamic>
+    </select>
+    
+    <!--ImproveCounterMeasure-->
+    <insert id="InsImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+      INSERT INTO T_DQMS_IMPROVE_COUNTERMEASURE
+      (OID,
+      ModuleOID,
+      RootCause,
+      ImproveCountermeasure,
+      ProcessDt)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #RootCause#,
+      #ImproveCountermeasure#,
+      #ProcessDt#)
+    </insert>
+
+    <update id="UdtImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+      UPDATE T_DQMS_IMPROVE_COUNTERMEASURE
+      SET
+      RootCause = #RootCause#,
+      ImproveCountermeasure = #ImproveCountermeasure#,
+      ProcessDt = #ProcessDt#
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelImproveCounterMeasure" parameterClass="ImproveCounterMeasure" resultClass="ImproveCounterMeasure">
+      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.RootCause, A.ImproveCountermeasure, A.ProcessDt
+      FROM T_DQMS_IMPROVE_COUNTERMEASURE A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
     </select>
     
     <!-- WorkerEdu SQL-->
