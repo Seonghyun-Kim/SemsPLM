@@ -62,7 +62,7 @@ namespace Pms
 
         public static int CalculateFutureDuration(DateTime fromDate, DateTime toDate, int workingDay, ICollection<DateTime> holidays)
         {
-            int iBetWeenDayCnt = PmsConstant.INIT_DURATION;
+            int iBetWeenDayCnt = 0;
 
             DateTime tmp;
             int i = 0;
@@ -158,5 +158,6 @@ namespace Pms
             delay = PmsUtils.CalculateGapFutureDuration(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", _estEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", _actEndDt)), _workingDay, _lHoliday);
             return delay;
         }
+
     }
 }

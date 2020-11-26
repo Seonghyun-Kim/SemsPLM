@@ -32,7 +32,8 @@ namespace EBom.Models
         public string ObjEo_No_History { get; set; }
         public string ObjEtc { get; set; }
         public int? ObjApprovOID { get; set; }
-        public string ObjEPartType { get; set; }
+        public int? ObjEPartType { get; set; }
+        public string ObjEPartTypeNm { get; set; }
         public string ObjSel_Eo { get; set; }
         public DateTime? ObjSel_Eo_Dt { get; set; }
         public string ObjSpec { get; set; }
@@ -43,13 +44,31 @@ namespace EBom.Models
         public int? ObjProd_Lib_Lev1_OID { get; set; }
         public int? ObjProd_Lib_Lev2_OID { get; set; }
         public int? ObjProd_Lib_Lev3_OID { get; set; }
+        public string ObjDivision { get; set; }
+        public int?   ObjITEM_No { get; set; }
+        public string ObjITEM_NoNm { get; set; } //ITEM_NO
+        public int?   ObjITEM_Middle { get; set; }
+        public string ObjITEM_MiddleNm { get; set; }
+        public int?   ObjProduction_Place { get; set; }
+        public string ObjProduction_PlaceNm { get; set; }
+        public int?   ObjBlock_No { get; set; }
+        public string ObjBlock_NoNm { get; set; } //BLOCK_NONm
+        public string ObjSerial { get; set; }
+        public string ObjSel_Revision { get; set; }
+        public int? ObjMaterial_OID { get; set; }
+        public string ObjMaterial_Nm { get; set; }
 
-        public string ObjCar_Lib_NM { get; set; }
+
+
+        public string ObjCar_Lib_Nm { get; set; }
 
         public string ObjThumbnail { get; set; }
 
         public string Action { get; set; }
         public int? OldOID { get; set; }
+        public int? RootOID { get; set; }
+        public int? LToOID { get; set; }
+        public int? RToOID { get; set; }
     }
 
     public static class EBomRepository
@@ -70,12 +89,21 @@ namespace EBom.Models
         }
         #endregion
 
-        #region EBom Add
+        #region EBom Ru
         public static int RuAction(EBOM _param)
+        {
+            int OID = DaoFactory.SetUpdate("EBom.RuEBomStructure", _param);
+            return OID;
+        }
+        #endregion
+
+        #region EBom Udt
+        public static int UdtAction(EBOM _param)
         {
             int OID = DaoFactory.SetUpdate("EBom.UdtEBomStructure", _param);
             return OID;
         }
         #endregion
+
     }
 }

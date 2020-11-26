@@ -17,6 +17,14 @@ namespace Common.Constant
         public static string PART_TYPE_SASSY = "S";
         public static string PART_TYPE_DETAIL = "D";
 
+        public static string DIV_ASSEMBLY = "ASSEMBLY";
+        public static string DIV_SINGLE = "SINGLE";
+        public static string DIV_STANDARD= "STANDARD";
+
+        public static string DIV_ASSEMBLY_NM = "조립도";
+        public static string DIV_SINGLE_NM = "단품도";
+        public static string DIV_STANDARD_NM = "스탠다드";
+
         public static List<string> DISEDITABLE
         {
             get => new List<string> { 

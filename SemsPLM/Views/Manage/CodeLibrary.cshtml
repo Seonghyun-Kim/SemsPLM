@@ -1,0 +1,231 @@
+﻿@{
+    Layout = null;
+}
+<div class="searchBox">
+    <div class="searchTitle">
+        <label><i class="fas fa-folder-open"></i> &nbsp;코드 라이브러리</label>
+    </div>
+    <div class="searchContent">
+        <div class="searchData">
+            <div>코드1</div>
+            <div>
+                <input type="text" class="txtBox" id="CodeLibrary_Code1" />
+                @* <div id="LibraryManage_Name" style="margin-left:5px;"></div>*@
+            </div>
+        </div>
+        <div class="searchData">
+            <div>코드2</div>
+            <div>
+                <input type="text" class="txtBox" id="CodeLibrary_Code2" />
+                @* <div id="LibraryManage_Name" style="margin-left:5px;"></div>*@
+            </div>
+        </div>
+        <div class="searchData">
+            <div>이름</div>
+            <div>
+                <input type="text" class="txtBox" id="CodeLibrary_KorNm" />
+            </div>
+        </div>
+        <div class="searchButton">
+            <button id="CodeLibrary_SearchBtn" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+        </div>
+    </div>
+</div>
+<div id="CodeLibrary_Grid"></div>
+
+
+<script>
+    var selRow;
+    var CodeLibSearchBtn$ = $('#CodeLibrarySearchBtn');
+    $(function () {
+        var rowKey = null;
+
+        var CodeLibSource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'Code1', type: 'string' },
+                { name: 'Code2', type: 'string' },
+                { name: 'KorNm', type: 'string' },
+                { name: 'Ord', type: 'number' },
+                { name: 'Description', type: 'string' },
+                { name: 'IsUse', type: 'string' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'CreateUsNm', type: 'string' },
+                { name: 'isRequired', type: 'string' },
+            ],
+            hierarchy:
+            {
+                keyDataField: { name: 'OID' },
+                parentDataField: { name: 'FromOID' }
+            },
+            id: 'OID',
+            addRow: function (rowID, rowData, IsUse, parentID, commit) {
+                // synchronize with the server - send insert command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                // you can pass additional argument to the commit callback which represents the new ID if it is generated from a DB.
+                commit(true);
+                newRowID = rowID;
+            },
+            updateRow: function (rowID, rowData, commit) {
+                // synchronize with the server - send update command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                commit(true);
+                console.log(rowData);
+            },
+        };
+        var initialized = false;
+        const CodeLibraryGrd$ = $('#CodeLibrary_Grid');
+        CodeLibraryGrd$.jqxTreeGrid(
+            {
+                width: "100%",
+                height: 680,
+                theme: "kdnc",
+                //      source: dataAdapter,
+                sortable: true,
+                ready: function () {
+                    initialized = true;
+
+                },
+                columns: [
+                    { text: 'OID', datafield: 'OID', type: 'number', align: 'center', hidden: true },
+                    {
+                        text: '코드1', datafield: 'Code1', type: 'string', align: 'center',
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            if (rowData.isRequired == "Y") {
+                                return cellValue + ' <i class="fas fa-lock"></i>';
+
+                            } else {
+                                return cellValue;
+
+
+                            }
+                        }
+                    },
+                    { text: '코드2', datafield: 'Code2', type: 'string', align: 'center', },
+                    { text: '이름', datafield: 'KorNm', type: 'string', align: 'center', },
+                    { text: '순서', datafield: 'Ord', type: 'string', align: 'center', },
+                    { text: '설명', datafield: 'Description', type: 'string', align: 'center', },
+                    { text: '사용여부', datafield: 'IsUse', type: 'string', align: 'center', },
+
+                    // { text: '생성일', datafield: 'CreateDt', type: 'date', align: 'center', },
+                    // { text: '생성자', datafield: 'CreateUsNm', type: 'string', align: 'center', },
+                ],
+                editable: false,
+                showToolbar: true,
+                toolbarHeight: 45,
+                renderToolbar: function (statusbar) {
+                    if (initialized === false) {
+                        var container$ = $('<div class="lGridComponent"></div>');
+                        var libAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                        var libDellBtn$= $('<button class="custom-button"><i class="fas fa-trash-alt"></i> 삭제</button>').jqxButton();
+                        container$.append(libAddBtn$);
+                        container$.append(libDellBtn$);
+                        statusbar.append(container$);
+                        //행 추가
+                        libAddBtn$.on('click', function (e) {
+                            var datarow = {};
+                            //LibraryGrd$.jqxTreeGrid('expandRow', rowKey);
+                            //LibraryGrd$.jqxTreeGrid('addRow', null, {}, 'first', rowKey);
+                            //LibraryGrd$.jqxTreeGrid('clearSelection');
+                            //LibraryGrd$.jqxTreeGrid('selectRow', newRowID);
+                            //LibraryGrd$.jqxTreeGrid('beginRowEdit', newRowID);
+                            if (selRow == null || selRow == undefined) {
+                                OpenCodeLibraryManipDialog(function (res) {
+                                    getCodeLibraryList(CodeLibSource, CodeLibraryGrd$);
+                                    setTimeout(function () {
+                                        CodeLibraryGrd$.jqxTreeGrid('selectRow', res);
+                                    }, 100);
+                                }, null, null, '/Manage/dlgCodeLibraryManip', '코드 라이브러리 관리', "Create");
+                            } else {
+                                OpenCodeLibraryManipDialog(function (res) {
+                                    getCodeLibraryList(CodeLibSource, CodeLibraryGrd$);
+                                    setTimeout(function () {
+                                        CodeLibraryGrd$.jqxTreeGrid('selectRow', res);
+                                    }, 100);
+                                }, null, selRow.OID, '/Manage/dlgCodeLibraryManip', '코드 라이브러리 관리', "Create");
+                            }
+
+                        });
+
+                        libDellBtn$.on('click', function (e) {
+                            var param = {};
+                            param.OID = selRow.OID;
+                            if (selRow != null && selRow != '') {
+                                if (selRow.isRequired == "Y") {
+                                    alert('필수항목이라 삭제할수 없습니다.');
+                                } else {
+                                    if (confirm('삭제 하시겠습니까?')) {
+                                        $.post('/Manage/delLibrary', param, function (res) {
+                                            if (res.isError) {
+                                                alert(response.resultMessage);
+                                                return;
+                                            }
+                                            alert('삭제 하였습니다.');
+                                            getCodeLibraryList(CodeLibSource, CodeLibraryGrd$);
+                                        });
+                                    }
+                                }
+                            } else {
+                                alert('삭제할 항목을 선택하여 주세요.');
+                            }
+                        });
+                    }
+                //    CodeLibraryGrd$.jqxTreeGrid('expandAll');
+                }
+            });
+
+
+        CodeLibraryGrd$.on('rowClick', function (event) {
+            var arg = event.args;
+            var rowData = arg.row;
+            if (selRow == rowData) {
+                setTimeout(function () {
+                    CodeLibraryGrd$.jqxTreeGrid('clearSelection');
+                }, 5);
+               // LibraryGrd$.jqxTreeGrid('collapseRow', selRow.OID);
+                selRow = null;
+            } else {
+                selRow = rowData;
+               // LibraryGrd$.jqxTreeGrid('expandRow', selRow.OID);
+            }
+            // const parentData = LibraryGrd$.jqxTreeGrid('getRow', ProjectOID);
+        });
+
+        CodeLibraryGrd$.on('rowDoubleClick', function (event) {
+            var arg = event.args;
+            selRow = arg.row;
+            OpenCodeLibraryManipDialog(function (res) {
+                CodeLibraryGrd$.jqxTreeGrid('updateRow', res.OID, res);
+               // LibraryGrd$.jqxTreeGrid('render');
+            }, null, selRow.OID, '/Manage/dlgCodeLibraryManip', '코드 라이브러리 관리', "Edit");
+        });
+
+        getCodeLibraryList(CodeLibSource, CodeLibraryGrd$,null);
+
+        CodeLibSearchBtn$.on('click', function () {
+            var param = {};
+            param.Name = $('#LibraryManage_Name').val();
+            param.KorNm = $('#LibraryManage_KorNm').val();
+            getCodeLibraryList(CodeLibSource, CodeLibraryGrd$, param);
+
+        });
+
+
+    });
+
+    function getCodeLibraryList(_Source, _Grid$,_param) {
+        RequestData("/Manage/SelCodeLibrary", _param, function (res) {
+            PrintJqxTreeGrid(_Source, _Grid$, res);
+        });
+
+    }
+
+
+
+</script>
+

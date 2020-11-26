@@ -81,7 +81,7 @@ namespace Common
         public static string NumberToletters(int value, int length = 2)
         {
             //string map = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string map = "0123456789ABCDEFGHIJKLMNOPQSTUVWXYZ";
+            string map = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
             char[] result = new char[length];
             var x = value;

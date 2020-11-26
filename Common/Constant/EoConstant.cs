@@ -22,6 +22,9 @@ namespace Common.Constant
         public static string TYPE_CHANGE_REQUEST_KorNm = "변경요청";
         public static string TABLE_CHANGE_REQUEST = "T_DCHANGE_REQUEST";
 
+        public static string TYPE_ECR_STATEMENT = "ECR_STATEMENT"; //변경요청내역
+        public static string TYPE_ECO_RELATION = "ECO_RELATION"; //연관 ECO
+
         //EO 타입
         public static string TYPE_CUSTOMER_KorNm = "대여도(Customer)";
         public static string TYPE_HOUSE_KorNm = "승인도(In House)";

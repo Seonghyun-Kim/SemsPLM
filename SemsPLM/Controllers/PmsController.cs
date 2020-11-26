@@ -2,11 +2,15 @@
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using Pms;
 using Pms.Interface;
 using Pms.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -893,6 +897,188 @@ namespace SemsPLM.Controllers
             });
             return Json(PmsRelationshipRepository.GetLDGanttWbs(ProjectOID));
         }
+        #endregion
+
+        #region -- Resource Dashboard
+
+        public ActionResult ResourceDashboard()
+        {
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = PmsConstant.TYPE_PROJECT });
+            return View();
+        }
+
+        #endregion
+
+        #region -- Import Excel WBS
+
+        public JsonResult ImportExcelWbs(string OID, string ExcelFile)
+        {
+            XSSFWorkbook workBook;
+            ISheet sheet;
+
+            List<PmsRelationship> tmpRelationship = new List<PmsRelationship>();
+            Dictionary<int, PmsRelationship> displayRelationship = new Dictionary<int, PmsRelationship>();
+
+            try
+            {
+
+                string templateFilePath = HttpContext.Server.MapPath("~/TmpFile/" + ExcelFile);
+                using (var fs = new FileStream(templateFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    workBook = new XSSFWorkbook(fs);
+                }
+                sheet = workBook.GetSheetAt(0);
+                List<Dictionary<string, string>> excelMapList = getReadExcelMapList(workBook, sheet, 1);
+
+                PmsProject pdobj = PmsProjectRepository.SelPmsObject(new PmsProject { OID = Convert.ToInt32(OID) });
+                List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = pdobj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
+
+
+                int workingDay = Convert.ToInt32(pdobj.WorkingDay);
+                int rootOID = Convert.ToInt32(pdobj.OID);
+
+                excelMapList.ForEach(excelMap =>
+                {
+                    PmsRelationship pmsRel = new PmsRelationship();
+                   if(excelMap["개요 수준"].Equals("1"))
+                    {
+                        pmsRel.Level = Convert.ToInt32(excelMap["개요 수준"]);
+                        pmsRel.ToOID = rootOID;
+                        pmsRel.RootOID = rootOID;
+                        pmsRel.ObjName = pdobj.Name;
+                        pmsRel.ObjType = pdobj.Type;
+                        pmsRel.EstStartDt = Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", excelMap["시작"].Substring(0, excelMap["시작"].IndexOf(' '))));
+                        pmsRel.ObjSt = pdobj.BPolicyOID;
+                        pmsRel.ObjStNm = pdobj.BPolicy.StatusNm;
+                        pmsRel.WorkingDay = workingDay;
+                        pmsRel.Id = Convert.ToInt32(excelMap["ID"]);
+                        pmsRel.Dependency = null;
+                        displayRelationship.Add(Convert.ToInt32(excelMap["개요 수준"]), pmsRel);
+                    }
+                    else
+                    {
+                        pmsRel.Action = PmsConstant.ACTION_NEW;
+                        pmsRel.Id = Convert.ToInt32(excelMap["ID"]);
+                        pmsRel.Level = Convert.ToInt32(excelMap["개요 수준"]);
+                        pmsRel.ToOID = (rootOID + pmsRel.Id);
+                        pmsRel.RootOID = rootOID;
+                        pmsRel.FromOID = displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].ToOID;
+                        pmsRel.ObjName = excelMap["이름"];
+                        pmsRel.ObjType = PmsConstant.TYPE_TASK;
+                        pmsRel.WorkingDay = workingDay;
+                        pmsRel.Dependency = excelMap["선행 작업"];
+                        pmsRel.EstStartDt = Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", excelMap["시작"].Substring(0, excelMap["시작"].IndexOf(' '))));
+                        pmsRel.EstDuration = Convert.ToInt32(excelMap["기간"].Substring(0, excelMap["기간"].IndexOf(' ')));
+                        pmsRel.EstEndDt = PmsUtils.CalculateFutureDate( Convert.ToDateTime(pmsRel.EstStartDt), Convert.ToInt32(pmsRel.EstDuration), Convert.ToInt32(pmsRel.WorkingDay), lHoliday);
+                        if (displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].Children == null)
+                        {
+                            displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].Children = new List<PmsRelationship>();
+                        }
+
+                        displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].Children.Add(pmsRel);
+                        if(displayRelationship.ContainsKey(Convert.ToInt32(pmsRel.Level))){
+                            displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].EstEndDt = displayRelationship[Convert.ToInt32(pmsRel.Level - 1)].Children.Select(item => item.EstEndDt).ToList().Max();
+                            displayRelationship.Remove(Convert.ToInt32(pmsRel.Level));
+                        }
+                        displayRelationship.Add(Convert.ToInt32(pmsRel.Level), pmsRel);
+                    }
+                    tmpRelationship.Add(pmsRel);
+                });
+                displayRelationship.Clear();
+
+                tmpRelationship.ForEach(item =>
+                {
+                    if (item.Level == 1)
+                    {
+                        displayRelationship.Add(Convert.ToInt32(item.Level), item);
+                    }
+                    else
+                    {
+                        PmsRelationship tmpRel = tmpRelationship.Find(tmpItem => Convert.ToString(tmpItem.Id).Equals(item.Dependency));
+                        if (tmpRel != null)
+                        {
+                            item.EstStartDt = PmsUtils.CalculateFutureDate(Convert.ToDateTime(tmpRel.EstEndDt), 2, Convert.ToInt32(item.WorkingDay), lHoliday);
+                            item.EstEndDt = PmsUtils.CalculateFutureDate(Convert.ToDateTime(item.EstStartDt), Convert.ToInt32(item.EstDuration), Convert.ToInt32(item.WorkingDay), lHoliday);
+                        }
+
+                        if (displayRelationship.ContainsKey(Convert.ToInt32(item.Level)))
+                        {
+                            displayRelationship[Convert.ToInt32(item.Level - 1)].EstEndDt = displayRelationship[Convert.ToInt32(item.Level - 1)].Children.Select(tmpItem => tmpItem.EstEndDt).ToList().Max();
+                            displayRelationship[Convert.ToInt32(item.Level - 1)].EstDuration = PmsUtils.CalculateFutureDuration(Convert.ToDateTime(displayRelationship[Convert.ToInt32(item.Level - 1)].EstStartDt),
+                                                                                                                                Convert.ToDateTime(displayRelationship[Convert.ToInt32(item.Level - 1)].EstEndDt),
+                                                                                                                                Convert.ToInt32(displayRelationship[Convert.ToInt32(item.Level - 1)].WorkingDay),
+                                                                                                                                lHoliday);
+                            displayRelationship.Remove(Convert.ToInt32(item.Level));
+                        }
+                        if (item.Children != null && item.Children.Count > 0)
+                        {
+                            item.ObjType = PmsConstant.TYPE_PHASE;
+                        }
+                        displayRelationship.Add(Convert.ToInt32(item.Level), item);
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+            return Json(displayRelationship[1]);
+        }
+
+        public List<Dictionary<string, string>> getReadExcelMapList(XSSFWorkbook workBook, ISheet sheet, int startRowRead)
+        {
+            List<Dictionary<string, string>> readExcelMapList = new List<Dictionary<string, string>>();
+            IRow firstRow = sheet.GetRow(0);
+            int numberOfCells = firstRow.LastCellNum;
+            string[] headerList = new string[numberOfCells];
+            ICell cell = null;
+            for(int colIdx = 0; colIdx < numberOfCells; colIdx++)
+            {
+                if (cell != null)
+                {
+                    cell = null;
+                }
+                cell = firstRow.GetCell(colIdx);
+                headerList[colIdx] = cell.StringCellValue.Trim();
+            }
+
+            IRow row = null;
+            int numberOfRows = sheet.LastRowNum;
+            for(int rowId = startRowRead; rowId <= numberOfRows; rowId++)
+            {
+                if (row != null)
+                {
+                    row = null;
+                }
+
+                row = sheet.GetRow(rowId);
+                Dictionary<string, string> rowMap = new Dictionary<string, string>();
+                
+                for(int colId = 0; colId < numberOfCells; colId++)
+                {
+                    if (cell != null)
+                    {
+                        cell = null;
+                    }
+                    cell = row.GetCell(colId);
+                    if (cell != null)
+                    {
+                        //cell.SetCellType(CellType.String);
+                        rowMap.Add(headerList[colId], cell.StringCellValue);
+                    }
+                    else
+                    {
+                        rowMap.Add(headerList[colId], "");
+                    }
+                }
+                readExcelMapList.Add(rowMap);
+            }
+
+            return readExcelMapList;
+        }
+
         #endregion
     }
 }

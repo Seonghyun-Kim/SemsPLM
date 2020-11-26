@@ -67,15 +67,15 @@
         var docTypeList = [{ doctype: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT' },
         { doctype: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT' }];
         var docSource =
-            {
-        localdata: docTypeList,
+        {
+            localdata: docTypeList,
             datatype: "json",
             datafields:
                 [
                     { name: 'doctype', type: 'string' },
                     { name: 'value', type: 'string' },
                 ]
-            };
+        };
         var dataAdapter = new $.jqx.dataAdapter(docSource);
         docType$.jqxComboBox({ source: dataAdapter, displayMember: "doctype", valueMember: "value", width: "100%", height:32 });
 
@@ -145,12 +145,11 @@
                 dyTr$.attr('hidden', 'hidden');
                 dyTr$.empty();
             }
-
-
         });
+
         $(document).on('change', '#CreateDocument_Doc_Lib_Lev1', function () {
 
-            changeDocLibComboBox(2, docType$.jqxComboBox('getSelectedItem').value,$('#CreateDocument_Doc_Lib_Lev1').jqxComboBox('getSelectedItem').value);
+            changeDocLibComboBox(2, docType$.val(),$('#CreateDocument_Doc_Lib_Lev1').val());
 
         });
 
@@ -176,19 +175,40 @@
         $('#CreateDocument_createbtn').on('click', function () {
             const param = {};
             param.Title = $('#CreateDocument_Title').val();                 //제목
-            param.DocType = docType$.jqxComboBox('getSelectedItem').value;  //문서종류
+            param.DocType = docType$.val();  //문서종류
             param.Name = $('#CreateDocument_Name').val();                   //품번
             param.Eo_No = $('#CreateDocument_Eo_No').val();                 //eono
             param.Description = $('#CreateDocument_Description').val();     //설명
-            param.Doc_Lib_Lev1_OID = $('#CreateDocument_Doc_Lib_Lev1').jqxComboBox('getSelectedItem').value;
-            param.Doc_Lib_Lev2_OID = $('#CreateDocument_Doc_Lib_Lev2').jqxComboBox('getSelectedItem').value;
+            param.Doc_Lib_Lev1_OID = $('#CreateDocument_Doc_Lib_Lev1').val();
+            param.Doc_Lib_Lev2_OID = $('#CreateDocument_Doc_Lib_Lev2').val();
             if (param.DocType == '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') {
-                param.Doc_Lib_Lev3_OID = $('#CreateDocument_Doc_Lib_Lev3').jqxComboBox('getSelectedItem').value;
+
+                if (param.Doc_Lib_Lev1_OID == null || param.Doc_Lib_Lev1_OID.length < 1) {
+                    alert('OEM을 선택해주세요.');
+                    return;
+                }
+                if (param.Doc_Lib_Lev2_OID == null || param.Doc_Lib_Lev2_OID.length < 1) {
+                    alert('차종을 입력해주세요.');
+                    return;
+                }
+
+                param.Doc_Lib_Lev3_OID = $('#CreateDocument_Doc_Lib_Lev3').val();
+
+                if (param.Doc_Lib_Lev3_OID == null || param.Doc_Lib_Lev3_OID.length < 1) {
+                    alert('분류를 선택해주세요.');
+                    return;
+                }
+
             }
             if (param.DocType == null || param.DocType.length < 1) {
                 alert('구분을 입력해주세요.');
                 return;
             }
+            if (param.Doc_Lib_Lev1_OID == null || param.Doc_Lib_Lev1_OID.length < 1) {
+                alert('1Lv을 선택해주세요.');
+                return;
+            }
+
             if (param.Name == null || param.Name.length < 1) {
                 alert('품번을 입력해주세요.');
                 return;
@@ -203,13 +223,14 @@
                     return;
                 }
                 alert("저장되었습니다.");
+                PageReload();
             }).fail(function (err) {
                 alert(err.responseText);
             });
         });
     });
 
-    function changeDocLibComboBox(Lev,Type, OID) {
+    function changeDocLibComboBox(Lev, Type, OID) {
         var comboBox$ = $('#CreateDocument_Doc_Lib_Lev' + Lev);
         var param = {};
         param.fromOID = OID;
@@ -239,13 +260,6 @@
                 comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
                 comboBox$.jqxComboBox({ selectedIndex: 0 });
             }
-
-
-
-
         });
     }
-
-
-
 </script>

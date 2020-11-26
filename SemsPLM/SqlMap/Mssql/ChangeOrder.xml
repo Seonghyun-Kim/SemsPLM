@@ -99,6 +99,15 @@
         <isNotNull prepend="and" property="Title">
           B.Title LIKE CONCAT('%',#Title#,'%')
         </isNotNull>
+        <isNotNull prepend="and" property="Oem_Eo">
+          B.Oem_Eo LIKE CONCAT('%',#Oem_Eo#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Oem_Lib_OID">
+          B.Oem_Lib_OID  = #Oem_Lib_OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Car_Lib_OID">
+          B.Car_Lib_OID  = #Car_Lib_OID#
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
     </select>

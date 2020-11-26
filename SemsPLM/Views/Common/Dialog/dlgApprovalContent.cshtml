@@ -1,0 +1,159 @@
+﻿@{
+    Layout = null;
+}
+
+
+<div class="approvalOrder" style="width:503px;height:745px;float:left;">
+    <table>
+        <colgroup>
+            <col width="6%">
+            <col width="11%">
+            <col width="83%">
+        </colgroup>
+        <tbody id="sampleApprovalLine">
+        </tbody>
+    </table>
+</div>
+<div class="approvalContents">
+    <table class="tableTopButtonBox">
+        <tbody>
+            <tr>
+                <td style="text-align: right;">
+                    <button class="custom-button"><i class="fas fa-check"></i> 승인</button>
+                    <button class="custom-button"><i class="fas fa-reply"></i> 반려</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="infoTable">
+        <tbody>
+            <tr>
+                <th>제목</th>
+                <td>@ViewBag.ApprvalData.Description</td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <th>내용</th>
+                <td style="padding:0 !important;">
+                    <div style="height:250px;overflow-y:scroll;">
+                        @Html.Raw(ViewBag.ApprvalData.Comment)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>Link</th>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="approvalComment">
+        <tr>
+            <td>
+                <i class="fas fa-pen-alt"></i> 의견
+            </td>
+        </tr>
+        <tr class="opinion">
+            <td>
+                <div id="approvalOpinion"><!--이미 작성된 의견 목록--></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="txtApprovalComment" placeholder="의견을 입력하세요"></textarea>
+                <button id="btnApprovalComment">제출</button>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var ApprovDatas = @Html.Raw(Json.Encode(ViewBag.ApprvalData));
+        var ApprovOID = ApprovDatas.OID;
+        var sampleArray = ApprovDatas.InboxStep;
+
+        const sampleApprovalLine$ = $("#sampleApprovalLine");
+
+        function loadSample() {
+            var listLength = sampleArray.length;
+            for (var i = 0; i < listLength; i++) {
+                var type = sampleArray[i].ApprovalType;
+                var newTr = '<tr>';
+                newTr += '<th>' + (i + 1) + '</th><td>' + (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV' ? '결재' : '합의') + '</td><td>';
+                var person = '<div class="approverInfo">';
+                if (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV') {
+                    var TaskData = sampleArray[i].InboxTask[0];
+                    person += '<div>' + TaskData.PersonObj.Name + '</div>';
+                    if (TaskData.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED') {
+                        person += '<div>' + (TaskData.PersonObj.ImgSign == null ? '승인' : '<img src="' + TaskData.PersonObj.ImgSign + '">') + '</div>';
+                        person += '<div>' + moment(TaskData.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                    } else if (TaskData.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED') {
+                        person += '<div>반려</div>';
+                        person += '<div>' + moment(TaskData.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                    } else {
+                        person += '<div>-</div>';
+                        person += '<div>-</div>';
+                    }
+                    newTr += person + '</td>';
+                } else {
+                    var TaskData = sampleArray[i].InboxTask;
+                    _.each(TaskData, function (item, index) {
+                        var person = '<div class="approverInfo">';
+                        person += '<div>' + item.PersonObj.Name + '</div>';
+                        if (item.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED') {
+                            person += '<div>' + (item.PersonObj.ImgSign == null ? '승인' : '<img src="' + item.PersonObj.ImgSign + '">') + '</div>';
+                            person += '<div>' + moment(item.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                        } else if (item.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED') {
+                            person += '<div>반려</div>';
+                            person += '<div>' + moment(item.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                        } else {
+                            person += '<div>-</div>';
+                            person += '<div>-</div>';
+                        }
+                        person += '</div>';
+                        newTr += person;
+                    });
+                    newTr += '</td>';
+                }
+                newTr += '</tr>'
+                sampleApprovalLine$.append(newTr);
+            }
+        };
+
+        loadSample();
+
+        if (sampleApprovalLine$.height() > 745) {
+            $('.approvalOrder > table tr:last-child').css('border-bottom', 'none');
+        }
+
+        //의견 목록 로드
+        const approvalOpinion$ = $("#approvalOpinion");
+        var commentArr = @Html.Raw(Json.Encode(ViewBag.ApprvalData.InboxCommnet));
+
+        function loadComment() {
+            for (var i = 0; i < commentArr.length; i++) {
+                var name = commentArr[i].CreateUsNm,
+                    comment = commentArr[i].Comment;
+                var newP = '<p>';
+                newP += '<span>' + name + ' :</span>' + comment;
+                approvalOpinion$.append(newP);
+            }
+            approvalOpinion$.scrollTop(approvalOpinion$[0].scrollHeight);
+        };
+
+        loadComment();
+
+        $('#btnApprovalComment').on('click', function () {
+            var txtApprovalComment = $('#txtApprovalComment');
+            RequestData('/Common/InsApprovalComment', { ApprovalOID: ApprovOID, Comment: txtApprovalComment.val() }, function (res) {
+                commentArr = res;
+                approvalOpinion$.html('');
+                loadComment();
+                txtApprovalComment.val('');
+            });
+        });
+
+    });
+
+</script>

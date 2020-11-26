@@ -82,7 +82,7 @@
         myProcessDocumentList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: '84.5%',
+            height: 680,
             rowsheight: 28,
             columnsheight: 30,
             source: new $.jqx.dataAdapter(MyProcessDocumentSource),
@@ -107,13 +107,13 @@
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");
-                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>작업자교육 등록</button>").jqxButton();
-                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>유효성검증 등록</button>").jqxButton();
-                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i>표준화&Follow-Up 등록</button>").jqxButton();
-                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i>봉쇄조치 등록</button>").jqxButton();
-                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i>발생원인 등록</button>").jqxButton();
-                var addImproveCounterMeasureButton = $("<button class='custom-button'><i class='fas fa-plus'></i>개선대책</button>").jqxButton();
-                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i>삭제</button>").jqxButton();
+                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 작업자교육 등록</button>").jqxButton();
+                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 유효성검증 등록</button>").jqxButton();
+                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 표준화&Follow-Up 등록</button>").jqxButton();
+                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 봉쇄조치 등록</button>").jqxButton();
+                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 발생원인 등록</button>").jqxButton();
+                var addImproveCounterMeasureButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 개선대책</button>").jqxButton();
+                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
                 container.append(addWorkerEducationButton);
                 container.append(addQuickValidationButton);
                 container.append(addStandardFollowUpButton);

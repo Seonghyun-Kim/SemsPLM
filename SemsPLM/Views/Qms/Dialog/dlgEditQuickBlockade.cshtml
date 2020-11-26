@@ -2,14 +2,14 @@
     Layout = null;
 }
 
-    <div>
+    <div class="qmsDlgTable">
         <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
-            <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+            <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
             <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
         </div>
 
         @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
-        <label>봉쇄조치</label>
+        <label><i class="fas fa-toolbox"></i> 봉쇄조치</label>
         <table id="tbBlockadeList" class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:9%" />
@@ -126,6 +126,7 @@
         $(txtActStartDt$).jqxDateTimeInput(DateFormat);
         $(txtActStartDt$).jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });   
         if (v.ActStartDt === null) {
@@ -141,6 +142,7 @@
         $(txtActEndDt$).jqxDateTimeInput(DateFormat);
         $(txtActEndDt$).jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });   
         if (v.ActEndDt === null) {

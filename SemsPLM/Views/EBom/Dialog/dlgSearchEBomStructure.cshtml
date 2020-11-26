@@ -9,62 +9,97 @@
             <label><i class="fas fa-folder-open"></i> &nbsp;프로젝트 검색</label>
         </div>
         <div class="searchContent">
-            <div class="searchData">
-                <div class="comboBoxLabel">고객사</div>
-                <div>
-                    <div id="dlgSearchEPartOEM" class="searchEpartComboBox"></div>
+            @*<div class="searchData">
+            <div class="comboBoxLabel">고객사</div>
+            <div>
+                <div id="dlgSearchEPartOEM" class="searchEpartComboBox"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">차종</div>
+            <div>
+                <div id="dlgSearchEPartCar" class="searchEpartComboBox"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">프로젝트</div>
+            <div>
+                <div id="dlgSearchEPartPms" class="searchEpartComboBox"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div>품번</div>
+            <div><input id="dlgSearchEPartName" type="text" class="txtBox" value="" /></div>
+        </div>
+        <div class="searchData">
+            <div>품명</div>
+            <div><input id="dlgSearchEPartTitle" type="text" class="txtBox" value="" /></div>
+        </div>
+        <div class="searchData">
+            <div>EO No</div>
+            <div><input id="dlgSearchEPartEoNo" type="text" class="txtBox" value="" /></div>
+        </div>
+        <div class="searchData">
+            <div>고객사 EO</div>
+            <div>
+                <input id="dlgSearchEPartSelEo" type="text" class="txtBox" value="" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="checkBoxLabel">타입</div>
+            <div>
+                <div id="dlgSearchEPartTypeAssy" class="custom-checkbox">
+                    Assy
                 </div>
+                <div id="dlgSearchEPartTypeSAssy" class="custom-checkbox">
+                    S/Assy
+                </div>
+                <div id="dlgSearchEPartTypeDetail" class="custom-checkbox">
+                    Detail
+                </div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">작성일</div>
+            <div><div id="dlgSearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
+        </div>
+        <div class="searchButton">
+            <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+        </div>*@
+            <div class="searchData">
+                <div>부품번호</div>
+                <div><input id="SearchEBomStructureName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="checkBoxLabel">구분</div>
+                <div>
+                    <div id="SearchEBomStructureAssemble" class="custom-checkbox">
+                        조립도
+                    </div>
+                    <div id="SearchEBomStructureSingle" class="custom-checkbox">
+                        단품도
+                    </div>
+                    <div id="SearchEBomStructureStandard" class="custom-checkbox">
+                        스탠다드
+                    </div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_NO</div>
+                <div> <div id="SearchEBomStructureItemNo" class="SearchEBomStructureComboBox"></div></div>
             </div>
             <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
                 <div>
-                    <div id="dlgSearchEPartCar" class="searchEpartComboBox"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">프로젝트</div>
-                <div>
-                    <div id="dlgSearchEPartPms" class="searchEpartComboBox"></div>
-                </div>
-            </div>
-            <div class="searchData">
-                <div>품번</div>
-                <div><input id="dlgSearchEPartName" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>품명</div>
-                <div><input id="dlgSearchEPartTitle" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>EO No</div>
-                <div><input id="dlgSearchEPartEoNo" type="text" class="txtBox" value="" /></div>
-            </div>
-            <div class="searchData">
-                <div>고객사 EO</div>
-                <div>
-                    <input id="dlgSearchEPartSelEo" type="text" class="txtBox" value="" />
-                </div>
-            </div>
-            <div class="searchData">
-                <div class="checkBoxLabel">타입</div>
-                <div>
-                    <div id="dlgSearchEPartTypeAssy" class="custom-checkbox">
-                        Assy
-                    </div>
-                    <div id="dlgSearchEPartTypeSAssy" class="custom-checkbox">
-                        S/Assy
-                    </div>
-                    <div id="dlgSearchEPartTypeDetail" class="custom-checkbox">
-                        Detail
-                    </div>
+                    <div id="SearchEBomStructureCar" class="SearchEBomStructureComboBox"></div>
                 </div>
             </div>
             <div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
-                <div><div id="dlgSearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
+                <div><div id="SearchEBomStructureCreateDt" class="SearchEBomStructureDateTimeInput"></div></div>
             </div>
             <div class="searchButton">
-                <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+                <button id="SearchEBomStructurebtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
         </div>
     </div>
@@ -72,22 +107,19 @@
 
 <div id="digSearchEBomStructureGrid"></div>
 
+
 <script>
+    var EPartDivision;
+    var checked;
     $(function () {
-        $('#dlgSearchEPartTypeAssy').jqxRadioButton({ width: 100, height: 30, checked: false });
-        $('#dlgSearchEPartTypeSAssy').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#dlgSearchEPartTypeDetail').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('.searchEpartComboBox').jqxComboBox({ width: 180, height: 33 });
-        $('.searchEpartDateTimeInput').jqxDateTimeInput({ width: 240, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
-        var dlgSearchEPartOEMList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-        var dlgSearchEPartOEM$ = $('#dlgSearchEPartOEM');
-        var dlgSearchEPartCar$ = $('#dlgSearchEPartCar');
-        var dlgSearchEPartPms$ = $('#dlgSearchEPartPms');
-
-        var OEMSource =
+        var SearchEBomStructureItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var SearchEBomStructureCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEBomStructureItemLib$ = $('#SearchEBomStructureItemNo');
+        var SearchEBomStructureCarLib$ = $('#SearchEBomStructureCar');
+        var CarSource =
         {
-            localdata: dlgSearchEPartOEMList,
+            localdata: SearchEBomStructureCarList,
             datatype: "json",
             datafields:
                 [
@@ -95,35 +127,47 @@
                     { name: 'OID', type: 'int' },
                 ]
         };
-        var OEMdataAdapter = new $.jqx.dataAdapter(OEMSource);
-        dlgSearchEPartOEM$.jqxComboBox({ source: OEMdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+        SearchEBomStructureCarLib$.jqxComboBox({width: 250, height: 33, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
 
-        $(document).on('change', '#dlgSearchEPartOEM', function () {
-            dlgSearchChangeEPartLib($('#dlgSearchEPartOEM').jqxComboBox('getSelectedItem').value, $('#dlgSearchEPartCar'));
+        var ItemSource =
+        {
+            localdata: SearchEBomStructureItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        SearchEBomStructureItemLib$.jqxComboBox({ width: 250, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        $('#SearchEBomStructureAssemble').jqxRadioButton({ width: 100, height: 34, checked: true });
+        $('#SearchEBomStructureSingle').jqxRadioButton({ width: 120, height: 34, checked: false });
+        $('#SearchEBomStructureStandard').jqxRadioButton({ width: 120, height: 34, checked: false });
+        $('#SearchEBomStructureCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        $('#SearchEBomStructureAssemble').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+            }
         });
+        $('#SearchEBomStructureSingle').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+            }
+        });
+        $('#SearchEBomStructureStandard').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+            }
+        });
+
 
     });
 
-    function dlgSearchChangeEPartLib(OID, ID) {
-        var comboBox$ = ID;
-        var param = {};
-        param.fromOID = OID;
-        var comboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                comboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var comboAdapter = new $.jqx.dataAdapter(comboSource);
-                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID" });
-            }
-        });
-    }
 </script>

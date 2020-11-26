@@ -24,6 +24,8 @@ namespace Common.Models
 
         public DateTime? ApprovalDt { get; set; }
 
+        public string ActionType { get; set; }
+
 
         public int? Ord { get; set; }
 
@@ -32,6 +34,19 @@ namespace Common.Models
         public string PersonNm { get; set; }
 
         public int? CurrentNum { get; set; }
+
+        public int? DocOID { get; set; }
+
+        public string DocType { get; set; }
+
+        public string DocNm { get; set; }
+
+        public int? DocCreateUs { get; set; }
+
+        public string DocCreateNm { get; set; }
+
+        public BPolicy ApprovalBPolicy { get; set; }
+
     }
 
     public static class ApprovalTaskRepository
@@ -41,6 +56,7 @@ namespace Common.Models
             List<ApprovalTask> lApprovalTasks = DaoFactory.GetList<ApprovalTask>("Comm.SelApprovalTask", _param);
             lApprovalTasks.ForEach(task =>
             {
+                task.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = task.BPolicyOID }).First();
                 task.PersonObj = PersonRepository.SelPerson(new Person { OID = task.PersonOID });
                 task.PersonNm = task.PersonObj.Name;
                 task.DepartmentNm = task.PersonObj.DepartmentNm;
@@ -51,7 +67,11 @@ namespace Common.Models
         public static int InsInboxTask(ApprovalTask _param)
         {
             return DaoFactory.SetInsert("Comm.InsApprovalTask", _param);
+        }
 
+        public static int UdtInboxTask(ApprovalTask _param)
+        {
+            return DaoFactory.SetUpdate("Comm.UdtInboxTask", _param);
         }
     }
 }

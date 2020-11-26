@@ -32,6 +32,10 @@ input[readonly] {
     background-color: #ddd !important;
 }
 
+.floatL{
+    float:left;
+}
+
 body {
     background-color: #fff;
     color: #444;
@@ -58,7 +62,7 @@ header {
 
 h1 {
     float: left;
-    margin-right: 10px;
+    margin-right: 5px;
     height: 55px;
     margin-top:0;
     margin-bottom:0;
@@ -82,7 +86,6 @@ button, .menu_h, .btn_icon, .sub > li {
 .btn_icon {
     display: inline-block;
     width: 32px;
-    margin-left: 2px;
 }
 
     .btn_icon > img {
@@ -98,8 +101,8 @@ nav {
 
 .gnb > li {
     float: left;
-    width: 175px;
-    padding:0 5px;
+    width: 158px;
+    padding:0 2px;
     text-align: center;
 }
 
@@ -140,7 +143,7 @@ nav {
 .sub {
     display: none;
     position: absolute;
-    width: 165px;
+    width: 154px;
     top: 70px;
     background-color: #fff;
     border-radius: 0 0 3px 3px;
@@ -153,7 +156,7 @@ nav {
 .sub > li {
     font-size:14px;
     line-height:18px;
-    padding: 15px 0;
+    padding: 15px 5px;
     /*border-bottom:1px solid #ccc;*/
 }
 
@@ -195,6 +198,7 @@ nav {
 }
 
 #wrapContent {
+    width:1900px;
     border-top: 10px solid #77787b;
 }
 
@@ -427,8 +431,13 @@ button > .fas{
     text-align:center;
 }
 
+.dlgCodeLibraryManip_table input[type=text]{
+    width:100%;
+}
+
+
 .imgPerson, .signPerson {
-    width:180px;
+    width: 180px;
     margin: 15px auto 25px;
     position: relative;
 }
@@ -535,7 +544,7 @@ button > .fas{
     line-height:33px;
     width:150px;
     margin-left:5px;
-    margin-bottom:15px;
+    margin-bottom:14px;
     text-indent:5px;
     background-color:#fff;
 }
@@ -646,7 +655,8 @@ button > .fas{
 .project_basic {
     width: 100%;
     padding: 20px 0;
-    border: 1px solid #ddd;
+    border: 1px solid #c5c5c5;
+    background: linear-gradient(0deg, #eee, #fff);
     box-shadow: 0 0 1px #eee;
     margin-bottom: 10px;
 }
@@ -692,6 +702,16 @@ button > .fas{
     color:#3798ae;
 }
 
+.file_inputbox {
+    width: 300px;
+    height: 60px;
+    border-radius: 3px;
+    border: 1px dashed #3798ae;
+    text-align: center;
+    line-height: 60px;
+    color: #3798ae;
+}
+
 .image_thumbnail{
     width:180px;
     height:90px;
@@ -727,25 +747,25 @@ button > .fas{
     z-index:999;
 }
 
-.changeOrderImg {
+.changeOrderImg, .ChangeRequestImg {
     width: 90%;
     margin-left: 5%;
     position: relative;
-    border-right:none !important;
+    border-right: none !important;
 }
 
-.changeOrderImg > .image_inputbox, .changeOrderImg > .image_thumbnail{
-    width: 100%;
-    height: 180px;
-    border: 1px solid #c5c5c5;
-    position: absolute;
-    top: 10px;
-    left: 0;
-    line-height: 180px;
-    text-align: center;
-    margin-left: 0;
-    color:#ccc !important;
-}
+    .changeOrderImg > .image_inputbox, .changeOrderImg > .image_thumbnail, .ChangeRequestImg > .image_inputbox, .ChangeRequestImg > .image_thumbnail{
+        width: 100%;
+        height: 180px;
+        border: 1px solid #c5c5c5;
+        position: absolute;
+        top: 10px;
+        left: 0;
+        line-height: 180px;
+        text-align: center;
+        margin-left: 0;
+        color: #ccc !important;
+    }
 
 .changeOrderImg > .image_inputbox{
     z-index:100;
@@ -853,12 +873,15 @@ button > .fas{
     height:auto;
 }
 
-/* createtable */
+.import_excel td{
+    padding:5px 0;
+}
 
-.createtable{
-    margin:10px 0;
-    width:100%;
-    border-collapse:collapse;
+/* createtable */
+.createtable {
+    margin: 10px 0;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .createtable tr{
@@ -879,6 +902,11 @@ button > .fas{
     width:100%;
 }
 
+.createtable select{
+    border:1px solid #c5c5c5;
+    border-radius:3px;
+}
+
 .createtable textarea{
     width:100%;
     height:300px;
@@ -893,11 +921,11 @@ button > .fas{
 }
 
 .epart_create th{
-    width:10%;
+    width:15%;
 }
 
 .epart_create td{
-    width:23.3%;
+    width:35%;
 }
 
 .epart_create .image_inputbox, .epart_create .image_thumbnail {
@@ -938,7 +966,6 @@ button > .fas{
 .createChangeOrder_table > .createtable td {
     width: 38%;
 }
-
 
 /* UserManage */
 .user_tree, .user_list {
@@ -1152,32 +1179,32 @@ button > .fas{
     width:53%;
 }
 
-.approvalList{
+.approvalList, .approvalOrder{
     height:310px;
     border: 1px solid #c5c5c5;
     margin-bottom:4px;
     overflow-y:scroll;
 }
 
-.approvalList > table{
+.approvalList > table, .approvalOrder > table{
     width:100%;
 }
 
-.approvalList > table tr{
+.approvalList > table tr, .approvalOrder > table tr{
     border-bottom:1px solid #c5c5c5;
     background-color:#fff;
     overflow:hidden;
     vertical-align:top;
 }
 
-.approvalList > table tr > th{
+.approvalList > table tr > th, .approvalOrder > table tr > th{
     background-color:#eee;
     border-right:1px solid #c5c5c5;
     text-align:center;
     line-height:40px;
 }
 
-.approvalList > table tr > td:first-of-type{
+.approvalList > table tr > td:first-of-type, .approvalOrder > table tr > td:first-of-type{
     border-right:1px solid #c5c5c5;
     text-align:center;
     line-height:40px;
@@ -1413,6 +1440,311 @@ button > .fas{
     background: rgb(232, 232, 232);
 }
 
+
+.approvalContents{
+    float:left;
+    margin-left:10px;
+    width:436px;
+}
+
+.approvalContents > .infoTable{
+    height:355px;
+    line-height:44px;
+    margin-bottom:10px;
+}
+
+.approvalContents > .infoTable th{
+    width:15%;
+}
+
+.approverInfo {
+    width: 100px;
+    box-sizing: border-box;
+    float: left;
+    border:1px solid #ddd;
+}
+
+.approverInfo > div {
+    width: 100%;
+    height: 36px;
+    text-align:center;
+    line-height: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.approverInfo > div:nth-child(2){
+    height:60px;
+    background-color:#fff;
+}
+
+.approverInfo > div:nth-child(2) > img{
+    max-width:84px;
+    max-height:44px;
+}
+
+.approverInfo > div:last-child{
+    font-size:11px;
+}
+
+.approvalComment{
+    width:100%;
+    height:336px;
+}
+
+.approvalComment tr:first-child {
+    height: 43px;
+    line-height:43px;
+    text-indent:8px;
+    background-color: rgb(232,232,232);
+}
+
+.approvalComment tr:last-child{
+    height:42px;
+}
+
+.approvalComment td{
+    border:1px solid #c5c5c5;
+}
+
+.approvalComment .opinion div {
+    width:434px;
+    height:241px;
+    overflow-y:scroll;
+    vertical-align:sub;
+}
+
+.approvalComment .opinion p{
+    width:416px;
+    line-height:36px;
+    text-indent:8px;
+    border-bottom:1px solid #ddd;
+}
+
+.approvalComment .opinion p > span{
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.approvalComment textarea{
+    width:360px;
+    height:100%;
+    border-radius:0;
+    border:none;
+    resize:none;
+    padding:5px;
+    float:left;
+    display:block;
+}
+
+.approvalComment button{
+    display:block;
+    float:left;
+    width:74px;
+    height:100%;
+    border-left:1px solid #c5c5c5;
+    border-right:none;
+    border-top:none;
+    border-bottom:none;
+}
+
+/* ResourceDashBoard */
+.resourceDashboard {
+    width: 1900px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.resourceDashboard label{
+    margin-bottom:0 !important;
+}
+
+input[name=rscRadio] {
+    display: none;
+}
+
+input[name=rscRadio]:checked + label{
+    background-color:#3798ae !important;
+    color:#fff !important;
+}
+
+input[name=rscRadio] + label{
+    display:inline-block;
+    width:177px;
+    height:40px;
+    line-height:40px;
+    text-align:center;
+    background-color:#eee;
+    border-radius:5px 5px 0 0;
+    cursor:pointer;
+}
+
+.resourceInfo{
+    padding-top:5px;
+    position:relative;
+}
+
+.resourceInfo, .resourceInfo > div {
+    width: 100%;
+    height:775px;
+}
+
+.resourceInfo .rscComboBox{
+    position:absolute;
+    top:-36px;
+    right:0;
+}
+
+.rscList {
+    float: left;
+}
+
+.rscContent{
+    width:1530px;
+    margin-left:10px;
+    float:left;
+}
+
+.rscTopInfo{
+    width:100%;
+    height:160px;
+    margin-bottom:12px;
+    border:1px solid #c5c5c5;
+    box-sizing:border-box;
+    padding:24px 50px;
+}
+
+.rscTopInfo > table{
+    width:100%;
+    text-align:center;
+}
+
+.rscTopInfo > table td{
+    line-height:36px;
+}
+
+.rscTopInfo > table label{
+    width:60px;
+    border-right:2px solid #aaa;
+    line-height:16px;
+    margin:5px 10px 0 0;
+}
+
+.rscTopInfo > table td > b{
+    line-height:50px;
+    font-size:24px;
+}
+
+.rscProjectState{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    float:left;
+    margin:21px;
+}
+
+.rscProjectName{
+    font-size:20px;
+    line-height:45px;
+}
+
+.rscProgress{
+    margin: 10px auto;
+    width:60%;
+    height:30px;
+    border:1px solid #ccc;
+    box-shadow:1px 1px 3px #eee inset;
+    overflow:hidden;
+    border-radius:4px;
+}
+
+.rscProgress > .gauge{
+    height:100%;
+    background-color:#3798ae;
+}
+
+.rscPeopleImg{
+    text-align:left;
+}
+
+.rscPeopleImg > img{
+    width:96px;
+    height:96px;
+}
+
+.rscPieChart{
+    margin-left:40px;
+    width:110px;
+    height:110px;
+}
+
+.rscGridChart > div {
+    float: left;
+}
+
+.rscGridChart > div:first-child{
+    margin-right:10px;
+}
+
+.rscGridChart > div:last-child{
+    width:608px;
+    height:603px;
+}
+
+.tblChart{
+    border-color: transparent !important;
+}
+
+/* CreateProblemsLibrary */
+.fixedCreateTop {
+    width: 1883px;
+    padding: 30px 20px 0;
+    position: fixed;
+    height:90px;
+    top: 123px;
+    left: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+/* CreateOptimalDesign */
+
+.optimalDesignTable{
+    width:100%;
+}
+
+/* QuickResponse */
+
+.qmsDlgTable > label{
+    line-height:24px;
+    font-size:14px;
+    text-indent:5px;
+    margin-top:15px;
+}
+
+.qmsDlgTable > label:first-child{
+    margin-top:0 !important;
+}
+
+.qmsDlgTable input[type=text]{
+    height:32px;
+    border:1px solid #c5c5c5;
+}
+
+.qmsDlgH{
+    text-indent:10px;
+    font-size:15px;
+    border-bottom:1px solid #c5c5c5;
+    padding-bottom:8px;
+    transform:translateY(10px);
+}
+
+table[TableType=Why] th, table[TableType=Why] td {
+    border: none !important;
+}
+
+/* etc */
 .editableCell {
     position: relative;
     width: 100%;
@@ -1436,7 +1768,7 @@ button > .fas{
     position:absolute;
     top:0;
     left:0;
-    border-top:10px solid #d11e1e;
+    border-top:10px solid red;
     border-right:10px solid transparent;
 }
 
@@ -1466,6 +1798,14 @@ table.tableTopButtonBox td {
     background-color: rgb(232,232,232);
     padding:5px;
 }
+
+table.tableTopButtonBox input[type=text]{
+    height:33px;
+    line-height:33px;
+    width:250px;
+    text-indent:5px;
+}
+
 
 /* IE6,7,8 */
 @media \0screen\,screen\9 {
