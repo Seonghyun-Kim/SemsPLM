@@ -11,6 +11,9 @@ namespace Qms.Models
 {
     public class QmsCheck : DObject, IDObject
     {
+        // 신속대응 OID
+        public int? QuickOID { get; set; }
+
         public int? ModuleOID { get; set; }
         // N차 
         public int? Cnt { get; set; }

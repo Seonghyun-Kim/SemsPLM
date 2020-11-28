@@ -11,6 +11,8 @@ namespace Qms.Models
 {
     public class StandardDoc : DObject, IDObject
     {
+        // 신속대응 OID
+        public int? QuickOID { get; set; }
         public int? ModuleOID { get; set; }
 
         // 문서타입 

@@ -644,12 +644,155 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- Error Proof  
+        /// <summary>
+        /// 2020.11.15
+        /// 작업자 교육 등록
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditErrorProof(ErrorPrrof _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            return View("Dialog/dlgEditErrorProof", _param);
+        }
+
+        public JsonResult InsErrorProof(ErrorPrrof _param)
+        {
+            int returnValue = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                ErrorPrrof errorPrrof = new ErrorPrrof()
+                {
+                    ModuleOID = _param.ModuleOID,
+                    EstDt = _param.EstDt,
+                    ActDt = _param.ActDt,
+                    CheckDetail = _param.CheckDetail,
+                    CheckUserOID = _param.CheckUserOID,
+                };
+
+                returnValue = ErrorPrrofRepository.InsErrorPrrof(errorPrrof);
+
+                DaoFactory.Commit();
+
+                return Json(returnValue);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
         #endregion
 
         #region -- LPA 부적합현황 
+        public ActionResult EditLPAIncongruity(LpaUnfit _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            Library LayerLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "LAYER" });
+            List<Library> LayerLibList = LibraryRepository.SelLibrary(new Library { FromOID = LayerLibKey.OID });  // Layer
+            ViewBag.LayerLibList = LayerLibList;
+
+            Library AuditLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "AUDIT" });
+            List<Library> AuditLibList = LibraryRepository.SelLibrary(new Library { FromOID = AuditLibKey.OID });  // 감사주기
+            ViewBag.AuditLibList = AuditLibList;
+
+            Library LpaGrpLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "LPA_GROUP" });
+            List<Library> LpaGrpLibList = LibraryRepository.SelLibrary(new Library { FromOID = LpaGrpLibKey.OID });  // 그룹군
+            ViewBag.LpaGrpLibList = LpaGrpLibList;
+
+            Library LpaUseLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "LPA_USE" });
+            List<Library> LpaUseLibList = LibraryRepository.SelLibrary(new Library { FromOID = LpaUseLibKey.OID });  // 사용구분
+            ViewBag.LpaUseLibList = LpaUseLibList;
+
+            Library LpaCheckProcessLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "LPA_CHECK_PROCESS" });
+            List<Library> LpaCheckProcessLibList = LibraryRepository.SelLibrary(new Library { FromOID = LpaCheckProcessLibKey.OID });  // 확인공정
+            ViewBag.LpaCheckProcessLibList = LpaCheckProcessLibList;
+
+            return View("Dialog/dlgEditLPAIncongruity", _param);
+        }
+
+        public JsonResult InsLPAIncongruity(LpaUnfit _param)
+        {
+            int? resultValue = null;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                LpaUnfit lpaUnfit = new LpaUnfit()
+                {
+                    QuickOID = _param.QuickOID,
+                    ModuleOID = _param.ModuleOID,
+                    LayerLibOID = _param.LayerLibOID,
+                    AuditLibOID = _param.AuditLibOID,
+                    LpaGrpLibOID = _param.LpaGrpLibOID,
+                    LpaUseLibOID = _param.LpaUseLibOID,
+                    LpaCheckProcessLibOID = _param.LpaCheckProcessLibOID,
+                    LpaCheckUserOID = _param.LpaCheckUserOID,
+                    LpaCheckDt = _param.LpaCheckDt,
+                    EquipmentNm = _param.EquipmentNm,
+                    PartOID = _param.PartOID,
+                    LpaUserOID = _param.LpaUserOID,
+                    FinishRequestDt = _param.FinishRequestDt,
+                    MeasureUserOID = _param.MeasureUserOID
+                };
+
+                LpaUnfitRepository.InsLpaUnfit(lpaUnfit);
+
+                // LPA 부적합현황 지적사항
+                LpaUnfitCheck lpaUnfitCheck = new LpaUnfitCheck()
+                {
+                    OID = _param.LpaUnfitCheck.OID,
+                    ModuleOID = lpaUnfit.ModuleOID,
+                    CheckPoin = _param.LpaUnfitCheck.CheckPoin
+                };
+
+                // LPA 부적합현황 지적사항 등록
+                if (lpaUnfitCheck.OID == null)
+                {
+                    DObject dobj = new DObject();
+                    dobj.Type = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
+                    dobj.Name = "LPA_UNFIT_CHECK_ITEM_"+ lpaUnfit.ModuleOID;
+                    lpaUnfitCheck.OID = DObjectRepository.InsDObject(dobj);
+
+                    resultValue = LpaUnfitCheckRepository.InsLpaUnfitCheck(lpaUnfitCheck);
+                }
+
+                DaoFactory.Commit();
+                return Json(resultValue);
+            }
+            catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
         #endregion
 
         #region -- LPA 대책서 
+        public ActionResult EditLPAMeasure(LpaMeasure _param)
+        {
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            List<QuickResponseModule> list = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = _param.QuickOID });
+
+            QuickResponseModule lpaUnfitModule = (from x in list
+                                                 where x.Type == QmsConstant.TYPE_LPA_UNFIT
+                                                 select x
+                                                 ).FirstOrDefault();
+            if(lpaUnfitModule != null)
+            {
+                ViewBag.LpaUnfitDetail = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = lpaUnfitModule.OID });
+            }
+
+            return View("Dialog/dlgEditLPAMeasure", _param);
+        }
+
         #endregion
 
         #region -- 유효성 검증
@@ -663,9 +806,12 @@ namespace SemsPLM.Controllers
         /// 유효성 검증 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditQuickValidation(QmsCheck qmsCheck)
+        public ActionResult EditQuickValidation(QmsCheck _param)
         {
-            return View("Dialog/dlgEditQuickValidation", (qmsCheck.OID == null ? qmsCheck : QmsCheckRepository.SelQmsCheck(qmsCheck)));
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            return View("Dialog/dlgEditQuickValidation", _param);
         }
 
         /// <summary>
@@ -689,11 +835,11 @@ namespace SemsPLM.Controllers
 
                     if (qmsCheck.OID == null)
                     {
-                        returnValue = QmsCheckRepository.InsQmsCheck(_param);
+                        returnValue = QmsCheckRepository.InsQmsCheck(qmsCheck);
                     }
                     else
                     {
-                        QmsCheckRepository.UdtQmsCheck(_param);
+                        QmsCheckRepository.UdtQmsCheck(qmsCheck);
                     }
                 }
 
@@ -716,9 +862,12 @@ namespace SemsPLM.Controllers
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditStandardFollowUp(StandardDoc standardDoc)
+        public ActionResult EditStandardFollowUp(StandardDoc _param)
         {
-            return View("Dialog/dlgEditStandardFollowUp", (standardDoc.OID == null ? standardDoc : StandardDocRepository.SelStandardDoc(standardDoc)));
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            return View("Dialog/dlgEditStandardFollowUp", _param);
         }
 
         public JsonResult InsStandardFollowUp(StandardDoc _param)
@@ -762,34 +911,25 @@ namespace SemsPLM.Controllers
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditWorkerEducation(WorkerEdu workerEdu)
+        public ActionResult EditWorkerEducation(WorkerEdu _param)
         {
-            return View("Dialog/dlgEditWorkerEducation", (workerEdu.OID == null ? workerEdu : WorkerEduRepository.SelWorkerEdu(workerEdu)));
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+
+            return View("Dialog/dlgEditWorkerEducation", _param);
         }
 
         public JsonResult InsWorkerEducation(WorkerEdu _param)
         {
-            int ModuleOID = 0;
             try
             {
                 DaoFactory.BeginTransaction();
 
-                DObject dobj = new DObject();
-                dobj.Type = QmsConstant.TYPE_WORKER_EDU;
-                dobj.Name = QmsConstant.TYPE_WORKER_EDU;
-                ModuleOID = DObjectRepository.InsDObject(dobj);
-
-                if(ModuleOID == 0)
-                {
-                    throw new Exception("작업자교육을 등록 할 수가 없습니다.");
-                }
-
-                _param.ModuleOID = ModuleOID;
                 int returnValue = WorkerEduRepository.InsWorkerEdu(_param);
 
                 DaoFactory.Commit();
 
-                return Json(ModuleOID);
+                return Json(returnValue);
             }
             catch(Exception ex)
             {

@@ -175,28 +175,6 @@
     </table>
 </div>
 
-<div style="margin-top:25px;">
-    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
-    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-        <tr>
-            <th class="reqVal" style="width:180px;">
-            </th>
-            <th class="reqVal"> <i class="fa fa-caret-right"></i> 검토자결재순서</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 승인자결재순서</th>
-        </tr>
-        <tr>
-            <td><button id="btnEditQuickValidationApprovalLine" class="custom-button"><i class="fas fa-search"></i> 결재선지정</button></td>
-            <td>
-                <div id="listEditQuickValidationApprovalconfirm" />
-            </td>
-            <td>
-                <div id="listEditQuickValidationApprovalcomplete" />
-            </td>
-        </tr>
-    </table>
-</div>
-
-
 <script>
     var Cnt = 3; // 유효성 검증 카운트
     $(function () {
@@ -206,11 +184,6 @@
         dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
         dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));
 
-        // 결재선 지정
-        var listEditQuickValidationApprovalconfirm$ = $("#listEditQuickValidationApprovalconfirm");
-        var listEditQuickValidationApprovalcomplete$ = $("#listEditQuickValidationApprovalcomplete");
-        listEditQuickValidationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
-        listEditQuickValidationApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
         InitDlgValidation();
 
         // 저장

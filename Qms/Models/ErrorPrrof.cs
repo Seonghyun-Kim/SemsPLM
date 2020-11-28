@@ -12,7 +12,7 @@ namespace Qms.Models
     public class ErrorPrrof : QuickResponseModule, IDObject
     {
         // 모듈 OID 
-        public int ModuleOID { get; set; }
+        public int? ModuleOID { get; set; }
 
         // 예정일자 
         public DateTime EstDt { get; set; }

@@ -2832,6 +2832,9 @@
     <Content Include="Views\Qms\Partitial\QuickResponseSummary.cshtml" />
     <Content Include="Views\Qms\QuickMyProcessDocumentList.cshtml" />
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditErrorProof.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditLPAIncongruity.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditLPAMeasure.cshtml" />
     <Content Include="Views\Qms\CreateQuickResponse.cshtml" />
     <Content Include="Views\Qms\InfoQuickResponse.cshtml" />
   </ItemGroup>

@@ -1,0 +1,330 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> Error Proof장치점검 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnDlgEditLPAMeasureSave" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnDlgEditLPAMeasureCancel" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 기본정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>신속대응No</th>
+            <td>
+                <span></span>
+            </td>
+            <th>공장</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>품번/품명</th>
+            <td>
+                <span></span>
+            </td>
+            <th>LOT NO</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>고객사</th>
+            <td>
+                <span></span>
+            </td>
+            <th>작업자</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>개발품질</th>
+            <td>
+                <span></span>
+            </td>
+            <th>작성일자</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>작업수량</th>
+            <td>
+                <span></span>
+            </td>
+            <th>불량수량</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 문제요약</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>제목</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>발생처</th>
+            <td>
+                <span></span>
+            </td>
+            <th>결함정도</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>귀책구분</th>
+            <td>
+                <span></span>
+            </td>
+            <th>귀책처</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>요약</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>불량내용상세</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>재발여부</th>
+            <td>
+                <span></span>
+            </td>
+            <th>발생장소</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>발생일자</th>
+            <td>
+                <span></span>
+            </td>
+            <th>책임업체/부서</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>시정판정</th>
+            <td>
+                <span></span>
+            </td>
+            <th>유발공정</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 부적합기본정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>Layer</th>
+            <td>
+                <span></span>
+            </td>
+            <th>감사주기</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>그룹군</th>
+            <td>
+                <span></span>
+            </td>
+            <th>공통사용</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>심사자</th>
+            <td>
+                <span></span>
+            </td>
+            <th>포밍</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>심사일자</th>
+            <td>
+                <span></span>
+            </td>
+            <th>설비명</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>품번/품명</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>지적사항</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>담당자</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>완료예정일</th>
+            <td>
+                <span></span>
+            </td>
+            <th>처리일자</th>
+            <td>
+                <span></span>
+            </td>
+        </tr>
+        <tr>
+            <th>신속대응NO</th>
+            <td colspan="3">
+                <span></span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 대책서작성</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>원인코드</th>
+            <td>
+                <div style="display:flex;">
+                    <input type="text" id="txtDlgEditLPAMeasureCd" style="width:120px;" readonly />
+                    <input type="text" id="txtDlgEditLPAMeasureNm" style="width:120px;" readonly />
+                    <button id="btnDlgEditLPAMeasureSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>검토원인상세</th>
+            <td>
+                <textarea id="txtDlgEditLPAMeasureCauseAnalysis"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>재발방지대책</th>
+            <td>
+                <textarea id="txtDlgEditLPAMeasureImproveCountermeasure"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 통보서-첨부문서파일</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>등록파일정보</th>
+            <td>
+                <span id="lblDlgEditLPAMeasureFile">등록된 파일이 없습니다.</span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 대책서-첨부문서파일</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>
+                <i class="fa fa-caret-right"></i>
+                <button id="btnDlgEditLPAMeasureFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </th>
+            <td>
+                <input type="text" id="txtDlgEditLPAMeasureFile" style="width:100%" readonly/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        // 저장
+        var btnDlgSave$ = $("#btnDlgEditLPAMeasureSave").jqxButton();
+        btnDlgSave$.on("click", function () {
+            
+        });
+
+        // 취소
+        var btnDlgCancel$ = $("#btnDlgEditLPAMeasureCancel").jqxButton();
+        btnDlgCancel$.on("click", function () {
+            CloseDlgLPAMeasure();
+        });
+    });
+</script>
+
