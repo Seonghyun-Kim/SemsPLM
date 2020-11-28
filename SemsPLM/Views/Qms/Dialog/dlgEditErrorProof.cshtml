@@ -1,0 +1,145 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> Error Proof장치점검 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnDlgEditErrorProofSave" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnDlgEditErrorProofCancel" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 기본정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 예정일자</th>
+            <td>
+                <div id="dtDlgEditErrorProofEstDt"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 처리일자</th>
+            <td>
+                <div id="dtDlgEditErrorProofActDt"></div>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 점검내용</th>
+            <td colspan="3">
+                <input type="text" id="txtDlgEditErrorProofCheck" style="width:100%"/>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 점검 담당자</th>
+            <td colspan="3">
+                <div style="display:flex;">
+                    <input type="text" id="txtDlgEditErrorProofCheckUser" style="width:120px; margin-right:5px;" readonly/>
+                    <button id="btnDlgEditErrorProofCheckUser" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 문서첨부</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th>
+                <i class="fa fa-caret-right"></i>
+                <button id="btnDlgEditErrorProofFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
+            </th>
+            <td>
+                <input type="text" id="txtDlgEditErrorProofFile" style="width:100%" readonly/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        var dtDlgEditErrorProofEstDt$ = $("#dtDlgEditErrorProofEstDt");
+        var dtDlgEditErrorProofActDt$ = $("#dtDlgEditErrorProofActDt");
+
+        // 예정일자
+        dtDlgEditErrorProofEstDt$.jqxDateTimeInput(DateFormat);
+        dtDlgEditErrorProofEstDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtDlgEditErrorProofEstDt$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        // 처리일자
+        dtDlgEditErrorProofActDt$.jqxDateTimeInput(DateFormat);
+        dtDlgEditErrorProofActDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtDlgEditErrorProofActDt$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        // 담당자 검색
+        var btnDlgUserSearch$ = $("#btnDlgEditErrorProofCheckUser").jqxButton();
+        btnDlgUserSearch$.on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                $("#txtDlgEditErrorProofCheckUser").val(res[0].Name);
+                $("#txtDlgEditErrorProofCheckUser").attr("CheckUserOID", res[0].OID);
+
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        // 파일등록
+        var btnDlgFileSearch$ = $("#btnDlgEditErrorProofFileSearch").jqxButton();
+        btnDlgUserSearch$.on("click", function () {
+            // 파일등록 로직 필요
+
+            $("#txtDlgEditErrorProofFile").val();
+            $("#txtDlgEditErrorProofFile").attr("FileNm");
+        });
+
+        // 저장
+        var btnDlgSave$ = $("#btnDlgEditErrorProofSave").jqxButton();
+        btnDlgSave$.on("click", function () {
+            var param = {};
+            param.OID = "@Model.OID";
+            param.ModuleOID = "@ViewBag.ModuleOID";
+            param.EstDt = dtDlgEditErrorProofEstDt$.val();
+            param.ActDt = dtDlgEditErrorProofActDt$.val();
+            param.CheckDetail = $("#txtDlgEditErrorProofCheck").val();
+            param.CheckUserOID = $("#txtDlgEditErrorProofCheckUser").attr("CheckUserOID");
+
+            $.post('/Qms/InsErrorProof', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+
+                alert("저장되었습니다.");
+                CloseDlgErrorProof();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        // 취소
+        var btnDlgCancel$ = $("#btnDlgEditErrorProofCancel").jqxButton();
+        btnDlgCancel$.on("click", function () {
+            CloseDlgErrorProof();
+        });
+    });
+</script>
+
