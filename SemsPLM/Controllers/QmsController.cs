@@ -36,7 +36,84 @@ namespace SemsPLM.Controllers
             return PartialView("Partitial/QuickResponseSummary", QuickResponseRepository.SelQuickResponse(quickResponse));
         }
 
-        public ActionResult EditQuickResponse(QuickResponse quickResponse)
+        public ActionResult CreateQuickResponse()
+        {
+            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
+            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            ViewBag.oemList = oemList;
+
+            //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
+            //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
+            //ViewBag.plantList = plantList;
+
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 검사유형
+            ViewBag.occurrenceList = occurrenceList;
+
+            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
+            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
+            ViewBag.occurrenceAreaList = occurrenceAreaList;
+
+            Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
+            List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
+            ViewBag.induceList = induceList;
+
+            Library defectDegreeKey = LibraryRepository.SelLibraryObject(new Library { Name = "DEFECT_DEGREE" });
+            List<Library> defectDegreeList = LibraryRepository.SelLibrary(new Library { FromOID = defectDegreeKey.OID });  // 결함정도
+            ViewBag.defectDegreeList = defectDegreeList;
+
+            Library imputeKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE" });
+            List<Library> imputeList = LibraryRepository.SelLibrary(new Library { FromOID = imputeKey.OID });  // 귀책구분
+            ViewBag.imputeList = imputeList;
+
+            Library correctDecisionKey = LibraryRepository.SelLibraryObject(new Library { Name = "CORRECT_DECISION" });
+            List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
+            ViewBag.correctDecisionList = correctDecisionList;
+
+            return View();
+        }
+
+        public ActionResult InfoQuickResponse(int OID)
+        {
+            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
+            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            ViewBag.oemList = oemList;
+
+            //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
+            //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
+            //ViewBag.plantList = plantList;
+
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 검사유형
+            ViewBag.occurrenceList = occurrenceList;
+
+            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
+            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
+            ViewBag.occurrenceAreaList = occurrenceAreaList;
+
+            Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
+            List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
+            ViewBag.induceList = induceList;
+
+            Library defectDegreeKey = LibraryRepository.SelLibraryObject(new Library { Name = "DEFECT_DEGREE" });
+            List<Library> defectDegreeList = LibraryRepository.SelLibrary(new Library { FromOID = defectDegreeKey.OID });  // 결함정도
+            ViewBag.defectDegreeList = defectDegreeList;
+
+            Library imputeKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE" });
+            List<Library> imputeList = LibraryRepository.SelLibrary(new Library { FromOID = imputeKey.OID });  // 귀책구분
+            ViewBag.imputeList = imputeList;
+
+            Library correctDecisionKey = LibraryRepository.SelLibraryObject(new Library { Name = "CORRECT_DECISION" });
+            List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
+            ViewBag.correctDecisionList = correctDecisionList;
+
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE });
+            return View();
+        }
+
+        /*
+        public ActionResult CreateQuickResponse(QuickResponse quickResponse)
         {
             Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
@@ -74,16 +151,102 @@ namespace SemsPLM.Controllers
 
             return View("Dialog/dlgEditQuickResponse",  (quickResponse.OID == null ? quickResponse : QuickResponseRepository.SelQuickResponse(quickResponse)));
         }
+        */
 
         public JsonResult SelQuickResponseGridList(QuickResponse _param)
         {
             List<QuickResponse> list = QuickResponseRepository.SelQuickResponses(_param);
 
+            List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule());
+
             List<QuickResponseView> gridView = new List<QuickResponseView>();
 
             list.ForEach(v =>
             {
-                gridView.Add(new QuickResponseView(v));
+                QuickResponseView quickResponseView = new QuickResponseView(v);
+
+                var Modules = from m in Modulelist
+                              where m.QuickOID == v.OID
+                              select m;
+
+                Modules.ToList().ForEach(m => 
+                {
+                    if (m.ModuleType == QmsConstant.TYPE_BLOCKADE)
+                    {
+                        quickResponseView.ModuleBlockadeOID = m.OID;
+                        quickResponseView.ModuleBlockadeStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleBlockadeFl = m.ModuleFl;
+                        quickResponseView.ModuleBlockadeEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleBlockadeChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleBlockadeChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
+                    {
+                        quickResponseView.ModuleOccurrenceCauseOID = m.OID;
+                        quickResponseView.ModuleOccurrenceCauseStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleOccurrenceCauseFl = m.ModuleFl;
+                        quickResponseView.ModuleOccurrenceCauseEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleOccurrenceCauseChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleOccurrenceCauseChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
+                    {
+                        quickResponseView.ModuleImproveCountermeasureOID = m.OID;
+                        quickResponseView.ModuleImproveCountermeasureStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleImproveCountermeasureFl = m.ModuleFl;
+                        quickResponseView.ModuleImproveCountermeasureEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleImproveCountermeasureChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleImproveCountermeasureChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
+                    {
+                        quickResponseView.ModuleErrorPrrofOID = m.OID;
+                        quickResponseView.ModuleErrorPrrofStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleErrorPrrofFl = m.ModuleFl;
+                        quickResponseView.ModuleErrorPrrofEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleErrorPrrofChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleErrorPrrofChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
+                    {
+                        quickResponseView.ModuleLpaOID = m.OID;
+                        quickResponseView.ModuleLpaStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleLpaFl = m.ModuleFl;
+                        quickResponseView.ModuleLpaEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleLpaChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleLpaChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
+                    {
+                        quickResponseView.ModuleCheckOID = m.OID;
+                        quickResponseView.ModuleCheckStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleCheckFl = m.ModuleFl;
+                        quickResponseView.ModuleCheckEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleCheckChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleCheckChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_STANDARD)
+                    {
+                        quickResponseView.ModuleStandardOID = m.OID;
+                        quickResponseView.ModuleStandardStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleStandardFl = m.ModuleFl;
+                        quickResponseView.ModuleStandardEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleStandardChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleStandardChargeUserNm = m.ChargeUserNm;
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_WORKER_EDU)
+                    {
+                        quickResponseView.ModuleWorkerEduOID = m.OID;
+                        quickResponseView.ModuleWorkerEduStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleWorkerEduFl = m.ModuleFl;
+                        quickResponseView.ModuleWorkerEduEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleWorkerEduChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleWorkerEduChargeUserNm = m.ChargeUserNm;
+                    }
+                });
+
+
+                gridView.Add(quickResponseView);
             });
             
             return Json(gridView);

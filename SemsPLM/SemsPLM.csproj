@@ -2835,6 +2835,8 @@
     <Content Include="Views\Qms\Dialog\dlgEditErrorProof.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAIncongruity.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAMeasure.cshtml" />
+    <Content Include="Views\Qms\CreateQuickResponse.cshtml" />
+    <Content Include="Views\Qms\InfoQuickResponse.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

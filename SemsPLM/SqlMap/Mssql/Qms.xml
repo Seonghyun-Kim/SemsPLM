@@ -220,19 +220,15 @@
         PoorPicture = #PoorPicture#
       </isNotNull>
 
-      <isNotNull prepend="," property="FinishDt">
-        FinishDt = #FinishDt#
-      </isNotNull>
-
       WHERE OID = #OID#
     </update>
 
     <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
-      SELECT A.OID, AO.Name, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
+      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, A.PoorPicture
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
@@ -247,7 +243,7 @@
       LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID
       LEFT JOIN T_DOBJECT L ON A.ImputeDepartmentOID = L.OID AND L.Type = 'DEPARTMENT'
       LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
-      LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND M.Type = 'PERSON'
+      LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
@@ -304,8 +300,10 @@
     </update>
 
     <select id="SelQuickResponseModule" parameterClass="QuickResponseModule" resultClass="QuickResponseModule">
-      SELECT A.*, B.Type AS ModuleType FROM T_DQMS_QUICK_MODULE A
+      SELECT A.*, B.Type AS ModuleType, C.Name AS ChargeUserNm, D.Name AS BPolicyNm FROM T_DQMS_QUICK_MODULE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.ChargeUserOID = C.OID AND C.Type = 'PERSON'
+      LEFT JOIN T_BPOLICY D ON B.BPolicyOID = D.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="QuickOID">
           QuickOID = #QuickOID#
