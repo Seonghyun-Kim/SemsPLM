@@ -1,5 +1,4 @@
-﻿using Common.Constant;
-using Common.Factory;
+﻿using Common.Factory;
 using Common.Interface;
 using Common.Models;
 using System;
@@ -160,110 +159,6 @@ namespace Qms.Models
 
         public string PlanUserNm { get; set; }
 
-
-        public int? ModuleBlockadeOID { get; set; }
-
-        public string ModuleBlockadeStatusNm { get; set; }
-
-        public bool ModuleBlockadeFl { get; set; }
-
-        public int? ModuleBlockadeChargeUserOID { get; set; }
-
-        public string ModuleBlockadeChargeUserNm { get; set; }
-
-        public DateTime? ModuleBlockadeEstEndDt { get; set; }
-
-
-        public int? ModuleOccurrenceCauseOID { get; set; }
-
-        public string ModuleOccurrenceCauseStatusNm { get; set; }
-
-        public bool ModuleOccurrenceCauseFl { get; set; }
-
-        public int? ModuleOccurrenceCauseChargeUserOID { get; set; }
-
-        public string ModuleOccurrenceCauseChargeUserNm { get; set; }
-
-        public DateTime? ModuleOccurrenceCauseEstEndDt { get; set; }
-
-
-        public int? ModuleImproveCountermeasureOID { get; set; }
-
-        public string ModuleImproveCountermeasureStatusNm { get; set; }
-
-        public bool ModuleImproveCountermeasureFl { get; set; }
-
-        public int? ModuleImproveCountermeasureChargeUserOID { get; set; }
-
-        public string ModuleImproveCountermeasureChargeUserNm { get; set; }
-
-        public DateTime? ModuleImproveCountermeasureEstEndDt { get; set; }
-
-
-        public int? ModuleErrorPrrofOID { get; set; }
-
-        public string ModuleErrorPrrofStatusNm { get; set; }
-
-        public bool ModuleErrorPrrofFl { get; set; }
-
-        public int? ModuleErrorPrrofChargeUserOID { get; set; }
-
-        public string ModuleErrorPrrofChargeUserNm { get; set; }
-
-        public DateTime? ModuleErrorPrrofEstEndDt { get; set; }
-
-
-        public int? ModuleLpaOID { get; set; }
-
-        public string ModuleLpaStatusNm { get; set; }
-
-        public bool ModuleLpaFl { get; set; }
-
-        public int? ModuleLpaChargeUserOID { get; set; }
-
-        public string ModuleLpaChargeUserNm { get; set; }
-
-        public DateTime? ModuleLpaEstEndDt { get; set; }
-
-
-        public int? ModuleCheckOID { get; set; }
-
-        public string ModuleCheckStatusNm { get; set; }
-
-        public bool ModuleCheckFl { get; set; }
-
-        public int? ModuleCheckChargeUserOID { get; set; }
-
-        public string ModuleCheckChargeUserNm { get; set; }
-
-        public DateTime? ModuleCheckEstEndDt { get; set; }
-
-
-        public int? ModuleStandardOID { get; set; }
-
-        public string ModuleStandardStatusNm { get; set; }
-
-        public bool ModuleStandardFl { get; set; }
-
-        public int? ModuleStandardChargeUserOID { get; set; }
-
-        public string ModuleStandardChargeUserNm { get; set; }
-
-        public DateTime? ModuleStandardEstEndDt { get; set; }
-
-
-        public int? ModuleWorkerEduOID { get; set; }
-
-        public string ModuleWorkerEduStatusNm { get; set; }
-
-        public bool ModuleWorkerEduFl { get; set; }
-
-        public int? ModuleWorkerEduChargeUserOID { get; set; }
-
-        public string ModuleWorkerEduChargeUserNm { get; set; }
-
-        public DateTime? ModuleWorkerEduEstEndDt { get; set; }
-
         public QuickResponseView(QuickResponse response)
         {
             this.OID = response.OID;
@@ -283,11 +178,7 @@ namespace Qms.Models
     {
         public static QuickResponse SelQuickResponse(QuickResponse _param)
         {
-            _param.Type = QmsConstant.TYPE_QUICK_RESPONSE;
-            QuickResponse quickResponse = DaoFactory.GetData<QuickResponse>("Qms.SelQuickResponse", _param);
-
-            quickResponse.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE, OID = quickResponse.BPolicyOID }).First();
-            return quickResponse;
+            return DaoFactory.GetData<QuickResponse>("Qms.SelQuickResponse", _param);
         }
 
         public static List<QuickResponse> SelQuickResponses(QuickResponse _param)
@@ -330,8 +221,6 @@ namespace Qms.Models
 
         // 처리담당자 
         public int? ChargeUserOID { get; set; }
-
-        public string ChargeUserNm { get; set; }
     }
 
     public static class QuickResponseModuleRepository

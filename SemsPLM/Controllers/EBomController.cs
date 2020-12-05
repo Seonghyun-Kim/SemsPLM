@@ -116,7 +116,28 @@ namespace SemsPLM.Controllers
             ViewBag.ItemList = ItemList;
             return PartialView("Dialog/dlgSearchEPart");
         }
-        
+        public ActionResult dlgCreateEPart()
+        {
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
+            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
+            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
+            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
+            List<Library> epartList = LibraryRepository.SelLibrary(new Library { FromOID = epartKey.OID });  //제품구분 목록
+            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> psizeList = LibraryRepository.SelLibrary(new Library { FromOID = psizeKey.OID });  //제품구분 목록
+
+            ViewBag.ItemList = ItemList;
+            ViewBag.placeList = placeList;
+            ViewBag.epartList = epartList;
+            ViewBag.carList = carList;
+            ViewBag.psizeList = psizeList;
+            return PartialView("Dialog/dlgCreateEPart");
+        }
+
 
         #region EPart 검색
         public JsonResult SelEPart(EPart _param)
@@ -134,7 +155,12 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-
+                var check = CreateEPartChk(_param);
+                if (check ==1)
+                {
+                    DaoFactory.Rollback();
+                    return Json(new ResultJsonModel { isError = true, resultMessage = "품번이 이미 존재합니다.", resultDescription = "" });
+                }
                 DObject dobj = new DObject();
                 dobj.Type = EBomConstant.TYPE_PART;
                 dobj.TableNm = EBomConstant.TABLE_PART;
@@ -189,7 +215,7 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region EPart 중복체크
-        public JsonResult CreateEPartChk(EPart _param)
+        public int CreateEPartChk(EPart _param)
         {
             int result = 0;
             EPart Epart = EPartRepository.ChkEPart(_param);
@@ -197,7 +223,7 @@ namespace SemsPLM.Controllers
             {
                 result = 1;
             }
-            return Json(result);
+            return result;
         }
         #endregion
 
@@ -367,14 +393,16 @@ namespace SemsPLM.Controllers
             getCompareStructure.LName = LPartData.Name;
             getCompareStructure.LType = EBomConstant.TYPE_PART;
             getCompareStructure.LToOld = LOID;
+            getCompareStructure.LRevision = LPartData.Revision;
             //getCompareStructure.LId = null;
 
             getCompareStructure.RName = RPataData.Name;
             getCompareStructure.RType = EBomConstant.TYPE_PART;
             getCompareStructure.RToOld = ROID;
+            getCompareStructure.RRevision = RPataData.Revision;
             //getCompareStructure.RId = null;
 
-           getCompareEPartStructure(getCompareStructure, LOID, ROID, CompareList, CheckCompareList);
+            getCompareEPartStructure(getCompareStructure, LOID, ROID, CompareList, CheckCompareList);
            //if(CheckCompareList.Count > 1)
            //{
            //    getCheckCompareEPartStructure(getCompareStructure, LOID, ROID, CompareList, CheckCompareList);

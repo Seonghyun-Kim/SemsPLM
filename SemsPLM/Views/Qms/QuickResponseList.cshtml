@@ -57,7 +57,6 @@
         dataFields: [
             { name: 'OID', type: 'number' },
             { name: 'Name', type: 'string' },
-            { name: 'Title', type: 'string' },
             { name: 'OccurrenceDt', type: 'date' },
             { name: 'OccurrenceNm', type: 'string' },
             { name: 'PartNo', type: 'string' },
@@ -68,74 +67,15 @@
             { name: 'CreateUsNm', type: 'string' },
             { name: 'PlanUserNm', type: 'string' },
             { name: 'FinishDt', type: 'date' },
-            
-            { name: 'ModuleBlockadeOID', type: 'number' },
-            { name: 'ModuleBlockadeStatusNm', type: 'string' },
-            { name: 'ModuleBlockadeFl', type: 'bool' },
-            { name: 'ModuleBlockadeChargeUserOID', type: 'number' },
-            { name: 'ModuleBlockadeChargeUserNm', type: 'string' },
-            { name: 'ModuleBlockadeEstEndDt', type: 'string' },
-            
-            { name: 'ModuleOccurrenceCauseOID', type: 'number' },
-            { name: 'ModuleOccurrenceCauseStatusNm', type: 'string' },
-            { name: 'ModuleOccurrenceCauseFl', type: 'bool' },
-            { name: 'ModuleOccurrenceCauseChargeUserOID', type: 'number' },
-            { name: 'ModuleOccurrenceCauseChargeUserNm', type: 'string' },
-            { name: 'ModuleOccurrenceCauseEstEndDt', type: 'string' },
-            
-            { name: 'ModuleImproveCountermeasureOID', type: 'number' },
-            { name: 'ModuleImproveCountermeasureStatusNm', type: 'string' },
-            { name: 'ModuleImproveCountermeasureFl', type: 'bool' },
-            { name: 'ModuleImproveCountermeasureChargeUserOID', type: 'number' },
-            { name: 'ModuleImproveCountermeasureChargeUserNm', type: 'string' },
-            { name: 'ModuleImproveCountermeasureEstEndDt', type: 'string' },
-            
-            { name: 'ModuleErrorPrrofOID', type: 'number' },
-            { name: 'ModuleErrorPrrofStatusNm', type: 'string' },
-            { name: 'ModuleErrorPrrofFl', type: 'bool' },
-            { name: 'ModuleErrorPrrofChargeUserOID', type: 'number' },
-            { name: 'ModuleErrorPrrofChargeUserNm', type: 'string' },
-            { name: 'ModuleErrorPrrofEstEndDt', type: 'string' },
-            
-            { name: 'ModuleLpaOID', type: 'number' },
-            { name: 'ModuleLpaStatusNm', type: 'string' },
-            { name: 'ModuleLpaFl', type: 'bool' },
-            { name: 'ModuleLpaChargeUserOID', type: 'number' },
-            { name: 'ModuleLpaChargeUserNm', type: 'string' },
-            { name: 'ModuleLpaEstEndDt', type: 'string' },
-            
-            { name: 'ModuleCheckOID', type: 'number' },
-            { name: 'ModuleCheckStatusNm', type: 'string' },
-            { name: 'ModuleCheckFl', type: 'bool' },
-            { name: 'ModuleCheckChargeUserOID', type: 'number' },
-            { name: 'ModuleCheckChargeUserNm', type: 'string' },
-            { name: 'ModuleCheckEstEndDt', type: 'string' },
-            
-            { name: 'ModuleStandardOID', type: 'number' },
-            { name: 'ModuleStandardStatusNm', type: 'string' },
-            { name: 'ModuleStandardFl', type: 'bool' },
-            { name: 'ModuleStandardChargeUserOID', type: 'number' },
-            { name: 'ModuleStandardChargeUserNm', type: 'string' },
-            { name: 'ModuleStandardEstEndDt', type: 'string' },
-            
-            { name: 'ModuleWorkerEduOID', type: 'number' },
-            { name: 'ModuleWorkerEduStatusNm', type: 'string' },
-            { name: 'ModuleWorkerEduFl', type: 'bool' },
-            { name: 'ModuleWorkerEduChargeUserOID', type: 'number' },
-            { name: 'ModuleWorkerEduChargeUserNm', type: 'string' },
-            { name: 'ModuleWorkerEduEstEndDt', type: 'string' }
           
         ],
         type: "POST",
         url : "/Qms/SelQuickResponseGridList"
     };
 
-    
-    var nowDate = new Date();
-
     $(document).ready(function () {
         var aa = "aaaaasd";
-        var quickResponseList$ = $('#SearchQuickResponse_Grid');
+         var quickResponseList$ = $('#SearchQuickResponse_Grid');
         quickResponseList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
@@ -157,8 +97,8 @@
                 },
                 {
                     text: '신속대응NO', dataField: 'Name', width: '11%', align: 'center', cellsalign: 'center', pinned: true,
-                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
-                        return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OepnQuickResonse(" + rowData.uid + ")'>" + (value) + "</a></div></div>";
+                    cellsrenderer: function (row, column, value) {    
+                        return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:alert(\"" + aa + "\")'>" + (value) + "</a></div></div>";
                     }
                 },
                 { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', pinned:true },
@@ -180,130 +120,66 @@
                 },
                 {
                     text: '봉쇄조치(24H)', dataField: 'Blockade', width: '8%', align: 'center', cellsalign: 'center',
-                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
-                        if (rowData.ModuleBlockadeOID === null || rowData.ModuleBlockadeEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleBlockadeFl, rowData.ModuleBlockadeStatusNm, rowData.ModuleBlockadeEstEndDt, rowData.ModuleBlockadeChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: '원인분석(7D)', dataField: 'OccurrenceCause', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                       if (rowData.ModuleOccurrenceCauseOID === null || rowData.ModuleOccurrenceCauseEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleOccurrenceCauseFl, rowData.ModuleOccurrenceCauseStatusNm, rowData.ModuleOccurrenceCauseEstEndDt, rowData.ModuleOccurrenceCauseChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: '개선대책(14D)', dataField: 'ImproveCountermeasure', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleImproveCountermeasureOID === null || rowData.ModuleImproveCountermeasureEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleImproveCountermeasureFl, rowData.ModuleImproveCountermeasureStatusNm, rowData.ModuleImproveCountermeasureEstEndDt, rowData.ModuleImproveCountermeasureChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: 'Error Proof', dataField: 'ErrorProof', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleErrorPrrofOID === null || rowData.ModuleErrorPrrofEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleErrorPrrofFl, rowData.ModuleErrorPrrofStatusNm, rowData.ModuleErrorPrrofEstEndDt, rowData.ModuleErrorPrrofChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: 'LPA 감사', dataField: 'LpaUnfit', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleLpaOID === null || rowData.ModuleLpaEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleLpaFl, rowData.ModuleLpaStatusNm, rowData.ModuleLpaEstEndDt, rowData.ModuleLpaChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: '유효성 검증(34D)', dataField: 'Check', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                       if (rowData.ModuleCheckOID === null || rowData.ModuleCheckEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleCheckFl, rowData.ModuleCheckStatusNm, rowData.ModuleCheckEstEndDt, rowData.ModuleCheckChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: '표준F/U(35D)', dataField: 'Standard', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleStandardOID === null || rowData.ModuleStandardEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleStandardFl, rowData.ModuleStandardStatusNm, rowData.ModuleStandardEstEndDt, rowData.ModuleStandardChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },
                 {
                     text: '작업자교육(40D)', dataField: 'WorkerEdu', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleWorkerEduOID === null || rowData.ModuleWorkerEduEstEndDt === null) {
-                            var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
-                            var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
-                            return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
-                        }
-
-                        var status = GridStatus(rowData.ModuleWorkerEduFl, rowData.ModuleWorkerEduStatusNm, rowData.ModuleWorkerEduEstEndDt, rowData.ModuleWorkerEduChargeUserNm);
-
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
-                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
-                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                        var moduleDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'>AA</a></div>";
+                        var moduleChargerUser = "<div style='width:100%;text-align:center;'>AB</div>";
+                        return "<div>" + moduleDate + moduleChargerUser + "</div>";
                     }
                 },                       
                 { text: '상태', dataField: 'StatusNm', width: '5%', align: 'center', cellsalign: 'center' },
@@ -326,77 +202,8 @@
                 toolBar.append(container);
             }
         });
+
     });
-
-    var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
-        var retJson = {};
-
-        var BackgroundColor = "white";
-        var ChargeUserText = ModuleFl ? ChargeUserNm : "N/A";
-        var milli = EstEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
-        var EstDate = new Date(parseInt(milli));
-
-        if (!ModuleFl) {
-            BackgroundColor = "lightgreen";
-        } else if (BPolicyNm === "Compleated") {
-            BackgroundColor = "lightgreen";
-            ChargeUserText = "(완료) " + ChargeUserText;
-        } else if (BPolicyNm === "Started" && EstDate <= nowDate) {
-            BackgroundColor = "yellow";
-            ChargeUserText = "(실행전) " + ChargeUserText;
-        } else if (BPolicyNm === "Prepare" && EstDate >= nowDate) {
-            BackgroundColor = "white";
-        } else {
-            BackgroundColor = "red";
-            ChargeUserText = "(실행전) " + ChargeUserText;
-        }
-        
-        retJson.BackgroundColor = BackgroundColor;
-        retJson.ChargeUserText = ChargeUserText;
-        var sYear = EstDate.getFullYear();
-        var sMonth = (EstDate.getMonth() + 1) <= 9 ? "0" + (EstDate.getMonth() + 1).toString() : (EstDate.getMonth() + 1).toString();
-        var sDate = EstDate.getDate() <= 9 ? "0" + EstDate.getDate().toString() : EstDate.getDate().toString();
-        retJson.EstDt = sYear + "-" + sMonth + "-" + sDate;
-        return retJson;
-    }
-
-    function OepnQuickResonse(uid) {
-        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
-        console.log(rowData);
-        const linkUrl = '/Qms/InfoQuickResponse?OID=' + rowData.OID;
-        if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
-            var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
-            $('#tabContent').jqxTabs('select', $(tabDiv).index());
-            return;
-        }
-
-        const loading$ = $('#loading');
-        const tabContent$ = $('#tabContent');
-        loading$.css('display', 'block');
-        var linkName = rowData.Title;
-        tabContent$.jqxTabs('addLast', linkName, "");
-        var tabLength = tabContent$.jqxTabs('length');
-        $.ajax({
-            url: linkUrl,
-            type: 'get',
-            dataType: 'html',
-            async: true,
-            success: function (resHtml) {
-                var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
-                $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
-            }, error: function (res) {
-                if (res.status === 404) {
-                    alert("현재 개발중인 화면입니다.");
-                    return false;
-                }
-                alert(res.responseText);
-                console.log(res);
-            }
-            , complete: function () {
-                loading$.css('display', 'none');
-            }
-        });
-    }
 
     function OpenDlgQuickResponse(QuickResponseOID) {
         var popTitle = "";

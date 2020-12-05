@@ -13,15 +13,15 @@
             <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
                 <div>
-                    <div id="" class="searchEcontentsComboBox"></div>
+                    <div id="SearchEcontentsCar" class="searchEcontentsComboBox"></div>
                 </div>
-                <div class="comboBoxLabel">작성자</div>
+                @*<div class="comboBoxLabel">작성자</div>
                 <div>
                     <div id="" class="searchEpartComboBox"></div>
-                </div>
+                </div>*@
                 <div class="comboBoxLabel">작성일</div>
                 <div>
-                    <div id="" class="searchEpartComboBox"></div>
+                    <div id="SearchEcontentsCreateDt" class="searchEpartComboBox"></div>
                 </div>
             </div>
 
@@ -35,6 +35,23 @@
 <div id="SearchProblemsLibraryGrid"></div>
 <script type="text/javascript">
     $(function () {
+        var SearchEcontentsCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEcontentsCarLib$ = $('#SearchEcontentsCar');
+        var CarSource =
+        {
+            localdata: SearchEcontentsCarList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+        SearchEcontentsCarLib$.jqxComboBox({ width: 250, height: 32, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        $('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
 
         var SearchProblemsLibrarySource = {
             datatype: 'json',
@@ -102,38 +119,8 @@
                 container.append(CreateButton);
                 toolBar.append(container);
 
-                CreateButton.click(function (event) {
-                    const CreatelinkUrl = '/Econtents/CreateProblemsLibrary';
-                    if ($("div[tabUrl='" + CreatelinkUrl + "']").length > 0) {
-                        var tabDiv = $("div[tabUrl='" + CreatelinkUrl + "']")[0].parentNode;
-                        $('#tabContent').jqxTabs('select', $(tabDiv).index());
-                        return;
-                    }
-                    const loading$ = $('#loading');
-                    const tabContent$ = $('#tabContent');
-                    loading$.css('display', 'block');
-                    var linkName = "과거차 문제 라이브러리 작성";
-                    tabContent$.jqxTabs('addLast', linkName, "");
-                    var tabLength = tabContent$.jqxTabs('length');
-                    $.ajax({
-                        url: CreatelinkUrl,
-                        type: 'get',
-                        dataType: 'html',
-                        async: true,
-                        success: function (resHtml) {
-                            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
-                            $(content).html("<div class='wrapPage' tabUrl='" + CreatelinkUrl + "'>" + resHtml + "</div>");
-                        }, error: function (res) {
-                            if (res.status === 404) {
-                                alert("현재 개발중인 화면입니다.");
-                                return false;
-                            }
-                            alert(res.responseText);
-                        }
-                        , complete: function () {
-                            loading$.css('display', 'none');
-                        }
-                    });
+                CreateButton.on('click', function () {
+                    OpenProblemsLibraryCreateDialog(null, null, null, '/Econtents/CreateProblemsLibrary', '과거차 문제 라이브러리 등록');
                 });
             }
         });
@@ -146,7 +133,7 @@
                 $('#tabContent').jqxTabs('select', $(tabDiv).index());
                 return;
             }
-        
+
             const loading$ = $('#loading');
             const tabContent$ = $('#tabContent');
             loading$.css('display', 'block');

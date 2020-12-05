@@ -10,9 +10,7 @@ using System.Threading.Tasks;
 namespace Qms.Models
 {
     public class LpaUnfit : QuickResponseModule, IDObject
-    {
-        public int? ModuleOID { get; set; }
-        // 레이어 
+    {// 레이어 
         public int LayerLibOID { get; set; }
 
         // 감사주기 
@@ -48,10 +46,6 @@ namespace Qms.Models
         // 대책서 담당자 
         public int? MeasureUserOID { get; set; }
 
-        #region -- 저장용
-        public LpaUnfitCheck LpaUnfitCheck { get; set; }
-        #endregion
-
     }
 
     public static class LpaUnfitRepository
@@ -81,10 +75,7 @@ namespace Qms.Models
     }
 
     public class LpaUnfitCheck : DObject, IDObject
-    {
-        // LPA 부적합현황 OID
-        public int? ModuleOID { get; set; }
-
+    {      
         // 지적사항 내용 
         public string CheckPoin { get; set; }
 

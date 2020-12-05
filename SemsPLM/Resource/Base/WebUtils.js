@@ -223,4 +223,3 @@ WebUtils.GetComboObjectValue = function (Component) {
 WebUtils.GetCheckBoxValue = function (ComponentID) {
     return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;
 };
-

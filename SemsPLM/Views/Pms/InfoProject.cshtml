@@ -366,7 +366,7 @@
                         commit(true);
                     }
                 };
-                var dataAdapter = new $.jqx.dataAdapter(source);
+                //var dataAdapter = new $.jqx.dataAdapter(source);
                 const projWbsInfo$ = $("#wbsInfo_" + ProjectOID);
                 projWbsInfo$.jqxTreeGrid('render');
                 projWbsInfo$.jqxTreeGrid(
@@ -374,7 +374,7 @@
                     width: screenWidth,
                     height: screenHeight,
                     theme: "kdnc",
-                    source: dataAdapter,
+                    //source: dataAdapter,
                     columnsResize: true,
                     sortable: false,
                     checkboxes: false,
@@ -406,7 +406,6 @@
 
                             $("#importWbsBatchSave_" + ProjectOID).mousedown(function () {
                                 RequestData('/Pms/ImportExcelWbs', { OID: ProjectOID, ExcelFile: hidWbsFileInfo }, function (res) {
-                                    console.log(res);
                                     PrintJqxTreeGrid(source, projWbsInfo$, [res]);
                                     batch$.jqxWindow('close');
                                 });
@@ -749,8 +748,9 @@
 
                         saveButton.click(function (event) {
                             if (confirm('저장하시겠습니까?')) {
+                                console.log(fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration']).concat(deleteData));
                                 RequestData('/Pms/InsWbs',
-                                    fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable']).concat(deleteData),
+                                    fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration', 'WorkingDay', 'Deliveries', 'Delay']).concat(deleteData),
                                     function (res) {
                                         deleteData = [];
                                         cancelButton.click();
@@ -781,18 +781,22 @@
                         });
                     },
                     pagerRenderer: function () {
-                        RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
-                            projectDatas = [];
-                            projectDatas.push(res);
-                            var arrData = fPmsArrayTasks(projectDatas);
-                            var masterlink = fMasterLink(arrData);
-                            fComputeCriticalPath(arrData, masterlink);
-                            PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
-                        });
+                       
                     }
                 });
 
-                projWbsInfo$.jqxTreeGrid('pagerRenderer');
+                setTimeout(function () {
+                RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
+                    
+                        projectDatas = [];
+                        projectDatas.push(res);
+                        var arrData = fPmsArrayTasks(projectDatas);
+                        var masterlink = fMasterLink(arrData);
+                        fComputeCriticalPath(arrData, masterlink);
+                        PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
+                   
+                });
+                }, 100);
 
                 projWbsInfo$.on('rowClick', function (event) {
                     $('.ui-datepicker').remove();
@@ -836,6 +840,7 @@
                 });
 
                 projWbsInfo$.on('cellValueChanged', function (event) {
+                    console.log('cellValueChanged');
                     var args = event.args;
                     var value = args.value;
                     var oldValue = args.oldValue;
@@ -885,13 +890,13 @@
                 });
 
                 projWbsInfo$.on('cellEndEdit', function (event) {
+                    console.log('cellEndEdit');
                     var args = event.args;
                     var value = args.value;
                     var row = args.row;
                     var rowKey = args.key;
                     var dataField = args.dataField;
                     var records = row.records;
-                    const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
 
                     if (dataField == 'EstStartDt') {
                         if (records != undefined && records.length > 0) {
@@ -900,8 +905,9 @@
                                 projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
                             }
                         }
-                    } 
-                    fDependencyControl(ProjectOID);
+                    }
+
+                    fDependencyRescureControl(ProjectOID, row);
                 });
 
             } else if (infoValue == 'resource') {

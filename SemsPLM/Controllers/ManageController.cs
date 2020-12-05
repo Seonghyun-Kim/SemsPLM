@@ -558,6 +558,14 @@ namespace SemsPLM.Controllers
 
         #endregion
 
+        #region -- Module : AssessListLibrary
+        public ActionResult AssessListLibrary()
+        {
+            return View();
+        }
+
+        #endregion
+
         #region -- Module : Auth
 
         public ActionResult AuthManage()

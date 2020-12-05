@@ -56,6 +56,27 @@
     </table>
 </div>
 
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+        <tr>
+            <th class="reqVal" style="width:180px;">
+            </th>
+            <th class="reqVal"> <i class="fa fa-caret-right"></i> 검토자결재순서</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 승인자결재순서</th>
+        </tr>
+        <tr>
+            <td><button id="btnEditStandardFollowUpApprovalLine" class="custom-button"><i class="fas fa-search"></i> 결재선지정</button></td>
+            <td>
+                <div id="listEditStandardFollowUpApprovalconfirm" />
+            </td>
+            <td>
+                <div id="listEditStandardFollowUpApprovalcomplete" />
+            </td>
+        </tr>
+    </table>
+</div>
+
 <script>
     $(function () {
         InitEditStandardFollowUp("EditStandardFollowUpPFMEA", "PFMEA");
@@ -63,6 +84,13 @@
         InitEditStandardFollowUp("EditStandardFollowUpManagePlan", "ManagePlan");
         InitEditStandardFollowUp("EditStandardFollowUpWorkStd", "WorkStd");
         InitEditStandardFollowUp("EditStandardFollowUpInspect", "Inspect");
+
+        var listEditStandardFollowUpApprovalconfirm$ = $("#listEditStandardFollowUpApprovalconfirm");
+        var listEditStandardFollowUpApprovalcomplete$ = $("#listEditStandardFollowUpApprovalcomplete");
+
+        // 결재선지정
+        listEditStandardFollowUpApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
+        listEditStandardFollowUpApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
 
         var btnDlgSave$ = $("#btnEditStandardFollowUp").jqxButton();
         btnDlgSave$.on("click", function () {

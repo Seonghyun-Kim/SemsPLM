@@ -1490,7 +1490,7 @@ License: https://jqwidgets.com/license/
             return this._updating;
         },
 
-        databind: function ( source, reason, done ) {
+        databind: function (source, reason, done) {
             if ( this.loadingstate === true ) {
                 return;
             }
@@ -1813,8 +1813,7 @@ License: https://jqwidgets.com/license/
                     }
                 }
             }
-
-            this.dataview.databind( source );
+            this.dataview.databind(source);
         },
 
         _raiseEvent: function ( id, arg ) {

@@ -25,6 +25,9 @@ namespace SemsPLM.Controllers
         }
         public ActionResult SearchProblemsLibrary()
         {
+            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            ViewBag.carList = carList;
             return View();
         }
         public ActionResult InfoProblemsLibrary(int OID)
