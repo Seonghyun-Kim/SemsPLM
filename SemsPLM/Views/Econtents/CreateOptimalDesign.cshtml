@@ -8,7 +8,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <h2><i class="fas fa-edit"></i> 고가저 문제 반영 작성</h2>
+                        <h2><i class="fas fa-edit"></i> 최적설계 작성</h2>
                     </td>
                     <td style="text-align: right;">
                         <button id="" class="custom-button"><i class="fas fa-file"></i> 임시 저장</button>
@@ -17,36 +17,106 @@
             </tbody>
         </table>
     </div>
-<table class="optimalDesignTable">
-    <tr>
-        <td>고객사</td>
-        <td>차종</td>
-        <td>제품</td>
-        <td>구분</td>
-        <td>반영단계</td>
-        <td>반영(건)</td>
-        <td>미반영(건)</td>
-        <td>합계(건)</td>
-    </tr>
-</table>
+    <table class="optimalDesignTable">
+        <thead>
+            <tr>
+                <td>고객사</td>
+                <td>차종</td>
+                <td>제품</td>
+                <td>구분</td>
+                <td>반영단계</td>
+                <td>반영(건)</td>
+                <td>미반영(건)</td>
+                <td>합계(건)</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><select></select><div id="CreateOptimalDesignOEM"></div></td>
+                <td><select></select><div id="CreateOptimalDesignCar"></div></td>
+                <td><select></select><div id="CreateOptimalDesignProduct"></div></td>
+                <td><select></select><div id="CreateOptimalDesignDivision"></div></td>
+                <td><input type="text" value="시작" readonly="readonly" /></td>
+                <td><input type="text" readonly="readonly" /></td>
+                <td><input type="text" readonly="readonly" /></td>
+                <td><input type="text" readonly="readonly" /></td>
+            </tr>
+        </tbody>
+    </table>
 
-<table>
-    <thead>
-        <tr>
-            <td>순서</td>
-            <td>NO</td>
-            <td>과거차 문제</td>
-            <td>과거차 문제 개선 대책</td>
-            <td>구분</td>
-            <td>반영</td>
-            <td>미반영</td>
-            <td>사유</td>
-            <td>첨부파일</td>
-        </tr>
-    </thead>
-    <tbody>
-        <!--동적으로 생성-->
-    </tbody>
-</table>
+<div id="CreateOptimalDesignGrid"></div>
+
 <script type="text/javascript">
+    $(function () {
+        var CreateOptimalDesignGridSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+
+                { name: 'Description' },
+
+                { name: 'Car_Lib_OID' },
+                { name: 'Product' },
+                { name: 'Part' },
+                { name: 'Occurrence' },
+                { name: 'Stage_Occurrence' },
+                { name: 'Failure_Type' },
+                { name: 'Division' },
+                { name: 'Issues' },
+                { name: 'Cause' },
+                { name: 'Countermeasures' },
+
+                { name: 'Reflect'},
+                { name: 'NotReflect' },
+
+                { name: 'Revision' },
+
+            ],
+        }
+
+        const CreateOptimalDesignGrid$ = $('#CreateOptimalDesignGrid');
+        CreateOptimalDesignGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 695,
+            rowsheight: 200,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: '순서', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: 'NO', datafield: 'Car_Lib_OID', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '과거차 문제', datafield: 'Issues', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '과거차 문제 개선 대책 ', datafield: 'Countermeasures', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'Division', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '반영', datafield: 'Reflect', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '미반영', datafield: 'NotReflect', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '사유', datafield: 'Description', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "7%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (toolBar) {
+
+            }
+        });
+
+        getSearchCreateOptimalDesignGridList(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, null)
+    });
+
+    function getSearchCreateOptimalDesignGridList(_Source, _Grid$, param) {
+        RequestData("/Econtents/SelProblemsLibrary", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
 </script>

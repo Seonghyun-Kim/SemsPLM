@@ -1,0 +1,134 @@
+﻿@{
+    Layout = null;
+}
+<div id="AssessListLibrary_ParentGrid" style="float:left;margin-right:15px;"></div>
+
+<div id="AssessListLibrary_ChildGrid" style="float:left;"></div>
+
+<script>
+    var param = {};
+
+    $(function () {
+        var AssessListParentsource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'KorNm', type: 'string' },
+                { name: 'Ord', type: 'number' },
+                { name: 'IsUse', type: 'string' },
+                ],
+            hierarchy:
+            {
+                keyDataField: { name: 'OID' },
+                parentDataField: { name: 'FromOID' }
+            },
+            id: 'OID',
+            addRow: function (rowID, rowData, IsUse, parentID, commit) {
+                // synchronize with the server - send insert command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                // you can pass additional argument to the commit callback which represents the new ID if it is generated from a DB.
+                commit(true);
+                newRowID = rowID;
+            },
+            updateRow: function (rowID, rowData, commit) {
+                // synchronize with the server - send update command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                commit(true);
+            },
+        };
+        var initialized = false;
+        const AssessListParentGrd$ = $('#AssessListLibrary_ParentGrid');
+        AssessListParentGrd$.jqxGrid(
+            {
+                width: 940,
+                height: 820,
+                theme: "kdnc",
+                //      source: dataAdapter,
+                sortable: true,
+                ready: function () {
+                    initialized = true;
+
+                },
+                columns: [
+                    { text: 'OID', datafield: 'OID', type: 'number', align: 'center', hidden: true },
+                    { text: '이름', datafield: 'KorNm', type: 'string', align: 'center', },
+                    { text: 'NO', type: 'number', align: 'center', },
+                    // { text: '생성일', datafield: 'CreateDt', type: 'date', align: 'center', },
+                    // { text: '생성자', datafield: 'CreateUsNm', type: 'string', align: 'center', },
+                ],
+                editable: false,
+                showToolbar: true,
+                toolbarHeight: 45,               
+            });
+        getAssessList(AssessListParentsource, AssessListParentGrd$, param);
+
+        var AssessListChildsource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'KorNm', type: 'string' },
+                { name: 'Ord', type: 'number' },
+                { name: 'IsUse', type: 'string' },
+            ],
+            hierarchy:
+            {
+                keyDataField: { name: 'OID' },
+                parentDataField: { name: 'FromOID' }
+            },
+            id: 'OID',
+            addRow: function (rowID, rowData, IsUse, parentID, commit) {
+                // synchronize with the server - send insert command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                // you can pass additional argument to the commit callback which represents the new ID if it is generated from a DB.
+                commit(true);
+                newRowID = rowID;
+            },
+            updateRow: function (rowID, rowData, commit) {
+                // synchronize with the server - send update command
+                // call commit with parameter true if the synchronization with the server is successful
+                // and with parameter false if the synchronization failed.
+                commit(true);
+            },
+        };
+        var initialized = false;
+        const AssessListChildGrd$ = $('#AssessListLibrary_ChildGrid');
+        AssessListChildGrd$.jqxGrid(
+            {
+                width: 940,
+                height: 820,
+                theme: "kdnc",
+                //      source: dataAdapter,
+                sortable: true,
+                ready: function () {
+                    initialized = true;
+
+                },
+                columns: [
+                    { text: 'OID', datafield: 'OID', type: 'number', align: 'center', hidden: true },
+                    { text: '이름', datafield: 'KorNm', type: 'string', align: 'center', },
+                    { text: 'NO', type: 'number', align: 'center', },
+                    // { text: '생성일', datafield: 'CreateDt', type: 'date', align: 'center', },
+                    // { text: '생성자', datafield: 'CreateUsNm', type: 'string', align: 'center', },
+                ],
+                editable: false,
+                showToolbar: true,
+                toolbarHeight: 45,
+
+            });
+
+        getAssessList(AssessListChildsource, AssessListChildGrd$, param);
+
+    });
+    function getAssessList(_Source, _Grid$, _param) {
+        RequestData("/Manage/SelLibrary", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

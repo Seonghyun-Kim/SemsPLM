@@ -41,21 +41,21 @@
         <tr>
             <th><i class="fa fa-caret-right"></i> 도면/부품번호</th>
             <td>
-                <input type="text" id="CreateEPartName" style="width:76.5%;" value="시스템 생성 12자리" />
-                <button id="CreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>
+                <input type="text" id="CreateEPartName"  value="" readonly="readonly"/>
+                @*<button id="CreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>*@
             </td>
-            <th><i class="fa fa-caret-right"></i> 리비젼</th>
-            <td></td>
+            <th><i class="fa fa-caret-right"></i> 리비전</th>
+            <td><input type="text" value="00" readonly="readonly" /></td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 등록자</th>
-            <td></td>
+            <td><input type="text" value="등록자" readonly="readonly" /></td>
             <th><i class="fa fa-caret-right"></i> 상태</th>
-            <td></td>
+            <td><input type="text" value="작성중" readonly="readonly" /></td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 등록일</th>
-            <td></td>
+            <td><input type="text" value="@DateTime.Now.ToShortDateString()" readonly="readonly" /></td>
             <td colspan="2"></td>
         </tr>
         <tr>
@@ -282,6 +282,7 @@
                         [
                             { name: 'KorNm', type: 'string' },
                             { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' }
                         ]
                 };
                 var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
@@ -298,7 +299,6 @@
         $("#CreateEPartDivisionStandard").on('change', function (event) {
             checked = event.args.checked;
             if (checked) {
-                console.log(sizeList);
                 EPartDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
                 DivisionStandard$.removeClass('DivisionStandard');
 
@@ -319,6 +319,7 @@
                         [
                             { name: 'KorNm', type: 'string' },
                             { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' }
                         ]
                 };
                 var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
@@ -430,7 +431,8 @@
         psize$.on('change', function (evt) {
             var idx = evt.args.index;
             var param = {};
-            psize = sizeList[idx].Name;
+            var data = evt.args.item.originalItem;
+            psize = data.Name;
             CreateEPartName();
             param.fromOID = psize$.val();
             param.Code1 = 'TYPE';
@@ -462,7 +464,6 @@
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 block = data.Code1;
             } else {
-                console.log(data);
                 block = data.Name;
             }
 
@@ -563,22 +564,16 @@
                 
             }
 
-            //if (param.Name == null || param.Name == "") {
-            //    alert('품번을 확인해주세요.');
-            //    return;
-            //} else if (param.Title == null || param.Title == "") {
-            //    alert('품명을 확인해주세요.');
-            //    return;
-            //} else if (param.Oem_Lib_OID == null || param.Oem_Lib_OID == "") {
-            //    alert('고객사를 선택 해주세요.');
-            //    return;
-            //} else if (param.Car_Lib_OID == null || param.Car_Lib_OID == "") {
-            //    alert('차종를 선택 해주세요.');
-            //    return;
-            //} else if (param.EPartType == null) {
-            //    alert('타입을 선택 해주세요.');
-            //    return;
-            //}
+            if (param.Name == null || param.Name == "") {
+                alert('품번을 확인해주세요.');
+                return;
+            } else if (param.Name.length != 12) {
+                alert('품번을 확인해주세요.');
+                return;
+            } else if (param.Division == null || param.Division == "") {
+                alert('구분을 선택해주세요.');
+                return;
+            } 
 
             RequestData('/EBom/InsEPart', param, function (response) {
                 if (response.isError) {

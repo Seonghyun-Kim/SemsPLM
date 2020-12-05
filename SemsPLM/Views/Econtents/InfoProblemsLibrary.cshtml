@@ -54,60 +54,84 @@
                 <table class="infoTable">
                     <tr>
                         <th>차종</th>
-                        <td colspan="3">1</td>
+                        <td colspan="3">@Model.Car_Lib_OID</td>
                         <th>제품</th>
-                        <td>1</td>
+                        <td>@Model.Product</td>
                         <th>부품</th>
-                        <td>1</td>
+                        <td>@Model.Part</td>
                     </tr>
                     <tr>
                         <th>발생처</th>
-                        <td>1</td>
+                        <td>@Model.Occurrence</td>
                         <th>발생단계</th>
-                        <td>1</td>
+                        <td>@Model.Stage_Occurrence</td>
                         <th>고장유형</th>
-                        <td>1</td>
+                        <td>@Model.Failure_Type</td>
                         <th>구분</th>
-                        <td>1</td>
+                        <td>@Model.Division</td>
                     </tr>
                     <tr>
                         <th>기타</th>
-                        <td colspan="5">1</td>
+                        <td colspan="5">@Model.Description</td>
                         <th>Revision</th>
-                        <td>1</td>
+                        <td>@Model.Revision</td>
                     </tr>
                     <tr>
                         <th>첨부파일</th>
-                        <td colspan="7">1</td>
+                        <td colspan="7"></td>
                     </tr>
                     <tr>
                         <th>Issues(문제점)</th>
                         <td colspan="3">
-                            <textarea id="CreateProblemIssues"></textarea>
-                            <div>
-                                <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
-                                <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
-                                <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
+                            <div class="problemsLibraryDetailBox">
+                                <textarea id="CreateProblemIssues">@Model.Issues</textarea>
+                                @if (@Model.Issues_Thumbnail != null)
+                                {
+                                    <img src="~/images/Thumbnail/@Model.Issues_Thumbnail" />
+                                }
+                                @*
+        <div>
+            <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
+            <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
+            <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
+        </div>
+                                *@
                             </div>
                         </td>
                         <th>Cause(원인)</th>
                         <td colspan="3">
-                            <textarea id="CreateProblemCause"></textarea>
-                            <div>
-                                <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
-                                <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
-                                <ul class="image_thumbnail floatL" id="CauseUploadResult"><!--이미지 썸네일 영역--></ul>
-                            </div>
+                            <div class="problemsLibraryDetailBox">
+                                <textarea id="CreateProblemCause">@Model.Cause</textarea>
+                                @if (@Model.Cause_Thumbnail != null)
+                                {
+                                    <img src="~/images/Thumbnail/@Model.Cause_Thumbnail" />
+                                }
+                                @*
+            <div>
+                <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
+                <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
+                <ul class="image_thumbnail floatL" id="CauseUploadResult"><!--이미지 썸네일 영역--></ul>
+            </div>
+                                *@
+                             </div>
                         </td>
                     </tr>
                     <tr>
                         <th>Countermeasures<br />(대책)</th>
                         <td colspan="7">
-                            <textarea id="CreateProblemCountermeasures"></textarea>
-                            <div>
-                                <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
-                                <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
-                                <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult"><!--이미지 썸네일 영역--></ul>
+                            <div class="problemsLibraryDetailBox">
+                                <textarea id="CreateProblemCountermeasures">@Model.Countermeasures</textarea>
+                                @if (@Model.Countermeasures_Thumbnail != null)
+                                {
+                                    <img src="~/images/Thumbnail/@Model.Countermeasures_Thumbnail" />
+                                }
+                                @*
+        <div>
+            <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
+            <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
+            <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult"><!--이미지 썸네일 영역--></ul>
+        </div>
+                                *@
                             </div>
                         </td>
                     </tr>
@@ -161,5 +185,4 @@
             }
         });
     });
-
 </script>

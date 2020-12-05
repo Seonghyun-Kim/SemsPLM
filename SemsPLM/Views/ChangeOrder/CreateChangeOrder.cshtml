@@ -2,7 +2,7 @@
     Layout = null;
 }
 
-    @*<div style="padding:20px;">
+@*<div style="padding:20px;">
         <table width="100%">
             <tbody>
                 <tr>
@@ -89,7 +89,7 @@
                     <label><input type="radio" name="selEoId" value="D" style="width:20px; height:15px;" /> D(@Common.Constant.EoConstant.ID_D)</label>
                     <label><input type="radio" name="selEoId" value="R" style="width:20px; height:15px;" /> R(@Common.Constant.EoConstant.ID_R)</label>
                 </td>
-               
+
             </tr>
             <tr class="Rental">
                 <th><i class="fa fa-caret-right"></i> 설계원가</th>
@@ -231,162 +231,331 @@
                 </tr>
             </table>
         </div>*@
+    <div class="info_project clearfix">
+        <div class="info_menubar clearfix" style="width:250px;">
+            <ul id="ECOMenu">
+                <li class="tab info_focus" info="ECOprofile"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
+                <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
+                <li class="tab" info="ECOList"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
+                <li class="tab" info="ECOBreakdown"><i class="fas fa-stream"></i> 설계변경 내역서</li>
+            </ul>
+        </div>
 
-    <div class="eBomChangeTopMenu">
-        <ul>
-            <li class="tab"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
-            <li class="tab"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
-            <li class="tab"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
-            <li class="tab"><i class="fas fa-stream"></i> 설계변경 내역서</li>
-        </ul>
+        <div class="eBomChangeContents">
+            <div id="ECOprofile" class="ecoContents">
+                <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="40%" />
+                        <col width="10%" />
+                        <col width="40%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>설계변경번호</th>
+                            <td class="required"><input type="text" value="" /></td>
+                            <th>품목그룹</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th>제목</th>
+                            <td class="required"><input type="text" value="" /></td>
+                            <th>설계변경일자</th>
+                            <td class="required"><div class="ECODatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>변경사유</th>
+                            <td class="required"><div id="" class="ECOComboBox"></div></td>
+                            <th>호환성</th>
+                            <td>
+                                <div class="ECORadioBtn" group="compatible">있음</div>
+                                <div class="ECORadioBtn" group="compatible">없음</div>
+                                <div class="ECORadioBtn" group="compatible">동시적용품</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>금형수정</th>
+                            <td>
+                                <div class="ECORadioBtn" group="moldMod">무관</div>
+                                <div class="ECORadioBtn" group="moldMod">있음</div>
+                                <div class="ECORadioBtn" group="moldMod">신규제작</div>
+                            </td>
+                            <th>등록사유</th>
+                            <td>
+                                <div class="ECORadioBtn" group="reason">설계변경</div>
+                                <div class="ECORadioBtn" group="reason">신규</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>보안여부</th>
+                            <td>
+                                <div class="ECORadioBtn" group="security">보안</div>
+                                <div class="ECORadioBtn" group="security">중요</div>
+                                <div class="ECORadioBtn" group="security">법규</div>
+                                <div class="ECORadioBtn" group="security">일반</div>
+                            </td>
+                            <th>변경내용</th>
+                            <td>
+                                <div class="ECOCheckBox">도면</div>
+                                <div class="ECOCheckBox">BOM</div>
+                                <div class="ECOCheckBox">생산원단위</div>
+                                <div class="ECOCheckBox">신규사양</div>
+                                <div class="ECOCheckBox">생관도번추가</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>재고처리</th>
+                            <td>
+                                <div class="ECORadioBtn" group="stock">보안</div>
+                                <div class="ECORadioBtn" group="stock">중요</div>
+                                <div class="ECORadioBtn" group="stock">법규</div>
+                                <div class="ECORadioBtn" group="stock">일반</div>
+                            </td>
+                            <th>메모사양</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th>유첨자료</th>
+                            <td>
+                                <div class="ECORadioBtn" group="dataYN">없음</div>
+                                <div class="ECORadioBtn" group="dataYN">있음</div>
+                            </td>
+                            <th>고객요구일자</th>
+                            <td><div class="ECODatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>고객품번</th>
+                            <td><input type="text" value="" /></td>
+                            <th>E-BOM</th>
+                            <td><div class="ECODatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>개발/양산 구분</th>
+                            <td class="required"><div id="" class="ECOComboBox"></div></td>
+                            <th>차종</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
+                            <td colspan="3">
+                                <textarea></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECR 정보</h3>
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="40%" />
+                        <col width="10%" />
+                        <col width="40%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>ECR_NO</th>
+                            <td></td>
+                            <th>상태</th>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="90%" />
+                    </colgroup>
+                    <tr>
+                        <th>첨부파일</th>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="ECOEffectAssess" class="ecoContents dective">
+                <div style="height:820px;overflow-x:hidden;overflow-y:scroll;">
+                    <table class="effectAssessList">
+                        <tr>
+                            <td>
+                                <h4>공용부품에 대한 검토 (연구소)</h4>
+                                <div id="assessList1"></div>
+                            </td>
+                            <td>
+                                <h4>원가변동에 대한 검토 (원가팀)</h4>
+                                <div id="assessList2"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>변경 자재에 대한 재고검토 (구매,생관)</h4>
+                                <div id="assessList3"></div>
+                            </td>
+                            <td>
+                                <h4>고객 승인에 대한 검토 (QC,QA)</h4>
+                                <div id="assessList4"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>성능에 대한 검토 (연구소)</h4>
+                                <div id="assessList5"></div>
+                            </td>
+                            <td>
+                                <h4>공정에 대한 검토 (QC,QA)</h4>
+                                <div id="assessList6"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>변경 자재에 대한 재고검토 (자관,제관)</h4>
+                                <div id="assessList7"></div>
+                            </td>
+                            <td>
+                                <h4>재고처리에 대한 검토 (영업,제관)</h4>
+                                <div id="assessList8"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div id="ECOList" class="ecoContents dective">
+                <div id="ECOListGrid"></div>
+            </div>
+
+            <div id="ECOBreakdown" class="ecoContents dective">
+                <div id="ECOBreakdownGrid"></div>
+            </div>
+        </div>
     </div>
+<script type="text/javascript">
+    $('.ECOComboBox').jqxComboBox({width:'50%', height:32});
+    $('.ECOCheckBox').jqxCheckBox({width:120, height:32});
+    $('.ECODatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
 
-    <div class="eBomChangeContents">
-        <div id="ECOprofile">
-            <h3>기본정보</h3>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>설계변경번호</th>
-                        <td class="required"></td>
-                        <th>품목그룹</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>제목</th>
-                        <td class="required"></td>
-                        <th>설계변경일자</th>
-                        <td class="required"></td>
-                    </tr>
-                    <tr>
-                        <th>변경사유</th>
-                        <td class="required"></td>
-                        <th>호환성</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>금형수정</th>
-                        <td></td>
-                        <th>등록사유</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>보안여부</th>
-                        <td></td>
-                        <th>변경내용</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>재고처리</th>
-                        <td></td>
-                        <th>메모사양</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>유첨자료</th>
-                        <td></td>
-                        <th>고객요구일자</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>고객품번</th>
-                        <td></td>
-                        <th>E-BOM</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>개발/양산 구분</th>
-                        <td class="required"></td>
-                        <th>차종</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th>세부설명</th>
-                        <td colspan="3"></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <h3>연관ECR 정보</h3>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>ECR_NO</th>
-                        <td></td>
-                        <th>상태</th>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+    $('.ECORadioBtn').jqxRadioButton({width:120, height:32});
+    $('[group="compatible"]').jqxRadioButton({ groupName: 'compatible' });
+    $('[group="moldMod"]').jqxRadioButton({ groupName: 'moldMod' });
+    $('[group="reason"]').jqxRadioButton({ groupName: 'reason' });
+    $('[group="security"]').jqxRadioButton({ groupName: 'security' });
+    $('[group="stock"]').jqxRadioButton({ groupName: 'stock' });
+    $('[group="dataYN"]').jqxRadioButton({ groupName: 'dataYN' });
 
-            <table>
-                <tr>
-                    <th>첨부파일</th>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
+    $('#ECOMenu > .tab').on('click', function () {
+        if ($(this).hasClass('info_focus')) {
+            return;
+        }
+        const menu$ = $('#ECOMenu'),
+            contents$ = $('.eBomChangeContents');
+        const self$ = $(this);
+        const ecoValue = self$.attr('info');
+        menu$.find('[class="tab info_focus"]').removeClass('info_focus');
+        self$.addClass('info_focus');
+        contents$.find('[class="ecoContents"]').addClass('dective');
+        contents$.find('[id="' + ecoValue + '"]').removeClass('dective');
 
-        <div id="ECOEffectAssess">
-            <table>
-                <tr>
-                    <td>
-                        <h4>공용부품에 대한 검토 (연구소)</h4>
-                        <ul></ul>
-                    </td>
-                    <td>
-                        <h4>원가변동에 대한 검토 (원가팀)</h4>
-                        <ul></ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h4>변경 자재에 대한 재고검토 (구매,생관)</h4>
-                        <ul></ul>
-                    </td>
-                    <td>
-                        <h4>고객 승인에 대한 검토 (QC,QA)</h4>
-                        <ul></ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h4>성능에 대한 검토 (연구소)</h4>
-                        <ul></ul>
-                    </td>
-                    <td>
-                        <h4>공정에 대한 검토 (QC,QA)</h4>
-                        <ul></ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h4>변경 자재에 대한 재고검토 (자관,제관)</h4>
-                        <ul></ul>
-                    </td>
-                    <td>
-                        <h4>재고처리에 대한 검토 (영업,제관)</h4>
-                        <ul></ul>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        if (ecoValue == 'ECOProfile') {
 
-        <div id="ECOList">
-            <div id="ECOListGrid"></div>
-        </div>
-
-        <div id="ECOBreakdown">
-            <div id="ECOBreakdownGrid"></div>
-        </div>
-
-    </div>
+        } else if (ecoValue == 'ECOEffectAssess') {
+            $('#assessList1').jqxListBox({
+                width: '100%',
+                source: ['공용부품은 LIST-UP 되어있는가?',
+                    '공용부품에 대한 영향성 평가는 되었는가?',
+                    '공용부품에 대한 역전개 BOM은 확보 되었는가? (기술관리 확인 항목)'],
+                checkboxes: true,
+            });
+            $('#assessList2').jqxListBox({
+                width: '100%',
+                source: ['원가변동 무',
+                    '원가변동 유',
+                    '기타사항',
+                    '원가변동에 대한 Risk는 검토되었는가?',
+                    '고객사 제품인상',
+                    '우리산업 흡수'],
+                checkboxes: true,
+            });
+            $('#assessList3').jqxListBox({
+                width: '100%',
+                source: ['Excess 자재가 발생 없음 (재고소진)',
+                    'Excess 자재가 발생되는가?',
+                    '협력업체 재고현황이 검토되었는가?'],
+                checkboxes: true,
+            });
+            $('#assessList4').jqxListBox({
+                width: '100%',
+                source: ['고객 신고 항목',
+                    '4M 적용',
+                    'ISIR 적용'
+                ],
+                checkboxes: true,
+            });
+            $('#assessList5').jqxListBox({
+                width: '100%',
+                source: ['설계변경에 의한 성능변화는 없는가? 성능변화가 있다면, 설계변경 불가'],
+                checkboxes: true,
+            });
+            $('#assessList6').jqxListBox({
+                width: '100%',
+                source: ['공정변화 발생이 없음.',
+                    '공정변화 발생이 있음.',
+                    '공정개발에 대한 검토가 이루어졌는가?'],
+                checkboxes: true,
+            });
+            $('#assessList7').jqxListBox({
+                width: '100%',
+                source: ['Excess 자재가 발생 없음 (재고소진)',
+                    'Excess 자재가 발생되는가?',
+                    'Excess 제품 발생 없음 (재고소진)',
+                    'Excess 자재가 발생되는가?'],
+                checkboxes: true,
+            });
+            $('#assessList8').jqxListBox({
+                width: '100%',
+                source: ['고객사에 재고 통보하였는가?',
+                    '재고 처리 협의는 하였는가?'],
+                checkboxes: true,
+            });
+        } else if (ecoValue == 'ECOList') {
+            $('#ECOListGrid').jqxGrid({
+                width: '100%',
+                height: 817,
+                columns: [
+                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
+                    { text: '품번', width: '15%', },
+                    { text: '품명', width: '15%', },
+                    { text: '규격', width: '15%', },
+                    { text: '차수(리비전)', width: '10%', align: 'center', },
+                    { text: '작성일', width: '15%', align: 'center', },
+                    { text: '작성자', width: '10%', },
+                    { text: '상태', width: '15%', },
+                ]
+            });
+        } else if (ecoValue == 'ECOBreakdown') {
+            $('#ECOBreakdownGrid').jqxGrid({
+                width: '100%',
+                height: 817,
+                columns: [
+                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
+                    { text: '품번', width: '15%', },
+                    { text: '품명', width: '15%', },
+                    { text: '변경 전', width: '10%', },
+                    { text: '변경 후', width: '10%', },
+                    { text: '변경내용', width: '30%', },
+                    { text: '비고', width: '15%', },
+                ]
+            });
+        }
+    });
+</script>
 
 
 
 
 
-        <script>
+@*<script>
     var CreateECO_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
     var CreateECO_OemLib$ = $('#CreateChangeOrder_Oem_Lib');
     var CreateECO_CarLib$ = $('#CreateChangeOrder_Car_Lib');
@@ -570,7 +739,7 @@
                     param.WtChange = $('#CreateChangeOrder_WtChange').val(); //중량변경
                 }
 
-                param.EoID = $("input[name='selEoId']:checked").val() //EOID            
+                param.EoID = $("input[name='selEoId']:checked").val() //EOID
                 param.IsMold = $("input[name='selMoldChange']:checked").val();  //금형변경
 
                 if (param.IsMold == "" || param.IsMold == null) {
@@ -621,7 +790,7 @@
                 param.Effective = $('#CreateChangeOrder_Effective').val(); //적용요구시점
                 param.Statement = $('#CreateChangeOrder_Statement').val(); //기술사양변경내역서
             }
-                                
+
             RequestData('/ChangeOrder/InsertChangeOrder', param, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
@@ -667,4 +836,4 @@
         });
     }
 
-        </script>
+        </script>*@

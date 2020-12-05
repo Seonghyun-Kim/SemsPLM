@@ -36,7 +36,7 @@
 
 <script>
     var selRow;
-    var CodeLibSearchBtn$ = $('#CodeLibrarySearchBtn');
+    var CodeLibSearchBtn$ = $('#CodeLibrary_SearchBtn');
     $(function () {
         var rowKey = null;
 
@@ -209,8 +209,8 @@
 
         CodeLibSearchBtn$.on('click', function () {
             var param = {};
-            param.Name = $('#LibraryManage_Name').val();
-            param.KorNm = $('#LibraryManage_KorNm').val();
+            param.Code1 = $('#CodeLibrary_Code1').val();
+            param.KorNm = $('#CodeLibrary_KorNm').val();
             getCodeLibraryList(CodeLibSource, CodeLibraryGrd$, param);
 
         });

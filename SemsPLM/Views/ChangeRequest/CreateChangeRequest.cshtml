@@ -210,111 +210,218 @@
             </tr>
         </table>
     </div>*@
+    <div class="info_project clearfix">
+        <div class="info_menubar clearfix" style="width:250px;">
+            <ul id="ECRMenu">
+                <li class="tab info_focus" info="ECRProfile"><i class="fas fa-info-circle"></i> 설계변경요청 프로파일</li>
+                <li class="tab" info="ECRBreakdown"><i class="fas fa-file"></i> 변경요청 내역서</li>
+                <li class="tab" info="ECRRelated"><i class="fas fa-file-medical"></i> 연관 설계변경</li>
+            </ul>
+        </div>
 
-<div class="eBomChangeTopMenu">
-    <ul>
-        <li class="tab"><i class="fas fa-info-circle"></i> 설계변경요청 프로파일</li>
-        <li class="tab"><i class="fas fa-file"></i> 변경요청 내역서</li>
-        <li class="tab"><i class="fas fa-file-medical"></i> 연관 설계변경</li>
-    </ul>
-</div>
+        <div class="eBomChangeContents">
+            <div id="ECRProfile" class="ecrContents">
+                <h3><i class="fas fa-info-circle"></i> 기본정보</h3>
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="40%" />
+                        <col width="10%" />
+                        <col width="40%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>설계변경요청번호</th>
+                            <td class="required"><input type="text" value="" /></td>
+                            <th>품목그룹</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th>제목</th>
+                            <td class="required"><input type="text" value="" /></td>
+                            <th>설계변경일자</th>
+                            <td class="required"><div class="ECRDatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>변경요청사유</th>
+                            <td class="required"><div id="" class="ECRComboBox"></div></td>
+                            <th>호환성</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="compatibleR">있음</div>
+                                <div class="ECRRadioBtn" group="compatibleR">없음</div>
+                                <div class="ECRRadioBtn" group="compatibleR">동시적용품</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>금형수정</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="moldModR">무관</div>
+                                <div class="ECRRadioBtn" group="moldModR">있음</div>
+                                <div class="ECRRadioBtn" group="moldModR">신규제작</div>
+                            </td>
+                            <th>등록사유</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="reasonR">설계변경</div>
+                                <div class="ECRRadioBtn" group="reasonR">신규</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>보안여부</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="securityR">보안</div>
+                                <div class="ECRRadioBtn" group="securityR">중요</div>
+                                <div class="ECRRadioBtn" group="securityR">법규</div>
+                                <div class="ECRRadioBtn" group="securityR">일반</div>
+                            </td>
+                            <th>변경내용</th>
+                            <td>
+                                <div class="ECRCheckBox">도면</div>
+                                <div class="ECRCheckBox">BOM</div>
+                                <div class="ECRCheckBox">생산원단위</div>
+                                <div class="ECRCheckBox">신규사양</div>
+                                <div class="ECRCheckBox">생관도번추가</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>재고처리</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="stockR">보안</div>
+                                <div class="ECRRadioBtn" group="stockR">중요</div>
+                                <div class="ECRRadioBtn" group="stockR">법규</div>
+                                <div class="ECRRadioBtn" group="stockR">일반</div>
+                            </td>
+                            <th>메모사양</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th>유첨자료</th>
+                            <td>
+                                <div class="ECRRadioBtn" group="dataYNR">없음</div>
+                                <div class="ECRRadioBtn" group="dataYNR">있음</div>
+                            </td>
+                            <th>고객요구일자</th>
+                            <td><div class="ECRDatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>고객품번</th>
+                            <td><input type="text" value="" /></td>
+                            <th>E-BOM</th>
+                            <td><div class="ECRDatetimeInput"></div></td>
+                        </tr>
+                        <tr>
+                            <th>개발/양산 구분</th>
+                            <td class="required"><div id="" class="ECRComboBox"></div></td>
+                            <th>차종</th>
+                            <td><input type="text" value="" /></td>
+                        </tr>
+                        <tr>
+                            <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
+                            <td colspan="3">
+                                <textarea></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<div class="eBomChangeContents">
-    <div id="ECRProfile">
-        <h3>기본정보</h3>
-        <table>
-            <tbody>
-                <tr>
-                    <th>설계변경요청번호</th>
-                    <td class="required"></td>
-                    <th>품목그룹</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>제목</th>
-                    <td class="required"></td>
-                    <th>설계변경일자</th>
-                    <td class="required"></td>
-                </tr>
-                <tr>
-                    <th>변경요청사유</th>
-                    <td class="required"></td>
-                    <th>호환성</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>금형수정</th>
-                    <td></td>
-                    <th>등록사유</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>보안여부</th>
-                    <td></td>
-                    <th>변경내용</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>재고처리</th>
-                    <td></td>
-                    <th>메모사양</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>유첨자료</th>
-                    <td></td>
-                    <th>고객요구일자</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>고객품번</th>
-                    <td></td>
-                    <th>E-BOM</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>개발/양산 구분</th>
-                    <td class="required"></td>
-                    <th>차종</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>세부설명</th>
-                    <td colspan="3"></td>
-                </tr>
-            </tbody>
-        </table>
+                <h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECO 정보</h3>
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="40%" />
+                        <col width="10%" />
+                        <col width="40%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>ECO_NO</th>
+                            <td></td>
+                            <th>상태</th>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-        <h3>연관ECO 정보</h3>
-        <table>
-            <tbody>
-                <tr>
-                    <th>ECO_NO</th>
-                    <td></td>
-                    <th>상태</th>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="10%" />
+                        <col width="90%" />
+                    </colgroup>
+                    <tr>
+                        <th>첨부파일</th>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
 
-        <table>
-            <tr>
-                <th>첨부파일</th>
-                <td></td>
-            </tr>
-        </table>
+            <div id="ECRBreakdown" class="ecrContents dective">
+                <div id="ECRBreakdownGrid"></div>
+            </div>
+
+            <div id="ECRRelated" class="ecrContents dective">
+                <div id="ECRRelatedGrid"></div>
+            </div>
+        </div>
     </div>
 
-    <div id="ECRBreakdown">
-        <div id="ECRBreakdownGrid"></div>
-    </div>
+<script type="text/javascript">
+    $('.ECRComboBox').jqxComboBox({width:'50%', height:32});
+    $('.ECRCheckBox').jqxCheckBox({width:120, height:32});
+    $('.ECRDatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
 
-    <div id="ECRRelated">
-        <div id="ECRRelatedGrid"></div>
-    </div>
-</div>
+    $('.ECRRadioBtn').jqxRadioButton({width:120, height:32});
+    $('[group="compatibleR"]').jqxRadioButton({ groupName: 'compatibleR' });
+    $('[group="moldModR"]').jqxRadioButton({ groupName: 'moldModR' });
+    $('[group="reasonR"]').jqxRadioButton({ groupName: 'reasonR' });
+    $('[group="securityR"]').jqxRadioButton({ groupName: 'securityR' });
+    $('[group="stockR"]').jqxRadioButton({ groupName: 'stockR' });
+    $('[group="dataYNR"]').jqxRadioButton({ groupName: 'dataYNR' });
 
-    <script>
+    $('#ECRMenu > .tab').on('click', function () {
+        if ($(this).hasClass('info_focus')) {
+            return;
+        }
+        const menu$ = $('#ECRMenu'),
+            contents$ = $('.eBomChangeContents');
+        const self$ = $(this);
+        const ecrValue = self$.attr('info');
+        menu$.find('[class="tab info_focus"]').removeClass('info_focus');
+        self$.addClass('info_focus');
+        contents$.find('[class="ecrContents"]').addClass('dective');
+        contents$.find('[id="' + ecrValue + '"]').removeClass('dective');
+
+        if (ecrValue == 'ECRProfile') {
+
+        } else if (ecrValue == 'ECRBreakdown') {
+            $('#ECRBreakdownGrid').jqxGrid({
+                width: '100%',
+                height: 817,
+                columns: [
+                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
+                    { text: '품번', width: '15%', },
+                    { text: '품명', width: '15%', },
+                    { text: '변경 전', width: '10%', },
+                    { text: '변경 후', width: '10%', },
+                    { text: '변경내용', width: '30%', },
+                    { text: '비고', width: '15%', },
+                ]
+            });
+        } else if (ecrValue == 'ECRRelated') {
+            $('#ECRRelatedGrid').jqxGrid({
+                width: '100%',
+                height: 817,
+                columns: [
+                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
+                    { text: 'ECO_NO', width: '30%', },
+                    { text: 'ECO_NO 일자', width: '15%', },
+                    { text: '작성자', width: '10%', },
+                    { text: '상태', width: '40%', },
+                ]
+            });
+        }
+    });
+</script>
+
+@*<script>
     var CreateEcrOEMList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
     var CreateEcrOEM$ = $('#CreateEcrOEM');
     var CreateEcrCar$ = $('#CreateEcrCar');
@@ -477,4 +584,4 @@
             }
         });
     }
-    </script>
+    </script>*@

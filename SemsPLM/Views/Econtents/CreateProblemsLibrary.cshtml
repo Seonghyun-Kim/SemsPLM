@@ -2,7 +2,7 @@
 @{
     Layout = null;
 }
-<div class="fixedCreateTop">
+<div style="padding:20px;">
     <table width="100%">
         <tbody>
             <tr>
@@ -17,7 +17,7 @@
         </tbody>
     </table>
 </div>
-<table class="createtable" style="margin-top:82px;">
+<table class="createtable">
     <colgroup>
         <col style="width: 12.5%" />
         <col style="width: 12.5%" />
@@ -99,42 +99,10 @@
 </table>
 
 <script type="text/javascript">
+    var CreateProblemLibIssues = null;
+    var CreateProblemLibCause = null;
+    var CreateProblemLibCountermeasures = null;
     $(function () {
-        var CreateProblemLibIssues;
-        var CreateProblemLibCause;
-        var CreateProblemLibCountermeasures;
-
-        $('#CreateProblemsLibraryBtn').on('click', function () {
-            var param = {};
-
-            //param.Car_Lib_OID = $('#CreateProblemCar_Lib').val(); //차종
-            //param.Product = $('#CreateProblemProduct').val(); //제품 
-            //param.Part = $('#CreateProblemPart').val(); //부품
-            //param.Occurrence = $('#CreateProblemOccurrence').val(); //발생처
-            //param.Stage_Occurrence = $('#CreateProblemStage_Occurrence').val();
-            //param.Failure_Type = $('#CreateProblemFailure_Type').val(); //고장유형
-            //param.Division = $('#CreateProblemDivision').val(); //구분
-            param.Issues = $('#CreateProblemIssues').val();
-            param.Issues_Thumbnai = CreateProblemLibIssues;
-            param.Cause = $('#CreateProblemCause').val();
-            param.Cause_Thumbnail = CreateProblemLibCause;
-            param.Countermeasures = $('#CreateProblemCountermeasures').val();
-            param.Countermeasures_Thumbnail = CreateProblemLibCountermeasures;
-
-            param.Name = $('#CreateProblemName').val(); //번호
-            param.Description = $('#CreateProblemDescription').val(); //기타
-
-
-            RequestData('/Econtents/InsProblemsLibrary', param, function (response) {
-                if (response.isError) {
-                    alert(response.resultMessage);
-                    return;
-                }
-                alert("저장되었습니다.");
-                PageReload();
-            });
-        });
-
         $('#IssuesImageDrag').simpleUpload({
             url: '/Common/ImgUploadFile',
             //params: { OID: null },

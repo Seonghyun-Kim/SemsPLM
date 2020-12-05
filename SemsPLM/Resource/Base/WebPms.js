@@ -48,8 +48,6 @@ $(document).on('focus', '.datePicker', function () {
                 gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('updateBoundData');
                 $('#loading').css('display', 'none');
             }, 100);
-           
-            
         }
     });
 });

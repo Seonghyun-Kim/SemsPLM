@@ -125,8 +125,10 @@
                 ],
                 rendertoolbar: function (toolBar) {
                     var container = $("<div class='lGridComponent' ></div>");
-                    var AddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                    var AddButton = $("<button class='custom-button'><i class='fas fa-stream'></i> 추가</button>").jqxButton();
+                    var CreateButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 생성</button>").jqxButton();
                     container.append(AddButton);
+                    container.append(CreateButton);
                     toolBar.append(container);
                     
                     AddButton.click(function (event) {
@@ -190,6 +192,10 @@
                         _Id.jqxTreeGrid('expandAll');
                     
                         $(popLayer).jqxWindow('modalDestory');
+                    });
+
+                    CreateButton.click(function (event) {
+                        OpenInfoEPartCreateDialog(null, null, null, '/EBom/dlgCreateEPart', 'EPART 등록');
                     });
                 },
             });
@@ -448,4 +454,104 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
             $(popLayer).jqxWindow('modalDestory');
         }
     });
+}
+
+function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1450 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1450, maxWidth: 1450, height: 900, minHeight: 900, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
+            $('#dlgCreateEPartBtn').on('click', function () {
+                var param = {};
+                param.Name = $('#dlgCreateEPartName').val();
+                param.Description = $('#dlgCreateEPart_Description').val();
+                param.Thumbnail = EPartThumbnailData;
+                if (EPartDivision == "ASSEMBLY") {            //조립도일때
+                    param.Division = EPartDivision;
+                    param.ITEM_No = $('#dlgCreateEPart_ITEM_NO1').val();
+                    param.ITEM_Middle = itemMiddle$.val();
+                    param.EPartType = epartType$.val();
+                    param.Production_Place = placeList$.val();
+                    param.Block_No = $('#dlgCreateEPart_BlockNo1').val();
+                    param.Car_Lib_OID = $('#dlgCreateEPart_Car1').val();
+                    param.Serial = serial;
+                    param.Sel_Revision = srev;
+
+
+                } else if (EPartDivision == "SINGLE") {       //단품도일떄
+                    param.Division = EPartDivision;
+                    param.Material_OID = psize$.val();
+                    param.ITEM_No = $('#dlgCreateEPart_ITEM_NO2').val();
+                    param.Block_No = $('#dlgCreateEPart_BlockNo2').val();
+                    param.Serial = serial;
+                    param.Car_Lib_OID = $('#dlgCreateEPart_Car2').val();
+                    param.Sel_Revision = srev;
+
+                } else if (EPartDivision == "STANDARD") {     //스탠다드일떄
+                    param.Division = EPartDivision;
+                    param.Material_OID = psize$.val();
+                    param.Block_No = $('#dlgCreateEPart_BlockNo3').val();
+                    param.Serial = serial;
+
+                }
+
+                if (param.Name == null || param.Name == "") {
+                    alert('품번을 확인해주세요.');
+                    return;
+                } else if (param.Name.length != 12) {
+                    alert('품번을 확인해주세요.');
+                    return;
+                } else if (param.Division == null || param.Division == "") {
+                    alert('구분을 선택해주세요.');
+                    return;
+                }
+
+                RequestData('/EBom/InsEPart', param, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+
+
+            $('#dlgCreateEPartCancelBtn').on('click', function () {
+                $(popLayer).jqxWindow('modalDestory');
+            });
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+   
 }
