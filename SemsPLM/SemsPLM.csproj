@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -3346,6 +3347,8 @@
     <Content Include="Views\Qms\QuickResponseList.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgCreateEPart.cshtml" />
     <Content Include="Views\Manage\AssessListLibrary.cshtml" />
+    <Content Include="Views\Qms\OpenIssueList.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditOpenIssue.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

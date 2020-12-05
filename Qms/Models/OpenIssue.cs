@@ -10,7 +10,9 @@ namespace Qms.Models
 {
     public class OpenIssue : DObject, IDObject
     {
+        public int? ProjectOID { get; set; }
 
+        public int? ProcessOID { get; set; }
     }
 
     public static class OpenIssueRepository
