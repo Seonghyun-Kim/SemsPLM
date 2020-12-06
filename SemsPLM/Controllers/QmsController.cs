@@ -19,6 +19,19 @@ namespace SemsPLM.Controllers
         }
 
         #region -- 오픈이슈 
+        public ActionResult OpenIssueList()
+        {
+            return View();
+        }
+
+        public ActionResult EditOpenIssue(OpenIssue _param)
+        {
+            ViewBag.ProjectOID = _param.ProjectOID;
+            ViewBag.ProcessOID = _param.ProcessOID;
+            ViewBag.OpenIssueOID = _param.OID;
+            return View("Dialog/dlgEditOpenIssue", _param);
+        }
+
         #endregion
 
         #region -- 신속대응 등록 & 조회 
