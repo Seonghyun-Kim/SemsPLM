@@ -48,7 +48,8 @@
                         <td style="text-align: right;" id="InfoQuickResponse_defaultBtn_@ViewBag.QuickDetail.OID">
                             <button id="InfoQuickResponse_EditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
                             @*<button id="InfoQuickResponse_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                            <button id="InfoQuickResponse_SaveBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoQuickResponse_EditCancleBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoQuickResponse_SaveBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
                         </td>
                     </tr>
                 </tbody>
@@ -297,30 +298,34 @@
             var ModifyAttr = $('.Modifiable_' + QuickDetailOID);
 
             ModifyAttr.each(function (i, v) {
-                var AttrType = $(v).attr("AttrType");
-                if (AttrType === "TEXT" || AttrType === "TEXTAREA") {
-                    $(v).removeAttr('readonly');
-                } else if (AttrType === "COMBO") {
-                    $(v).jqxComboBox({ disabled: false });
-                } else if (AttrType === "DATE") {                    
-                    $(v).jqxDateTimeInput({ disabled: false });
-                } else if (AttrType === "CHECKBOX") {
-                    $(v).jqxCheckBox({ disabled: false });
-                } else if (AttrType === "BUTTON") {
-                    $(v).jqxButton({ disabled: false });
-                }                  
+                ContentEditMode(v);  
             });
 
-          
-
-              //수정 가능한 항목을 표시
-                    var modifyTag = document.createElement('div');
-                    modifyTag.className = "modifyTag";
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
 
             $('.Modifiable_' + QuickDetailOID).parent().css('position', 'relative');
 
             $('.Modifiable_' + QuickDetailOID).parent().append(modifyTag);
 
+            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "none");            
+            $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "inline-block");
+            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "inline-block");       
+        });
+
+        $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).jqxButton();
+        $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + QuickDetailOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);             
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "inline-block");  
+            $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "none");
+            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "none");       
         });
 
         

@@ -73,6 +73,7 @@ function OpenApprovalPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
                         'OID': memList$.eq(index).attr('OID'),
                         'Name': memList$.eq(index).attr('Name'),
                         'Depart': memList$.eq(index).attr('Depart'),
+                        'DepartOID': memList$.eq(index).attr('DepartOID')
                     });   
                 }
                 if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {

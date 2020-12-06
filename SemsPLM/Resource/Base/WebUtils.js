@@ -22,6 +22,14 @@ WebUtils.isBlank = function (_str) {
     return true;
 }
 
+WebUtils.isEmpty = function(value) {
+    if (value === "" || value === null || value === undefined || (value !== null && typeof value === "object" && !Object.keys(value).length)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /** * 이메일 형식 체크 * * @param 데이터 */
 WebUtils.emailCheck = function(email) {
     var exptext = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
@@ -223,3 +231,20 @@ WebUtils.GetComboObjectValue = function (Component) {
 WebUtils.GetCheckBoxValue = function (ComponentID) {
     return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;
 };
+
+WebUtils.CommonFileDownload = function(FileOID) {
+    // popup 중앙에 띄우기
+    var mtWidth = window.outerWidth;
+    var mtHeight = window.outerHeight;
+
+    var scX = window.screenLeft;
+    var scY = window.screenTop;
+
+    var popX = scX + (mtWidth - 1) / 2 - 50;
+    var popY = scY + (mtHeight - 1) / 2 - 90;
+    var win = "toolbar=0, menubar=0, scrollbars=0, resizable=1, left=" + popX + ", top=" + popY + ", width=1, height=1";
+    //var url = '@Url.Action("CommonFileDownload","Common", new { FileOID = "file-id" })'.replace("file-id", encodeURIComponent(FileOID)); 
+    var url = "/Common/CommonFileDownload?FileOID=" + FileOID;
+
+    window.location.href = url;
+}

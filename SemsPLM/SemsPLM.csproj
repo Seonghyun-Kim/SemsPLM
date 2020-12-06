@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -180,9 +179,11 @@
     <Content Include="Resource\Base\WebEcontentsDialog.js" />
     <Content Include="Resource\Base\WebEPartPopup.js" />
     <Content Include="Resource\Base\WebEPartUtils.js" />
+    <Content Include="Resource\Base\WebFileUpload.js" />
     <Content Include="Resource\Base\WebPms.js" />
     <Content Include="Resource\Base\WebPmsDialog.js" />
     <Content Include="Resource\Base\WebPmsUtils.js" />
+    <Content Include="Resource\Base\WebQMSUtils.js" />
     <Content Include="Resource\Calendar\calendar-style.css" />
     <Content Include="Resource\Calendar\calendar.js" />
     <Content Include="Resource\Calendar\jQueryUI\AUTHORS.txt" />
@@ -219,6 +220,9 @@
     <Content Include="Resource\Base\WebPopup.js" />
     <Content Include="Resource\Base\WebUtils.js" />
     <Content Include="images\depart.png" />
+    <Content Include="Resource\Dropzone\basic.css" />
+    <Content Include="Resource\Dropzone\dropzone.css" />
+    <Content Include="Resource\Dropzone\dropzone.js" />
     <Content Include="Resource\fontawesome-free-5.14.0-web\css\all.css" />
     <Content Include="Resource\fontawesome-free-5.14.0-web\css\all.min.css" />
     <Content Include="Resource\fontawesome-free-5.14.0-web\css\brands.css" />
@@ -3349,6 +3353,12 @@
     <Content Include="Views\Manage\AssessListLibrary.cshtml" />
     <Content Include="Views\Qms\OpenIssueList.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditOpenIssue.cshtml" />
+    <Content Include="Views\Qms\CreateQuickResponse.cshtml" />
+    <Content Include="Views\Qms\InfoQuickResponse.cshtml" />
+    <Content Include="Views\Qms\InfoBlockade.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditErrorProof.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditLPAIncongruity.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgEditLPAMeasure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
