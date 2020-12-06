@@ -300,16 +300,16 @@
     </update>
 
     <select id="SelQuickResponseModule" parameterClass="QuickResponseModule" resultClass="QuickResponseModule">
-      SELECT A.*, B.Type AS ModuleType, C.Name AS ChargeUserNm, D.Name AS BPolicyNm FROM T_DQMS_QUICK_MODULE A
+      SELECT A.*, B.Type AS ModuleType, B.BPolicyOID, C.Name AS ChargeUserNm, D.Name AS BPolicyNm FROM T_DQMS_QUICK_MODULE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DOBJECT C ON A.ChargeUserOID = C.OID AND C.Type = 'PERSON'
       LEFT JOIN T_BPOLICY D ON B.BPolicyOID = D.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="QuickOID">
-          QuickOID = #QuickOID#
+          A.QuickOID = #QuickOID#
         </isNotNull>
         <isNotNull prepend="and" property="OID">
-          OID = #OID#
+          A.OID = #OID#
         </isNotNull>
       </dynamic>
 
@@ -346,7 +346,7 @@
     </update>
     
     <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
-      SELECT A.OID, B.Type, B.Name, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
+      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
       , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
       FROM T_DQMS_BLOCKADE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID

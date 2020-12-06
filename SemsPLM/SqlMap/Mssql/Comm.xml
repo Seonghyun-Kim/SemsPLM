@@ -13,6 +13,8 @@
     <typeAlias alias="ApprovalStep" type="Common.Models.ApprovalStep" />
     <typeAlias alias="ApprovalTask" type="Common.Models.ApprovalTask" />
     <typeAlias alias="ApprovalComment" type="Common.Models.ApprovalComment" />
+
+    <typeAlias alias="HttpFile" type="Common.Models.File.HttpFile" />
   </alias>
 
   <statements>
@@ -469,5 +471,50 @@
       WHERE OID = #OID#
     </update>
 
+    <insert id="InsFile" parameterClass="HttpFile">
+      <selectKey type="pre" resultClass="int" property="FileOID">
+        SELECT ISNULL(MAX(FileOID),0) + 1 AS FileOID FROM T_DFILE
+      </selectKey>
+      INSERT INTO T_DFILE
+      (FileOID,
+      OID,
+      Type,
+      OrgNm,
+      ConvNm,
+      Ext,
+      FileSize,
+      CreateUs,
+      CreateDt)
+      VALUES
+      (#FileOID#,
+      #OID#,
+      #Type#,
+      #OrgNm#,
+      #ConvNm#,
+      #Ext#,
+      #FileSize#,
+      #CreateUs#,
+      GETDATE())
+    </insert>
+
+    <select id="SelFile" parameterClass="HttpFile" resultClass="HttpFile">
+      SELECT A.FileOID AS "FileOID" , A.OID, A.Type AS "Type", A.OrgNm AS "OrgNm", A.ConvNm AS "ConvNm", A.Ext AS "Ext", A.FileSize AS "FileSize", A.CreateDt AS "CreateDt"
+      , A.CreateUs AS "CreateUs", B.Name AS "CreateUsNm", A.DeleteDt AS "DeleteDt", A.DeleteUs AS "DeleteUs", C.Name AS "DeleteUsNm"
+      FROM T_DFILE A
+      LEFT JOIN T_DOBJECT B ON A.CreateUs = B.OID
+      LEFT JOIN T_DOBJECT C ON A.DeleteUs = C.OID
+      WHERE A.DeleteDt IS NULL
+      <isNotNull prepend="AND" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+
+      <isNotNull prepend="AND" property="FileOID">
+        A.FileOID = #FileOID#
+      </isNotNull>
+    </select>
+
+    <update id="DelFile" parameterClass="HttpFile">
+      UPDATE T_DFILE  SET DeleteDt = GETDATE(), DeleteUs =  #DeleteUs# WHERE FileOID = #FileOID#
+    </update>
   </statements>
 </sqlMap>

@@ -63,5 +63,8 @@ namespace Common.Constant
         public static string ICON_COMPANY = "./images/comp.png";
         public static string ICON_DEPARTMENT = "./images/depart.png";
         public static string ICON_PERSON = "./images/user.png";
+
+        public static string TEXT_ENCRYPT_KEY = "SemsText";
+        public static string FILE_ENCRYPT_KEY = "SemsFile";
     }
 }

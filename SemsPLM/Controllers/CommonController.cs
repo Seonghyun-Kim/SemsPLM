@@ -2,10 +2,13 @@
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Models.File;
+using Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 
@@ -375,6 +378,53 @@ namespace SemsPLM.Controllers
             return Json(dFiles);
         }
 
+        #endregion
+
+        #region -- File 
+        public JsonResult GetFileList(HttpFile httpFile)
+        {
+            try
+            {
+                return Json(HttpFileRepository.SelFiles(httpFile));
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+        }
+
+        [HttpGet]
+        public ActionResult CommonFileDownload(HttpFile fileModel)
+        {
+            try
+            {
+                HttpFile downFile = HttpFileRepository.SelFile(fileModel);
+
+                if (downFile == null || downFile.FileOID == null)
+                {
+                    throw new Exception("잘못된 호출입니다.");
+                }
+
+                System.IO.Stream fileStream = SemsValut.GetFileStream(downFile);
+                //new ActionLog(downFile, eActionType.DOWNLOAD, null).InsertData();
+
+                if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(downFile.OrgNm, System.Text.Encoding.UTF8));
+                }
+                else
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, downFile.OrgNm);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.Replace("'", "");
+                return Content("<script language='javascript' type='text/javascript'>alert('" + message + "');history.back();</script>");
+            }
+        }
         #endregion
 
     }

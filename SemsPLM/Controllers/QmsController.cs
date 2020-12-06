@@ -1,6 +1,7 @@
 ﻿using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Models.File;
 using Qms.Models;
 using System;
 using System.Collections.Generic;
@@ -122,6 +123,16 @@ namespace SemsPLM.Controllers
 
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE });
+            return View();
+        }
+
+        public ActionResult InfoBlockade(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.Blockade = Module;
+            ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
             return View();
         }
 
@@ -465,6 +476,13 @@ namespace SemsPLM.Controllers
                 _params.ForEach(v =>
                 {
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
+
+                    DObject dObject = DObjectRepository.SelDObject(v);
+
+                    if(dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
+                    {
+
+                    }
                 });
 
                 DaoFactory.Commit();
@@ -486,17 +504,30 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditQuickBlockade", BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = _param.OID }));
         }
 
-        public JsonResult SaveQuickBlockade(List<BlockadeItem> _params)
+        public JsonResult SaveQuickBlockade(Blockade param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
-
-                _params.ForEach(v =>
+                param.Type = QmsConstant.TYPE_BLOCKADE;
+                param.BlockadeItems.ForEach(v =>
                 {
                     DObjectRepository.UdtDObject(v);
                     BlockadeItemRepository.UdtBlockadeItem(v);
                 });
+
+                if(param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
 
                 DaoFactory.Commit();
                 return Json("1");

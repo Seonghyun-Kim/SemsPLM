@@ -68,6 +68,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
@@ -111,6 +112,7 @@
     <Compile Include="Models\Calendar\CalendarDetail.cs" />
     <Compile Include="Models\Common\BDefine.cs" />
     <Compile Include="Models\Company\Role.cs" />
+    <Compile Include="Models\File\HttpFile.cs" />
     <Compile Include="Models\Menu\BMenu.cs" />
     <Compile Include="Models\Common\BPolicy.cs" />
     <Compile Include="Models\Common\BPolicyAuth.cs" />
@@ -126,8 +128,10 @@
     <Compile Include="Models\Company\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trigger\ApprovalTrigger.cs" />
+    <Compile Include="Utils\SemsEncrypt.cs" />
     <Compile Include="Utils\SemsSecureEDecode.cs" />
     <Compile Include="Utils\SemsUtil.cs" />
+    <Compile Include="Utils\SemsValut.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

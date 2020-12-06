@@ -17,6 +17,8 @@
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/solid.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/svg-with-js.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/v4-shims.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/basic.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/dropzone.css" />
 </head>
 <body>
     <header>
@@ -82,6 +84,8 @@
 
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/moment.min.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/underscore-master/underscore.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Dropzone/dropzone.js")></script>
+
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebUtils.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebData.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebPopup.js")></script>
@@ -145,6 +149,11 @@
 
     <!--Econtents-->
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEcontentsDialog.js")></script>
+
+    <!--QMS-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebQMSUtils.js")></script>
+
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebFileUpload.js")></script>
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         $(document).ready(function () {
@@ -260,6 +269,40 @@
                 }
                 , complete: function () {
 
+                }
+            });
+        }
+
+        function TabPageLoad(_linkUrl, _linkName) {
+            if ($("div[tabUrl='" + _linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + _linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            tabContent$.jqxTabs('addLast', _linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: _linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + _linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
                 }
             });
         }

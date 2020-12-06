@@ -62,6 +62,89 @@ function RequestHtml(url, args, callBackFunc) {
     });
 }
 
+var SendDataWithFile = function (requestUrl, jsonData, fileList, callBackFunc) {
+    var formData = objectToFormData(jsonData, null, null);
+
+    if (!WebUtils.isEmpty(fileList)) {
+        fileList.forEach(function (v, i) {
+            formData.append("Files", v);
+        });
+    }
+
+    $.ajax({
+        contentType: false,
+        processData: false,
+        type: "post",
+        url: requestUrl,
+        data: formData,
+        success: function (res) {
+            if (res === null) {
+                return;
+            }
+            if (res.isError) {
+                alert(res.resultMessage);
+                console.log(res.resultDescription);
+                return;
+            }
+
+            retData = res;
+            if (!(callBackFunc === undefined || callBackFunc === null)) {
+                callBackFunc(retData);
+            }
+        }, error: function (res) {
+            alert(res.responseText);
+            console.log(res);
+        }
+    });
+}
+
+
+// 2020.10.20 김성현
+// Json 형식 데이터를 FormData 로 변경해주는 기능
+function objectToFormData(obj, rootName, ignoreList) {
+    var ff = document.createElement('form');
+    ff.enctype = 'multipart/form-data';
+    ff.method = 'post';
+
+    var formData = new FormData(ff);
+
+    function appendFormData(data, root) {
+        if (!ignore(root)) {
+            root = root || '';
+            if (data instanceof File) {
+                formData.append(root, data);
+            } else if (Array.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    appendFormData(data[i], root + '[' + i + ']');
+                }
+            } else if (typeof data === 'object' && data) {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        if (root === '') {
+                            appendFormData(data[key], key);
+                        } else {
+                            appendFormData(data[key], root + '.' + key);
+                        }
+                    }
+                }
+            } else {
+                if (data !== null && typeof data !== 'undefined') {
+                    formData.append(root, data);
+                }
+            }
+        }
+    }
+
+    function ignore(root) {
+        return Array.isArray(ignoreList)
+            && ignoreList.some(function (x) { return x === root; });
+    }
+
+    appendFormData(obj, rootName);
+
+    return formData;
+}
+
 function PrintJqxGrid(_Source, _GridObject, _JsonResult) {
     _Source.localdata = _JsonResult;
 
