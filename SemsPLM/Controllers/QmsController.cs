@@ -32,6 +32,111 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditOpenIssue", _param);
         }
 
+        public JsonResult InsOpenIssue(OpenIssue _param, List<OpenIssueItem> openIssueItems, List<QuickResponse> quickResponses)
+        {
+            int resultValue = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                OpenIssue openIssue = new OpenIssue()
+                {
+                    CustomerLibOID = _param.CustomerLibOID,
+                    CarLibOID = _param.CarLibOID,
+                    ProductOID = _param.ProductOID,
+                    ProjectOID = _param.ProjectOID,
+                    ProcessOID = _param.ProcessOID,
+                };
+
+                // OpenIssue 신규작성 일 경우 OpenIssue OID 생성
+                if (openIssue.OID == null)
+                {
+                    DObject dobj = new DObject();
+                    dobj.Type = QmsConstant.TYPE_OPEN_ISSUE;
+                    dobj.Name = QmsConstant.TYPE_OPEN_ISSUE;
+                    openIssue.OID = DObjectRepository.InsDObject(dobj);
+
+                    resultValue = OpenIssueRepository.InsOpenIssue(openIssue);
+                }
+
+                // OpenIssue 리스트 항목 추가
+                if (openIssueItems.Count > 0)
+                {
+                    OpenIssueRelationship openIssueRelationship = null;
+                    openIssueItems.ForEach(item =>
+                    {
+                        OpenIssueItem openIssueItem = new OpenIssueItem()
+                        {
+                            RelapseInsideFl = item.RelapseInsideFl,
+                            RelapseHanonFl = item.RelapseHanonFl,
+                            RelapseCarFl = item.RelapseCarFl,
+                            OpenIssueDetailDesc = item.OpenIssueDetailDesc,
+                            OpenIssueOccurrenceDt = item.OpenIssueOccurrenceDt,
+                            OpenIssueExpectedDt = item.OpenIssueExpectedDt,
+                            OpenIssueCompleteDt = item.OpenIssueCompleteDt,
+                            OpenIssueCloseFl = item.OpenIssueCloseFl
+                        };
+
+                        if (openIssue.OID == null)
+                        {
+                            DObject dobj = new DObject();
+                            dobj.Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM;
+                            dobj.Name = QmsConstant.TYPE_OPEN_ISSUE_ITEM + "_" + openIssue.OID;
+                            openIssueItem.OID = DObjectRepository.InsDObject(dobj);
+
+                            resultValue = OpenIssueItemRepository.InsOpenIssueItem(openIssueItem);
+                        }
+
+                        if(openIssueRelationship != null)
+                        {
+                            openIssueRelationship = null;
+                        }
+
+                        // OpenIssue 와 OpenIssue 리스트 항목 릴레이션 연결
+                        openIssueRelationship = new OpenIssueRelationship()
+                        {
+                            FromOID = openIssue.OID,
+                            ToOID = openIssueItem.OID,
+                            type = QmsConstant.TYPE_OPEN_ISSUE_ITEM,
+                            CreateUs = Convert.ToInt32(Session["UserOID"])
+                        };
+
+                        resultValue = OpenIssueRelationshipRepository.InsOpenIssueRelationship(openIssueRelationship);
+                    });
+                }
+
+                // 신속대응 연결
+                if (quickResponses.Count > 0)
+                {
+                    OpenIssueRelationship openIssueRelationship = null;
+                    quickResponses.ForEach(item =>
+                    {
+                        if (openIssueRelationship != null)
+                        {
+                            openIssueRelationship = null;
+                        }
+
+                        openIssueRelationship = new OpenIssueRelationship()
+                        {
+                            FromOID = openIssue.OID,
+                            ToOID = item.OID,
+                            type = QmsConstant.TYPE_QUICK_RESPONSE,
+                            CreateUs = Convert.ToInt32(Session["UserOID"])
+                        };
+
+                        resultValue = OpenIssueRelationshipRepository.InsOpenIssueRelationship(openIssueRelationship);
+                    });
+                }
+
+                DaoFactory.Commit();
+                return Json(1);
+            }catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
         #endregion
 
         #region -- 신속대응 등록 & 조회 

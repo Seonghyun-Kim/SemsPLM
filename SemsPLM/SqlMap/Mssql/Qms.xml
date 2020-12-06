@@ -13,6 +13,10 @@
     <typeAlias alias="DetectCounterMeasure" type="Qms.Models.DetectCounterMeasure" />
     <typeAlias alias="ImproveCounterMeasure" type="Qms.Models.ImproveCounterMeasure" />
 
+    <typeAlias alias="OpenIssue" type="Qms.Models.OpenIssue" />
+    <typeAlias alias="OpenIssueItem" type="Qms.Models.OpenIssueItem" />
+    <typeAlias alias="OpenIssueRelationship" type="Qms.Models.OpenIssueRelationship" />
+
     <typeAlias alias="ErrorPrrof" type="Qms.Models.ErrorPrrof" />
     <typeAlias alias="LpaUnfit" type="Qms.Models.LpaUnfit" />
     <typeAlias alias="LpaUnfitCheck" type="Qms.Models.LpaUnfitCheck" />
@@ -819,6 +823,128 @@
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
 
+    <!-- OpenIssue SQL -->
+    <select id="SelOpenIssue" parameterClass="OpenIssue" resultClass="OpenIssue">
+      SELECT A.*, B.Name, B.Description
+      FROM T_DQMS_OPENISSUE A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsOpenIssue" parameterClass="OpenIssue">
+      INSERT INTO T_DQMS_OPENISSUE
+      (OID,
+      CustomerLibOID,
+      CarLibOID,
+      ProductOID,
+      ProjectOID,
+      ProcessOID)
+      VALUES
+      (#OID#,
+      #CustomerLibOID#,
+      #CarLibOID#,
+      #ProductOID#,
+      #ProjectOID#,
+      #ProcessOID#)
+    </insert>
+
+    <update id="UdtOpenIssue" parameterClass="OpenIssue">
+      UPDATE T_DQMS_OPENISSUE
+      SET
+      CustomerLibOID = #CustomerLibOID#,
+      CarLibOID = #CustomerLibOID#,
+      ProductOID = #ProductOID#
+      WHERE OID = #OID#
+    </update>
+
+    <!-- OpenIssueItem SQL -->
+    <select id="SelOpenIssueItem" parameterClass="OpenIssueItem" resultClass="OpenIssueItem">
+      SELECT A.*, B.Name, B.Description
+      FROM T_DQMS_OPENISSUE_ITEM A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsOpenIssueItem" parameterClass="OpenIssueItem">
+      INSERT INTO T_DQMS_OPENISSUE_ITEM
+      (OID,
+      RelapseInsideFl,
+      RelapseHanonFl,
+      RelapseCarFl,
+      OpenIssueDetailDesc,
+      OpenIssueOccurrenceDt,
+      OpenIssueExpectedDt,
+      OpenIssueCompleteDt,
+      OpenIssueCloseFl)
+      VALUES
+      (#OID#,
+      #RelapseInsideFl#,
+      #RelapseHanonFl#,
+      #RelapseCarFl#,
+      #OpenIssueDetailDesc#,
+      #OpenIssueOccurrenceDt#,
+      #OpenIssueExpectedDt#,
+      #OpenIssueCompleteDt#,
+      #OpenIssueCloseFl#)
+    </insert>
+
+    <update id="UdtOpenIssueItem" parameterClass="OpenIssueItem">
+      UPDATE T_DQMS_OPENISSUE_ITEM
+      SET
+      RelapseInsideFl = #RelapseInsideFl#,
+      RelapseHanonFl = #RelapseHanonFl#,
+      RelapseCarFl = #RelapseCarFl#,
+      OpenIssueDetailDesc = #OpenIssueDetailDesc#,
+      OpenIssueOccurrenceDt = #OpenIssueOccurrenceDt#,
+      OpenIssueExpectedDt = #OpenIssueExpectedDt#,
+      OpenIssueCompleteDt = #OpenIssueCompleteDt#,
+      OpenIssueCloseFl = #OpenIssueCloseFl#
+      WHERE OID = #OID#
+    </update>
+
+    <!-- OpenIssue Relationship SQL -->
+    <select id="SelOpenIssueRelationship" parameterClass="OpenIssueRelationship" resultClass="OpenIssueRelationship">
+      SELECT 
+      A.*
+      FROM T_DQMS_OPENISSUE_RELATIONSHIP A
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          A.FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          A.ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="type">
+          A.type = #type#
+        </isNotNull>
+      </dynamic>
+    </select>
+
+    <insert id="InsOpenIssueRelationship" parameterClass="OpenIssueRelationship">
+      INSERT INTO T_DQMS_OPENISSUE_RELATIONSHIP
+      (FromOID,
+      ToOID,
+      type,
+      CreateDt,
+      CreateUs)
+      VALUES
+      (#FromOID#,
+      #ToOID#,
+      #type#,
+      GETDATE(),
+      #CreateUs#)
+    </insert>
+
+    <delete id="DelOpenIssueRelationship" parameterClass="OpenIssueRelationship">
+      DELETE FROM T_DQMS_OPENISSUE_RELATIONSHIP
+      WHERE FromOID = #FromOID# AND ToOID = #ToOID# AND type = #type#
+    </delete>
   </statements>
   
 </sqlMap>

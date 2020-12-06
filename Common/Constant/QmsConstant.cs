@@ -83,5 +83,7 @@ namespace Common.Constant
         public static string TYPE_STANDARD_DOC_ITEM { get { return "STANDARD_DOC_ITEM "; } }
 
         public static string RELATIONSHIP_QUICK_MODULE { get { return "QUICK_MODULE"; } }
+
+        public static string TYPE_OPEN_ISSUE_ITEM { get { return "OPEN_ISSUE_ITEM"; } }
     }
 }
