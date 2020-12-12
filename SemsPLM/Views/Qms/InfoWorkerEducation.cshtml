@@ -1,0 +1,201 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="InfoWorkerEducation_@ViewBag.WorkerEduDetail.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>작업자교육</h3>
+                <p>제 목 : <span>@ViewBag.WorkerEduDetail.EduDetail</span></p>
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.WorkerEduDetail.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoWorkerEducation_defaultBtn_@ViewBag.WorkerEduDetail.OID">
+                            <button id="InfoWorkerEducation_EditBtn_@ViewBag.WorkerEduDetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            <button id="InfoWorkerEducation_EditCancleBtn_@ViewBag.WorkerEduDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoWorkerEducation_SaveBtn_@ViewBag.WorkerEduDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">교육일자</label></th>
+                        <td>
+                            <div class="Modifiable_@ViewBag.WorkerEduDetail.OID" AttrType="DATE" id="InfoWorkerEducation_txtEduDt_@ViewBag.WorkerEduDetail.OID" value="@(ViewBag.WorkerEduDetail.EduDt == null ? "" : ViewBag.WorkerEduDetail.EduDt.ToString("yyyy-MM-dd"))"></div>
+                        </td>
+                        <th><label class="lbText">담당자</label></th>
+                        <td>
+                            <div style="display:flex">
+                                <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEduDetail.OID" EduUserOID="@ViewBag.WorkerEduDetail.EduUserOID" value="@ViewBag.WorkerEduDetail.EduUserNm"/>
+                                <button id="InfoWorkerEducation_btnEduUser_@ViewBag.WorkerEduDetail.OID" class="searchBtn custom-button" style="display:none;"><i class="fas fa-search"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">교육내용</label></th>
+                        <td colspan="3"><input class="Modifiable_@ViewBag.WorkerEduDetail.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduDetail_@ViewBag.WorkerEduDetail.OID" value="@ViewBag.WorkerEduDetail.EduDetail" /></td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">교육계획</label></th>
+                        <td colspan="3"><input class="Modifiable_@ViewBag.WorkerEduDetail.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduPlan_@ViewBag.WorkerEduDetail.OID" value="@ViewBag.WorkerEduDetail.EduPlan" /></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <label><i class="fas fa-caret-square-down"></i> 교육자료</label>
+            <div id="InfoWorkerEducation__FileList_@ViewBag.WorkerEduDetail.OID">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var fileUpload = $("#InfoWorkerEducation__FileList_@ViewBag.WorkerEduDetail.OID").FileUpload({ OID: '@ViewBag.WorkerEduDetail.OID' });
+
+    $(document).ready(function () {
+        const WorkerEduDetailOID = '@ViewBag.WorkerEduDetail.OID';
+        const WorkerEduDetailDiv$ = $('#InfoWorkerEducation_' + WorkerEduDetailOID);
+
+        $("#InfoWorkerEducation_txtEduDt_" + WorkerEduDetailOID).jqxDateTimeInput(DateFormat);
+        $("#InfoWorkerEducation_txtEduDt_" + WorkerEduDetailOID).jqxDateTimeInput({
+            width: 160,
+            height: 30,
+            theme: "Light",
+            disabled: true
+        });
+
+        var btnEduUserSearch$ = $("#InfoWorkerEducation_btnEduUser_" + WorkerEduDetailOID).jqxButton();
+        btnEduUserSearch$.on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                $("#InfoWorkerEducation_txtEduUser_"+ WorkerEduDetailOID).val(res[0].Name);
+                $("#InfoWorkerEducation_txtEduUser_"+ WorkerEduDetailOID).attr("EduUserOID", res[0].OID);
+
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        // 수정
+        $('#InfoWorkerEducation_EditBtn_' + WorkerEduDetailOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + WorkerEduDetailOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + WorkerEduDetailOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + WorkerEduDetailOID).parent().append(modifyTag);
+
+            $("#InfoWorkerEducation_EditBtn_" + WorkerEduDetailOID).css("display", "none");
+            $("#InfoWorkerEducation_SaveBtn_" + WorkerEduDetailOID).css("display", "inline-block");
+            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduDetailOID).css("display", "inline-block");
+            $("#InfoWorkerEducation_btnEduUser_" + WorkerEduDetailOID).css("display", "inline-block");
+
+            fileUpload.EditMode();
+        });
+
+        // 취소
+        $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduDetailOID).jqxButton();
+        $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduDetailOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + WorkerEduDetailOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoWorkerEducation_EditBtn_" + WorkerEduDetailOID).css("display", "inline-block");
+            $("#InfoWorkerEducation_SaveBtn_" + WorkerEduDetailOID).css("display", "none");
+            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduDetailOID).css("display", "none");
+            $("#InfoWorkerEducation_btnEduUser_" + WorkerEduDetailOID).css("display", "none");
+
+            fileUpload.ReadOnlyMode();
+        });
+
+
+        // 저장
+        $("#InfoWorkerEducation_SaveBtn_" + WorkerEduDetailOID).jqxButton();
+        $('#InfoWorkerEducation_SaveBtn_' + WorkerEduDetailOID).on("click", function () {
+            var param = {};
+
+            param.OID = WorkerEduDetailOID;
+            param.EduDetail = $("#InfoWorkerEducation_txtEduDetail_" + WorkerEduDetailOID).val();
+            param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduDetailOID).val();
+            param.EduDt = $("#InfoWorkerEducation_txtEduDt_" + WorkerEduDetailOID).jqxDateTimeInput("val");
+            param.EduUserOID = $("#InfoWorkerEducation_txtEduUser_" + WorkerEduDetailOID).attr("EduUserOID");
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+            $.post('/Qms/UdtWorkerEducation', param, function (response) {
+                  if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+    })
+</script>

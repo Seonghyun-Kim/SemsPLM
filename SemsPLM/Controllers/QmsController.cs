@@ -1175,19 +1175,48 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 교육
+
+        #region -- 화면
+        /// <summary>
+        /// 2020.12.12
+        /// 작업자 교육 리스트
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult WorkerEducationList()
+        {
+            return View();
+        }
+
         /// <summary>
         /// 2020.11.15
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditWorkerEducation(WorkerEdu _param)
+        public ActionResult EditWorkerEducation(int? QuickOID, int? ModuleOID)
         {
-            ViewBag.QuickOID = _param.QuickOID;
-            ViewBag.ModuleOID = _param.OID;
+            ViewBag.QuickOID = QuickOID;
+            ViewBag.ModuleOID = ModuleOID;
 
-            return View("Dialog/dlgEditWorkerEducation", _param);
+            return View("Dialog/dlgEditWorkerEducation");
         }
 
+        /// <summary>
+        /// 2020.12.12
+        /// 작업자 교육 상세화면
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InfoWorkerEducation(int? OID)
+        {
+            ViewBag.ModuleOID = OID;
+
+            ViewBag.WorkerEduDetail = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { OID = OID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
+
+            return View();
+        }
+        #endregion
+
+        #region -- 등록, 수정, 삭제, 조회
         public JsonResult InsWorkerEducation(WorkerEdu _param)
         {
             try
@@ -1200,12 +1229,57 @@ namespace SemsPLM.Controllers
 
                 return Json(returnValue);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
         }
+
+        public JsonResult UdtWorkerEducation(WorkerEdu _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                int returnValue = WorkerEduRepository.UdtWorkerEdu(_param);
+
+                DaoFactory.Commit();
+
+                return Json(returnValue);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
+        public JsonResult SelWorkerEducationGridList(WorkerEdu searchModel, int pagesize, int pagenum)
+        {
+            try
+            {
+                List<WorkerEdu> workerEdus = WorkerEduRepository.SelWorkerEdus(searchModel);
+
+                var total = workerEdus.Count();
+                workerEdus = workerEdus.Skip(pagesize * pagenum).Take(pagesize).Cast<WorkerEdu>().ToList();
+
+                var result = new
+                {
+                    TotalRows = total,
+                    Rows = workerEdus
+                };
+
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }

@@ -24,6 +24,13 @@ namespace Qms.Models
         public int? EduUserOID { get; set; }
 
         public string EduUserNm { get; set; }
+
+        #region -- Search & View
+
+        public string EduSDt { get; set; }
+        public string EduEDt { get; set; }
+
+        #endregion
     }
 
     public static class WorkerEduRepository

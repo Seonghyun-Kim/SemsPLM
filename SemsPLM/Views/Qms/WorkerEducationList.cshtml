@@ -1,0 +1,270 @@
+﻿@{
+    Layout = null;
+}
+<div id="WorkerEducationView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;작업자 교육 현황</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>교육일자</div>
+                    <div>
+                        <div style="display:flex;">
+                            <div id="SearchWorkerEducationList_EduSDt"></div>
+                            <span style="margin-left:5px; margin-right:5px; text-align:center; line-height:1.835em;">~</span>
+                            <div id="SearchWorkerEducationList_EduEDt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>교육내용</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchWorkerEducationList_Desc" style="width:200px;" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>교육계획</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchWorkerEducationList_Plan" style="width:200px;" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>담당자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchWorkerEducationList_EduUser" style="width:130px;" readonly />
+                        <button id="SearchWorkerEducationList_btnEduUser" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <div class="searchData" style="display:none;">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchWorkerEducationList_User" style="width:130px;" readonly />
+                        <button id="SearchWorkerEducationList_btnUser" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchWorkerEducationList_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                    <button id="SearchWorkerEducationList_btnRefresh" class="searchBtn custom-button" onclick=""> 초기화</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SearchWorkerEducation_Grid"></div>
+</div>
+<script>
+    var WorkerEducationSource =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'OID', type: 'number' },
+            { name: 'Name', type: 'string' },
+            { name: 'ModuleOID', type: 'number' },
+            { name: 'EduDetail', type: 'string' },
+            { name: 'EduPlan', type: 'string' },
+            { name: 'EduDt', type: 'date' },
+            { name: 'EduUserOID', type: 'number' },
+            { name: 'EduUserNm', type: 'string' },
+            { name: 'CreateUs', type: 'number' },
+            { name: 'CreateDt', type: 'date' }
+        ],
+        type: "POST",
+        url: "/Qms/SelWorkerEducationGridList",
+        beforeprocessing: function (data) {
+            WorkerEducationSource.totalrecords = data.TotalRows;
+        },
+        data: {
+            searchModel: {}
+        }
+    };
+
+    $(function () {
+        var dtSDt$ = $("#SearchWorkerEducationList_EduSDt");
+        var dtEDt$ = $("#SearchWorkerEducationList_EduEDt");
+
+        dtSDt$.jqxDateTimeInput(DateFormat);
+        dtSDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtSDt$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        dtEDt$.jqxDateTimeInput(DateFormat);
+        dtEDt$.val(WebUtils.GetDate(-1, "m", "-"));
+        dtEDt$.jqxDateTimeInput({ width: 150, height: 32 });
+
+        // 담당자 검색
+        const btnSearchEduUser$ = $("#SearchWorkerEducationList_btnEduUser").jqxButton();
+        btnSearchEduUser$.on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("작성자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                $("#SearchWorkerEducationList_EduUser").val(res[0].Name);
+                $("#SearchWorkerEducationList_EduUser").attr("EduUserOID", res[0].OID);
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        // 작성자 검색
+        const btnSearchUser$ = $("#SearchWorkerEducationList_btnUser").jqxButton();
+        btnSearchUser$.on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("작성자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                $("#SearchWorkerEducationList_User").val(res[0].Name);
+                $("#SearchWorkerEducationList_User").attr("UserOID", res[0].OID);
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        const btnSearch$ = $("#SearchWorkerEducationList_btnSearch").jqxButton();
+        btnSearch$.on("click", function () {
+            WebUtils.GetGrdSearchData(SelWorkerEducation, WorkerEducationSource, "SearchWorkerEducation_Grid");
+        });
+
+        // 초기화
+        const btnRefresh$ = $("#SearchWorkerEducationList_btnRefresh").jqxButton();
+        btnRefresh$.on("click", function () {
+            var RefreshFunc = function (InitItem) {
+                if (!WebUtils.isEmpty(InitItem) && InitItem.length > 0) {
+                    InitItem.forEach(function (item, i) {
+                        const node$ = $("#" + item._Id);
+                        if (item._InputType === "txt") {
+                            node$.val(item._InitValue);
+                        } else if (item._InputType === "combo") {
+                            node$.jqxComboBox('clearSelection');
+                        } else if (item._InputType === "num") {
+                            node$.val(item._InitValue);
+                        } else if (item._InputType === "date") {
+                            node$.val(item._InitValue);
+                        }
+
+                        if (!WebUtils.isEmpty(item._RemoveAttrs) && item._RemoveAttrs.length > 0) {
+                            item._RemoveAttrs.forEach(function (v) {
+                                node$.removeAttr(v);
+                            });
+                        }
+                    });
+                } else {
+                    alert("초기화 대상이 존재하지 않습니다.");
+                    return;
+                }
+            }
+
+            var InitItem = [];
+            var removeAttrs = [];
+            removeAttrs.push("EduUserOID");
+            removeAttrs.push("UserOID");
+
+            InitItem.push({ _InputType: "txt", _Id: "SearchWorkerEducationList_Desc", _InitValue: null });
+            InitItem.push({ _InputType: "txt", _Id: "SearchWorkerEducationList_Plan", _InitValue: null });
+            InitItem.push({ _InputType: "date", _Id: "SearchWorkerEducationList_EduSDt", _InitValue: WebUtils.GetDate(-1, "m", "-") });
+            InitItem.push({ _InputType: "date", _Id: "SearchWorkerEducationList_EduEDt", _InitValue: WebUtils.GetDate(0, "m", "-") });
+            InitItem.push({ _InputType: "txt", _Id: "SearchWorkerEducationList_EduUser", _InitValue: null, _RemoveAttrs: removeAttrs });
+            InitItem.push({ _InputType: "txt", _Id: "SearchWorkerEducationList_User", _InitValue: null, _RemoveAttrs: removeAttrs });
+
+            RefreshFunc(InitItem);
+        });
+
+        // OpenIssue List
+        const grdWorkerEducation$ = $('#SearchWorkerEducation_Grid');
+        grdWorkerEducation$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: 680,
+            rowsheight: 28,
+            columnsheight: 30,
+            source: new $.jqx.dataAdapter(WorkerEducationSource),
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            pagesize: 20,
+            pageable: true,
+            pagermode: 'simple',
+            virtualmode: true,
+            rendergridrows: function (obj) {
+                return obj.data;
+            },
+            columns: [
+                {
+                    text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '교육일자', dataField: 'EduDt', width: '15%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd'},
+                { text: '교육내용', dataField: 'EduDetail', width: '35%', align: 'center', cellsalign: 'center'},
+                { text: '교육계획', dataField: 'EduPlan', width: '35%', align: 'center', cellsalign: 'center'},
+                { text: '담당자', dataField: 'EduUserNm', width: '10%', align: 'center', cellsalign: 'center'},
+            ],
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var addButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 등록</button>").jqxButton();
+                //var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+
+                container.append(addButton);
+                //container.append(deleteButton);
+
+                addButton.on('click', function () {
+                    OpenCreateWorkerEducation(900, 915);
+                });
+
+                toolBar.append(container);
+            }
+        });
+
+        grdWorkerEducation$.on("pagechanged", function (event) {
+            // event arguments.
+            var args = event.args;
+            // page number.
+            var pagenum = args.pagenum;
+            // page size.
+            var pagesize = args.pagesize;
+
+            WebUtils.GetGrdSearchData(SelWorkerEducation, WorkerEducationSource, "SearchWorkerEducation_Grid", pagenum);
+        });
+
+        grdWorkerEducation$.on('rowdoubleclick', function (event) {
+            var args = event.args;
+            // row's bound index.
+            var selectIndex = args.rowindex;
+            // row's visible index.
+            //var selectData = args.row.bounddata;
+
+            OpenWorkerEducation(selectIndex);
+        });
+    });
+
+    function SelWorkerEducation() {
+        var param = {};
+
+        param.EduSDt = $("#SearchWorkerEducationList_EduSDt").jqxDateTimeInput("val");
+        param.EduEDt = $("#SearchWorkerEducationList_EduEDt").jqxDateTimeInput("val");
+        param.EduDetail = $("#SearchWorkerEducationList_Desc").val();
+        param.EduPlan = $("#SearchWorkerEducationList_Plan").val();
+        param.EduUserOID = $("#SearchWorkerEducationList_EduUser").attr("EduUserOID");
+        param.UserOID = $("#SearchWorkerEducationList_User").attr("UserOID");
+
+        return param;
+    }
+
+    function OpenWorkerEducation(uid) {
+        var rowData = $('#SearchWorkerEducation_Grid').jqxGrid("getrowdata", uid);
+        var linkName = rowData.EduDetail;
+        var linkUrl = '/Qms/InfoWorkerEducation?OID=' + rowData.OID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
+    function OpenCreateWorkerEducation(QuickOID, ModuleOID) {
+        var linkUrl = '/Qms/EditWorkerEducation?QuickOID=' + QuickOID + '&ModuleOID=' + ModuleOID;
+
+        TabPageLoad(linkUrl, "작업자 교육 등록");
+    }
+</script>
+

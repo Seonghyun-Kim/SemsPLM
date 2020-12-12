@@ -567,12 +567,33 @@
     
     <!-- WorkerEdu SQL-->
     <select id="SelWorkerEdu" parameterClass="WorkerEdu" resultClass="WorkerEdu">
-      SELECT A.*, B.Name, B.BPolicyOID, B.Description
+      SELECT
+      A.*
+      ,B.OID
+      ,B.Name
+      ,B.Description
+      ,C.Name AS EduUserNm
+      ,C.Description
       FROM T_DQMS_WORKER_EDU A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.EduUserOID = C.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="EduDetail">
+        A.EduDetail like "%" + #EduDetail# + "%"
+      </isNotNull>
+      <isNotNull prepend="and" property="EduPlan">
+        A.EduPlan like "%" + #EduDetail# + "%"
+      </isNotNull>
+      <isNotNull prepend="" property="EduSDt">
+        <isNotNull prepend="and" property="EduEDt">
+          A.EduDt between #EduSDt# and  DATEADD(dd, 1, #EduEDt#)
+        </isNotNull>
+      </isNotNull>
+      <isNotNull prepend="and" property="EduUserOID">
+        A.EduUserOID = #EduUserOID#
       </isNotNull>
     </select>
 
@@ -598,7 +619,7 @@
       EduPlan = #EduPlan#,
       EduDt = #EduDt#,
       EduUserOID = #EduUserOID#
-      WHERE ModuleOID = #ModuleOID#
+      WHERE ModuleOID = #OID#
     </update>
 
     <!-- QuickValidation SQL-->

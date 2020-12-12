@@ -78,7 +78,7 @@
 
                 $("#txtEditWorkerEducationUser").val(res[0].Name);
                 $("#txtEditWorkerEducationUser").attr("EduUserOID", res[0].OID);
-                
+
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
@@ -86,7 +86,8 @@
         btnDlgSave$.on("click", function () {
             var param = {};
 
-            param.OID = "@Model.OID";
+            param.QuickOID = "@ViewBag.QuickOID";
+            param.ModuleOID = "@ViewBag.ModuleOID";
             param.EduDetail = $("#txtEditWorkerEducationDesc").val();
             param.EduPlan = $("#txtEditWorkerEducationDesc").val();
             param.EduUserOID = $("#txtEditWorkerEducationUser").attr("EduUserOID");
@@ -103,16 +104,18 @@
                     return;
                 }
                 alert("저장되었습니다.");
-                CloseDlgWorkerEducation();
+                //CloseDlgWorkerEducation();
+
+                PageReload();
             }).fail(function (err) {
                 alert(err.responseText);
             });
         });
 
-        var btnDlgCancel$ = $("#btnCancelWorkerEducation").jqxButton();
+        @*var btnDlgCancel$ = $("#btnCancelWorkerEducation").jqxButton();
         btnDlgCancel$.on("click", function () {
             CloseDlgWorkerEducation();
-        });
+        });*@
     });
 </script>
 
