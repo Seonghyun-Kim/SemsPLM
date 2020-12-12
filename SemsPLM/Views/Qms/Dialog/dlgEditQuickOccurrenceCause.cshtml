@@ -2,7 +2,7 @@
     Layout = null;
 }
 
-    <div>
+    <div class="qmsDlgTable">
         <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
             <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
             <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 결재</button>
@@ -10,7 +10,7 @@
 
         @{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.QuickOID });}
 
-        <label>원인분석</label>
+        <label><i class="fas fa-search-plus"></i> 원인분석</label>
         <table id="tbOccurrenceCause" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:20%" />
@@ -24,7 +24,7 @@
             </tr>
         </table>
 
-        <label>검출대책</label>
+        <label><i class="fas fa-tools"></i> 검출대책</label>
         <table id="tbDetectCounterMeasure" class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:15%" />
@@ -96,7 +96,6 @@
                     <input type="text" id="txtmeasure" class="txtBox" style="width:100%" value="@ViewBag.DetectCounterMeasure.Measure"/>
                 </td>
             </tr>
-
         </table>
 
     </div>
@@ -104,14 +103,15 @@
     <script type="text/javascript">
     $(document).ready(function () {
         $("#btnCauseAdd").jqxButton();
-        $('#btnDetectMFl').jqxSwitchButton({ height: 27, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectM" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectSFl').jqxSwitchButton({ height: 27, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectS" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectQFl').jqxSwitchButton({ height: 27, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectQ" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
-        $('#btnDetectEFl').jqxSwitchButton({ height: 27, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectE" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectMFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectM" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectSFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectS" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectQFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectQ" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
+        $('#btnDetectEFl').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectE" == "True" ? true : false), onLabel: "Yes", offLabel: "No" });
 
         $("#dtDetectDt").jqxDateTimeInput(DateFormat);
         $("#dtDetectDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.DetectCounterMeasure.DetectDt == null)
@@ -158,7 +158,7 @@
         var cbOccurrenceCause$ = document.createElement("div");
         cbOccurrenceCause$.setAttribute("DataId", "cbOccurrenceCause");
         tdOccurrenceCause$.appendChild(cbOccurrenceCause$);
-        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceCauseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 180, height: 25 });
+        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceCauseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 180, height: 30 });
         if (data != null) {
              $(cbOccurrenceCause$).jqxComboBox('selectItem', data.OccurrenceCauseLibOID);
         }

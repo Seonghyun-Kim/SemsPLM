@@ -3,11 +3,11 @@
 }
 
     <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
-        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
     </div>
 
-    <div>
-        <label>기본정보</label>
+    <div class="qmsDlgTable">
+        <label><i class="fas fa-info-circle"></i> 기본정보</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -64,7 +64,7 @@
 
         </table>
 
-        <label>문제요약</label>
+        <label><i class="fas fa-list"></i> 문제요약</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -126,7 +126,7 @@
             </tbody>
         </table>
 
-        <label>고품사진</label>
+        <label><i class="fas fa-image"></i> 고품사진</label>
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
                 <col style="width:190px;" />
@@ -147,31 +147,34 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });        
-        $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
-        $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
-        $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
-        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });        
-        $("#cbDlgDefectDegree").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
-        $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });        
+        $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });        
+        $("#cbDlgDefectDegree").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
-        $("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });
+        $("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
        
         $("#txtDlgWriteDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgWriteDt").jqxDateTimeInput({
             width: 160,
+            height: 30,
             theme: "Light"
         });
 
         $("#txtDlgOccurrenceDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgOccurrenceDt").jqxDateTimeInput({
             width: 160,
+            height: 30,
             theme: "Light"
         });
 
         $("#txtDlgMeasureResponseDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgMeasureResponseDt").jqxDateTimeInput({
             width: 160,
+            height: 30,
             theme: "Light"
         });
         

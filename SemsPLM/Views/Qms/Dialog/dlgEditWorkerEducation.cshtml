@@ -9,16 +9,16 @@
                     <h2><i class="fas fa-edit"></i> 작업자 교육 등록</h2>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btnEditWorkerEducation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
-                    <button id="btnCancelWorkerEducation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                    <button id="btnEditWorkerEducation" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnCancelWorkerEducation" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
 <div>
-    <h3><i class="fas fa-caret-square-down"></i> 작업자교육</h3>
-    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 작업자교육</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable qmsDlgTable">
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 교육일자</th>
             <td>
@@ -26,27 +26,27 @@
             </td>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 교육내용</th>
             <td>
-                <input id="txtEditWorkerEducationDesc" style="width:100%;"/>
+                <input id="txtEditWorkerEducationDesc" type="text" style="width:100%;"/>
             </td>
         </tr>
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 교육계획</th>
             <td>
-                <input id="txtEditWorkerEducationPlan" style="width:100%;" />
+                <input id="txtEditWorkerEducationPlan" type="text" style="width:100%;" />
             </td>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 담당자</th>
             <td>
                 <div style="display:flex;">
-                    <input id="txtEditWorkerEducationUser" style="width:80px; margin-right:5px;" readonly/>
-                    <button id="btnEditWorkerEducationUserSearch" class="custom-button"><i class="fas fa-search"></i>검색</button>
+                    <input id="txtEditWorkerEducationUser" type="text" style="width:80px; margin-right:5px;" readonly/>
+                    <button id="btnEditWorkerEducationUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </div>
             </td>
         </tr>
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 교육자료</h3>
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 교육자료</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <tr>
             <th class="reqVal">
@@ -60,39 +60,13 @@
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
-    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-        <tr>
-            <th class="reqVal" style="width:180px;">
-            </th>
-            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
-        </tr>
-        <tr>
-            <td><button id="btnEditWorkerEducationApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
-            <td>
-                <div id="listEditWorkerEducationApprovalconfirm" />
-            </td>
-            <td>
-                <div id="listEditWorkerEducationApprovalcomplete" />
-            </td>
-        </tr>
-    </table>
-</div>
-
 <script>
     $(function () {
         var dtEditWorkerEducationProcess$ = $("#dtEditWorkerEducationProcess");
-        var listEditWorkerEducationApprovalconfirm$ = $("#listEditWorkerEducationApprovalconfirm");
-        var listEditWorkerEducationApprovalcomplete$ = $("#listEditWorkerEducationApprovalcomplete");
 
         dtEditWorkerEducationProcess$.jqxDateTimeInput(DateFormat);
         dtEditWorkerEducationProcess$.val(WebUtils.GetDate(-1, "m", "-"));
         dtEditWorkerEducationProcess$.jqxDateTimeInput({ width: 150, height: 32 });
-
-        listEditWorkerEducationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
-        listEditWorkerEducationApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
 
         var btnDlgUserSearch$ = $("#btnEditWorkerEducationUserSearch").jqxButton();
         btnDlgUserSearch$.on("click", function () {
@@ -104,7 +78,7 @@
 
                 $("#txtEditWorkerEducationUser").val(res[0].Name);
                 $("#txtEditWorkerEducationUser").attr("EduUserOID", res[0].OID);
-                
+
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
@@ -112,7 +86,8 @@
         btnDlgSave$.on("click", function () {
             var param = {};
 
-            param.OID = "@Model.OID";
+            param.QuickOID = "@ViewBag.QuickOID";
+            param.ModuleOID = "@ViewBag.ModuleOID";
             param.EduDetail = $("#txtEditWorkerEducationDesc").val();
             param.EduPlan = $("#txtEditWorkerEducationDesc").val();
             param.EduUserOID = $("#txtEditWorkerEducationUser").attr("EduUserOID");
@@ -129,16 +104,18 @@
                     return;
                 }
                 alert("저장되었습니다.");
-                CloseDlgWorkerEducation();
+                //CloseDlgWorkerEducation();
+
+                PageReload();
             }).fail(function (err) {
                 alert(err.responseText);
             });
         });
 
-        var btnDlgCancel$ = $("#btnCancelWorkerEducation").jqxButton();
+        @*var btnDlgCancel$ = $("#btnCancelWorkerEducation").jqxButton();
         btnDlgCancel$.on("click", function () {
             CloseDlgWorkerEducation();
-        });
+        });*@
     });
 </script>
 

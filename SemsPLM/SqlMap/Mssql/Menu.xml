@@ -15,6 +15,7 @@
       SELECT *
       FROM T_BMENU
       WHERE IsUse = 1
+      ORDER BY Ord
     </select>
 
     <select id="SelBSubMenu" parameterClass="BSubMenu" resultClass="BSubMenu">
@@ -22,6 +23,7 @@
       FROM T_BSUB_MENU
       WHERE IsUse = 1
       AND MenuOID = #MenuOID#
+      ORDER BY Ord
     </select>
 
   </statements>

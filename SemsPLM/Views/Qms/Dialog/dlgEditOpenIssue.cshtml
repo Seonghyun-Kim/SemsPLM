@@ -1,0 +1,478 @@
+﻿@{
+    Layout = null;
+}
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> Open Issue 관리</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnDlgEditOpenIssueSave" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnDlgEditOpenIssueCancel" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> Open Issue 기본정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable qmsDlgTable">
+        <colgroup>
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+            <col style="width:180px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 프로젝트</th>
+            <td>
+                <input type="text" class="txtBox" id="txtDlgEditOpenIssueProject" readonly />
+            </td>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 프로젝트 단계</th>
+            <td>
+                <input type="text" class="txtBox" id="txtDlgEditOpenIssueProcess" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 고객사</th>
+            <td>
+                <div style="display:flex;">
+                    <input type="text" class="txtBox" id="txtDlgEditOpenIssueCustomer" style="margin-right:5px;" readonly />
+                    <button id="SearchDlgEditOpenIssueCustomer_btnCustomer" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                </div>
+            </td>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 차종</th>
+            <td>
+                <div style="display:flex;">
+                    <input type="text" class="txtBox" id="txtDlgEditOpenIssueCarType" style="margin-right:5px;" readonly />
+                    <button id="SearchDlgEditOpenIssueCarType_btnCarType" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 제품</th>
+            <td colspan="3">
+                <div style="display:flex;">
+                    <input type="text" class="txtBox" id="txtDlgEditOpenIssueProduct" style="margin-right:5px; width:32.2%;" readonly />
+                    <button id="SearchDlgEditOpenIssueProduct_btnProduct" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <div style="padding-left:20px; padding-right:20px;">
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td>
+                        <h3><i class="fas fa-caret-square-down"></i> Issue 현황</h3>
+                    </td>
+                    <td style="text-align: right;">
+                        <button id="btnDlgEditOpenIssueQuickSave" class="custom-button"><i class="fas fa-plus-square"></i> 신속대응 등록</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable qmsDlgTable">
+        <tr>
+            <th>ISSUE</th>
+            <th>완료</th>
+            <th>관망</th>
+            <th>미결</th>
+            <th>진행률</th>
+        </tr>
+        <tr>
+            <td>47</td>
+            <td>29</td>
+            <td>3</td>
+            <td style="color:red;">15</td>
+            <td>62%</td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> Open Issue 리스트</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable qmsDlgTable">
+        <tr>
+            <td>
+                <div id="grdDlgEditOpenIssue"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 연결 신속대응</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" class="createtable qmsDlgTable">
+        <tr>
+            <td>
+                <div id="grdDlgEditOpenIssueQuick"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var DlgEditOpenIssueSource =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'OID', type: 'number' },
+            { name: 'Name', type: 'string' },
+            { name: 'ProjectOID', type: 'number' },
+            { name: 'ProjectNm', type: 'string' },
+            { name: 'ProcessOID', type: 'number' },
+            { name: 'ProcessNm', type: 'string' },
+            { name: 'CustomerLibOID', type: 'number' },
+            { name: 'CustomerLibNm', type: 'string' },
+            { name: 'CarLibOID', type: 'number' },
+            { name: 'CarLibNm', type: 'string' },
+            { name: 'ProductOID', type: 'number' },
+            { name: 'ProductType', type: 'string' },
+            { name: 'ProductCd', type: 'string' },
+            { name: 'ProductNm', type: 'string' },
+            { name: 'RelapseInsideFl', type: 'string' },
+            { name: 'RelapseHanonFl', type: 'string' },
+            { name: 'RelapseCarFl', type: 'string' },
+            { name: 'OpenIssueTitle', type: 'string' },
+            { name: 'OpenIssueDetailDesc', type: 'string' },
+            { name: 'OpenIssueOccurrenceDt', type: 'date' },
+            { name: 'OpenIssueExpectedDt', type: 'date' },
+            { name: 'OpenIssueCompleteDt', type: 'date' },
+            { name: 'StatusOID', type: 'number' },
+            { name: 'StatusNm', type: 'string' },
+            { name: 'OpenIssueStNm', type: 'string' },
+            { name: 'Description', type: 'string' },
+            { name: 'OpenIssueCloseFl', type: 'string' },
+            { name: 'CreateUs', type: 'number' },
+            { name: 'CreateUsNm', type: 'string' },
+            { name: 'CreateDt', type: 'date' }
+        ],
+        type: "POST",
+        addrow: function (rowid, rowdata, position, commit) {
+            commit(true);
+        },
+        deleterow: function (rowid, commit) {
+            commit(true);
+        },
+        updaterow: function (rowid, newdata, commit) {
+            commit(true);
+        }
+    };
+
+    var DlgEditOpenIssueQuickSource =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'OID', type: 'number' },
+            { name: 'Name', type: 'string' },
+            { name: 'OpenIssueOID', type: 'number' },
+            { name: 'ProjectNm', type: 'string' },
+            { name: 'ProcessOID', type: 'number' },
+            { name: 'ProcessNm', type: 'string' },
+            { name: 'CustomerLibOID', type: 'number' },
+            { name: 'CustomerLibNm', type: 'string' },
+            { name: 'CarLibOID', type: 'number' },
+            { name: 'CarLibNm', type: 'string' },
+            { name: 'ProductOID', type: 'number' },
+            { name: 'ProductType', type: 'string' },
+            { name: 'ProductCd', type: 'string' },
+            { name: 'ProductNm', type: 'string' },
+            { name: 'QuickImage',  },
+            { name: 'QuickOccurrenceDt', type: 'date' },
+            { name: 'QuickOccurrenceType', type: 'string' },
+            { name: 'QuickDesc', type: 'string' },
+            { name: 'ActUserOID', type: 'number' },
+            { name: 'ActUserNm', type: 'string' },
+            { name: 'StatusOID', type: 'number' },
+            { name: 'StatusNm', type: 'string' },
+            { name: 'CreateUs', type: 'number' },
+            { name: 'CreateUsNm', type: 'string' },
+            { name: 'CreateDt', type: 'date' }
+        ],
+        type: "POST",
+        addrow: function (rowid, rowdata, position, commit) {
+            commit(true);
+        },
+        deleterow: function (rowid, commit) {
+            commit(true);
+        },
+        updaterow: function (rowid, newdata, commit) {
+            commit(true);
+        }
+    };
+
+    $(function () {
+        // 고객사 검색
+        const btnSearchCustomer$ = $("#SearchDlgEditOpenIssueCustomer_btnCustomer").jqxButton();
+        btnSearchCustomer$.on("click", function () {
+            // 검색
+        });
+
+        // 차종 검색
+        const btnSearchCarType$ = $("#SearchDlgEditOpenIssueCarType_btnCarType").jqxButton();
+        btnSearchCarType$.on("click", function () {
+            // 검색
+        });
+
+        // 제품 검색
+        const btnSearchProduct$ = $("#SearchDlgEditOpenIssueProduct_btnProduct").jqxButton();
+        btnSearchProduct$.on("click", function () {
+            // 검색
+        });
+
+        const btnDlgQuickSave$ = $("#btnDlgEditOpenIssueQuickSave").jqxButton();
+        btnDlgQuickSave$.on("click", function () {
+            OpenDlgQuickResponse(null);
+        });
+
+        const btnDlgSave$ = $("#btnDlgEditOpenIssueSave").jqxButton();
+        btnDlgSave$.on("click", function () {
+            var param = {};
+            param.CustomerLibOID = $("#txtDlgEditOpenIssueCustomer").attr("CustomerLibOID");
+            param.CarLibOID = $("#txtDlgEditOpenIssueCarType").attr("CarLibOID");
+            param.ProductOID = $("#txtDlgEditOpenIssueProduct").attr("ProductOID");
+            param.ProjectOID = $("#txtDlgEditOpenIssueProject").attr("ProjectOID");
+            param.ProcessOID = $("#txtDlgEditOpenIssueProcess").attr("ProcessOID");
+
+            var openIssueRows = $('#grdDlgEditOpenIssue').jqxGrid("getrows");
+            const openIssueItemList = openIssueRows.map(function (v, i) {
+                var data = {};
+                data.RelapseInsideFl = v.RelapseInsideFl === true ? "Y" : "N";
+                data.RelapseHanonFl = v.RelapseHanonFl === true ? "Y" : "N";
+                data.RelapseCarFl = v.RelapseCarFl === true ? "Y" : "N";
+                data.OpenIssueDetailDesc = v.OpenIssueDetailDesc;
+                data.OpenIssueOccurrenceDt = v.OpenIssueOccurrenceDt;
+                data.OpenIssueExpectedDt = v.OpenIssueExpectedDt;
+                data.OpenIssueCompleteDt = v.OpenIssueCompleteDt;
+                data.OpenIssueCloseFl = v.OpenIssueCloseFl === "Y" ? "Y" : "N";
+            });
+
+            // 신속대응 추가 로직 구현 필요
+
+            $.post('/Qms/InsOpenIssue', { _param: param, openIssueItems: openIssueItemList}, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+
+                alert("저장되었습니다.");
+                CloseDlgOpenIssue();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        const btnDlgCancel$ = $("#btnDlgEditOpenIssueCancel").jqxButton();
+        btnDlgCancel$.on("click", function () {
+            CloseDlgOpenIssue();
+        });
+
+        InitDlgEditOpenIssueGrd();
+        InitDlgEditOpenIssueQuickGrd();
+    });
+
+    /**
+     * Open Issue 리스트
+     * */
+    function InitDlgEditOpenIssueGrd() {
+        const grdDlgEditOpenIssue$ = $('#grdDlgEditOpenIssue');
+        grdDlgEditOpenIssue$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: 320,
+            rowsheight: 50,
+            columnsheight: 30,
+            source: new $.jqx.dataAdapter(DlgEditOpenIssueSource),
+            sortable: false,
+            pageable: false,
+            editable: true,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', pinned: true,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: 'OPEN ISSUE', dataField: 'OpenIssueTitle', width: '20%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '주요추진내용', dataField: 'OpenIssueDetailDesc', width: '20%', align: 'center', cellsalign: 'center', pinned: true },
+                {
+                    text: '사내', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseInsideFl', width: '7%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                {
+                    text: '한온', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseHanonFl', width: '7%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                {
+                    text: '자동차', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseCarFl', width: '7%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                { text: '발생일', dataField: 'OpenIssueOccurrenceDt', width: '12%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype:'datetimeinput' },
+                { text: '계획일', dataField: 'OpenIssueExpectedDt', width: '12%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
+                { text: '완료일', dataField: 'OpenIssueCompleteDt', width: '12%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
+                { text: '상태', dataField: 'OpenIssueStNm', width: '7%', align: 'center', cellsalign: 'center', },
+                { text: '비고', dataField: 'Description', width: '20%', align: 'center', cellsalign: 'center', },
+                {
+                    text: 'CLOSE 결과', dataField: 'OpenIssueCloseFl', width: '12%', align: 'center', cellsalign: 'center',
+                },
+            ],
+            columngroups:
+            [
+                { text: '재발여부', align: 'center', name: 'OpenIssueRelapseGroup', pinned: true},
+            ],
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var btnDel = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+
+                container.append(btnAdd);
+                container.append(btnDel);
+
+                btnAdd.on('click', function () {
+                    var datarow = {};
+                    datarow["RelapseInsideFl"] = false;
+                    datarow["RelapseHanonFl"] = false;
+                    datarow["RelapseCarFl"] = false;
+                    datarow["OpenIssueOccurrenceDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueExpectedDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueCompleteDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueStNm"] = "작성";
+                    datarow["Description"] = "";
+                    datarow["OpenIssueCloseFl"] = "N";
+                    var commit = grdDlgEditOpenIssue$.jqxGrid('addrow', null, datarow);
+                });
+
+                btnDel.on('click', function () {
+                    var selectedrowindex = grdDlgEditOpenIssue$.jqxGrid('getselectedrowindex');
+                    var rowscount = grdDlgEditOpenIssue$.jqxGrid('getdatainformation').rowscount;
+
+                    if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                        var id = grdDlgEditOpenIssue$.jqxGrid('getrowid', selectedrowindex);
+                        var commit = grdDlgEditOpenIssue$.jqxGrid('deleterow', id);
+                    }
+                });
+
+                toolBar.append(container);
+            }
+        });
+    }
+
+    function InitDlgEditOpenIssueQuickGrd() {
+        const grdDlgEditOpenIssueQuick$ = $('#grdDlgEditOpenIssueQuick');
+        grdDlgEditOpenIssueQuick$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: 320,
+            rowsheight: 50,
+            columnsheight: 30,
+            source: new $.jqx.dataAdapter(DlgEditOpenIssueQuickSource),
+            sortable: false,
+            pageable: false,
+            editable: true,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', pinned: true,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '신속대응NO', dataField: 'Name', width: '15%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '고품사진', dataField: 'QuickImage', width: '20%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '발생일자', columngroup: 'QuickOccurrenceDt', dataField: 'RelapseInsideFl', width: '12%', align: 'center'},
+                { text: '발생유형', dataField: 'QuickOccurrenceType', width: '10%', align: 'center', cellsalign: 'center' },
+                { text: '품목', dataField: 'ProductType', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '품번', dataField: 'ProductCd', width: '15%', align: 'center', cellsalign: 'center'},
+                { text: '품명', dataField: 'ProductNm', width: '15%', align: 'center', cellsalign: 'center' },
+                { text: '차종', dataField: 'CarLibNm', width: '10%', align: 'center', cellsalign: 'center', },
+                { text: '문제내용', dataField: 'QuickDesc', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '신속대응등록자', dataField: 'CreateUsNm', width: '12%', align: 'center', cellsalign: 'center', },
+                { text: '시정조치담당자', dataField: 'ActUserNm', width: '12%', align: 'center', cellsalign: 'center', },
+            ]
+        });
+    }
+
+    function OpenDlgQuickResponse(QuickResponseOID) {
+        var popTitle = "";
+        if (QuickResponseOID === null) {
+            popTitle = "신규 신속대응 등록";
+        } else {
+            popTitle = "선택 신속대응 수정";
+        }
+
+        var dlgDivWrap = document.createElement("div");
+
+        dlgDivWrap.id = "dlgEditQuickResponse";
+        var dlgDivTitle = document.createElement("div");
+        var dlgDivView = document.createElement("div");
+
+        dlgDivWrap.appendChild(dlgDivTitle);
+        dlgDivWrap.appendChild(dlgDivView);
+
+        var param = {};
+        param.OID = QuickResponseOID;
+
+        $(dlgDivView).load("/Qms/EditQuickResponse", param, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+            $(dlgDivWrap).jqxWindow({
+                width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+                initContent: function () {
+
+                }
+            });
+            $(dlgDivWrap).jqxWindow('setTitle', popTitle);
+            $(dlgDivWrap).jqxWindow("show");
+        });
+
+        $(dlgDivWrap).on('close', function (event) {
+            //_DlgAttributeItem();
+            $(dlgDivWrap).jqxWindow('modalDestory');
+            //GetAttributeItemList();
+        });
+    }
+
+    function CloseDlgQuickResponse() {
+        $("#dlgEditQuickResponse").jqxWindow("close");
+    }
+
+</script>
+

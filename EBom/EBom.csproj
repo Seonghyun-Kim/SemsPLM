@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Models\EBOM.cs" />
     <Compile Include="Models\EPart.cs" />
+    <Compile Include="Models\EPartCompare.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

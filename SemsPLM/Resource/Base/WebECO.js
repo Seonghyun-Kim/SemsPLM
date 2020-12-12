@@ -68,13 +68,13 @@
                 columns: [
                     { text: '차종', datafield: 'Car_Lib_NM', width: "15%", align: 'center', cellsalign: 'center', },
 
-                    { text: '품번', datafield: 'Name', width: "25%", align: 'center', cellsalign: 'center', },
-                    { text: '품명', datafield: 'Title', width: "25%", align: 'center', cellsalign: 'center', },
+                    { text: '품번', datafield: 'Name', width: "24%", align: 'center', cellsalign: 'center', },
+                    { text: '품명', datafield: 'Title', width: "24%", align: 'center', cellsalign: 'center', },
                     { text: '타입', datafield: 'EPartType', width: "9%", align: 'center', cellsalign: 'center', },
                     { text: 'C/N', datafield: 'Revision', width: "9%", align: 'center', cellsalign: 'center', },
 
                     {
-                        text: '상태', datafield: 'BPolicy', width: "9%", align: 'center', cellsalign: 'center',
+                        text: '상태', datafield: 'BPolicy', width: "8.5%", align: 'center', cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                         },

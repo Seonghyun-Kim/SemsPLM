@@ -11,8 +11,15 @@
     <typeAlias alias="OccurrenceCauseItem" type="Qms.Models.OccurrenceCauseItem" />
     <typeAlias alias="OccurrenceWhy" type="Qms.Models.OccurrenceWhy" />
     <typeAlias alias="DetectCounterMeasure" type="Qms.Models.DetectCounterMeasure" />
-    <typeAlias alias="ImproveCounterMeasure" type="Qms.Models.ImproveCounterMeasure" />
-    
+    <typeAlias alias="ImproveCounterMeasureItem" type="Qms.Models.ImproveCounterMeasureItem" />
+
+    <typeAlias alias="OpenIssue" type="Qms.Models.OpenIssue" />
+    <typeAlias alias="OpenIssueItem" type="Qms.Models.OpenIssueItem" />
+    <typeAlias alias="OpenIssueRelationship" type="Qms.Models.OpenIssueRelationship" />
+
+    <typeAlias alias="ErrorProof" type="Qms.Models.ErrorProof" />
+    <typeAlias alias="LpaUnfit" type="Qms.Models.LpaUnfit" />
+    <typeAlias alias="LpaUnfitCheck" type="Qms.Models.LpaUnfitCheck" />
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
     <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
     <typeAlias alias="StandardDoc" type="Qms.Models.StandardDoc" />
@@ -217,19 +224,15 @@
         PoorPicture = #PoorPicture#
       </isNotNull>
 
-      <isNotNull prepend="," property="FinishDt">
-        FinishDt = #FinishDt#
-      </isNotNull>
-
       WHERE OID = #OID#
     </update>
 
     <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
-      SELECT A.OID, AO.Name, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
+      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, A.PoorPicture
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
@@ -244,7 +247,7 @@
       LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID
       LEFT JOIN T_DOBJECT L ON A.ImputeDepartmentOID = L.OID AND L.Type = 'DEPARTMENT'
       LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
-      LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND M.Type = 'PERSON'
+      LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
@@ -301,14 +304,16 @@
     </update>
 
     <select id="SelQuickResponseModule" parameterClass="QuickResponseModule" resultClass="QuickResponseModule">
-      SELECT A.*, B.Type AS ModuleType FROM T_DQMS_QUICK_MODULE A
+      SELECT A.*, B.Type AS ModuleType, B.BPolicyOID, C.Name AS ChargeUserNm, D.Name AS BPolicyNm FROM T_DQMS_QUICK_MODULE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.ChargeUserOID = C.OID AND C.Type = 'PERSON'
+      LEFT JOIN T_BPOLICY D ON B.BPolicyOID = D.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="QuickOID">
-          QuickOID = #QuickOID#
+          A.QuickOID = #QuickOID#
         </isNotNull>
         <isNotNull prepend="and" property="OID">
-          OID = #OID#
+          A.OID = #OID#
         </isNotNull>
       </dynamic>
 
@@ -345,7 +350,7 @@
     </update>
     
     <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
-      SELECT A.OID, B.Type, B.Name, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
+      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
       , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
       FROM T_DQMS_BLOCKADE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
@@ -390,7 +395,7 @@
     </delete>
 
     <select id="SelOccurrenceCauseItem" parameterClass="OccurrenceCauseItem" resultClass="OccurrenceCauseItem">
-      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.OccurrenceCauseLibOID, C.KorNm AS OccurrenceCauseLibText
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.ModuleOID, A.OccurrenceCauseLibOID, C.KorNm AS OccurrenceCauseLibText
       FROM T_DQMS_OCCURRENCE_CAUSE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DLIBRARY C ON A.OccurrenceCauseLibOID = C.OID
@@ -431,7 +436,7 @@
     </delete>
 
     <select id="SelOccurrenceWhy" parameterClass="OccurrenceWhy" resultClass="OccurrenceWhy">
-      SELECT A.OID, B.Name, B.Description, A.CauseOID, A.OccurrenceCauseDetail
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.CauseOID, A.OccurrenceCauseDetail
       FROM T_DQMS_OCCURRENCE_WHY A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       WHERE B.DeleteDt IS NULL
@@ -512,8 +517,8 @@
     </update>
 
     <select id="SelDetectCounterMeasure" parameterClass="DetectCounterMeasure" resultClass="DetectCounterMeasure">
-      SELECT A.ModuleOID, A.DetectM, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
-      FROM T_DQMS_DETECT_COUNTERMEASURE A    
+      SELECT A.ModuleOID, A.DetectM, B.BPolicyOID, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
+      FROM T_DQMS_DETECT_COUNTERMEASURE A
       <dynamic prepend="where">      
         <isNotNull prepend="and" property="ModuleOID">
           A.ModuleOID = #ModuleOID#
@@ -522,7 +527,7 @@
     </select>
     
     <!--ImproveCounterMeasure-->
-    <insert id="InsImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+    <insert id="InsImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem">
       INSERT INTO T_DQMS_IMPROVE_COUNTERMEASURE
       (OID,
       ModuleOID,
@@ -537,7 +542,7 @@
       #ProcessDt#)
     </insert>
 
-    <update id="UdtImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+    <update id="UdtImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem">
       UPDATE T_DQMS_IMPROVE_COUNTERMEASURE
       SET
       RootCause = #RootCause#,
@@ -546,8 +551,8 @@
       WHERE OID = #OID#
     </update>
 
-    <select id="SelImproveCounterMeasure" parameterClass="ImproveCounterMeasure" resultClass="ImproveCounterMeasure">
-      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.RootCause, A.ImproveCountermeasure, A.ProcessDt
+    <select id="SelImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem" resultClass="ImproveCounterMeasureItem">
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.ModuleOID, A.RootCause, A.ImproveCountermeasure, A.ProcessDt
       FROM T_DQMS_IMPROVE_COUNTERMEASURE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       WHERE B.DeleteDt IS NULL
@@ -562,10 +567,34 @@
     
     <!-- WorkerEdu SQL-->
     <select id="SelWorkerEdu" parameterClass="WorkerEdu" resultClass="WorkerEdu">
-      SELECT A.*
+      SELECT
+      A.*
+      ,B.OID
+      ,B.Name
+      ,B.Description
+      ,C.Name AS EduUserNm
+      ,C.Description
       FROM T_DQMS_WORKER_EDU A
-      <dynamic prepend="where">
-      </dynamic>
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.EduUserOID = C.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="EduDetail">
+        A.EduDetail like "%" + #EduDetail# + "%"
+      </isNotNull>
+      <isNotNull prepend="and" property="EduPlan">
+        A.EduPlan like "%" + #EduDetail# + "%"
+      </isNotNull>
+      <isNotNull prepend="" property="EduSDt">
+        <isNotNull prepend="and" property="EduEDt">
+          A.EduDt between #EduSDt# and  DATEADD(dd, 1, #EduEDt#)
+        </isNotNull>
+      </isNotNull>
+      <isNotNull prepend="and" property="EduUserOID">
+        A.EduUserOID = #EduUserOID#
+      </isNotNull>
     </select>
 
     <insert id="InsWorkerEdu" parameterClass="WorkerEdu">
@@ -590,15 +619,18 @@
       EduPlan = #EduPlan#,
       EduDt = #EduDt#,
       EduUserOID = #EduUserOID#
-      WHERE ModuleOID = #ModuleOID#
+      WHERE ModuleOID = #OID#
     </update>
 
     <!-- QuickValidation SQL-->
     <select id="SelQmsCheck" parameterClass="QmsCheck" resultClass="QmsCheck">
-      SELECT A.*
+      SELECT A.*, B.Name, B.Description
       FROM T_DQMS_CHECK A
-      <dynamic prepend="where">
-      </dynamic>
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
     </select>
 
     <insert id="InsQmsCheck" parameterClass="QmsCheck">
@@ -625,7 +657,7 @@
       #CheckFl#,
       #CheckDetail#,
       #FinishFl#,
-      #FinishDetail#);
+      #FinishDetail#)
     </insert>
 
     <update id="UdtQmsCheck" parameterClass="QmsCheck">
@@ -639,7 +671,7 @@
       CheckDetail = #CheckDetail#,
       FinishFl = #FinishFl#,
       FinishDetail = #FinishDetail#
-      WHERE ModuleOID = #ModuleOID#;
+      WHERE ModuleOID = #ModuleOID#
     </update>
     
     <!-- StdDoc SQL -->
@@ -664,7 +696,7 @@
       #DocType#,
       #DocOID#,
       #DocSummary#,
-      #DocCompleteDt#);
+      #DocCompleteDt#)
     </insert>
 
     <update id="UdtStandardDoc" parameterClass="StandardDoc">
@@ -674,8 +706,271 @@
       DocOID = #DocOID#,
       DocSummary = #DocSummary#,
       DocCompleteDt = #DocCompleteDt#
-      WHERE OID = #OID# AND ModuleOID = #ModuleOID#;
+      WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
+    
+    <!-- Error Proof SQL ModuleOID == OID-->
+    <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
+      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm
+      FROM T_DQMS_ERROR_PRROF A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
+
+      <isNotNull prepend="and" property="OID">
+        B.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsErrorProof" parameterClass="ErrorProof">
+      INSERT INTO T_DQMS_ERROR_PRROF
+      (ModuleOID,
+      EstDt,
+      ActDt,
+      CheckDetail,
+      CheckUserOID)
+      VALUES
+      (#ModuleOID#,
+      #EstDt#,
+      #ActDt#,
+      #CheckDetail#,
+      #CheckUserOID#)
+    </insert>
+
+    <update id="UdtErrorProof" parameterClass="ErrorProof">
+      UPDATE T_DQMS_ERROR_PRROF
+      SET
+      EstDt = #EstDt#,
+      ActDt = #ActDt#,
+      CheckDetail = #CheckDetail#,
+      CheckUserOID = #CheckUserOID#
+      WHERE ModuleOID = #ModuleOID#
+    </update>
+
+    <!-- LPA SQL -->
+    <select id="SelLpaUnfit" parameterClass="LpaUnfit" resultClass="LpaUnfit">
+      SELECT
+      A.*
+      , B.Name
+      , B.Description
+      , C.*
+      FROM T_DQMS_LPA_UNFIT A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DQMS_LPA_UNFIT_CHECK C ON A.ModuleOID = C.ModuleOID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsLpaUnfit" parameterClass="LpaUnfit">
+      INSERT INTO T_DQMS_LPA_UNFIT
+      (ModuleOID,
+      LayerLibOID,
+      AuditLibOID,
+      LpaGrpLibOID,
+      LpaUseLibOID,
+      LpaCheckProcessLibOID,
+      LpaCheckUserOID,
+      LpaCheckDt,
+      EquipmentNm,
+      PartOID,
+      LpaUserOID,
+      FinishRequestDt,
+      MeasureUserOID)
+      VALUES
+      (#ModuleOID#,
+      #LayerLibOID#,
+      #AuditLibOID#,
+      #LpaGrpLibOID#,
+      #LpaUseLibOID#,
+      #LpaCheckProcessLibOID#,
+      #LpaCheckUserOID#,
+      #LpaCheckDt#,
+      #EquipmentNm#,
+      #PartOID#,
+      #LpaUserOID#,
+      #FinishRequestDt#,
+      #MeasureUserOID#)
+    </insert>
+
+    <update id="UdtLpaUnfit" parameterClass="LpaUnfit">
+      UPDATE T_DQMS_LPA_UNFIT
+      SET
+      LayerLibOID = #LayerLibOID#,
+      AuditLibOID = #AuditLibOID#,
+      LpaGrpLibOID = #LpaGrpLibOID#,
+      LpaUseLibOID = #LpaUseLibOID#,
+      LpaCheckProcessLibOID = #LpaCheckProcessLibOID#,
+      LpaCheckUserOID = #LpaCheckUserOID#,
+      LpaCheckDt = #LpaCheckDt#,
+      EquipmentNm = #EquipmentNm#,
+      PartOID = #PartOID#,
+      LpaUserOID = #LpaUserOID#,
+      FinishRequestDt = #FinishRequestDt#,
+      MeasureUserOID = #MeasureUserOID#
+      WHERE ModuleOID = #ModuleOID#
+    </update>
+
+    <!-- LPA Check SQL -->
+    <select id="SelLpaUnfitCheck" parameterClass="LpaUnfitCheck" resultClass="LpaUnfitCheck">
+      SELECT A.*, B.Name, B.Description
+      FROM T_DQMS_LPA_UNFIT_CHECK A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsLpaUnfitCheck" parameterClass="LpaUnfitCheck">
+      INSERT INTO T_DQMS_LPA_UNFIT_CHECK
+      (OID,
+      ModuleOID,
+      CheckPoin,
+      CauseAnalysis,
+      ImproveCountermeasure)
+      VALUES
+      (#OID#,
+      #ModuleOID#,
+      #CheckPoin#,
+      #CauseAnalysis#,
+      #ImproveCountermeasure#)
+    </insert>
+
+    <update id="UdtLpaUnfitCheck" parameterClass="LpaUnfitCheck">
+      UPDATE T_DQMS_LPA_UNFIT_CHECK
+      SET
+      CauseAnalysis = #CauseAnalysis#,
+      ImproveCountermeasure = #ImproveCountermeasure#
+      WHERE OID = #OID# AND ModuleOID = #ModuleOID#
+    </update>
+
+    <!-- OpenIssue SQL -->
+    <select id="SelOpenIssue" parameterClass="OpenIssue" resultClass="OpenIssue">
+      SELECT A.*, B.Name, B.Description
+      FROM T_DQMS_OPENISSUE A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsOpenIssue" parameterClass="OpenIssue">
+      INSERT INTO T_DQMS_OPENISSUE
+      (OID,
+      CustomerLibOID,
+      CarLibOID,
+      ProductOID,
+      ProjectOID,
+      ProcessOID)
+      VALUES
+      (#OID#,
+      #CustomerLibOID#,
+      #CarLibOID#,
+      #ProductOID#,
+      #ProjectOID#,
+      #ProcessOID#)
+    </insert>
+
+    <update id="UdtOpenIssue" parameterClass="OpenIssue">
+      UPDATE T_DQMS_OPENISSUE
+      SET
+      CustomerLibOID = #CustomerLibOID#,
+      CarLibOID = #CustomerLibOID#,
+      ProductOID = #ProductOID#
+      WHERE OID = #OID#
+    </update>
+
+    <!-- OpenIssueItem SQL -->
+    <select id="SelOpenIssueItem" parameterClass="OpenIssueItem" resultClass="OpenIssueItem">
+      SELECT A.*, B.Name, B.Description
+      FROM T_DQMS_OPENISSUE_ITEM A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.OID = #OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsOpenIssueItem" parameterClass="OpenIssueItem">
+      INSERT INTO T_DQMS_OPENISSUE_ITEM
+      (OID,
+      RelapseInsideFl,
+      RelapseHanonFl,
+      RelapseCarFl,
+      OpenIssueDetailDesc,
+      OpenIssueOccurrenceDt,
+      OpenIssueExpectedDt,
+      OpenIssueCompleteDt,
+      OpenIssueCloseFl)
+      VALUES
+      (#OID#,
+      #RelapseInsideFl#,
+      #RelapseHanonFl#,
+      #RelapseCarFl#,
+      #OpenIssueDetailDesc#,
+      #OpenIssueOccurrenceDt#,
+      #OpenIssueExpectedDt#,
+      #OpenIssueCompleteDt#,
+      #OpenIssueCloseFl#)
+    </insert>
+
+    <update id="UdtOpenIssueItem" parameterClass="OpenIssueItem">
+      UPDATE T_DQMS_OPENISSUE_ITEM
+      SET
+      RelapseInsideFl = #RelapseInsideFl#,
+      RelapseHanonFl = #RelapseHanonFl#,
+      RelapseCarFl = #RelapseCarFl#,
+      OpenIssueDetailDesc = #OpenIssueDetailDesc#,
+      OpenIssueOccurrenceDt = #OpenIssueOccurrenceDt#,
+      OpenIssueExpectedDt = #OpenIssueExpectedDt#,
+      OpenIssueCompleteDt = #OpenIssueCompleteDt#,
+      OpenIssueCloseFl = #OpenIssueCloseFl#
+      WHERE OID = #OID#
+    </update>
+
+    <!-- OpenIssue Relationship SQL -->
+    <select id="SelOpenIssueRelationship" parameterClass="OpenIssueRelationship" resultClass="OpenIssueRelationship">
+      SELECT 
+      A.*
+      FROM T_DQMS_OPENISSUE_RELATIONSHIP A
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          A.FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          A.ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="type">
+          A.type = #type#
+        </isNotNull>
+      </dynamic>
+    </select>
+
+    <insert id="InsOpenIssueRelationship" parameterClass="OpenIssueRelationship">
+      INSERT INTO T_DQMS_OPENISSUE_RELATIONSHIP
+      (FromOID,
+      ToOID,
+      type,
+      CreateDt,
+      CreateUs)
+      VALUES
+      (#FromOID#,
+      #ToOID#,
+      #type#,
+      GETDATE(),
+      #CreateUs#)
+    </insert>
+
+    <delete id="DelOpenIssueRelationship" parameterClass="OpenIssueRelationship">
+      DELETE FROM T_DQMS_OPENISSUE_RELATIONSHIP
+      WHERE FromOID = #FromOID# AND ToOID = #ToOID# AND type = #type#
+    </delete>
   </statements>
   
 </sqlMap>

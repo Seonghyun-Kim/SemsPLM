@@ -12,6 +12,9 @@
     <typeAlias alias="Approval" type="Common.Models.Approval" />
     <typeAlias alias="ApprovalStep" type="Common.Models.ApprovalStep" />
     <typeAlias alias="ApprovalTask" type="Common.Models.ApprovalTask" />
+    <typeAlias alias="ApprovalComment" type="Common.Models.ApprovalComment" />
+
+    <typeAlias alias="HttpFile" type="Common.Models.File.HttpFile" />
   </alias>
 
   <statements>
@@ -276,7 +279,7 @@
       LEFT OUTER JOIN T_DAPPROVAL B ON A.OID = B.OID
       WHERE A.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
-        OID = #OID#
+        A.OID = #OID#
       </isNotNull>
       <isNotNull prepend="and" property="Name">
         A.Name = #Name#
@@ -287,6 +290,7 @@
       <isNotNull prepend="and" property="TargetOID">
         B.TargetOID = #TargetOID#
       </isNotNull>
+      ORDER BY B.OID
     </select>
 
     <update id="UdtApproval" parameterClass="Approval" >
@@ -358,7 +362,6 @@
       , #Comment# )
     </insert>
 
-    
     <select id="SelApprovalTask" parameterClass="ApprovalTask" resultClass="ApprovalTask">
         SELECT *
         FROM T_DOBJECT A
@@ -383,6 +386,135 @@
           B.PersonOID = #PersonOID#
         </isNotNull>
       </select>
-    
+
+    <select id="SelMyApprovalTask" parameterClass="ApprovalTask" resultClass="ApprovalTask">
+      SELECT A.*, B.*,
+      E.OID AS DocOID,
+      E.Type AS DocType,
+      E.Name AS DocNm,
+      E.CreateUs AS DocCreateUs
+      FROM T_DAPPROVAL_TASK A
+      LEFT OUTER JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT OUTER JOIN T_DAPPROVAL C ON A.ApprovalOID = C.OID
+      LEFT OUTER JOIN T_DAPPROVAL_STEP D ON A.StepOID = D.OID
+      LEFT OUTER JOIN T_DOBJECT E ON C.TargetOID = E.OID
+      WHERE B.DeleteDt IS NULL AND E.OID IS NOT NULL AND A.ApprovalType != 'DIST'
+      <isNotNull prepend="and" property="PersonOID">
+        A.PersonOID = #PersonOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="BPolicyOID">
+        B.BPolicyOID = #BPolicyOID#
+      </isNotNull>
+    </select>
+
+    <update id="UdtInboxTask" parameterClass="ApprovalTask" >
+      UPDATE T_DAPPROVAL_TASK SET
+      <dynamic prepend=" " close=" ">
+        <isNotNull prepend="," property="ActionType">
+          ActionType = #ActionType#
+          , ApprovalDt = GETDATE()
+        </isNotNull>
+        <isNotNull prepend="," property="Comment">
+          Comment = #Comment#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsApprovalComment" parameterClass="ApprovalComment">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DAPPROVAL_COMMENT
+      </selectKey>
+      INSERT INTO T_DAPPROVAL_COMMENT
+      ( OID
+      , ApprovalOID
+      , Comment
+      , Ord
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #ApprovalOID#
+      , #Comment#
+      , (SELECT ISNULL(MAX(Ord),0) + 1 AS ORD FROM T_DAPPROVAL_COMMENT WHERE ApprovalOID = #ApprovalOID#)
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <select id="SelApprovalComment" parameterClass="ApprovalComment" resultClass="ApprovalComment">
+      SELECT *
+      FROM T_DAPPROVAL_COMMENT
+      WHERE DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="ApprovalOID">
+        ApprovalOID = #ApprovalOID#
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+
+    <update id="UdtApprovalComment" parameterClass="ApprovalComment" >
+      UPDATE T_DAPPROVAL_COMMENT SET
+      <dynamic prepend=" " close=" ">
+        <isNotNull prepend="," property="Comment">
+          Comment = #Comment#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <update id="DelApprovalComment" parameterClass="ApprovalComment" >
+      UPDATE T_DAPPROVAL_COMMENT
+      SET DeleteUs = #DeleteUs#
+      , DeleteDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
+
+    <insert id="InsFile" parameterClass="HttpFile">
+      <selectKey type="pre" resultClass="int" property="FileOID">
+        SELECT ISNULL(MAX(FileOID),0) + 1 AS FileOID FROM T_DFILE
+      </selectKey>
+      INSERT INTO T_DFILE
+      (FileOID,
+      OID,
+      Type,
+      OrgNm,
+      ConvNm,
+      Ext,
+      FileSize,
+      CreateUs,
+      CreateDt)
+      VALUES
+      (#FileOID#,
+      #OID#,
+      #Type#,
+      #OrgNm#,
+      #ConvNm#,
+      #Ext#,
+      #FileSize#,
+      #CreateUs#,
+      GETDATE())
+    </insert>
+
+    <select id="SelFile" parameterClass="HttpFile" resultClass="HttpFile">
+      SELECT A.FileOID AS "FileOID" , A.OID, A.Type AS "Type", A.OrgNm AS "OrgNm", A.ConvNm AS "ConvNm", A.Ext AS "Ext", A.FileSize AS "FileSize", A.CreateDt AS "CreateDt"
+      , A.CreateUs AS "CreateUs", B.Name AS "CreateUsNm", A.DeleteDt AS "DeleteDt", A.DeleteUs AS "DeleteUs", C.Name AS "DeleteUsNm"
+      FROM T_DFILE A
+      LEFT JOIN T_DOBJECT B ON A.CreateUs = B.OID
+      LEFT JOIN T_DOBJECT C ON A.DeleteUs = C.OID
+      WHERE A.DeleteDt IS NULL
+      <isNotNull prepend="AND" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+
+      <isNotNull prepend="AND" property="FileOID">
+        A.FileOID = #FileOID#
+      </isNotNull>
+    </select>
+
+    <update id="DelFile" parameterClass="HttpFile">
+      UPDATE T_DFILE  SET DeleteDt = GETDATE(), DeleteUs =  #DeleteUs# WHERE FileOID = #FileOID#
+    </update>
   </statements>
 </sqlMap>

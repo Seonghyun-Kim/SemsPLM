@@ -82,7 +82,7 @@
         myProcessDocumentList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: '84.5%',
+            height: 680,
             rowsheight: 28,
             columnsheight: 30,
             source: new $.jqx.dataAdapter(MyProcessDocumentSource),
@@ -107,16 +107,22 @@
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");
-                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>작업자교육 등록</button>").jqxButton();
-                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i>유효성검증 등록</button>").jqxButton();
-                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i>표준화&Follow-Up 등록</button>").jqxButton();
-                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i>봉쇄조치 등록</button>").jqxButton();
-                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i>발생원인 등록</button>").jqxButton();
-                var addImproveCounterMeasureButton = $("<button class='custom-button'><i class='fas fa-plus'></i>개선대책</button>").jqxButton();
-                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i>삭제</button>").jqxButton();
+                var addWorkerEducationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 작업자교육 등록</button>").jqxButton();
+                var addQuickValidationButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 유효성검증 등록</button>").jqxButton();
+                var addStandardFollowUpButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 표준화&Follow-Up 등록</button>").jqxButton();
+                var addErrorProofButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Error Proof장치점검 등록</button>").jqxButton();
+                var addLPAIncongruity = $("<button class='custom-button'><i class='fas fa-plus'></i> LPA 부적합 등록</button>").jqxButton();
+                var addLPAMeasurey = $("<button class='custom-button'><i class='fas fa-plus'></i> LPA 대책서 등록</button>").jqxButton();
+                var addBlockadeButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 봉쇄조치 등록</button>").jqxButton();
+                var addOccurrenceCauseButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 발생원인 등록</button>").jqxButton();
+                var addImproveCounterMeasureButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 개선대책</button>").jqxButton();
+                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
                 container.append(addWorkerEducationButton);
                 container.append(addQuickValidationButton);
                 container.append(addStandardFollowUpButton);
+                container.append(addErrorProofButton);
+                container.append(addLPAIncongruity);
+                container.append(addLPAMeasurey);
                 container.append(addBlockadeButton);
                 container.append(addOccurrenceCauseButton);
                 container.append(addImproveCounterMeasureButton);
@@ -133,6 +139,18 @@
 
                 addStandardFollowUpButton.on('click', function () {
                     OpenDlgStandardFollowUp(null);
+                });
+
+                addErrorProofButton.on('click', function () {
+                    OpenDlgErrorProof(368, 372);
+                });
+
+                addLPAIncongruity.on('click', function () {
+                    OpenDlgLPAIncongruity(368, 373);
+                });
+
+                addLPAMeasurey.on('click', function () {
+                    OpenDlgLPAMeasure(368, 374);
                 });
 
                 deleteButton.on('click', function () {
@@ -155,13 +173,9 @@
         });
     });
 
-    function OpenDlgWorkerEducation(WorkerEducationOID) {
+    function OpenDlgWorkerEducation(QuickOID, ModuleOID) {
         var popTitle = "";
-        if (WorkerEducationOID === null) {
-            popTitle = "신규 작업자교육 등록";
-        } else {
-            popTitle = "선택 작업자교육 수정";
-        }
+        popTitle = "작업자교육 등록";
 
         var dlgDivWrap = document.createElement("div");
 
@@ -173,7 +187,8 @@
         dlgDivWrap.appendChild(dlgDivView);
 
         var param = {};
-        param.OID = WorkerEducationOID;
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
 
         $(dlgDivView).load("/Qms/EditWorkerEducation", param, function () {
             var winHeight = $(window).height();
@@ -203,13 +218,9 @@
         $("#dlgEditWorkerEducation").jqxWindow("close");
     }
 
-    function OpenDlgQuickValidation(QuickValidationOID) {
+    function OpenDlgQuickValidation(QuickOID, ModuleOID) {
         var popTitle = "";
-        if (QuickValidationOID === null) {
-            popTitle = "신규 유효성검증 등록";
-        } else {
-            popTitle = "선택 유효성검증 수정";
-        }
+        popTitle = "유효성검증 등록";
 
         var dlgDivWrap = document.createElement("div");
 
@@ -221,7 +232,8 @@
         dlgDivWrap.appendChild(dlgDivView);
 
         var param = {};
-        param.OID = QuickValidationOID;
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
 
         $(dlgDivView).load("/Qms/EditQuickValidation", param, function () {
             var winHeight = $(window).height();
@@ -251,13 +263,9 @@
         $("#dlgEditQuickValidation").jqxWindow("close");
     }
 
-    function OpenDlgStandardFollowUp(StandardFollowUpOID) {
+    function OpenDlgStandardFollowUp(QuickOID, ModuleOID) {
         var popTitle = "";
-        if (StandardFollowUpOID === null) {
-            popTitle = "신규 표준화&Follow-Up 등록";
-        } else {
-            popTitle = "선택 표준화&Follow-Up 수정";
-        }
+        popTitle = "표준화&Follow-Up 등록";
 
         var dlgDivWrap = document.createElement("div");
 
@@ -269,7 +277,8 @@
         dlgDivWrap.appendChild(dlgDivView);
 
         var param = {};
-        param.OID = StandardFollowUpOID;
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
 
         $(dlgDivView).load("/Qms/EditStandardFollowUp", param, function () {
             var winHeight = $(window).height();
@@ -299,6 +308,134 @@
         $("#dlgEditStandardFollowUp").jqxWindow("close");
     }
 
+    function OpenDlgErrorProof(QuickOID, ModuleOID) {
+        var popTitle = "";
+        popTitle = "Error Proof장치점검 등록";
+
+        var dlgDivWrap = document.createElement("div");
+
+        dlgDivWrap.id = "dlgEditErrorProof";
+        var dlgDivTitle = document.createElement("div");
+        var dlgDivView = document.createElement("div");
+
+        dlgDivWrap.appendChild(dlgDivTitle);
+        dlgDivWrap.appendChild(dlgDivView);
+
+        var param = {};
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
+
+        $(dlgDivView).load("/Qms/EditErrorProof", param, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+            $(dlgDivWrap).jqxWindow({
+                width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+                initContent: function () {
+
+                }
+            });
+            $(dlgDivWrap).jqxWindow('setTitle', popTitle);
+            $(dlgDivWrap).jqxWindow("show");
+        });
+
+        $(dlgDivWrap).on('close', function (event) {
+            $(dlgDivWrap).jqxWindow('modalDestory');
+        });
+    }
+
+    function CloseDlgErrorProof() {
+        $("#dlgEditErrorProof").jqxWindow("close");
+    }
+
+    function OpenDlgLPAIncongruity(QuickOID, ModuleOID) {
+        var popTitle = "";
+        popTitle = "LPA 부적합 등록";
+
+        var dlgDivWrap = document.createElement("div");
+
+        dlgDivWrap.id = "dlgEditLPAIncongruity";
+        var dlgDivTitle = document.createElement("div");
+        var dlgDivView = document.createElement("div");
+
+        dlgDivWrap.appendChild(dlgDivTitle);
+        dlgDivWrap.appendChild(dlgDivView);
+
+        var param = {};
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
+
+        $(dlgDivView).load("/Qms/EditLPAIncongruity", param, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+            $(dlgDivWrap).jqxWindow({
+                width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+                initContent: function () {
+
+                }
+            });
+            $(dlgDivWrap).jqxWindow('setTitle', popTitle);
+            $(dlgDivWrap).jqxWindow("show");
+        });
+
+        $(dlgDivWrap).on('close', function (event) {
+            $(dlgDivWrap).jqxWindow('modalDestory');
+        });
+    }
+
+    function CloseDlgLPAIncongruity() {
+        $("#dlgEditLPAIncongruity").jqxWindow("close");
+    }
+
+    function OpenDlgLPAMeasure(QuickOID, ModuleOID) {
+        var popTitle = "";
+        popTitle = "LPA 대책서 등록";
+
+        var dlgDivWrap = document.createElement("div");
+
+        dlgDivWrap.id = "dlgEditLPAMeasure";
+        var dlgDivTitle = document.createElement("div");
+        var dlgDivView = document.createElement("div");
+
+        dlgDivWrap.appendChild(dlgDivTitle);
+        dlgDivWrap.appendChild(dlgDivView);
+
+        var param = {};
+        param.OID = ModuleOID;
+        param.QuickOID = QuickOID;
+
+        $(dlgDivView).load("/Qms/EditLPAMeasure", param, function () {
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+
+            var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+            var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+            $(dlgDivWrap).jqxWindow({
+                width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+                initContent: function () {
+
+                }
+            });
+            $(dlgDivWrap).jqxWindow('setTitle', popTitle);
+            $(dlgDivWrap).jqxWindow("show");
+        });
+
+        $(dlgDivWrap).on('close', function (event) {
+            $(dlgDivWrap).jqxWindow('modalDestory');
+        });
+    }
+
+    function CloseDlgLPAMeasure() {
+        $("#dlgEditLPAMeasure").jqxWindow("close");
+    }
 
     function OpenDlgBlockade(QuickOID, ModuleOID) {
         var popTitle = "봉쇄조치 등록";       

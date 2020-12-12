@@ -9,7 +9,7 @@
     @Scripts.Render("~/bundles/modernizr")
     <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/layout.css" />
-    <link rel="stylesheet" type="text/css" href="~/Resource/jqwidgets-ver10.1.2/styles/jqx.kdc.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/jqwidgets-ver11.0.0/styles/jqx.kdc.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/all.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/brands.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/fontawesome.css" />
@@ -17,10 +17,12 @@
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/solid.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/svg-with-js.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/v4-shims.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/basic.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/dropzone.css" />
 </head>
 <body>
     <header>
-        <h1><a href="/" title="main"><img src="~/images/logo.png" alt="logo"></a></h1>
+        <h1><a href="/" title="main"><img src="~/images/logo_.png" alt="logo"></a></h1>
 
         <nav>
             <ul class="gnb">
@@ -82,6 +84,8 @@
 
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/moment.min.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/underscore-master/underscore.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Dropzone/dropzone.js")></script>
+
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebUtils.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebData.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebPopup.js")></script>
@@ -98,49 +102,58 @@
     <script defer type="text/javascript" src=@Url.Content("~/Resource/jquery-fancyfileuploader-master/jquery.iframe-transport.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/jquery-fancyfileuploader-master/jquery.ui.widget.js")></script>
 
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxcore.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdata.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxbuttons.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxscrollbar.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdatatable.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxtreegrid.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxtree.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxexpander.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxlistbox.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxcheckbox.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxradiobutton.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxmenu.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxtabs.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.sort.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.selection.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdragdrop.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.pager.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.filter.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.columnsresize.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.columnsreorder.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdropdownlist.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdropdownbutton.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxwindow.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.aggregates.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdatetimeinput.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxcalendar.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxcombobox.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.edit.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxnumberinput.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxgrid.export.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxdata.export.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxeditor.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxtooltip.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxcolorpicker.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/jqxswitchbutton.js")></script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver10.1.2/scripts/jszip.min.js")></script>
-    
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxcore.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdata.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxbuttons.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxscrollbar.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdatatable.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxtreegrid.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxtree.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxexpander.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxlistbox.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxcheckbox.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxradiobutton.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxmenu.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxtabs.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.sort.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.selection.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdragdrop.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.pager.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.filter.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.columnsresize.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.columnsreorder.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdropdownlist.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdropdownbutton.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxwindow.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.aggregates.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdatetimeinput.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxcalendar.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxcombobox.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.edit.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxnumberinput.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxgrid.export.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdata.export.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxeditor.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxtooltip.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxcolorpicker.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxloader.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxdraw.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxchart.core.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/scripts/jszip.min.js")></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxSwitchButton.js")></script>
 
     <!--EPart-->
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEPartUtils.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEPartPopup.js")></script>
 
+    <!--Econtents-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEcontentsDialog.js")></script>
+
+    <!--QMS-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebQMSUtils.js")></script>
+
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebFileUpload.js")></script>
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         $(document).ready(function () {
@@ -256,6 +269,40 @@
                 }
                 , complete: function () {
 
+                }
+            });
+        }
+
+        function TabPageLoad(_linkUrl, _linkName) {
+            if ($("div[tabUrl='" + _linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + _linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            tabContent$.jqxTabs('addLast', _linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: _linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + _linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
                 }
             });
         }

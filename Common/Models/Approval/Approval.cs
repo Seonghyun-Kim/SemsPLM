@@ -19,15 +19,26 @@ namespace Common.Models
         public int? CurrentNum { get; set; }
 
         public List<ApprovalStep> InboxStep { get; set; }
+
+        public List<ApprovalComment> InboxCommnet { get; set; }
     }
 
     public static class ApprovalRepository
     {
+        public static Approval SelApprovalNonStep(Approval _param)
+        {
+            Approval tmpApproval = DaoFactory.GetData<Approval>("Comm.SelApproval", _param);
+            return tmpApproval;
+        }
 
         public static Approval SelApproval(Approval _param)
         {
-            Approval tmpApproval = DaoFactory.GetData<Approval>("Comm.SelApproval", _param);
-            tmpApproval.InboxStep = ApprovalStepRepository.SelApprovalSteps(new ApprovalStep { ApprovalOID = tmpApproval.OID });
+            Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(_param);
+            if (tmpApproval != null)
+            {
+                tmpApproval.InboxStep = ApprovalStepRepository.SelApprovalSteps(new ApprovalStep { ApprovalOID = tmpApproval.OID });
+                tmpApproval.InboxCommnet = ApprovalCommentRepository.SelApprovalComment(new ApprovalComment { ApprovalOID = tmpApproval.OID });
+            }
             return tmpApproval;
         }
 
@@ -37,6 +48,7 @@ namespace Common.Models
             tmpApprovals.ForEach(app =>
             {
                 app.InboxStep = ApprovalStepRepository.SelApprovalSteps(new ApprovalStep { ApprovalOID = app.OID });
+                app.InboxCommnet = ApprovalCommentRepository.SelApprovalComment(new ApprovalComment { ApprovalOID = app.OID });
             });
             return tmpApprovals;
         }

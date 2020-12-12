@@ -7,26 +7,26 @@
         <input type="hidden" id="hiddenDlgBlockadeOID" value="@ViewBag.Blockade.OID" />
         <input type="hidden" id="hiddenDlgOccurrenceCauseOID" value="@ViewBag.OccurrenceCause.OID" />
         <input type="hidden" id="hiddenDlgImproveCountermeasureOID" value="@ViewBag.ImproveCountermeasure.OID" />
-        <input type="hidden" id="hiddenDlgErrorPrrofOID" value="@ViewBag.ErrorPrrof.OID" />
+        <input type="hidden" id="hiddenDlgErrorProofOID" value="@ViewBag.ErrorProof.OID" />
         <input type="hidden" id="hiddenDlgLpaOID" value="@ViewBag.Lpa.OID" />
         <input type="hidden" id="hiddenDlgCheckOID" value="@ViewBag.Check.OID" />
         <input type="hidden" id="hiddenDlgStandardOID" value="@ViewBag.Standard.OID" />
         <input type="hidden" id="hiddenDlgWorkerEduOID" value="@ViewBag.WorkerEdu.OID" />
     </div>
-<div>
+<div class="qmsDlgTable">
     <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
-        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 저장</button>
+        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
         <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 확정</button>
     </div>
     @{Html.RenderAction("QuickResponseSummary", "Qms");}
-    <label>신속대응</label>
+<label><i class="fas fa-toggle-on"></i> 신속대응</label>
     <table class="infoTable" style="table-layout:fixed;">
         
         <colgroup>
             <col style="width:120px;" />
             <col style="width:auto;" />
             <col style="width:160px;" />
-            <col style="width:230px;" />
+            <col style="width:160px;" />
         </colgroup>
         <tbody>
             <tr>
@@ -49,9 +49,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgBlockAdePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgBlockAdePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgBlockAdePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgBlockAdePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgBlockAdePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Blockade.ChargeUserNm" />
+                        <button id="btnDlgBlockAdePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgBlockAdePlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -69,9 +69,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgOccurrenceCausePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgOccurrenceCausePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgOccurrenceCausePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgOccurrenceCausePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgOccurrenceCausePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.OccurrenceCause.ChargeUserNm" />
+                        <button id="btnDlgOccurrenceCausePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgOccurrenceCausePlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -89,9 +89,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgImproveCountermeasurePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgImproveCountermeasurePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgImproveCountermeasurePlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgImproveCountermeasurePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgImproveCountermeasurePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ImproveCountermeasure.ChargeUserNm" />
+                        <button id="btnDlgImproveCountermeasurePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgImproveCountermeasurePlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -109,9 +109,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ErrorProof.ChargeUserNm" />
+                        <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgErrorProofPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -129,9 +129,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgLpaUnfitPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgLpaUnfitPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgLpaUnfitPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgLpaUnfitPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgLpaUnfitPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Lpa.ChargeUserNm" />
+                        <button id="btnDlgLpaUnfitPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgLpaUnfitPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -149,9 +149,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgCheckPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgCheckPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgCheckPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgCheckPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgCheckPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Check.ChargeUserNm" />
+                        <button id="btnDlgCheckPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgCheckPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -169,9 +169,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgStandardPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgStandardPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgStandardPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgStandardPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgStandardPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Standard.ChargeUserNm" />
+                        <button id="btnDlgStandardPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgStandardPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -189,9 +189,9 @@
                 </td>
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgWorkerEduPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <input type="text" id="txtDlgWorkerEduPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" />
-                        <button id="btnDlgWorkerEduPlanUserSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" id="txtDlgWorkerEduPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                        <input type="text" id="txtDlgWorkerEduPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.WorkerEdu.ChargeUserNm" />
+                        <button id="btnDlgWorkerEduPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgWorkerEduPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
             </tr>
@@ -210,18 +210,19 @@
         $("#btnDlgStandardPlanUserSearch").jqxButton();
         $("#btnDlgWorkerEduPlanUserSearch").jqxButton();
 
-        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 27, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
-        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnErrorProofUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnCheckUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnStandardUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 27, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 30, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
+        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnErrorProofUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnCheckUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnStandardUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
 
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Blockade.EstEndDt == null)
@@ -236,6 +237,7 @@
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.OccurrenceCause.EstEndDt == null)
@@ -250,6 +252,7 @@
         $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.ImproveCountermeasure.EstEndDt == null)
@@ -264,20 +267,22 @@
         $("#txtDlgErrorProofPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgErrorProofPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
-        @if(ViewBag.ErrorPrrof.EstEndDt == null)
+        @if(ViewBag.ErrorProof.EstEndDt == null)
         {
             <text>$("#txtDlgErrorProofPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
         }
         else
         {
-            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.ErrorPrrof.EstEndDt.ToString("yyyy-MM-dd")")</text>
+            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.ErrorProof.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
 
         $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Lpa.EstEndDt == null)
@@ -292,6 +297,7 @@
         $("#txtDlgCheckPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgCheckPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Check.EstEndDt == null)
@@ -306,6 +312,7 @@
         $("#txtDlgStandardPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgStandardPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.Standard.EstEndDt == null)
@@ -320,6 +327,7 @@
         $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput({
             width: 140,
+            height:30,
             theme: "Light"
         });
         @if(ViewBag.WorkerEdu.EstEndDt == null)
@@ -336,6 +344,20 @@
         })
     });
 
+    var SelectModulePlanUser = function (textBoxID) {
+        OpenApprovalPersonDialog(function (res) {
+            if (res.length > 1) {
+                alert("담당자는 한명만 지정 할 수 있습니다.");
+                return;
+            }
+
+            $("#" + textBoxID).val(res[0].Name);
+            $("#" + textBoxID).attr("UserOID", res[0].OID);
+                
+        }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+    };
+
+
     var SaveQuickResponse = function () {
         var params = [];
 
@@ -344,65 +366,105 @@
         blockadd.OID = $("#hiddenDlgBlockadeOID").val();
         blockadd.ModuleFl = $("#btnBlockadeUseFl").val();
         blockadd.EstEndDt = $("#txtDlgBloackAdePlanDt").val();
-        blockadd.ChargeUserOID = "75";
+        blockadd.ChargeUserOID = $("#txtDlgBlockAdePlanUserNm").attr("UserOID");
         params.push(blockadd);
+
+        if (blockadd.ModuleFl && WebUtils.isBlank(blockadd.ChargeUserOID)) {
+            alert("봉쇄조치 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var occurrenceCause = {};
         occurrenceCause.QuickOID = $("#hiddenDlgQuickOID").val();
         occurrenceCause.OID = $("#hiddenDlgOccurrenceCauseOID").val();
         occurrenceCause.ModuleFl = $("#btnOccurrenceCauseUseFl").val();
         occurrenceCause.EstEndDt = $("#txtDlgOccurrenceCausePlanDt").val();
-        occurrenceCause.ChargeUserOID = "75";
+        occurrenceCause.ChargeUserOID = $("#txtDlgOccurrenceCausePlanUserNm").attr("UserOID");
         params.push(occurrenceCause);
+
+        if (occurrenceCause.ModuleFl && WebUtils.isBlank(occurrenceCause.ChargeUserOID)) {
+            alert("발생원인 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var ImproveCountermeasure = {};
         ImproveCountermeasure.QuickOID = $("#hiddenDlgQuickOID").val();
         ImproveCountermeasure.OID = $("#hiddenDlgImproveCountermeasureOID").val();
         ImproveCountermeasure.ModuleFl = $("#btnImproveCountermeasureUseFl").val();
         ImproveCountermeasure.EstEndDt = $("#txtDlgImproveCountermeasurePlanDt").val();
-        ImproveCountermeasure.ChargeUserOID = "75";
+        ImproveCountermeasure.ChargeUserOID =$("#txtDlgImproveCountermeasurePlanUserNm").attr("UserOID");
         params.push(ImproveCountermeasure);
 
-        var errorprrof = {};
-        errorprrof.QuickOID = $("#hiddenDlgQuickOID").val();
-        errorprrof.OID = $("#hiddenDlgErrorPrrofOID").val();
-        errorprrof.ModuleFl = $("#btnErrorProofUseFl").val();
-        errorprrof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
-        errorprrof.ChargeUserOID = "75";
-        params.push(errorprrof);
+        if (ImproveCountermeasure.ModuleFl && WebUtils.isBlank(ImproveCountermeasure.ChargeUserOID)) {
+            alert("개선대책 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
+
+        var ErrorProof = {};
+        ErrorProof.QuickOID = $("#hiddenDlgQuickOID").val();
+        ErrorProof.OID = $("#hiddenDlgErrorProofOID").val();
+        ErrorProof.ModuleFl = $("#btnErrorProofUseFl").val();
+        ErrorProof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
+        ErrorProof.ChargeUserOID = $("#txtDlgErrorProofPlanUserNm").attr("UserOID");
+        params.push(ErrorProof);
+
+        if (ErrorProof.ModuleFl && WebUtils.isBlank(ErrorProof.ChargeUserOID)) {
+            alert("Error Proof 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var lpa = {};
         lpa.QuickOID = $("#hiddenDlgQuickOID").val();
         lpa.OID = $("#hiddenDlgLpaOID").val();
         lpa.ModuleFl = $("#btnLpaUnfitUseFl").val();
         lpa.EstEndDt = $("#txtDlgLpaUnfitPlanDt").val();
-        lpa.ChargeUserOID = "75";
+        lpa.ChargeUserOID = $("#txtDlgLpaUnfitPlanUserNm").attr("UserOID");
         params.push(lpa);
+
+        if (lpa.ModuleFl && WebUtils.isBlank(lpa.ChargeUserOID)) {
+            alert("LPA 확인 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var check = {};
         check.QuickOID = $("#hiddenDlgQuickOID").val();
         check.OID = $("#hiddenDlgCheckOID").val();
         check.ModuleFl = $("#btnCheckUseFl").val();
         check.EstEndDt = $("#txtDlgCheckPlanDt").val();
-        check.ChargeUserOID = "75";
+        check.ChargeUserOID = $("#txtDlgCheckPlanUserNm").attr("UserOID");
         params.push(check);
+
+        if (check.ModuleFl && WebUtils.isBlank(check.ChargeUserOID)) {
+            alert("유효성 검증 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var standard = {};
         standard.QuickOID = $("#hiddenDlgQuickOID").val();
         standard.OID = $("#hiddenDlgStandardOID").val();
         standard.ModuleFl = $("#btnStandardUseFl").val();
         standard.EstEndDt = $("#txtDlgStandardPlanDt").val();
-        standard.ChargeUserOID = "75";
+        standard.ChargeUserOID = $("#txtDlgStandardPlanUserNm").attr("UserOID");
         params.push(standard);
+
+        if (standard.ModuleFl && WebUtils.isBlank(standard.ChargeUserOID)) {
+            alert("표준화 & Follow-Up 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
 
         var workeredu = {};
         workeredu.QuickOID = $("#hiddenDlgQuickOID").val();
         workeredu.OID = $("#hiddenDlgWorkerEduOID").val();
         workeredu.ModuleFl = $("#btnWorkerEduUseFl").val();
         workeredu.EstEndDt = $("#txtDlgWorkerEduPlanDt").val();
-        workeredu.ChargeUserOID = "75";
+        workeredu.ChargeUserOID = $("#txtDlgWorkerEduPlanUserNm").attr("UserOID");
         params.push(workeredu);
-        
+
+        if (workeredu.ModuleFl && WebUtils.isBlank(workeredu.ChargeUserOID)) {
+            alert("작업자교육 항목이 YES 인데 처리담당자가 없습니다.");
+            return;
+        }
+
         $.post('/Qms/SaveQuickResponseModule', { _params: params }, function (response) {
                 if (response.isError) {
                 alert(response.resultMessage);

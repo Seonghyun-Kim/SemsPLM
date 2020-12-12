@@ -22,6 +22,13 @@ namespace Common.Models
 
     public static class ApprovalStepRepository
     {
+        public static ApprovalStep SelApprovalStep(ApprovalStep _param)
+        {
+            ApprovalStep tmpApprovalStep = DaoFactory.GetData<ApprovalStep>("Comm.SelApprovalStep", _param);
+            tmpApprovalStep.InboxTask = ApprovalTaskRepository.SelInboxTasks(new ApprovalTask { StepOID = tmpApprovalStep.OID });
+            return tmpApprovalStep;
+        }
+
         public static List<ApprovalStep> SelApprovalSteps(ApprovalStep _param)
         {
             List<ApprovalStep> tmpApprovalSteps = DaoFactory.GetList<ApprovalStep>("Comm.SelApprovalStep", _param);
@@ -36,5 +43,6 @@ namespace Common.Models
         {
             return DaoFactory.SetInsert("Comm.InsApprovalStep", _param);
         }
+
     }
 }

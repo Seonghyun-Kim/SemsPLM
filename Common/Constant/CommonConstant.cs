@@ -8,7 +8,10 @@ namespace Common.Constant
 {
     public class CommonConstant
     {
+        public static int RETURN_SUCCESS = 1;
+
         public static string DEFINE_ROLE = "ROLE";
+        public static string DEFINE_TYPE = "TYPE";
 
         public static string TYPE_CALENDAR = "CALENDAR";
         public static string TABLE_CALENDAR = "T_DCALENDAR";
@@ -48,8 +51,8 @@ namespace Common.Constant
         public static string ACTION_REJECT = "R";
 
         public static string INIT_REVISION = "00";
-        public static int MAX_NUMBER = 1224;
-        public static string REVISION_PREFIX = "R";
+        public static int MAX_NUMBER = 1155;
+        public static string REVISION_PREFIX = "";
 
         //Library
         public static string TYPE_LIBRARY = "LIBRARY";
@@ -60,5 +63,8 @@ namespace Common.Constant
         public static string ICON_COMPANY = "./images/comp.png";
         public static string ICON_DEPARTMENT = "./images/depart.png";
         public static string ICON_PERSON = "./images/user.png";
+
+        public static string TEXT_ENCRYPT_KEY = "SemsText";
+        public static string FILE_ENCRYPT_KEY = "SemsFile";
     }
 }

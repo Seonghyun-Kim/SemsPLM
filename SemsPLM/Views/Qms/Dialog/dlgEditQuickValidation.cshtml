@@ -9,15 +9,15 @@
                     <h2><i class="fas fa-edit"></i> 유효성검증 등록</h2>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btnEditQuickValidation" class="custom-button"><i class="fas fa-plus-square"></i>등록</button>
-                    <button id="btnCancelQuickValidation" class="custom-button"><i class="fas fa-window-close"></i>취소</button>
+                    <button id="btnEditQuickValidation" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnCancelQuickValidation" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
 <div>
-    <h3><i class="fas fa-caret-square-down"></i> 기본정보</h3>
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 기본정보</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <colgroup>
             <col style="width:180px;" />
@@ -68,8 +68,8 @@
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 문제요약</h3>
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 문제요약</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <colgroup>
             <col style="width:180px;" />
@@ -139,14 +139,14 @@
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 유효성검증</h3>
+<div style="margin-top:25px;">
+    <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 유효성검증</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <tr>
             <th><i class="fa fa-caret-right"></i> 구분</th>
-            <th><i class="fa fa-caret-right"></i> 1차 유효성검증</th>
-            <th><i class="fa fa-caret-right"></i> 2차 유효성검증</th>
-            <th><i class="fa fa-caret-right"></i> 3차 유효성검증</th>
+            <th>1차 유효성검증</th>
+            <th>2차 유효성검증</th>
+            <th>3차 유효성검증</th>
         </tr>
         <tr id="EditQuickValidationConfirmSt">
             <th><i class="fa fa-caret-right"></i> 검증시작일</th>
@@ -175,28 +175,6 @@
     </table>
 </div>
 
-<div>
-    <h3><i class="fas fa-caret-square-down"></i> 결재선지정</h3>
-    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-        <tr>
-            <th class="reqVal" style="width:180px;">
-            </th>
-            <th class="reqVal"> <i class="fa fa-caret-right"></i>검토자결재순서</th>
-            <th class="reqVal"><i class="fa fa-caret-right"></i>승인자결재순서</th>
-        </tr>
-        <tr>
-            <td><button id="btnEditQuickValidationApprovalLine" class="custom-button"><i class="fas fa-search"></i>결재선지정</button></td>
-            <td>
-                <div id="listEditQuickValidationApprovalconfirm" />
-            </td>
-            <td>
-                <div id="listEditQuickValidationApprovalcomplete" />
-            </td>
-        </tr>
-    </table>
-</div>
-
-
 <script>
     var Cnt = 3; // 유효성 검증 카운트
     $(function () {
@@ -206,11 +184,6 @@
         dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
         dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));
 
-        // 결재선 지정
-        var listEditQuickValidationApprovalconfirm$ = $("#listEditQuickValidationApprovalconfirm");
-        var listEditQuickValidationApprovalcomplete$ = $("#listEditQuickValidationApprovalcomplete");
-        listEditQuickValidationApprovalconfirm$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
-        listEditQuickValidationApprovalcomplete$.jqxListBox({ selectedIndex: 0, source: null, width: "100%", height: 120 });
         InitDlgValidation();
 
         // 저장
@@ -307,7 +280,7 @@
         // 담당자
         for (var i = 0; i < Cnt; i++) {
             innerHtml += "<td>";
-            innerHtml += "<input type='text' id='txtEditQuickValidationUser_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' style='width: 80px; margin - right: 5px;' data-Cnt=" + (i + 1) + " readOnly></input>";
+            innerHtml += "<input type='text' id='txtEditQuickValidationUser_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' style='width: 80px; height:32px; margin-right: 5px;' data-Cnt=" + (i + 1) + " readOnly></input>";
             innerHtml += "<button id='btnEditQuickValidationUserSearch_" + (i + 1) + "' class='custom-button'><i class='fas fa-search'></i>검색</button>"
             innerHtml += "</td>";
 

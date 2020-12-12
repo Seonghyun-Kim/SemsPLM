@@ -67,6 +67,7 @@
     var SearchECO_OemLib$ = $('#SearchChangeOrder_Oem_Lib');
     var SearchECO_CarLib$ = $('#SearchChangeOrder_Car_Lib');
     var SearchECO_PmsLib$ = $('#SearchChangeOrder_Pms_Lib');
+    var SearchECO_serchbtn$ = $('#SearchChangeOrder_btnSearch');
     $(function () {
         var SearchECO_dataAdapterOemSource =
         {
@@ -90,7 +91,7 @@
         SearchECO_PmsLib$.jqxComboBox({ selectedIndex: 0 });
 
         SearchECO_OemLib$.on('change', function (event) {
-            changeSearchECOComboBox(2, SearchECO_OemLib$.jqxComboBox('getSelectedItem').value);
+            changeSearchECOComboBox(2, SearchECO_OemLib$.val());
         });
 
         var SearchECOGrdSource = {
@@ -189,7 +190,6 @@
                         return false;
                     }
                     alert(res.responseText);
-                    console.log(res);
                 }
                 , complete: function () {
                     loading$.css('display', 'none');
@@ -200,7 +200,21 @@
 
         getSearchECOList(SearchECOGrdSource, SearchECOGrd$, null);
        
+        SearchECO_serchbtn$.on('click', function () {
+            var param = {};
+            if (SearchECO_OemLib$.val() != null && SearchECO_OemLib$.val() != undefined) {
+                param.Oem_Lib_OID = SearchECO_OemLib$.val();
+            }
+            if (SearchECO_CarLib$.val() != null && SearchECO_CarLib$.val() != undefined) {
+                param.Car_Lib_OID = SearchECO_CarLib$.val();
+            }
 
+            param.Name = $('#SearchChangeOrder_Name').val();
+            param.Oem_Eo = $('#SearchChangeOrder_Oem_Eo').val();
+            param.Title = $('#SearchChangeOrder_Title').val();
+            getSearchECOList(SearchECOGrdSource, SearchECOGrd$, param);
+
+        });
 
 
     });

@@ -1,0 +1,493 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="InfoBlockade_@ViewBag.Blockade.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>봉쇄조치</h3>
+                <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.Blockade.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoBlockade_defaultBtn_@ViewBag.Blockade.OID">
+                            <button id="InfoBlockade_EditBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            @*<button id="InfoBlockade_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                            <button id="InfoBlockade_EditCancleBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoBlockade_SaveBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoBlockade_ApprovalBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            @*@{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.Blockade.QuickOID });}*@
+
+
+            <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+            <table id="tbBlockadeList" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:9%" />
+                    <col style="width:22%" />
+                    <col style="width:22%" />
+                    <col style="width:8%" />
+                    <col style="width:9%" />
+                    <col style="width:11%" />
+                    <col style="width:19%" />
+                </colgroup>
+                <tr>
+                    <th>범위</th>
+                    <th>대상범위</th>
+                    <th>조치방법</th>
+                    <th>대상수량</th>
+                    <th>조치부서</th>
+                    <th>담당자</th>
+                    <th>기한</th>
+                </tr>
+            </table>
+
+            <label><i class="fas fa-caret-square-down"></i> 시정결과</label>
+            <table id="tbCorrectiveAction" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:9%" />
+                    <col style="width:11%" />
+                    <col style="width:11%" />
+                    <col style="width:11%" />
+                    <col style="width:11%" />
+                    <col style="width:11%" />
+                    <col style="width:11%" />
+                    <col style="width:25%" />
+                </colgroup>
+                <tr>
+                    <th rowspan="2">범위</th>
+                    <th colspan="2">선별</th>
+                    <th rowspan="2">재작업</th>
+                    <th rowspan="2">폐기</th>
+                    <th rowspan="2">특채</th>
+                    <th rowspan="2">기타</th>
+                    <th rowspan="2">비고</th>
+                </tr>
+                <tr>
+                    <th>적합</th>
+                    <th>부적합</th>
+                </tr>
+            </table>
+
+            <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+            <div id="InfoBlockade_FileList_@ViewBag.Blockade.OID" >
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var fileUpload = $("#InfoBlockade_FileList_@ViewBag.Blockade.OID").FileUpload({ OID : '@ViewBag.Blockade.OID'});
+
+    $(document).ready(function () {        
+        const BlockadeOID = '@ViewBag.Blockade.OID';
+        var BlockadeList = @Html.Raw(Json.Encode(ViewBag.BlockadeItems));
+
+        BlockadeList.forEach(function (v, i) {
+            PrintBlockade(v);
+            PrintCorrectiveAction(v);
+        });
+
+        $('#InfoBlockade_EditBtn_' + BlockadeOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + BlockadeOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);  
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + BlockadeOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + BlockadeOID).parent().append(modifyTag);
+
+            $("#InfoBlockade_EditBtn_" + BlockadeOID).css("display", "none");            
+            $("#InfoBlockade_SaveBtn_" + BlockadeOID).css("display", "inline-block");
+            $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).css("display", "inline-block");  
+
+            fileUpload.EditMode();
+        });
+
+        $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).jqxButton();
+        $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + BlockadeOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);             
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoBlockade_EditBtn_" + BlockadeOID).css("display", "inline-block");  
+            $("#InfoBlockade_SaveBtn_" + BlockadeOID).css("display", "none");
+            $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).css("display", "none");      
+
+            fileUpload.ReadOnlyMode();
+        });
+
+        $("#InfoBlockade_SaveBtn_" + BlockadeOID).jqxButton();
+        $('#InfoBlockade_SaveBtn_' + BlockadeOID).on("click", function () {
+            var param = {};
+            param.OID =  '@ViewBag.Blockade.OID';
+            param.BlockadeItems = [];
+
+            var tr$ = $("#tbBlockadeList tr[Data='Y']");
+
+            tr$.each(function (i, v) {
+                var data = {};
+                data.OID = $(v).attr("OID");
+                data.TargetScope = $($(v).find("[name='TargetScope']")[0]).val();
+                data.Act = $($(v).find("[name='Act']")[0]).val();
+                data.TargetCnt = $($(v).find("[name='TargetCnt']")[0]).val();
+                data.ActDepartmentOID = $($(v).find("[name='ActDepartment']")[0]).attr("ActDepartmentOID");
+                data.ActUserOID = $($(v).find("[name='ActUser']")[0]).attr("ActUserOID");
+                data.ActStartDt = $($(v).find("[name='ActStartDt']")[0]).val();
+                data.ActEndDt = $($(v).find("[name='ActEndDt']")[0]).val();
+
+                var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + param.OID + "']")[0];
+
+                data.SortSuitableCnt = $($(trCorrectiveAction$).find("[name='SortSuitableCnt']")[0]).val();
+                data.SortIncongruityCnt = $($(trCorrectiveAction$).find("[name='SortIncongruityCnt']")[0]).val();
+                data.ReworkCnt = $($(trCorrectiveAction$).find("[name='ReworkCnt']")[0]).val();
+                data.DisuseCnt = $($(trCorrectiveAction$).find("[name='DisuseCnt']")[0]).val();
+                data.SpecialCnt = $($(trCorrectiveAction$).find("[name='SpecialCnt']")[0]).val();
+                data.EtcCnt = $($(trCorrectiveAction$).find("[name='EtcCnt']")[0]).val();
+                data.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
+
+                param.BlockadeItems.push(data);
+            });
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+
+            //$.post('/Qms/SaveQuickBlockade', { param: param }, function (response) {
+            //    if (response.isError) {
+            //        alert(response.resultMessage);
+            //        return;
+            //    }
+            //    alert("저장되었습니다.");
+            //}).fail(function (err) {
+            //    alert(err.responseText);
+            //});
+
+            SendDataWithFile("/Qms/SaveQuickBlockade", param, Files, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+                PageReload();
+            });
+        });
+
+        $('#InfoBlockade_ApprovalBtn_' + BlockadeOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: BlockadeOID }, '/Common/Approval', '결재');
+        });
+
+        
+    });
+
+    function PrintBlockade(v) {
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("BlockadeType", v.Type);
+        tr$.setAttribute("OID", v.OID);
+        tr$.setAttribute("Data", "Y");
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+
+        var tdTargetScope$ = document.createElement("td");
+        var txtTargetScope$ = document.createElement("input");
+        txtTargetScope$.setAttribute("name", "TargetScope");
+        txtTargetScope$.setAttribute("type", "text");
+        txtTargetScope$.style.width = "100%";
+        txtTargetScope$.value = v.TargetScope;
+        txtTargetScope$.className = "Modifiable_@ViewBag.Blockade.OID";        
+        txtTargetScope$.setAttribute("readonly", "readonly");
+        txtTargetScope$.setAttribute("AttrType", "TEXT");
+        tdTargetScope$.appendChild(txtTargetScope$);
+
+        var tdAct$ = document.createElement("td");
+        var txtAct$ = document.createElement("input");
+        txtAct$.setAttribute("type", "text");
+        txtAct$.setAttribute("name", "Act");
+        txtAct$.style.width = "100%";
+        txtAct$.value = v.Act;
+        txtAct$.className = "Modifiable_@ViewBag.Blockade.OID"; 
+        txtAct$.setAttribute("readonly", "readonly");
+        txtAct$.setAttribute("AttrType", "TEXT");
+        tdAct$.appendChild(txtAct$);
+
+        var tdTargetCnt$ = document.createElement("td");
+        var txtTargetCnt$ = document.createElement("input");
+        txtTargetCnt$.setAttribute("type", "text");
+        txtTargetCnt$.setAttribute("name", "TargetCnt");
+        txtTargetCnt$.style.width = "100%";
+        txtTargetCnt$.style.height = "100%";
+        txtTargetCnt$.value = v.TargetCnt;
+        txtTargetCnt$.className = "Modifiable_@ViewBag.Blockade.OID";     
+        txtTargetCnt$.setAttribute("readonly", "readonly");   
+        txtTargetCnt$.setAttribute("AttrType", "TEXT");
+        tdTargetCnt$.appendChild(txtTargetCnt$);
+        /*
+          <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+         */ 
+        // 사용자하고 부서 선택해야함.
+        var tdActDepartmentOID$ = document.createElement("td");
+        
+        var txtActDepartment$ = document.createElement("input");
+        txtActDepartment$.setAttribute("type", "text");
+        txtActDepartment$.setAttribute("name", "ActDepartment");
+        txtActDepartment$.style.width = "100%";
+        txtActDepartment$.className = "txtbox";
+        txtActDepartment$.setAttribute("readonly", "readonly");   
+        txtActDepartment$.value = v.ActDepartmentNm;    
+        txtActDepartment$.setAttribute("ActDepartmentOID", v.ActUserOID);
+
+        tdActDepartmentOID$.appendChild(txtActDepartment$);
+
+        var tdActUserOID$ = document.createElement("td");
+        
+        var txtActUser$ = document.createElement("input");
+        txtActUser$.setAttribute("type", "text");
+        txtActUser$.setAttribute("name", "ActUser");
+        txtActUser$.style.width = "60%";
+        txtActUser$.style.height = "100%";
+        txtActUser$.className = "txtbox";
+        txtActUser$.setAttribute("readonly", "readonly");   
+        txtActUser$.value = v.ActUserNm;
+        txtActUser$.setAttribute("ActUserOID", v.ActUserOID);
+
+        tdActUserOID$.appendChild(txtActUser$);     
+
+        var btnActUserSearch$ = document.createElement("button");
+        btnActUserSearch$.style.float = "right";
+        btnActUserSearch$.className = "Modifiable_@ViewBag.Blockade.OID";    
+        btnActUserSearch$.setAttribute("AttrType", "BUTTON");
+        var iSearch = document.createElement("i");
+        iSearch.className = "fas fa-search";
+
+        btnActUserSearch$.appendChild(iSearch);
+        btnActUserSearch$.innerText = "검색";
+        $(btnActUserSearch$).on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                txtActUser$.value = res[0].Name;
+                txtActUser$.setAttribute("ActUserOID", res[0].OID);
+
+                txtActDepartment$.value = res[0].Depart;
+                txtActDepartment$.setAttribute("ActDepartmentOID", res[0].DepartOID);
+                
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        tdActUserOID$.appendChild(btnActUserSearch$);
+        
+        $(btnActUserSearch$).jqxButton({disabled: true});
+
+        var tdActDt$ = document.createElement("td");
+        var divActDt$ = document.createElement("div");
+        divActDt$.style.display = "flex";
+        divActDt$.style.flexDirection = "row";
+        var txtActStartDt$ = document.createElement("div");
+        txtActStartDt$.className = "Modifiable_@ViewBag.Blockade.OID";     
+        txtActStartDt$.setAttribute("name", "ActStartDt");
+        txtActStartDt$.setAttribute("AttrType", "DATE");
+        $(txtActStartDt$).jqxDateTimeInput(DateFormat);
+        $(txtActStartDt$).jqxDateTimeInput({
+            width: 140,
+            height:30,
+            theme: "Light",
+            disabled: true
+        });   
+        if (v.ActStartDt === null) {
+            $(txtActStartDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = v.ActStartDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(txtActStartDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        var txtActEndDt$ = document.createElement("div");
+        txtActEndDt$.className = "Modifiable_@ViewBag.Blockade.OID";     
+        txtActEndDt$.setAttribute("name", "ActEndDt");
+        txtActEndDt$.setAttribute("AttrType", "DATE");
+        $(txtActEndDt$).jqxDateTimeInput(DateFormat);
+        $(txtActEndDt$).jqxDateTimeInput({
+            width: 140,
+            height:30,
+            theme: "Light",
+            disabled: true
+        });   
+        if (v.ActEndDt === null) {
+            $(txtActEndDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = v.ActEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(txtActEndDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        var lbActDtRange$ = document.createElement("label");
+        lbActDtRange$.innerText = "~";
+            
+        divActDt$.appendChild(txtActStartDt$);
+        divActDt$.appendChild(lbActDtRange$);
+        divActDt$.appendChild(txtActEndDt$);
+        tdActDt$.appendChild(divActDt$);
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdTargetScope$);
+        tr$.appendChild(tdAct$);
+        tr$.appendChild(tdTargetCnt$);
+        tr$.appendChild(tdActDepartmentOID$);
+        tr$.appendChild(tdActUserOID$);
+        tr$.appendChild(tdActDt$);
+
+        document.getElementById("tbBlockadeList").appendChild(tr$);
+    }
+
+    function PrintCorrectiveAction(v) {
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("BlockadeType", v.Type);
+        tr$.setAttribute("OID", v.OID);
+
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+        
+        var tdSortSuitableCnt$ = document.createElement("td");
+        var txtSortSuitableCnt$ = document.createElement("input");
+        txtSortSuitableCnt$.setAttribute("type", "text");
+        txtSortSuitableCnt$.setAttribute("name", "SortSuitableCnt");
+        txtSortSuitableCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtSortSuitableCnt$.setAttribute("AttrType", "TEXT");
+        txtSortSuitableCnt$.style.width = "100%";
+        txtSortSuitableCnt$.value = v.SortSuitableCnt;   
+        tdSortSuitableCnt$.appendChild(txtSortSuitableCnt$);
+
+        var tdSortIncongruityCnt$ = document.createElement("td");
+        var txtSortIncongruityCnt$ = document.createElement("input");
+        txtSortIncongruityCnt$.setAttribute("type", "text");
+        txtSortIncongruityCnt$.setAttribute("name", "SortIncongruityCnt");
+        txtSortIncongruityCnt$.style.width = "100%";
+        txtSortIncongruityCnt$.value = v.SortIncongruityCnt;
+        txtSortIncongruityCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtSortIncongruityCnt$.setAttribute("AttrType", "TEXT");
+        tdSortIncongruityCnt$.appendChild(txtSortIncongruityCnt$);
+
+        var tdReworkCnt$ = document.createElement("td");
+        var txtReworkCnt$ = document.createElement("input");
+        txtReworkCnt$.setAttribute("type", "text");
+        txtReworkCnt$.setAttribute("name", "ReworkCnt");
+        txtReworkCnt$.style.width = "100%";
+        txtReworkCnt$.value = v.ReworkCnt;
+        txtReworkCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtReworkCnt$.setAttribute("AttrType", "TEXT");         
+        tdReworkCnt$.appendChild(txtReworkCnt$);
+
+        var tdDisuseCnt$ = document.createElement("td");
+        var txtDisuseCnt$ = document.createElement("input");
+        txtDisuseCnt$.setAttribute("type", "text");
+        txtDisuseCnt$.setAttribute("name", "DisuseCnt");
+        txtDisuseCnt$.style.width = "100%";
+        txtDisuseCnt$.value = v.DisuseCnt;
+        txtDisuseCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtDisuseCnt$.setAttribute("AttrType", "TEXT");                 
+        tdDisuseCnt$.appendChild(txtDisuseCnt$);
+
+        var tdSpecialCnt$ = document.createElement("td");
+        var txtSpecialCnt$ = document.createElement("input");
+        txtSpecialCnt$.setAttribute("type", "text");
+        txtSpecialCnt$.setAttribute("name", "SpecialCnt");
+        txtSpecialCnt$.style.width = "100%";
+        txtSpecialCnt$.value = v.SpecialCnt;
+        txtSpecialCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtSpecialCnt$.setAttribute("AttrType", "TEXT");                
+        tdSpecialCnt$.appendChild(txtSpecialCnt$);
+
+        var tdEtcCnt$ = document.createElement("td");
+        var txtEtcCnt$ = document.createElement("input");
+        txtEtcCnt$.setAttribute("type", "text");
+        txtEtcCnt$.setAttribute("name", "EtcCnt");
+        txtEtcCnt$.style.width = "100%";
+        txtEtcCnt$.value = v.EtcCnt;
+        txtEtcCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtEtcCnt$.setAttribute("AttrType", "TEXT");          
+        tdEtcCnt$.appendChild(txtEtcCnt$);
+
+        var tdDesc$ = document.createElement("td");
+        var txtDesc$ = document.createElement("input");
+        txtDesc$.setAttribute("type", "text");
+        txtDesc$.setAttribute("name", "Description");
+        txtDesc$.style.width = "100%";
+        txtDesc$.value = v.Description;
+        txtDesc$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtDesc$.setAttribute("AttrType", "TEXT");          
+        tdDesc$.appendChild(txtDesc$);
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdSortSuitableCnt$);
+        tr$.appendChild(tdSortIncongruityCnt$);
+        tr$.appendChild(tdReworkCnt$);
+        tr$.appendChild(tdDisuseCnt$);
+        tr$.appendChild(tdSpecialCnt$);
+        tr$.appendChild(tdEtcCnt$);
+        tr$.appendChild(tdDesc$);
+
+        document.getElementById("tbCorrectiveAction").appendChild(tr$);
+    }
+</script>

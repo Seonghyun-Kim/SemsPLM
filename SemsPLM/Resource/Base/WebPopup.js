@@ -73,6 +73,7 @@ function OpenApprovalPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
                         'OID': memList$.eq(index).attr('OID'),
                         'Name': memList$.eq(index).attr('Name'),
                         'Depart': memList$.eq(index).attr('Depart'),
+                        'DepartOID': memList$.eq(index).attr('DepartOID')
                     });   
                 }
                 if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
@@ -319,6 +320,176 @@ function OpenLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,_
     });
 }
 
+//Library Logic Dialog _Type = Create, Edit 에대한 액션을 받아온다
+function OpenCodeLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Type) {
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (700 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (560 / 2) + $(window).scrollTop();
+    var IsUse = 'Y';
+    $(popLayer).jqxWindow({
+        width: 700, maxWidth: 700, height: 560, minHeight: 560, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            if (_Type == "Edit") {
+                $('#dlgCodeLibraryManip_AddLib').css("display", "none");
+                var param = {};
+                param.OID = _Param;
+                RequestData("/Manage/SelCodeLibraryObject", param, function (res) {
+                    $('#dlgCodeLibraryManip_Code1').val(res.Code1);
+                    $('#dlgCodeLibraryManip_Code2').val(res.Code2);
+                    $('#dlgCodeLibraryManip_KorNm').val(res.KorNm);
+                    $('#dlgCodeLibraryManip_Ord').val(res.Ord);
+                    $('#dlgCodeLibraryManip_Description').val(res.Description);
+                    if (res.IsUse == "Y") {
+                        $('#dlgCodeLibraryManip_IsYes').jqxRadioButton({ width: "40%", height: 25, checked: true });
+                        $('#dlgCodeLibraryManip_IsNo').jqxRadioButton({ width: "40%", height: 25, checked: false });
+                    } else {
+                        $('#dlgCodeLibraryManip_IsYes').jqxRadioButton({ width: "40%", height: 25, checked: false });
+                        $('#dlgCodeLibraryManip_IsNo').jqxRadioButton({ width: "40%", height: 25, checked: true });
+                    }
+                });
+
+            } else if (_Type == "Create") {
+                $('#dlgCodeLibraryManip_EditLib').css("display", "none");
+                $('#dlgCodeLibraryManip_IsYes').jqxRadioButton({ width: "40%", height: 25, checked: true });
+                $('#dlgCodeLibraryManip_IsNo').jqxRadioButton({ width: "40%", height: 25, checked: false });
+            }
+
+
+            $("#dlgCodeLibraryManip_IsYes").on('change', function (event) {
+                checked = event.args.checked;
+                if (checked) {
+                    IsUse = "Y";
+                }
+            });
+
+            $("#dlgCodeLibraryManip_IsNo").on('change', function (event) {
+                checked = event.args.checked;
+                if (checked) {
+                    IsUse = "N";
+                }
+            });
+
+
+            $('#dlgCodeLibraryManip_AddLib').on('click', function () {
+                const param = {};
+                param.Code1 = $('#dlgCodeLibraryManip_Code1').val();
+                param.Code2 = $('#dlgCodeLibraryManip_Code2').val();
+                param.KorNm = $('#dlgCodeLibraryManip_KorNm').val();
+                param.Description = $('#dlgCodeLibraryManip_Description').val();
+                param.CreateUs = 1;
+                param.Ord = $('#dlgCodeLibraryManip_Ord').val();
+
+                param.IsUse = IsUse;
+                if (_Param == null || _Param == undefined) {
+                } else {
+                    param.FromOID = _Param;
+                }
+
+                if (param.Code1 == null || param.Code1.length < 1) {
+                    alert('코드를 입력해주세요.');
+                    return;
+                }
+
+                if (param.KorNm == null || param.KorNm.length < 1) {
+                    alert('이름을 입력해주세요.');
+                    return;
+                }
+                if (param.IsUse == null || param.IsUse.length < 1) {
+                    alert('사용여부를 선택해주세요.');
+                    return;
+                }
+
+                $.post('/Manage/InsertCodeLibrary', param, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction(response);
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                }).fail(function (err) {
+                    alert(err.responseText);
+                });
+            });
+
+            $('#dlgCodeLibraryManip_EditLib').on('click', function () {
+                const param = {};
+                param.OID = _Param;
+                param.Code1 = $('#dlgCodeLibraryManip_Code1').val();
+                param.Code2 = $('#dlgCodeLibraryManip_Code2').val();
+                param.KorNm = $('#dlgCodeLibraryManip_KorNm').val();
+                param.Description = $('#dlgCodeLibraryManip_Description').val();
+                param.CreateUs = 1;
+                param.Ord = $('#dlgCodeLibraryManip_Ord').val();
+
+                param.IsUse = IsUse;
+                if (_Param == null || _Param == undefined) {
+                } else {
+                    param.FromOID = _Param;
+                }
+
+                if (param.Code1 == null || param.Code1.length < 1) {
+                    alert('코드를 입력해주세요.');
+                    return;
+                }
+
+                if (param.KorNm == null || param.KorNm.length < 1) {
+                    alert('이름을 입력해주세요.');
+                    return;
+                }
+                if (param.IsUse == null || param.IsUse.length < 1) {
+                    alert('사용여부를 선택해주세요.');
+                    return;
+                }
+
+                $.post('/Manage/updateCodeLibrary', param, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("수정되었습니다.");
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction(param);
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                }).fail(function (err) {
+                    alert(err.responseText);
+                });
+            });
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}
+
+
 function OpenDepartmentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
@@ -555,3 +726,42 @@ function OpenApprovalDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     });
 }
 
+
+function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (960 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (795 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 960, maxWidth: 960, height: 795, minHeight: 795, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}

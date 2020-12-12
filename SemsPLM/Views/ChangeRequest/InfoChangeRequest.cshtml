@@ -10,7 +10,7 @@
             <li class="tab" info="Apphis"><i class="fas fa-file"></i> 결재이력</li>
             <li class="tab" info="Downhis"><i class="fas fa-file-medical"></i> 다운로드이력 </li>
             <li class="tab" info="EcrStatement"><i class="fas fa-stream"></i> 변경요청내역</li>
-            <li class="tab" info=""><i class="fas fa-list"></i> 연관 ECO </li>
+            @*<li class="tab" info="EcoRelation"><i class="fas fa-list"></i> 연관 ECO </li>*@
         </ul>
     </div>
 
@@ -197,7 +197,6 @@
                             <input type="text" readonly="readonly" id="InfoECRStatus_@ViewBag.ECRDetail.OID" value="@ViewBag.ECRDetail.BPolicy.Name" />
                         </td>
                     </tr>
-
                 </table>
 
                 <h3 class="infoH3"><i class="fas fa-caret-down"></i> 연관 ECO</h3>
@@ -323,6 +322,12 @@
             <div id="EcrStatementInfo_@ViewBag.ECRDetail.OID">
             </div>
         </div>
+        
+        @*<div id="EcoRelation" class="basic_grid dective">
+            <div id="EcoRelationInfo_@ViewBag.ECRDetail.OID">
+            </div>
+        </div>*@
+
     </div>
 </div>
 
@@ -539,8 +544,9 @@
             } else if (infoValue == 'EcrStatement') {
                 var selRow;
                 var rowKey = null;
+                var rowDataField = null;
                 var param = {};
-                param.Type = '@Common.Constant.EoConstant.TYPE_MBOM_STATEMENT';
+                param.Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
                 param.RootOID = @ViewBag.ECRDetail.OID;
 
                 var EcrStatementSource = {
@@ -559,9 +565,14 @@
                         { name: 'CreateUsNm' },
                         { name: 'CreateDt', type: 'date' },
                     ],
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+
+                    }
                 }
 
                 const EcrStatementGrid$ = $('#EcrStatementInfo_@ViewBag.ECRDetail.OID');
+                EcrStatementGrid$.jqxGrid('render');
                 EcrStatementGrid$.jqxGrid({
                     theme: "kdnc",
                     width: "100%",
@@ -598,20 +609,17 @@
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
                                 var div = '<div class="basic_image ChangeRequestImg">';
-                                    div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
-                                    div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                                    div += '<ul class="image_thumbnail" id="uploadResult1_' + uid+'"></div>';
-                                    $(htmlElement).append(div);
+                                div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
+                                $(htmlElement).append(div);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone1_' + uid).empty();
+                                    $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
                             },
                             initwidget: function (row, column, value, htmlElement) {
-                                if (EcrStatementGrid$.jqxGrid('getrowdata', row) != null && EcrStatementGrid$.jqxGrid('getrowdata', row) != undefined) {
-                                    var uid = EcrStatementGrid$.jqxGrid('getrowdata', row).uid;
-                                    if (value != null && value != '') {
-                                        $(htmlElement).find('#dropZone1_' + uid).empty();
-                                        $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
 
-                                    }
-                                }
                             }
                         },
                         {
@@ -619,20 +627,18 @@
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
                                 var div = '<div class="basic_image ChangeRequestImg">';
-                                    div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
-                                    div += '<div class="image_inputbox" id="dropZone2_' + uid+'"><span class="imgPlaceholder">이미지</span></div>';
-                                    div += '<ul class="image_thumbnail" id="uploadResult2_' + uid+'"></div>';
-                                    $(htmlElement).append(div);
+                                div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
+                                $(htmlElement).append(div);
                                 dropImage(uid);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone2_' + uid).empty();
+                                    $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
                             },
                             initwidget: function (row, column, value, htmlElement) {
-                                if (EcrStatementGrid$.jqxGrid('getrowdata', row) != null && EcrStatementGrid$.jqxGrid('getrowdata', row) != undefined) {
-                                    var uid = EcrStatementGrid$.jqxGrid('getrowdata', row).uid;
-                                    if (value != null && value != '') {
-                                        $(htmlElement).find('#dropZone2_' + uid).empty();
-                                        $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                                    }
-                                }
+
                             }
                         },
                         { text: '변경 내역', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
@@ -658,16 +664,24 @@
                         EcrStatementAddBtn$.on('click', function (e) {
                             var rowData = {};
                             rowData.RootOID = @ViewBag.ECRDetail.OID;
-                            rowData.Type = '@Common.Constant.EoConstant.TYPE_MBOM_STATEMENT';
+                            rowData.Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
                             EcrStatementGrid$.jqxGrid('addrow', null, rowData);
                             EcrStatementGrid$.jqxGrid({ editable: true });
                         });
 
+                        EcrStatementGrid$.on('cellclick', function (event) {
+                            // event arguments.
+                            var args = event.args;
+                            rowKey = args.rowindex;
+                            rowDataField = args.datafield;
+
+                        });
+
                         EcrStatementSaveBtn$.on('click', function (e) {
+                            EcrStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
                             var data = EcrStatementGrid$.jqxGrid('getrows');
                             for (var i = 0; i < data.length; i++) {
                                 var cellData = EcrStatementGrid$.jqxGrid('getcelltext', i, 'PNo');
-                                console.log(cellData);
                                 if (cellData == null || cellData == undefined || cellData == '') {
                                     alert('P/NO를 입력해주세요');
                                     return false;
@@ -676,8 +690,8 @@
                             if (confirm("저장하시겠습니까?")) {
                                 var iData = {};
                                 iData.RootOID = @ViewBag.ECRDetail.OID;
-                                iData.Type = '@Common.Constant.EoConstant.TYPE_MBOM_STATEMENT';
-                        
+                                iData.Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
+
                                 RequestData('/ChangeRequest/InsECRContents', { _param: data, delData: iData }, function (response) {
                                     if (response.isError) {
                                         alert(response.resultMessage);
@@ -687,6 +701,7 @@
                                     getBomList(EcrStatementSource, EcrStatementGrid$, param);
                                 });
                             }
+
                         });
 
                         EcrStatementDelBtn$.on('click', function (e) {
@@ -704,12 +719,9 @@
                             }
                         });
                     }
-
-
                 });
                 getBomList(EcrStatementSource, EcrStatementGrid$, param);
-
-            }
+            } 
         });
         $('.info_focus').click();
     });

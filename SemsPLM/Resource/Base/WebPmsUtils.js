@@ -358,22 +358,54 @@ function fMaxDate(all_dates) {
     return max_dt;
 }
 
+function fDependencyRescureControl(_projOid, _selData) {
+    const obj$ = gPmsModifyHistoryMaster[_projOid].obj;
+    const allDatas = fPmsArrayTasks(obj$.jqxTreeGrid('getRows'));
+
+    const targetData = fListMatch(allDatas, function (x) { return x.Id == _selData.Dependency });
+    if (targetData.length > 0) {
+        for (var index = 0; index < targetData.length; index++) {
+            obj$.jqxTreeGrid('setCellValue', _selData.ToOID, 'EstStartDt', fWeekendCalcDuration(targetData[index].EstEndDt, 2, _selData.WorkingDay, gPmsModifyHistoryHoliday[_projOid]));
+        }
+    }
+    fDependencyRescureDataControl(obj$, _projOid, _selData, allDatas);
+}
+
+function fDependencyRescureDataControl(obj$, projOid, selData, datas) {
+    const targetData = fListMatch(datas, function (x) { return x.Dependency == selData.Id });
+    if (targetData.length > 0) {
+        for (var index = 0; index < targetData.length; index++) {
+            obj$.jqxTreeGrid('setCellValue', targetData[index].ToOID, 'EstStartDt', fWeekendCalcDuration(selData.EstEndDt, 2, selData.WorkingDay, gPmsModifyHistoryHoliday[projOid]));
+            fDependencyRescureDataControl(obj$, projOid, targetData[index], datas);
+        }
+    }
+}
+
 function fDependencyControl(_projOid) {
     const obj$ = gPmsModifyHistoryMaster[_projOid].obj;
     const allDatas = fPmsArrayTasks(obj$.jqxTreeGrid('getRows'));
+
     for (var index = 0; index < allDatas.length; index++) {
-        if (allDatas[index].Dependency != null && allDatas[index].Dependency.length > 0) {
-            const val = allDatas[index].Dependency;
-            if (val.length > 0) {
-                const splitValue = val.split(':');
-                var splitDuration = 0;
-                if (splitValue.length > 1) {
-                    splitDuration = parseInt(splitValue[1]) - 1;
-                }
-                const targetData = fListMatch(allDatas, function (x) { return x.Id == splitValue[0] });
-                if (targetData.length > 0) {
-                    obj$.jqxTreeGrid('setCellValue', allDatas[index].ToOID, 'EstStartDt', fWeekendCalcDuration(targetData[0].EstEndDt, (2 + splitDuration), allDatas[index].WorkingDay, gPmsModifyHistoryHoliday[_projOid]));
-                }
+        fDependencyDataControl(obj$, _projOid, index, allDatas);
+    }
+
+    for (var index = allDatas.length - 1; index >= 0; --index) {
+        fDependencyDataControl(obj$, _projOid, index, allDatas);
+    }
+}
+
+function fDependencyDataControl(obj$, projOid, idx, datas) {
+    if (datas[idx].Dependency != null && datas[idx].Dependency.length > 0) {
+        const val = datas[idx].Dependency;
+        if (val.length > 0) {
+            const splitValue = val.split(':');
+            var splitDuration = 0;
+            if (splitValue.length > 1) {
+                splitDuration = parseInt(splitValue[1]) - 1;
+            }
+            const targetData = fListMatch(datas, function (x) { return x.Id == splitValue[0] });
+            if (targetData.length > 0) {
+                obj$.jqxTreeGrid('setCellValue', datas[idx].ToOID, 'EstStartDt', fWeekendCalcDuration(targetData[0].EstEndDt, (2 + splitDuration), datas[idx].WorkingDay, gPmsModifyHistoryHoliday[projOid]));
             }
         }
     }

@@ -1490,7 +1490,7 @@ License: https://jqwidgets.com/license/
             return this._updating;
         },
 
-        databind: function ( source, reason, done ) {
+        databind: function (source, reason, done) {
             if ( this.loadingstate === true ) {
                 return;
             }
@@ -1813,8 +1813,7 @@ License: https://jqwidgets.com/license/
                     }
                 }
             }
-
-            this.dataview.databind( source );
+            this.dataview.databind(source);
         },
 
         _raiseEvent: function ( id, arg ) {
@@ -5846,13 +5845,15 @@ License: https://jqwidgets.com/license/
             this.hidedetailsbykey( key );
         },
 
-        setCellValueByKey: function ( key, datafield, value ) {
+        setCellValueByKey: function (key, datafield, value) {
             var that = this;
             var row = this.rowsByKey[ key ];
             var index = this.getrowindex( row );
             var datarow = row;
 
-            if ( datarow != null && datarow[ datafield ] == value ) {
+            //modify by ihjung
+            if (datarow != null && !this.treeGrid && datarow[datafield] == value) {
+            //if ( datarow != null && datarow[ datafield ] == value ) {
                 return false;
             }
 
@@ -6017,7 +6018,7 @@ License: https://jqwidgets.com/license/
             this._renderrows();
         },
 
-        setCellValue: function ( row, datafield, value ) {
+        setCellValue: function (row, datafield, value) {
             if ( row == null || datafield == null )
                 return false;
 

@@ -2,10 +2,11 @@
     Layout = null;
 }
 
-    <div>
-        <label>기본정보</label>
+    <div class="qmsDlgTable">
         <table class="infoTable" style="table-layout:fixed;">
             <colgroup>
+                <col style="width:190px;" />
+                <col style="width:auto;" />
                 <col style="width:190px;" />
                 <col style="width:auto;" />
                 <col style="width:190px;" />
@@ -13,82 +14,76 @@
             </colgroup>
             <tbody>
                 <tr>
+                    <th colspan="6"><i class="fas fa-caret-square-down" onclick="">기본정보</i></th>
+                </tr>
+                <tr>
                     <th><label class="lbText">신속대응 No</label></th>
                     <td>@Model.Name</td>
                     <th><label class="lbText">공장</label></th>
                     <td>@Model.PlantNm</td>
+                    <th><label class="lbText">품번</label></th>
+                    <td>@Model.PartNo</td>                  
                 </tr>
                 <tr>
-                    <th><label class="lbText">품번</label></th>
-                    <td>@Model.PartNo</td>
                     <th><label class="lbText">품명</label></th>
                     <td>@Model.PartNm</td>
-                </tr>
-                <tr>
                     <th><label class="lbText">LOT NO</label></th>
                     <td>@Model.LotNo</td>
                     <th><label class="lbText">불량수량</label></th>
-                    <td>@Model.PoorCnt</td>
+                    <td>@Model.PoorCnt</td>                    
                 </tr>
                 <tr>
                     <th><label class="lbText">고객사</label></th>
                     <td>@Model.OemNm</td>
                     <th><label class="lbText">품질담당자</label></th>
                     <td>@Model.WorkUserNm</td>
+                    <th><label class="lbText">발생유형</label></th>
+                    <td>@Model.OccurrenceNm</td>                  
                 </tr>
                 <tr>
-                    <th><label class="lbText">발생유형</label></th>
-                    <td>@Model.OccurrenceNm</td>
                     <th><label class="lbText">작성일자</label></th>
                     <td>@(Model.WriteDt == null ? "" : Model.WriteDt.ToString("yyyy-MM-dd"))</td>
+                    <td colspan="4"></td>
                 </tr>
-            </tbody>
-        </table>
-        <label>문제요약</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
+                <tr>
+                    <th colspan="6"><i class="fas fa-caret-square-down">문제요약</i></th>
+                </tr>
                 <tr>
                     <th><label class="lbText">제목</label></th>
                     <td colspan="3">@Model.Title</td>
-                </tr>
-                <tr>
                     <th><label class="lbText">발생처</label></th>
                     <td>@Model.OccurrenceAreaNm</td>
-                    <th><label class="lbText">결함정도</label></th>
-                    <td>@Model.DefectDegreeNm</td>
                 </tr>
                 <tr>
+                    <th><label class="lbText">결함정도</label></th>
+                    <td>@Model.DefectDegreeNm</td>
                     <th><label class="lbText">귀책구분</label></th>
                     <td>@Model.ImputeNm</td>
                     <th><label class="lbText">귀책처</label></th>
-                    <td>@(Model.ImputeDepartmentOID != null ? Model.ImputeDepartmentNm : Model.ImputeSupplierNm)</td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">불량내용상세</label></th>
-                    <td colspan="3">@Model.PoorDetail</td>
+                    <td>@(Model.ImputeDepartmentOID != null ? Model.ImputeDepartmentNm : Model.ImputeSupplierNm)</td>                
                 </tr>
                 <tr>
                     <th><label class="lbText">재발여부</label></th>
                     <td>@(Model.RecurrenceFl == true ? "Y" : "N")</td>
                     <th><label class="lbText">발생장소</label></th>
                     <td>@Model.OccurrencePlace</td>
-                </tr>
-                <tr>
                     <th><label class="lbText">발생일자</label></th>
                     <td>@(Model.OccurrenceDt == null ? "" : Model.OccurrenceDt.ToString("yyyy-MM-dd"))</td>
-                    <th><label class="lbText">유발공정</label></th>
-                    <td>@Model.InduceNm</td>
                 </tr>
                 <tr>
+                    <th><label class="lbText">불량내용상세</label></th>
+                    <td colspan="5">@Model.PoorDetail</td>
+                </tr>
+                <tr>                    
+                    <th><label class="lbText">유발공정</label></th>
+                    <td>@Model.InduceNm</td>
                     <th><label class="lbText">판정</label></th>
                     <td colspan="3">@Model.CorrectDecisionNm</td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+<script type="text/javascript">
+    function Close
+</script>

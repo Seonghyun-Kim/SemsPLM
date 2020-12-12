@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+ namespace="Econtents"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <alias>
+    <typeAlias alias="ProblemsLibrary"  type="Econtents.Models.ProblemsLibrary" />
+  </alias>
+
+  <statements>
+    <select id="SelProblemsLibrary" parameterClass="ProblemsLibrary" resultClass="ProblemsLibrary">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPROBLEMS_LIBRARY B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'ECONTENT'
+      <isNotNull property="OID">
+        AND A.OID = #OID#
+      </isNotNull>
+    </select>
+    
+    
+    <insert id="InsProblemsLibrary" parameterClass="ProblemsLibrary" >
+      INSERT INTO T_DPROBLEMS_LIBRARY
+      ( OID
+      , Car_Lib_OID
+      , Product
+      , Part
+      , Occurrence
+      , Stage_Occurrence
+      , Failure_Type
+      , Division
+      , Issues
+      , Issues_Thumbnail
+      , Cause
+      , Cause_Thumbnail
+      , Countermeasures
+      , Countermeasures_Thumbnail
+      )
+      VALUES
+      ( #OID#
+      , #Car_Lib_OID#
+      , #Product#
+      , #Part#
+      , #Occurrence#
+      , #Stage_Occurrence#
+      , #Failure_Type#
+      , #Division#
+      , #Issues#
+      , #Issues_Thumbnail#
+      , #Cause#
+      , #Cause_Thumbnail#
+      , #Countermeasures#
+      , #Countermeasures_Thumbnail#
+      )
+    </insert>
+    
+  </statements>
+</sqlMap>

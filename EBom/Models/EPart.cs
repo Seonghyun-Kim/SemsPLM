@@ -21,13 +21,13 @@ namespace EBom.Models
         public string Eo_No_History { get; set; }
         public string Etc { get; set; }
         public int? ApprovOID { get; set; }
-        public string EPartType { get; set; }
+        public int? EPartType { get; set; } //제품 구분
         public string Sel_Eo { get; set; }
         public DateTime? Sel_Eo_Dt { get; set; }
         public string Spec { get; set; }
         public string Surface { get; set; }
         public int? Oem_Lib_OID { get; set; }
-        public int? Car_Lib_OID { get; set; }
+        public int? Car_Lib_OID { get; set; } //차종
         public int? Pms_OID { get; set; }
         public int? Prod_Lib_Lev1_OID { get; set; }
         public int? Prod_Lib_Lev2_OID { get; set; }
@@ -38,12 +38,25 @@ namespace EBom.Models
 
 
         public string Oem_Lib_NM { get; set; }
-        public string Car_Lib_NM { get; set; }
+        public string Car_Lib_Nm { get; set; }
         public string Pms_NM { get; set; }
         public string Prod_Lib_Lev1_NM { get; set; }
         public string Prod_Lib_Lev2_NM { get; set; }
         public string Prod_Lib_Lev3_NM { get; set; }
-        public string Material_NM { get; set; }
+        public string Material_Nm { get; set; }
+
+        public string Division { get; set; } //구분
+        public int? ITEM_No { get; set; } //ITEM_NO
+        public string ITEM_NoNm { get; set; } //ITEM_NO
+        public int? ITEM_Middle { get; set; } //ITEM_Middle
+        public string ITEM_MiddleNm { get; set; }
+        public int? Production_Place { get; set; } //생산지 PRODUCTION_PLACE
+        public string Production_PlaceNm { get; set; }
+        public int? Block_No { get; set; } //BLOCK_NO
+        public string Block_NoNm { get; set; } //BLOCK_NONm
+        public string Serial { get; set; } //시리얼 
+        public string Sel_Revision { get; set; } //고객 리비전
+        public string EPartTypeNm { get; set; }
 
 
         public int? RootOID { get; set; }
@@ -51,6 +64,9 @@ namespace EBom.Models
         public int? ToOID { get; set; }
 
         public int? isDuplicate { get; set; }
+
+        public string StartCreateDt { get; set; }
+        public string EndCreateDt { get; set; }
     }
 
     public static class EPartRepository
@@ -59,17 +75,33 @@ namespace EBom.Models
         public static List<EPart> SelEPart(EPart _param)
         {
             _param.Type = EBomConstant.TYPE_PART;
+            //_param.StartCreateDt = 
             List<EPart> lEPart = DaoFactory.GetList<EPart>("EBom.SelEPart", _param);
             lEPart.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
-                if (obj.Oem_Lib_OID != null)
-                {
-                    obj.Oem_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = obj.Oem_Lib_OID }).KorNm;
-                }
                 if (obj.Car_Lib_OID != null)
                 {
-                    obj.Car_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                    obj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                }
+                if (obj.Block_No != null)
+                {
+                    if (obj.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
+                    {
+                        obj.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                    else
+                    {
+                        obj.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                }
+                if (obj.Material_OID != null)
+                {
+                    obj.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Material_OID }).KorNm;
+                }
+                if (obj.ITEM_No != null)
+                {
+                    obj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ITEM_No }).KorNm;
                 }
             });
             return lEPart;
@@ -82,31 +114,40 @@ namespace EBom.Models
             EPart lEPart = DaoFactory.GetData<EPart>("EBom.SelEPart", new EPart { Type = EBomConstant.TYPE_PART, OID = _param.OID });
             lEPart.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lEPart.Type, OID = lEPart.BPolicyOID }).First();
 
-            if (lEPart.Oem_Lib_OID != null)
+            if (lEPart.ITEM_No != null)
             {
-                lEPart.Oem_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Oem_Lib_OID }).KorNm;
+                lEPart.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_No }).KorNm;
+            }
+            if (lEPart.ITEM_Middle != null)
+            {
+                lEPart.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_Middle }).KorNm;
+            }
+            if(lEPart.EPartType != null)
+            {
+                lEPart.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = Convert.ToInt32(lEPart.EPartType) }).KorNm;
+            }
+            if (lEPart.Production_Place != null)
+            {
+                lEPart.Production_PlaceNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Production_Place }).KorNm;
+            }
+            if (lEPart.Block_No != null)
+            {
+                if (lEPart.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
+                {
+                    lEPart.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
+                }
+                else
+                {
+                    lEPart.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
+                }
             }
             if (lEPart.Car_Lib_OID != null)
             {
-                lEPart.Car_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Car_Lib_OID }).KorNm;
+                lEPart.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Car_Lib_OID }).KorNm;
             }
-
             if (lEPart.Material_OID != null)
             {
-                lEPart.Material_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Material_OID }).KorNm;
-            }
-
-            if (lEPart.Prod_Lib_Lev1_OID != null)
-            {
-                lEPart.Prod_Lib_Lev1_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Prod_Lib_Lev1_OID }).KorNm;
-            }
-            if (lEPart.Prod_Lib_Lev2_OID != null)
-            {
-                lEPart.Prod_Lib_Lev2_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Prod_Lib_Lev2_OID }).KorNm;
-            }
-            if (lEPart.Prod_Lib_Lev3_OID != null)
-            {
-                lEPart.Prod_Lib_Lev3_NM = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Prod_Lib_Lev3_OID }).KorNm;
+                lEPart.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Material_OID }).KorNm;
             }
 
 
@@ -144,25 +185,23 @@ namespace EBom.Models
             getStructure.ObjRevision = PataData.Revision;
             getStructure.ObjTdmxOID = PataData.TdmxOID;
             getStructure.ObjIsLatest = PataData.IsLatest;
-            getStructure.ObjTitle = PataData.Title;
-            getStructure.ObjRep_Part_No = PataData.Rep_Part_No;
-            getStructure.ObjRep_Part_No2 = PataData.Rep_Part_No2;
-            getStructure.ObjEo_No = PataData.Eo_No;
-            getStructure.ObjEtc = PataData.Etc;
-            getStructure.ObjApprovOID = PataData.ApprovOID;
             getStructure.ObjEPartType = PataData.EPartType;
             getStructure.ObjThumbnail = PataData.Thumbnail;
-            getStructure.ObjSel_Eo = PataData.Sel_Eo;
-            getStructure.ObjSel_Eo_Dt = PataData.Sel_Eo_Dt;
-            getStructure.ObjSpec = PataData.Spec;
-            getStructure.ObjSurface = PataData.Surface;
-            getStructure.ObjOem_Lib_OID = PataData.Oem_Lib_OID;
             getStructure.ObjCar_Lib_OID = PataData.Car_Lib_OID;
-            getStructure.ObjPms_OID = PataData.Pms_OID;
-            getStructure.ObjProd_Lib_Lev1_OID = PataData.Prod_Lib_Lev1_OID;
-            getStructure.ObjProd_Lib_Lev2_OID = PataData.Prod_Lib_Lev2_OID;
-            getStructure.ObjProd_Lib_Lev3_OID = PataData.Prod_Lib_Lev3_OID;
-            getStructure.ObjCar_Lib_NM = PataData.Car_Lib_NM;
+            getStructure.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
+            getStructure.ObjDivision = PataData.Division;
+            getStructure.ObjITEM_No = PataData.ITEM_No;
+            getStructure.ObjITEM_NoNm = PataData.ITEM_NoNm;
+            getStructure.ObjITEM_Middle = PataData.ITEM_Middle;
+            getStructure.ObjITEM_MiddleNm = PataData.ITEM_MiddleNm;
+            getStructure.ObjProduction_Place = PataData.Production_Place;
+            getStructure.ObjProduction_PlaceNm = PataData.Production_PlaceNm;
+            getStructure.ObjMaterial_OID = PataData.Material_OID;
+            getStructure.ObjMaterial_Nm = PataData.Material_Nm;
+            getStructure.ObjBlock_No = PataData.Block_No;
+            getStructure.ObjBlock_NoNm = PataData.Block_NoNm;
+            getStructure.ObjSerial = PataData.Serial;
+            getStructure.ObjSel_Revision = PataData.Sel_Revision;
 
             getStructure.BPolicy = PataData.BPolicy;
 
@@ -195,25 +234,23 @@ namespace EBom.Models
                 Obj.ObjRevision = PataData.Revision;
                 Obj.ObjTdmxOID = PataData.TdmxOID;
                 Obj.ObjIsLatest = PataData.IsLatest;
-                Obj.ObjTitle = PataData.Title;
-                Obj.ObjRep_Part_No = PataData.Rep_Part_No;
-                Obj.ObjRep_Part_No2 = PataData.Rep_Part_No2;
-                Obj.ObjEo_No = PataData.Eo_No;
-                Obj.ObjEtc = PataData.Etc;
-                Obj.ObjApprovOID = PataData.ApprovOID;
                 Obj.ObjEPartType = PataData.EPartType;
                 Obj.ObjThumbnail = PataData.Thumbnail;
-                Obj.ObjSel_Eo = PataData.Sel_Eo;
-                Obj.ObjSel_Eo_Dt = PataData.Sel_Eo_Dt;
-                Obj.ObjSpec = PataData.Spec;
-                Obj.ObjSurface = PataData.Surface;
-                Obj.ObjOem_Lib_OID = PataData.Oem_Lib_OID;
                 Obj.ObjCar_Lib_OID = PataData.Car_Lib_OID;
-                Obj.ObjPms_OID = PataData.Pms_OID;
-                Obj.ObjProd_Lib_Lev1_OID = PataData.Prod_Lib_Lev1_OID;
-                Obj.ObjProd_Lib_Lev2_OID = PataData.Prod_Lib_Lev2_OID;
-                Obj.ObjProd_Lib_Lev3_OID = PataData.Prod_Lib_Lev3_OID;
-                Obj.ObjCar_Lib_NM = PataData.Car_Lib_NM;
+                Obj.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
+                Obj.ObjDivision = PataData.Division;
+                Obj.ObjITEM_No = PataData.ITEM_No;
+                Obj.ObjITEM_NoNm = PataData.ITEM_NoNm;
+                Obj.ObjITEM_Middle = PataData.ITEM_Middle;
+                Obj.ObjITEM_MiddleNm = PataData.ITEM_MiddleNm;
+                Obj.ObjProduction_Place = PataData.Production_Place;
+                Obj.ObjProduction_PlaceNm = PataData.Production_PlaceNm;
+                Obj.ObjMaterial_OID = PataData.Material_OID;
+                Obj.ObjMaterial_Nm = PataData.Material_Nm;
+                Obj.ObjBlock_No = PataData.Block_No;
+                Obj.ObjBlock_NoNm = PataData.Block_NoNm;
+                Obj.ObjSerial = PataData.Serial;
+                Obj.ObjSel_Revision = PataData.Sel_Revision;
 
                 Obj.BPolicy = PataData.BPolicy;
 
@@ -244,7 +281,16 @@ namespace EBom.Models
             getStructure.ObjEtc = PataData.Etc;
             getStructure.ObjApprovOID = PataData.ApprovOID;
             getStructure.ObjEPartType = PataData.EPartType;
-            //getStructure.ObjThumbnail = PataData.Thumbnail;
+            getStructure.ObjITEM_No = PataData.ITEM_No;
+            getStructure.ObjITEM_NoNm = PataData.ITEM_NoNm;
+            getStructure.ObjITEM_Middle = PataData.ITEM_Middle;
+            getStructure.ObjITEM_MiddleNm = PataData.ITEM_MiddleNm;
+            getStructure.ObjProduction_Place = PataData.Production_Place;
+            getStructure.ObjProduction_PlaceNm = PataData.Production_PlaceNm;
+            getStructure.ObjMaterial_OID = PataData.Material_OID;
+            getStructure.ObjMaterial_Nm = PataData.Material_Nm;
+            getStructure.ObjBlock_No = PataData.Block_No;
+            getStructure.ObjBlock_NoNm = PataData.Block_NoNm;
             getStructure.ObjSel_Eo = PataData.Sel_Eo;
             getStructure.ObjSel_Eo_Dt = PataData.Sel_Eo_Dt;
             getStructure.ObjSpec = PataData.Spec;
@@ -256,7 +302,7 @@ namespace EBom.Models
             getStructure.ObjProd_Lib_Lev2_OID = PataData.Prod_Lib_Lev2_OID;
             getStructure.ObjProd_Lib_Lev3_OID = PataData.Prod_Lib_Lev3_OID;
 
-            getStructure.ObjCar_Lib_NM = PataData.Car_Lib_NM;
+            getStructure.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
 
             getStructure.BPolicy = PataData.BPolicy;
 
@@ -294,7 +340,16 @@ namespace EBom.Models
                 Obj.ObjEtc = PataData.Etc;
                 Obj.ObjApprovOID = PataData.ApprovOID;
                 Obj.ObjEPartType = PataData.EPartType;
-                //Obj.ObjThumbnail = PataData.Thumbnail;
+                Obj.ObjITEM_No = PataData.ITEM_No;
+                Obj.ObjITEM_NoNm = PataData.ITEM_NoNm;
+                Obj.ObjITEM_Middle = PataData.ITEM_Middle;
+                Obj.ObjITEM_MiddleNm = PataData.ITEM_MiddleNm;
+                Obj.ObjProduction_Place = PataData.Production_Place;
+                Obj.ObjProduction_PlaceNm = PataData.Production_PlaceNm;
+                Obj.ObjMaterial_OID = PataData.Material_OID;
+                Obj.ObjMaterial_Nm = PataData.Material_Nm;
+                Obj.ObjBlock_No = PataData.Block_No;
+                Obj.ObjBlock_NoNm = PataData.Block_NoNm;
                 Obj.ObjSel_Eo = PataData.Sel_Eo;
                 Obj.ObjSel_Eo_Dt = PataData.Sel_Eo_Dt;
                 Obj.ObjSpec = PataData.Spec;
@@ -306,7 +361,7 @@ namespace EBom.Models
                 Obj.ObjProd_Lib_Lev2_OID = PataData.Prod_Lib_Lev2_OID;
                 Obj.ObjProd_Lib_Lev3_OID = PataData.Prod_Lib_Lev3_OID;
 
-                Obj.ObjCar_Lib_NM = PataData.Car_Lib_NM;
+                Obj.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
 
                 Obj.BPolicy = PataData.BPolicy;
             }
@@ -328,7 +383,7 @@ namespace EBom.Models
                 }
                 if (obj.Car_Lib_OID != null)
                 {
-                    obj.Car_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                    obj.Car_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
                 }
             });
 
@@ -366,26 +421,23 @@ namespace EBom.Models
                 getStructure.ObjRevision = obj.Revision;
                 getStructure.ObjTdmxOID = obj.TdmxOID;
                 getStructure.ObjIsLatest = obj.IsLatest;
-                getStructure.ObjTitle = obj.Title;
-                getStructure.ObjRep_Part_No = obj.Rep_Part_No;
-                getStructure.ObjRep_Part_No2 = obj.Rep_Part_No2;
-                getStructure.ObjEo_No = obj.Eo_No;
-                getStructure.ObjEtc = obj.Etc;
-                getStructure.ObjApprovOID = obj.ApprovOID;
                 getStructure.ObjEPartType = obj.EPartType;
                 getStructure.ObjThumbnail = obj.Thumbnail;
-                getStructure.ObjSel_Eo = obj.Sel_Eo;
-                getStructure.ObjSel_Eo_Dt = obj.Sel_Eo_Dt;
-                getStructure.ObjSpec = obj.Spec;
-                getStructure.ObjSurface = obj.Surface;
-                getStructure.ObjOem_Lib_OID = obj.Oem_Lib_OID;
                 getStructure.ObjCar_Lib_OID = obj.Car_Lib_OID;
-                getStructure.ObjPms_OID = obj.Pms_OID;
-                getStructure.ObjProd_Lib_Lev1_OID = obj.Prod_Lib_Lev1_OID;
-                getStructure.ObjProd_Lib_Lev2_OID = obj.Prod_Lib_Lev2_OID;
-                getStructure.ObjProd_Lib_Lev3_OID = obj.Prod_Lib_Lev3_OID;
-
-                getStructure.ObjCar_Lib_NM = obj.Car_Lib_NM;
+                getStructure.ObjCar_Lib_Nm = obj.Car_Lib_Nm;
+                getStructure.ObjDivision = obj.Division;
+                getStructure.ObjITEM_No = obj.ITEM_No;
+                getStructure.ObjITEM_NoNm = obj.ITEM_NoNm;
+                getStructure.ObjITEM_Middle = obj.ITEM_Middle;
+                getStructure.ObjITEM_MiddleNm = obj.ITEM_MiddleNm;
+                getStructure.ObjProduction_Place = obj.Production_Place;
+                getStructure.ObjProduction_PlaceNm = obj.Production_PlaceNm;
+                getStructure.ObjMaterial_OID = obj.Material_OID;
+                getStructure.ObjMaterial_Nm = obj.Material_Nm;
+                getStructure.ObjBlock_No = obj.Block_No;
+                getStructure.ObjBlock_NoNm = obj.Block_NoNm;
+                getStructure.ObjSerial = obj.Serial;
+                getStructure.ObjSel_Revision = obj.Sel_Revision;
 
                 getStructure.BPolicy = obj.BPolicy;
 
@@ -407,5 +459,18 @@ namespace EBom.Models
             return _param;
         }
         #endregion
+
+
+        #region 루트 기준 하위 BOM 전체 검색
+        public static List<EBOM> SelRootChildEBomList(EBOM _param)
+        {
+            List<EBOM> lSelRootChildList = DaoFactory.GetList<EBOM>("EBom.SelRootChildEBomList", new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _param.FromOID });
+            //List<EBOM> RootChildList = lSelRootChildList.GroupBy(x => x.OID).Select(y => y.First()).ToList();
+
+            return lSelRootChildList;
+        }
+        #endregion
+
+        
     }
 }

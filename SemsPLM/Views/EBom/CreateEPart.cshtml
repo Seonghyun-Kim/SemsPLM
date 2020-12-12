@@ -2,6 +2,12 @@
 @{
     Layout = null;
 }
+<style>
+    .DivisionAssemblyDrawing, .DivisionSingleDrawing, .DivisionStandard {
+        display: none;
+    }
+
+</style>
 
 <div style="padding:20px;">
     <table width="100%">
@@ -23,7 +29,7 @@
     <table class="createtable epart_create">
         <tr>
             <th><i class="fa fa-caret-right"></i> Thumnail</th>
-            <td colspan="5">
+            <td colspan="3">
                 <div>
                     <input type="file" name="file" multiple="true" id="imageDrag" style="display:none;">
                     <div class="image_inputbox" id="dropZone">이미지<!--이미지 드래그 영역--></div>
@@ -31,229 +37,464 @@
                 </div>
             </td>
         </tr>
+
         <tr>
-            <th><i class="fa fa-caret-right"></i> 고객사</th>
+            <th><i class="fa fa-caret-right"></i> 도면/부품번호</th>
             <td>
-                <div id="CreateEPartOEM" class="createEpartComboBox"></div>
+                <input type="text" id="CreateEPartName"  value="" readonly="readonly"/>
+                @*<button id="CreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>*@
+            </td>
+            <th><i class="fa fa-caret-right"></i> 리비전</th>
+            <td><input type="text" value="00" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 등록자</th>
+            <td><input type="text" value="등록자" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 상태</th>
+            <td><input type="text" value="작성중" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 등록일</th>
+            <td><input type="text" value="@DateTime.Now.ToShortDateString()" readonly="readonly" /></td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 구분</th>
+            <td>
+                <div id="CreateEPartDivisionAssemblyDrawing" class="custom-checkbox">
+                    조립도
+                </div>
+                <div id="CreateEPartDivisionSingleDrawing" class="custom-checkbox">
+                    단품도
+                </div>
+                <div id="CreateEPartDivisionStandard" class="custom-checkbox">
+                    스탠다드
+                </div>
+            </td>
+            <td colspan="2"></td>
+        </tr>
+
+    <!--조립도-->
+        <tr class="DivisionAssemblyDrawing">
+            <th><i class="fa fa-caret-right"></i> ITEM_NO</th>
+            <td>
+                <div class="CreateEPart_ITEM_NO" id="CreateEPart_ITEM_NO1"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> ITEM_Middle</th>
+            <td>
+                <div class="CreateEPart_ITEM_Middle"></div>
+            </td>
+        </tr>
+        <tr class="DivisionAssemblyDrawing">
+            <th><i class="fa fa-caret-right"></i> 생산지</th>
+            <td>
+                <div class="CreateEPart_Place"></div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 제품구분</th>
+            <td>
+                <div class="CreateEPart_epartType"></div>
+            </td>
+        </tr>
+        <tr class="DivisionAssemblyDrawing">
+            <th><i class="fa fa-caret-right"></i> BLOCK NO</th>
+            <td>
+                <div class="CreateEPart_BlockNo" id="CreateEPart_BlockNo1"></div>
             </td>
             <th><i class="fa fa-caret-right"></i> 차종</th>
             <td>
-                <div id="CreateEPartCar" class="createEpartComboBox"></div>
-            </td>
-            <th><i class="fa fa-caret-right"></i> 프로젝트</th>
-            <td>
-                <div id="CreateEPartPms" class="createEpartComboBox"></div>
+                <div class="CreateEPart_Car" id="CreateEPart_Car1"></div>
             </td>
         </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 품번</th>
+        <tr class="DivisionAssemblyDrawing">
+            <th><i class="fa fa-caret-right"></i> 시리얼</th>
             <td>
-                <input type="text" id="CreateEPartName" style="width:69.5%;" />
-                <button id="CreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>
+                <input type="text" class="CreateEPart_Serial" id="CreateEPart_Serial1" maxlength="3" value="" />
             </td>
-            <th><i class="fa fa-caret-right"></i> 품명</th>
-            <td colspan="3"><input type="text" id="CreateEPartTitle" style="width:100%;" /></td>
+            <th><i class="fa fa-caret-right"></i>고객리비젼</th>
+            <td>
+                <input type="text" class="CreateEPart_SelRev" value=""  maxlength="1" />
+            </td>
         </tr>
-        <tr>
+
+    <!--단품도-->
+        <tr class="DivisionSingleDrawing">
             <th><i class="fa fa-caret-right"></i> 재질</th>
             <td>
-                <div id="CreateEPartMaterial" class="createEpartComboBox"></div>
+                <div class="CreateEPart_psize"></div>
             </td>
-            <th><i class="fa fa-caret-right"></i> 표면처리</th>
-            <td><input type="text" id="CreateEPartSurface" /></td>
-            <th><i class="fa fa-caret-right"></i> C/O</th>
+            <th><i class="fa fa-caret-right"></i> BLOCK NO</th>
             <td>
-                <div id="CreateEPartCO" class="custom-checkbox"></div>
+                <div class="CreateEPart_BlockNo"  id="CreateEPart_BlockNo2"></div>
             </td>
         </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> EO NO</th>
-            <td><input type="text" id="CreateEPartEo_No"></td>
-            <th><i class="fa fa-caret-right"></i> EO 일자</th>
+        <tr class="DivisionSingleDrawing">
+            <th><i class="fa fa-caret-right"></i> ITEM_NO</th>
             <td>
-                <input type="text" id="CreateEPartEo_No_ApplyDt" class="txtBox large" readonly />
+                <div class="CreateEPart_ITEM_NO" id="CreateEPart_ITEM_NO2"></div>
             </td>
-            <th><i class="fa fa-caret-right"></i> C/N</th>
-            <td><input type="text" value="R00" class="readonly" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 차종</th>
+            <td>
+                <div class="CreateEPart_Car" id="CreateEPart_Car2"></div>
+            </td>
+        </tr>
+        <tr class="DivisionSingleDrawing">
+            <th><i class="fa fa-caret-right"></i> 시리얼</th>
+            <td>
+                <input type="text"  class="CreateEPart_Serial" id="CreateEPart_Serial2"   maxlength="2"/>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 고객리비전</th>
+            <td>
+                <input type="text"class="CreateEPart_SelRev"  maxlength="1" />
+            </td>
+        </tr>
 
-        </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> EO 내역</th>
-            <td colspan="5"><input type="text" id="CreateEPartEo_No_History"></td>
-        </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 사양</th>
-            <td colspan="5"><input type="text" id="CreateEPartSpec"></td>
-        </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 비고</th>
-            <td colspan="5"><input type="text" id="CreateEPartEtc"></td>
-        </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 타입</th>
+    <!--스탠다드-->
+        <tr class="DivisionStandard">
+            <th><i class="fa fa-caret-right"></i> 재질</th>
             <td>
-                <div id="CreateEPartTypeAssy" class="custom-checkbox">
-                    Assy
-                </div>
-                <div id="CreateEPartTypeSAssy" class="custom-checkbox">
-                    S/Assy
-                </div>
-                <div id="CreateEPartTypeDetail" class="custom-checkbox">
-                    Detail
-                </div>
+                <div class="CreateEPart_psize"></div>
             </td>
-            <th><i class="fa fa-caret-right"></i> S/ON 품번</th>
-            <td><input type="text" id="CreateEPartRep_Part_No" /></td>
-            <th><i class="fa fa-caret-right"></i> 대체 품번</th>
-            <td><input type="text" id="CreateEPartRep_Part_No2" /></td>
-        </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 제품계층1Lv</th>
+            <th><i class="fa fa-caret-right"></i> BLOCK NO</th>
             <td>
-                <div id="CreateEPartProdLibLev1" class="createEpartComboBox"></div>
-            </td>
-            <th><i class="fa fa-caret-right"></i> 제품계층2Lv</th>
-            <td>
-                <div id="CreateEPartProdLibLev2" class="createEpartComboBox"></div>
-            </td>
-            <th><i class="fa fa-caret-right"></i> 제품계층3Lv</th>
-            <td>
-                <div id="CreateEPartProdLibLev3" class="createEpartComboBox"></div>
+                <div class="CreateEPart_BlockNo"  id="CreateEPart_BlockNo3"></div>
             </td>
         </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 별납품</th>
+        <tr class="DivisionStandard">
+            <th><i class="fa fa-caret-right"></i> 시리얼</th>
             <td>
-                <div id="CreateEPartEctDelivery" class="custom-checkbox"></div>
+                <input type="text"  class="CreateEPart_Serial" id="CreateEPart_Serial3"   maxlength="8" />
             </td>
-            <th><i class="fa fa-caret-right"></i> 고객사 EO</th>
-            <td><input type="text" id="CreateEPartSel_Eo" /></td>
-            <th><i class="fa fa-caret-right"></i> 고객 EO 일자</th>
-            <td>
-                <input type="text" id="CreateEPartSel_Eo_Dt" class="txtBox large" readonly />
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 세부사양</th>
+            <td colspan="3">
+                <textarea id="CreateEPart_Description" style="border:1px solid #59a3d5;height:150px;"></textarea>
             </td>
         </tr>
-        <tr>
-            <th><i class="fa fa-caret-right"></i> 작성자</th>
-            <td><input type="text" value="" class="readonly" readonly="readonly" /></td>
-            <th><i class="fa fa-caret-right"></i> 작성일</th>
-            <td><input type="text" class="readonly" readonly="readonly" /></td>
-            <th><i class="fa fa-caret-right"></i> 상태</th>
-            <td><input type="text" value="작성중" class="readonly" readonly="readonly" /></td>
-        </tr>
+
     </table>
+
+  
 
 </div>
 
 <script>
     var EPartThumbnailData = null;
+    var DivisionAssemblyDrawing$ = $('.DivisionAssemblyDrawing');
+    var DivisionSingleDrawing$ = $('.DivisionSingleDrawing');
+    var DivisionStandard$ = $('.DivisionStandard');
+    var CreateEPart_ITEM_NO$ = $('.CreateEPart_ITEM_NO');
+    var itemMiddle$ = $('.CreateEPart_ITEM_Middle');
+    var placeList$ = $('.CreateEPart_Place');
+    var epartType$ = $('.CreateEPart_epartType');
+    var BlockNo$ = $('.CreateEPart_BlockNo');
+    var CarType$ = $('.CreateEPart_Car');
+    var psize$ = $('.CreateEPart_psize');
+    var Name$ = $('#CreateEPartName');
+    var Serial$ = $('.CreateEPart_Serial');
+    var Srev$ = $('.CreateEPart_SelRev');
+    var EPartDivision;
+    var name;
+    var itemno = ''; //itemno
+    var place='';  //생산지
+    var etype='';   //제품구분
+    var block = '';  //blockno
+    var car = '';    //차종
+    var serial = ''; //시리얼
+    var srev = '';    //고객리비전
+    var psize = '';  //재질
 
     $(function () {
-        var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-        var psizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
-        var prodstrList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.prodstrList))');
+        var itemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var placeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.placeList))');
+        var epartList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.epartList))');
+        var carList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var sizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
+        var CreateEPartChk$ = true;
 
-        const CreEPartEoAppDt$ = $('#CreateEPartEo_No_ApplyDt');
+        var epartType;
 
-        CreEPartEoAppDt$.jqxDateTimeInput(DateFormat);
-        CreEPartEoAppDt$.val(WebUtils.GetDate(-1, "m", "-"));
-        CreEPartEoAppDt$.jqxDateTimeInput({ width: "100%", height: 32});
+        $('#CreateEPartDivisionAssemblyDrawing').jqxRadioButton({ width: "30%", height: 25, checked: false });
+        $('#CreateEPartDivisionSingleDrawing').jqxRadioButton({ width: "30%", height: 25, checked: false });
+        $('#CreateEPartDivisionStandard').jqxRadioButton({ width: "30%", height: 25, checked: false });
 
-        const CreEPartSelEoDt$ = $('#CreateEPartSel_Eo_Dt');
 
-        CreEPartSelEoDt$.jqxDateTimeInput(DateFormat);
-        CreEPartSelEoDt$.val(WebUtils.GetDate(-1, "m", "-"));
-        CreEPartSelEoDt$.jqxDateTimeInput({ width: "100%", height: 32, dropDownVerticalAlignment: "top" });
 
-        $('#CreateEPartCO').jqxCheckBox({ width: "30%", height: 24, checked: false });
-        $('#CreateEPartEctDelivery').jqxCheckBox({ width: 24, height: 24, checked: false });
+        $("#CreateEPartDivisionAssemblyDrawing").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+                DivisionAssemblyDrawing$.removeClass('DivisionAssemblyDrawing');
+                BlockNo$.jqxComboBox({ source: null, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                var placeSource =
+                {
+                    localdata: placeList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' },
+                        ]
+                };
+                var placeAdapter = new $.jqx.dataAdapter(placeSource);
+                placeList$.jqxComboBox({ source: placeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
-        $('#CreateEPartTypeAssy').jqxRadioButton({ width: "30%", height: 25, checked: false });
-        $('#CreateEPartTypeSAssy').jqxRadioButton({ width: "30%", height: 25, checked: false });
-        $('#CreateEPartTypeDetail').jqxRadioButton({ width: "30%", height: 25, checked: false });
+                var epartSource =
+                {
+                    localdata: epartList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' },
+                        ]
+                };
+                var epartAdapter = new $.jqx.dataAdapter(epartSource);
+                epartType$.jqxComboBox({ source: epartAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                epartType$.on('change', function (evt) {
+                    var idx = evt.args.index;
+                    etype = epartList[idx].Name;
+                    CreateEPartName();
+                });
+            } else {
+                Name$.val('');
+                CreateEPart_ITEM_NO$.val('');
+                DivisionAssemblyDrawing$.addClass('DivisionAssemblyDrawing');
+            }
+        });
 
-        CreateEPartOEM$ = $('#CreateEPartOEM');
-        var OEMSource =
+        $("#CreateEPartDivisionSingleDrawing").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+                DivisionSingleDrawing$.removeClass('DivisionSingleDrawing');
+                BlockNo$.jqxComboBox({ source: null, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+                var psizeSource =
+                {
+                    localdata: sizeList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' }
+                        ]
+                };
+                var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
+                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+            } else {
+                Name$.val('');
+                BlockNo$.val('');
+                CreateEPart_ITEM_NO$.val('');
+                DivisionSingleDrawing$.addClass('DivisionSingleDrawing');
+            }
+        });
+
+        $("#CreateEPartDivisionStandard").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+                DivisionStandard$.removeClass('DivisionStandard');
+
+                var standard;
+                for (var i = 0; i < sizeList.length; i++) {
+                    if (sizeList[i].KorNm == "STANDARD") {
+                        standard = sizeList[i];
+                        break;
+                    }
+                }
+
+
+                var psizeSource =
+                {
+                    localdata: standard,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' }
+                        ]
+                };
+                var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
+                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                psize$.jqxComboBox('selectIndex', 0);
+
+                BlockNo$.jqxComboBox({ source: blockNodapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+            } else {
+                Name$.val('');
+                BlockNo$.val('');
+                CreateEPart_ITEM_NO$.val('');
+                DivisionStandard$.addClass('DivisionStandard');
+            }
+        });
+
+
+        var itemSource =
         {
-            localdata: oemList,
+            localdata: itemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' }
                 ]
         };
-        var OEMdataAdapter = new $.jqx.dataAdapter(OEMSource);
-        CreateEPartOEM$.jqxComboBox({ source: OEMdataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+        var itemListAdapter = new $.jqx.dataAdapter(itemSource);
+        CreateEPart_ITEM_NO$.jqxComboBox({ source: itemListAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
-        $(document).on('change', '#CreateEPartOEM', function () {
-            ChangeEPartLib($('#CreateEPartOEM').jqxComboBox('getSelectedItem').value, $('#CreateEPartCar'));
-        });
+        CreateEPart_ITEM_NO$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var middleList;
+            var param = {};
+            param.fromOID = CreateEPart_ITEM_NO$.val();
+            param.Code1 = 'CLASS';
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                itemno = itemList[idx].Code1;
+                CreateEPartName();
+                RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
 
-        var EPartType;
+                    var middleSource =
+                    {
+                        localdata: res,
+                        datatype: "json",
+                        datafields:
+                            [
+                                { name: 'KorNm', type: 'string' },
+                                { name: 'OID', type: 'int' },
+                                { name: 'Code1', type: 'string' },
+                            ]
+                    };
+                    var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                    itemMiddle$.jqxComboBox({ source: middleAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                });
+                param.Code1 = 'TYPE'
+                RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                    if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                        var blockNoSource =
+                        {
+                            localdata: res,
+                            datatype: "json",
+                            datafields:
+                                [
+                                    { name: 'KorNm', type: 'string' },
+                                    { name: 'OID', type: 'int' },
+                                    { name: 'Code1', type: 'string' }
+                                ]
+                        };
+                        var blockNodapter = new $.jqx.dataAdapter(blockNoSource);
+                        BlockNo$.jqxComboBox({ source: blockNodapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
-        $("#CreateEPartTypeAssy").on('change', function (event) {
-            checked = event.args.checked;
-            if (checked) {
-                EPartType = "A";
+                    }
+
+                });
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                itemno = itemList[idx].Code2;
+                CreateEPartName();
             }
         });
 
-        $("#CreateEPartTypeSAssy").on('change', function (event) {
-            checked = event.args.checked;
-            if (checked) {
-                EPartType = "S";
-            }
-        });
-
-        $("#CreateEPartTypeDetail").on('change', function (event) {
-            checked = event.args.checked;
-            if (checked) {
-                EPartType = "D";
-            }
-        });
-
-        CreateEPartMaterial$ = $('#CreateEPartMaterial');
-        var MaterialSource =
+        var carSource =
         {
-            localdata: psizeList,
+            localdata: carList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var MaterialdataAdapter = new $.jqx.dataAdapter(MaterialSource);
-        CreateEPartMaterial$.jqxComboBox({ source: MaterialdataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+        var carAdapter = new $.jqx.dataAdapter(carSource);
+        CarType$.jqxComboBox({ source: carAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
-
-        CreateEPartProdLibLev1$ = $('#CreateEPartProdLibLev1');
-        var ProdLibLev1Source =
-        {
-            localdata: prodstrList,
-            datatype: "json",
-            datafields:
-                [
-                    { name: 'KorNm', type: 'string' },
-                    { name: 'OID', type: 'int' },
-                ]
-        };
-        var ProdLibLev1dataAdapter = new $.jqx.dataAdapter(ProdLibLev1Source);
-        CreateEPartProdLibLev1$.jqxComboBox({ source: ProdLibLev1dataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-
-        $(document).on('change', '#CreateEPartProdLibLev1', function () {
-            ChangeEPartLib($('#CreateEPartProdLibLev1').jqxComboBox('getSelectedItem').value, $('#CreateEPartProdLibLev2'));
+        CarType$.on('change', function (evt) {
+            var idx = evt.args.index;
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                car = carList[idx].Code1;
+            } else {
+                car = carList[idx].Code2;
+            }
+            CreateEPartName();
         });
 
-        $(document).on('change', '#CreateEPartProdLibLev2', function () {
-            ChangeEPartLib($('#CreateEPartProdLibLev2').jqxComboBox('getSelectedItem').value, $('#CreateEPartProdLibLev3'));
+        psize$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            var data = evt.args.item.originalItem;
+            psize = data.Name;
+            CreateEPartName();
+            param.fromOID = psize$.val();
+            param.Code1 = 'TYPE';
+            RequestData('/Manage/SelLibrary', param, function (res) {
+                    var blockNoSource =
+                    {
+                        localdata: res,
+                        datatype: "json",
+                        datafields:
+                            [
+                                { name: 'KorNm', type: 'string' },
+                                { name: 'OID', type: 'int' },
+                                { name: 'Name', type: 'string' }
+                            ]
+                    };
+                    var blockNodapter = new $.jqx.dataAdapter(blockNoSource);
+                    BlockNo$.jqxComboBox({ source: blockNodapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+            });
+        });
+        placeList$.on('change', function (evt) {
+            var idx = evt.args.index;
+            place = placeList[idx].Name;
+            CreateEPartName();
         });
 
-        $('.createEpartComboBox').jqxComboBox({ width: "100%", height: 32 });
+        BlockNo$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var data = evt.args.item.originalItem;
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                block = data.Code1;
+            } else {
+                block = data.Name;
+            }
 
-        var CreateEPartChk$ = false;
+            CreateEPartName();
+        });
+        itemMiddle$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var data = evt.args.item.originalItem;
+            Serial$.val(data.Code1);
+            CreateEPartName();
+        });
 
+        Serial$.bind('change paste keyup', function () {
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                serial=  $('#CreateEPart_Serial1').val();
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                serial = $('#CreateEPart_Serial2').val();
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+                serial = $('#CreateEPart_Serial3').val();
+            }
+            CreateEPartName();
+        });
+        Srev$.bind('change paste keyup', function () {
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                srev = Srev$[0].value;
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                srev = Srev$[1].value;
+            } 
+
+            CreateEPartName();
+        });
         $('#CreateEPartChk').bind('change paste keyup', function () {
             CreateEPartChk$ = true;
         });
@@ -267,60 +508,72 @@
                 return;
             }
 
-            RequestData('/EBom/CreateEPartChk', param, function (response) {
-                if (response.isError) {
-                    alert(response.resultMessage);
-                    return;
-                }
-                if (response == 1) {
-                    alert("이미 사용중인 품번입니다");
-                    CreateEPartChk$ = true;
-                } else {
-                    alert("사용 가능한 품번입니다.");
-                    CreateEPartChk$ = false;
-                }
-            }).fail(function (err) {
-                alert(err.responseText);
-            });
+            //RequestData('/EBom/CreateEPartChk', param, function (response) {
+            //    if (response.isError) {
+            //        alert(response.resultMessage);
+            //        return;
+            //    }
+            //    if (response == 1) {
+            //        alert("이미 사용중인 품번입니다");
+            //        CreateEPartChk$ = true;
+            //    } else {
+            //        alert("사용 가능한 품번입니다.");
+            //        CreateEPartChk$ = false;
+            //    }
+            //});
 
         });
 
 
         $('#CreateEPartBtn').on('click', function () {
-            if (CreateEPartChk$) {
-                alert('중복품번을 확인해주세요.');
-                return;
-            }
+            //if (CreateEPartChk$) {
+            //    alert('중복품번을 확인해주세요.');
+            //    return;
+            //}
 
             var param = {};
             param.Name = $('#CreateEPartName').val();
-
-            param.Title = $('#CreateEPartTitle').val();
-            param.Rep_Part_No = $('#CreateEPartRep_Part_No').val();
-            param.Rep_Part_No2 = $('#CreateEPartRep_Part_No2').val();
-            param.Eo_No = $('#CreateEPartEo_No').val();
-            param.Eo_No_ApplyDt = $('#CreateEPartEo_No_ApplyDt').val();
-            param.Eo_No_History = $('#CreateEPartEo_No_History').val();
-            param.Etc = $('#CreateEPartEtc').val();
-
-            param.EPartType = EPartType;
+            param.Description = $('#CreateEPart_Description').val();
             param.Thumbnail = EPartThumbnailData;
-            param.Sel_Eo = $('#CreateEPartSel_Eo').val();
-            param.Sel_Eo_Dt = $('#CreateEPartSel_Eo_Dt').val();
-            param.Spec = $('#CreateEPartSpec').val();
-            param.Surface = $('#CreateEPartSurface').val();
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {            //조립도일때
+                param.Division = EPartDivision;
+                param.ITEM_No = $('#CreateEPart_ITEM_NO1').val();
+                param.ITEM_Middle = itemMiddle$.val();
+                param.EPartType = epartType$.val();
+                param.Production_Place = placeList$.val();
+                param.Block_No = $('#CreateEPart_BlockNo1').val();
+                param.Car_Lib_OID = $('#CreateEPart_Car1').val();
+                param.Serial = serial;
+                param.Sel_Revision = srev;
 
-            param.Oem_Lib_OID = $('#CreateEPartOEM').val();
-            param.Car_Lib_OID = $('#CreateEPartCar').val();
+    
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {       //단품도일떄
+                param.Division = EPartDivision;
+                param.Material_OID = psize$.val();
+                param.ITEM_No = $('#CreateEPart_ITEM_NO2').val();
+                param.Block_No = $('#CreateEPart_BlockNo2').val();
+                param.Serial = serial;
+                param.Car_Lib_OID = $('#CreateEPart_Car2').val();
+                param.Sel_Revision = srev;
+                
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_STANDARD") {     //스탠다드일떄
+                param.Division = EPartDivision;
+                param.Material_OID = psize$.val();
+                param.Block_No = $('#CreateEPart_BlockNo3').val();
+                param.Serial = serial;
+                
+            }
 
-            param.CO = $('#CreateEPartCO').val();
-            param.Etc_Delivery = $('#CreateEPartEctDelivery').val();
-
-            param.Prod_Lib_Lev1_OID = $('#CreateEPartProdLibLev1').val();
-            param.Prod_Lib_Lev2_OID = $('#CreateEPartProdLibLev2').val();
-            param.Prod_Lib_Lev3_OID = $('#CreateEPartProdLibLev3').val();
-
-            param.Material_OID =  $('#CreateEPartMaterial').val();
+            if (param.Name == null || param.Name == "") {
+                alert('품번을 확인해주세요.');
+                return;
+            } else if (param.Name.length != 12) {
+                alert('품번을 확인해주세요.');
+                return;
+            } else if (param.Division == null || param.Division == "") {
+                alert('구분을 선택해주세요.');
+                return;
+            } 
 
             RequestData('/EBom/InsEPart', param, function (response) {
                 if (response.isError) {
@@ -328,9 +581,8 @@
                     return;
                 }
                 alert("저장되었습니다.");
+                PageReload();
 
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
 
@@ -352,13 +604,13 @@
             $('#uploadResult').empty();
             $('#uploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
             EPartThumbnailData = data;
-           $('.img-thumbnail').on('click', function () {
+            $('.img-thumbnail').on('click', function () {
                 $(this).addClass('showbigimage');
                 return false;
             });
             $(window).click(function () {
-                    $('.img-thumbnail').removeClass('showbigimage');
-                });
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
             $('.img-thumbnail').next().on('click', function () {
                 $(this).parent('li').remove();
             });
@@ -366,28 +618,30 @@
 
     });
 
+    function CreateEPartName() {
+        name = '';
+        if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
 
-    function ChangeEPartLib(OID, ID) {
-        var comboBox$ = ID;
-        var param = {};
-        param.fromOID = OID;
-        var comboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                comboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var comboAdapter = new $.jqx.dataAdapter(comboSource);
-                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-            }
-        });
+            name += itemno;
+            name += place;
+            name += etype;
+            name += block;
+            name += car;
+            name += serial;
+            name += srev;
+        } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+            name += psize;
+            name += block;
+            name += itemno;
+            name += car;
+            name += serial;
+            name += srev;
+        } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+            name += psize;
+            name += block;
+            name += serial;
+        }
+        Name$.val(name);
     }
 
 </script>

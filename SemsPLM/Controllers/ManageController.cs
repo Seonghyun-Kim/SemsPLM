@@ -472,6 +472,100 @@ namespace SemsPLM.Controllers
 
         #endregion
 
+        #region -- Module : CodeLibrary
+
+        public ActionResult CodeLibrary()
+        {
+            return View();
+        }
+
+        public JsonResult SelCodeLibrary(Library _param)
+        {
+            List<Library> lLibrary = LibraryRepository.SelCodeLibrary(_param);
+            return Json(lLibrary);
+        }
+        public JsonResult SelCodeLibraryChild(Library _param)
+        {
+            List<Library> lLibrary = LibraryRepository.SelCodeLibraryChild(_param);
+            return Json(lLibrary);
+        }
+        public JsonResult SelCodeLibraryObject(Library _param)
+        {
+            Library Library = LibraryRepository.SelCodeLibraryObject(_param);
+            return Json(Library);
+        }
+
+        public ActionResult dlgCodeLibraryManip()
+        {
+            return PartialView("Dialog/dlgCodeLibraryManip");
+        }
+
+        public JsonResult InsertCodeLibrary(Library _param)
+        {
+            int resultOid = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+                // DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
+
+                DaoFactory.SetInsert("Library.InsCodeLibrary", _param);
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOid);
+        }
+
+        public JsonResult delCodeLibrary(Library _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+                LibraryRepository.deleteCodeLibrary(_param);
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(0);
+        }
+
+        public JsonResult updateCodeLibrary(Library _param)
+        {
+            int result = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+                LibraryRepository.updateCodeLibrary(_param);
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(result);
+        }
+
+
+        #endregion
+
+        #region -- Module : AssessListLibrary
+        public ActionResult AssessListLibrary()
+        {
+            return View();
+        }
+
+        #endregion
+
         #region -- Module : Auth
 
         public ActionResult AuthManage()

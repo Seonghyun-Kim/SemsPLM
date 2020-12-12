@@ -1,0 +1,281 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="resourceDashboard">
+    <input type="radio" name="rscRadio" value="project" id="rscProject" checked />
+    <label for="rscProject">PROJECT</label>
+    <input type="radio" name="rscRadio" value="people" id="rscPeople" />
+    <label for="rscPeople">PEOPLE</label>
+
+    <div class="resourceInfo">
+        <div>
+            <div class="rscComboBox"></div>
+            <div class="rscList" id="rscProjectList"></div>
+            <div class="rscContent">
+                <div class="rscTopInfo">
+                    <table>
+                        <colgroup>
+                            <col width="24%" />
+                            <col width="16%" />
+                            <col width="16%" />
+                            <col width="16%" />
+                            <col width="auto" />
+                        </colgroup>
+                        <tr>
+                            <td style="text-align:left;">
+                                <label>부서</label><span id="rscDepartmentName"></span><br />
+                                <label>P M</label><span id="rscPMName"></span><br />
+                                <label>기간</label><span id="rscEstimatedDate"></span>
+                            </td>
+                            <td>
+                                Invoices<br />
+                                <b>12412</b>
+                            </td>
+                            <td>
+                                Accmulated<br />
+                                <b>12341</b>
+                            </td>
+                            <td>
+                                Progressed<br />
+                                <div class="rscProgress"><div class="gauge"></div></div>
+                            </td>
+                            <td>
+                                <div id="rscProjectPie" class="rscPieChart"><!--pie chart--></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="rscGridChart">
+                    <div id="rscProjectGrid"></div>
+                    <div id="rscProjectChart"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="rscComboBox"></div>
+            <div class="rscList" id="rscPeopleList" style="float:left !important;"></div>
+            <div class="rscContent">
+                <div class="rscTopInfo">
+                    <table>
+                        <colgroup>
+                            <col width="10%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                        </colgroup>
+                        <tr>
+                            <td class="rscPeopleImg">
+                                <img src="~/images/group.png" alt="sampleimg" />
+                            </td>
+                            <td style="text-align:left;">
+                                <p id="rscPersonPart">스마트솔루션사업부</p>
+                                <b id="rscPersonName">이현우</b>
+                            </td>
+                            <td style="text-align:left;">
+                                <label>직급</label><span id=""></span><br />
+                                <label>직무</label><span id=""></span>
+                            </td>
+                            <td>
+                                Month Total<br />
+                                <b>123h</b>
+                            </td>
+                            <td>
+                                Participate<br />
+                                <b>56%</b>
+                            </td>
+                            <td>
+                                <div id="rscPeoplePie" class="rscPieChart"><!--pie chart--></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="rscGridChart">
+                    <div id="rscPeopleGrid"></div>
+                    <div id="rscPeopleChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+
+
+        $(".rscComboBox").jqxComboBox({
+            width: 150,
+            height: 33,
+        })
+
+        const rscProjectList$ = $("#rscProjectList"),
+            rscPeopleList$ = $("#rscPeopleList"),
+            rscProjectGrid$ = $("#rscProjectGrid"),
+            rscPeopleGrid$ = $("#rscPeopleGrid");
+
+        var sampleList = [
+            { name: '프로젝트1', startdate: '2020-02-12', state: 0 },
+            { name: '프로젝트2', startdate: '2020-05-12', state: 1 }
+        ];
+
+        rscProjectList$.jqxListBox({
+            width: 360,
+            height: '100%',
+            filterable: true,
+            selectedIndex: 0,
+            itemHeight: 90,
+            source: sampleList,
+            renderer: function (index) {
+                var project = sampleList[index];
+                var name = project.name;
+                var date = project.startdate;
+                var state = project.state;
+                var color = "";
+                switch (state) {
+                    case 0:
+                        color = '#36b1eb'; break;
+                    case 1:
+                        color = '#ffae00'; break;
+                };
+                var projectDiv = '<div>';
+                projectDiv += '<div class="rscProjectState" style="background-color:' + color + ';"></div>'
+                projectDiv += '<h4 class="rscProjectName">' + name + '</h4><p>' + date + ' ~</p>';
+                return projectDiv;
+            }
+        });
+
+        rscPeopleList$.jqxTree({
+            width: 358,
+            height: '100%',
+            //source:,
+        });
+
+        const rscProjectPie$ = $("#rscProjectPie"),
+            rscPeoplePie$ = $("#rscPeoplePie");
+
+        var samplePieSource = [
+            { data: 'A', amount: 10 },
+            { data: 'B', amount: 40 },
+            { data: 'C', amount: 20 },
+            { data: 'D', amount: 30 },
+            { data: 'E', amount: 16 },
+        ];
+        var pieChartSetting = {
+            title: '',
+            description: '',
+            padding: {
+                left: 5,
+                top: 5,
+                right: 5,
+                bottom: 5
+            },
+            borderLineColor: 'transparent',
+            showLegend: false,
+            source: samplePieSource,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'data',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'pie',
+                useGradient: false,
+                series: [
+                    {
+                        dataField: 'amount',
+                        displayText: 'data',
+                        labelRadius: 45,
+                        initialAngle: 45,
+                        radius: 45,
+                        centerOffset: 0,
+                        formatSettings: { sufix: '%', decimalPlaces: 1 }
+                    }
+                ]
+            }],
+        };
+
+        rscProjectPie$.jqxChart(pieChartSetting);
+        rscPeoplePie$.jqxChart(pieChartSetting);
+
+
+        rscProjectGrid$.jqxGrid({
+            width: 910,
+            height: 600,
+            //source:,
+            columns: [
+                { text: '사원명', width: '25%' },
+                { text: 'Role', width: '20%' },
+                { text: '진행중인 작업', width: '20%' },
+                { text: 'Process', width: '15%' },
+                { text: '예상완료일', width: '20%' }
+            ]
+        });
+
+        rscPeopleGrid$.jqxTreeGrid({
+            width: 910,
+            height: 600,
+            //source:,
+            columns: [
+                { text: '참여 프로젝트', width: '25%' },
+                { text: 'Role', width: '20%' },
+                { text: '진행중인 작업', width: '20%' },
+                { text: 'Process', width: '15%' },
+                { text: '예상완료일', width: '20%' }
+            ]
+        });
+
+        const rscProjectChart$ = $("#rscProjectChart"),
+            rscPeopleChart$ = $("#rscPeopleChart");
+        var sampleData = [
+            { project: 20, state: '완료' },
+            { project: 30, state: '진행중' },
+            { project: 10, state: '지연' }
+        ];
+        var barChartSetting = {
+            title: '',
+            description: '',
+            padding: {
+                left: 30,
+                top: 60,
+                right: 40,
+                bottom: 20
+            },
+            borderLineColor: '#c5c5c5',
+            showLegend: false,
+            source: sampleData,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'state',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'column',
+                useGradient: false,
+                columnsGapPercent: 60,
+                valueAxis: {
+                    minValue: 0,
+                    maxValue: 50,
+                    unitInterval: 10,
+                },
+                horizontalTextAlignment: 'right',
+                series: [
+                    { dataField: 'project' }
+                ]
+            }],
+
+        };
+
+
+        rscProjectChart$.jqxChart(barChartSetting);
+        rscPeopleChart$.jqxChart(barChartSetting);
+
+        const rscContent$ = $(".resourceInfo > div");
+        rscContent$.last().hide();
+        $("input[name=rscRadio]").click(function () {
+            rscContent$.hide();
+            rscContent$.eq($("input[name=rscRadio]").index(this)).show();
+        });
+
+    });
+</script>

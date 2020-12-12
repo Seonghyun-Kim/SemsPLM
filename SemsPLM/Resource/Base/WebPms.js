@@ -29,36 +29,25 @@ $(document).on('focus', '.datePicker', function () {
             }
         },
         onSelect: function (dateText, inst) {
-            const args = gPmsModifyHistoryMaster[projId].event.args;
-            const row = args.row;
-            const records = row.records;
-            const dataField = args.dataField;
+            $('.ui-datepicker').remove();
+            $('#loading').css('display', 'block');
+            setTimeout(function () {
+                const args = gPmsModifyHistoryMaster[projId].event.args;
+                const row = args.row;
+                const records = row.records;
+                const dataField = args.dataField;
 
-            if (dataField == 'EstStartDt') {
-                const parentRowKey = gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('getKey', row);
-                if (projId == parentRowKey) {
-                    gPmsModifyHistoryMaster[projId].data[0]['EstStartDt'] = dateText;
-                }
-                if (records != undefined && records.length > 0) {
-                    for (var i = 0; i < records.length; i++) {
-                        var rowKey = gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('getKey', records[i]);
-                        var tmpRowData = gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('getRow', rowKey);
-                        if ((new Date(tmpRowData.EstStartDt).getTime()) < (new Date(dateText).getTime())) {
-                            gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', dateText);
-                        }
+                if (dataField == 'EstStartDt') {
+                    const parentRowKey = gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('getKey', row);
+                    if (projId == parentRowKey) {
+                        gPmsModifyHistoryMaster[projId].data[0]['EstStartDt'] = dateText;
                     }
+                } else if (dataField == 'EstEndDt') {
+                    gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('setCellValue', args.key, 'EstDuration', fWeekendCalc(row.EstStartDt, dateText, working, holiday));
                 }
-            } else if (dataField == 'EstEndDt') {
-                gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('setCellValue', args.key, 'EstDuration', fWeekendCalc(row.EstStartDt, dateText, working, holiday));
-            }
-            gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('updateBoundData');
-            fDependencyControl(projId);
-            /*
-            const maxEstEndDt = moment(fMaxDate(fPmsLoadProperties(gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('getRows'), 'EstEndDt'))).format('YYYY-MM-DD');
-            gPmsModifyHistoryMaster[projId].data[0]['EstEndDt'] = maxEstEndDt;
-            gPmsModifyHistoryMaster[projId].data[0]['EstDuration'] = fWeekendCalc(gPmsModifyHistoryMaster[projId].data[0]['EstStartDt'], maxEstEndDt, working, holiday);
-            gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('updateBoundData');
-            */
+                gPmsModifyHistoryMaster[projId].obj.jqxTreeGrid('updateBoundData');
+                $('#loading').css('display', 'none');
+            }, 100);
         }
     });
 });

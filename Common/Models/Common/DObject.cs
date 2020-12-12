@@ -23,6 +23,8 @@ namespace Common.Models
 
         public int? BPolicyOID { get; set; }
 
+        public string BPolicyNm { get; set; }
+
         public BPolicy BPolicy { get; set; }
 
         public List<BPolicyAuth> BPolicyAuths { get; set; }
