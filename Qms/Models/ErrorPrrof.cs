@@ -1,15 +1,17 @@
 ﻿using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Qms.Models
 {
-    public class ErrorPrrof : QuickResponseModule, IDObject
+    public class ErrorProof : QuickResponseModule, IDObject, IObjectFile
     {
         // 모듈 OID 
         public int? ModuleOID { get; set; }
@@ -24,32 +26,38 @@ namespace Qms.Models
         public string CheckDetail { get; set; }
 
         // 점검당담자 
-        public int CheckUserOID { get; set; }
+        public int? CheckUserOID { get; set; }
+
+        public string CheckUserNm { get; set; }
+
+        public List<HttpPostedFileBase> Files { get; set; }
+
+        public List<HttpFile> delFiles { get; set; }
 
     }
 
-    public static class ErrorPrrofRepository
+    public static class ErrorProofRepository
     {
-        public static ErrorPrrof SelErrorPrrof(ErrorPrrof _param)
+        public static ErrorProof SelErrorProof(ErrorProof _param)
         {
-            return DaoFactory.GetData<ErrorPrrof>("Qms.SelErrorPrrof", _param);
+            return DaoFactory.GetData<ErrorProof>("Qms.SelErrorProof", _param);
         }
 
-        public static List<ErrorPrrof> SelErrorPrrofs(ErrorPrrof _param)
+        public static List<ErrorProof> SelErrorProofs(ErrorProof _param)
         {
-            return DaoFactory.GetList<ErrorPrrof>("Qms.SelErrorPrrof", _param);
+            return DaoFactory.GetList<ErrorProof>("Qms.SelErrorProof", _param);
         }
 
-        public static int InsErrorPrrof(ErrorPrrof _param)
+        public static int InsErrorProof(ErrorProof _param)
         {
             _param.CreateUs = 1;
-            return DaoFactory.SetInsert("Qms.InsErrorPrrof", _param);
+            return DaoFactory.SetInsert("Qms.InsErrorProof", _param);
         }
 
-        public static int UdtErrorPrrof(ErrorPrrof _param)
+        public static int UdtErrorProof(ErrorProof _param)
         {
             _param.ModifyUs = 1;
-            return DaoFactory.SetUpdate("Qms.UdtErrorPrrof", _param);
+            return DaoFactory.SetUpdate("Qms.UdtErrorProof", _param);
         }
 
     }

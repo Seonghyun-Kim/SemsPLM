@@ -200,17 +200,17 @@ namespace Qms.Models
         public DateTime? ModuleImproveCountermeasureEstEndDt { get; set; }
 
 
-        public int? ModuleErrorPrrofOID { get; set; }
+        public int? ModuleErrorProofOID { get; set; }
 
-        public string ModuleErrorPrrofStatusNm { get; set; }
+        public string ModuleErrorProofStatusNm { get; set; }
 
-        public bool ModuleErrorPrrofFl { get; set; }
+        public bool ModuleErrorProofFl { get; set; }
 
-        public int? ModuleErrorPrrofChargeUserOID { get; set; }
+        public int? ModuleErrorProofChargeUserOID { get; set; }
 
-        public string ModuleErrorPrrofChargeUserNm { get; set; }
+        public string ModuleErrorProofChargeUserNm { get; set; }
 
-        public DateTime? ModuleErrorPrrofEstEndDt { get; set; }
+        public DateTime? ModuleErrorProofEstEndDt { get; set; }
 
 
         public int? ModuleLpaOID { get; set; }

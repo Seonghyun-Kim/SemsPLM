@@ -10,7 +10,9 @@
         $(v).jqxCheckBox({ disabled: false });
     } else if (AttrType === "BUTTON") {
         $(v).jqxButton({ disabled: false });
-    }                
+    } else if (AttrType === "SWITCH") {
+        $(v).jqxSwitchButton({ disabled: false });
+    }           
 }
 
 function ContentReadMode(v) {
@@ -25,6 +27,8 @@ function ContentReadMode(v) {
         $(v).jqxCheckBox({ disabled: true });
     } else if (AttrType === "BUTTON") {
         $(v).jqxButton({ disabled: true });
+    } else if (AttrType === "SWITCH") {
+        $(v).jqxSwitchButton({ disabled: true });
     }     
 }
 

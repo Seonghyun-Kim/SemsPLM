@@ -1,0 +1,217 @@
+﻿@{
+    Layout = null;
+}
+
+    <div id="InfoErrorProof_@ViewBag.ErrorProof.OID" class="info_project clearfix">
+        <div class="info_menubar">
+            <ul>
+                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+            </ul>
+        </div>
+        <div class="doc_content">
+            <div class="project_basic clearfix">
+                <div class="basic_info">
+                    <h3>개선대책</h3>
+                    <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
+                </div>
+                <div class="basic_image">
+                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+                </div>
+                <div class="basic_status">
+                    <div class="pointer_wrap">
+                        @for (int i = 0; i < ViewBag.Status.Count; i++)
+                        {
+                            if (ViewBag.ErrorProof.BPolicyOID == ViewBag.Status[i].StatusOID)
+                            {
+                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <p>설명 : <span></span></p>
+                </div>
+            </div>
+            <div id="properties" class="basic_grid">
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoErrorProof_defaultBtn_@ViewBag.ErrorProof.OID">
+                                <button id="InfoErrorProof_EditBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                @*<button id="InfoErrorProof_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                                <button id="InfoErrorProof_EditCancleBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoErrorProof_SaveBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoErrorProof_ApprovalBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table width="100%" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:180px;" />
+                        <col style="width:auto;" />
+                        <col style="width:180px;" />
+                        <col style="width:auto;" />
+                    </colgroup>
+                    <tr>
+                        <th>예정일자</th>
+                        <td>
+                            <div id="dtDlgEditErrorProofEstDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly" ></div>
+                        </td>
+                        <th>처리일자</th>
+                        <td>
+                            <div id="dtDlgEditErrorProofActDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>점검내용</th>
+                        <td colspan="3">
+                            <input type="text" id="txtDlgEditErrorProofCheck_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.ErrorProof.CheckDetail" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>점검 담당자</th>
+                        <td colspan="3">
+                            <div style="display:flex;">
+                                <input type="text" id="txtDlgEditErrorProofCheckUser_@ViewBag.ErrorProof.OID" style="width:120px; margin-right:5px;" readonly="readonly" CheckUserOID="@ViewBag.ErrorProof.CheckUserOID" value="@ViewBag.ErrorProof.CheckUserNm" />
+                                <button id="btnDlgEditErrorProofCheckUser_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+                <div id="InfoErrorProof_FileList_@ViewBag.ErrorProof.OID">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        const ErrorProofOID = '@ViewBag.ErrorProof.OID';
+        var fileUpload = $("#InfoErrorProof_FileList_" + ErrorProofOID).FileUpload({ OID: ErrorProofOID });
+
+        $('#InfoErrorProof_EditBtn_' + ErrorProofOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + ErrorProofOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);  
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + ErrorProofOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + ErrorProofOID).parent().append(modifyTag);
+
+            $("#InfoErrorProof_EditBtn_" + ErrorProofOID).css("display", "none");            
+            $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).css("display", "inline-block");
+            $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).css("display", "inline-block");  
+
+            fileUpload.EditMode();
+        });
+
+        $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).jqxButton();
+        $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + ErrorProofOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);             
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoErrorProof_EditBtn_" + ErrorProofOID).css("display", "inline-block");  
+            $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).css("display", "none");
+            $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).css("display", "none");      
+
+            fileUpload.ReadOnlyMode();
+        });
+
+        $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).jqxButton();
+        $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).on("click", function () {
+            var param = {};
+            param.OID = ErrorProofOID;
+            param.ModuleOID = ErrorProofOID;
+            param.EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
+            param.ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
+            param.CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
+            param.CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+           SendDataWithFile('/Qms/SaveQuickErrorProof', param, Files, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+               alert("저장되었습니다.");
+               PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        var dtDlgEditErrorProofEstDt$ = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID);
+        var dtDlgEditErrorProofActDt$ = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID);
+
+        // 예정일자
+        dtDlgEditErrorProofEstDt$.jqxDateTimeInput(DateFormat);
+        dtDlgEditErrorProofEstDt$.jqxDateTimeInput({
+            width: 150,
+            height: 32,
+            theme: "Light",
+            disabled: true
+        });
+
+        var vEstDt = "@(ViewBag.ErrorProof.EstDt == null ? null : ViewBag.ErrorProof.EstDt.ToString("yyyy-MM-dd"))";
+        dtDlgEditErrorProofEstDt$.val( vEstDt === null ? WebUtils.GetDate(-1, "m", "-") : vEstDt);
+        // 처리일자
+        dtDlgEditErrorProofActDt$.jqxDateTimeInput(DateFormat);
+        dtDlgEditErrorProofActDt$.jqxDateTimeInput({
+            width: 150,
+            height: 32,
+            theme: "Light",
+            disabled: true
+        });
+        var vActDt = "@(ViewBag.ErrorProof.ActDt == null ? null : ViewBag.ErrorProof.ActDt.ToString("yyyy-MM-dd"))";
+        dtDlgEditErrorProofActDt$.val( vActDt === null ? WebUtils.GetDate(-1, "m", "-") : vActDt);
+
+        // 담당자 검색
+        var btnDlgUserSearch$ = $("#btnDlgEditErrorProofCheckUser_" + ErrorProofOID).jqxButton({disabled: true});
+        btnDlgUserSearch$.on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).val(res[0].Name);
+                $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID", res[0].OID);
+
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+
+    });
+</script>

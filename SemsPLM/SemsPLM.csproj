@@ -3360,6 +3360,9 @@
     <Content Include="Views\Qms\Dialog\dlgEditErrorProof.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAIncongruity.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAMeasure.cshtml" />
+    <Content Include="Views\Qms\InfoOccurrenceCause.cshtml" />
+    <Content Include="Views\Qms\InfoImproveCountermeasure.cshtml" />
+    <Content Include="Views\Qms\InfoErrorProof.cshtml" />
     <Content Include="Views\Qms\WorkerEducationList.cshtml" />
     <Content Include="Views\Qms\InfoWorkerEducation.cshtml" />
   </ItemGroup>

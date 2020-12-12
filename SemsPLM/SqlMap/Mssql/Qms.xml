@@ -11,13 +11,13 @@
     <typeAlias alias="OccurrenceCauseItem" type="Qms.Models.OccurrenceCauseItem" />
     <typeAlias alias="OccurrenceWhy" type="Qms.Models.OccurrenceWhy" />
     <typeAlias alias="DetectCounterMeasure" type="Qms.Models.DetectCounterMeasure" />
-    <typeAlias alias="ImproveCounterMeasure" type="Qms.Models.ImproveCounterMeasure" />
+    <typeAlias alias="ImproveCounterMeasureItem" type="Qms.Models.ImproveCounterMeasureItem" />
 
     <typeAlias alias="OpenIssue" type="Qms.Models.OpenIssue" />
     <typeAlias alias="OpenIssueItem" type="Qms.Models.OpenIssueItem" />
     <typeAlias alias="OpenIssueRelationship" type="Qms.Models.OpenIssueRelationship" />
 
-    <typeAlias alias="ErrorPrrof" type="Qms.Models.ErrorPrrof" />
+    <typeAlias alias="ErrorProof" type="Qms.Models.ErrorProof" />
     <typeAlias alias="LpaUnfit" type="Qms.Models.LpaUnfit" />
     <typeAlias alias="LpaUnfitCheck" type="Qms.Models.LpaUnfitCheck" />
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
@@ -395,7 +395,7 @@
     </delete>
 
     <select id="SelOccurrenceCauseItem" parameterClass="OccurrenceCauseItem" resultClass="OccurrenceCauseItem">
-      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.OccurrenceCauseLibOID, C.KorNm AS OccurrenceCauseLibText
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.ModuleOID, A.OccurrenceCauseLibOID, C.KorNm AS OccurrenceCauseLibText
       FROM T_DQMS_OCCURRENCE_CAUSE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DLIBRARY C ON A.OccurrenceCauseLibOID = C.OID
@@ -436,7 +436,7 @@
     </delete>
 
     <select id="SelOccurrenceWhy" parameterClass="OccurrenceWhy" resultClass="OccurrenceWhy">
-      SELECT A.OID, B.Name, B.Description, A.CauseOID, A.OccurrenceCauseDetail
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.CauseOID, A.OccurrenceCauseDetail
       FROM T_DQMS_OCCURRENCE_WHY A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       WHERE B.DeleteDt IS NULL
@@ -517,8 +517,8 @@
     </update>
 
     <select id="SelDetectCounterMeasure" parameterClass="DetectCounterMeasure" resultClass="DetectCounterMeasure">
-      SELECT A.ModuleOID, A.DetectM, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
-      FROM T_DQMS_DETECT_COUNTERMEASURE A    
+      SELECT A.ModuleOID, A.DetectM, B.BPolicyOID, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
+      FROM T_DQMS_DETECT_COUNTERMEASURE A
       <dynamic prepend="where">      
         <isNotNull prepend="and" property="ModuleOID">
           A.ModuleOID = #ModuleOID#
@@ -527,7 +527,7 @@
     </select>
     
     <!--ImproveCounterMeasure-->
-    <insert id="InsImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+    <insert id="InsImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem">
       INSERT INTO T_DQMS_IMPROVE_COUNTERMEASURE
       (OID,
       ModuleOID,
@@ -542,7 +542,7 @@
       #ProcessDt#)
     </insert>
 
-    <update id="UdtImproveCounterMeasure" parameterClass="ImproveCounterMeasure">
+    <update id="UdtImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem">
       UPDATE T_DQMS_IMPROVE_COUNTERMEASURE
       SET
       RootCause = #RootCause#,
@@ -551,8 +551,8 @@
       WHERE OID = #OID#
     </update>
 
-    <select id="SelImproveCounterMeasure" parameterClass="ImproveCounterMeasure" resultClass="ImproveCounterMeasure">
-      SELECT A.OID, B.Name, B.Description, A.ModuleOID, A.RootCause, A.ImproveCountermeasure, A.ProcessDt
+    <select id="SelImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem" resultClass="ImproveCounterMeasureItem">
+      SELECT A.OID, B.Name, B.BPolicyOID, B.Description, A.ModuleOID, A.RootCause, A.ImproveCountermeasure, A.ProcessDt
       FROM T_DQMS_IMPROVE_COUNTERMEASURE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       WHERE B.DeleteDt IS NULL
@@ -709,18 +709,23 @@
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
     
-    <!-- Error Proof SQL -->
-    <select id="SelErrorPrrof" parameterClass="ErrorPrrof" resultClass="ErrorPrrof">
-      SELECT A.*, B.Name, B.Description
+    <!-- Error Proof SQL ModuleOID == OID-->
+    <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
+      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm
       FROM T_DQMS_ERROR_PRROF A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
       </isNotNull>
+
+      <isNotNull prepend="and" property="OID">
+        B.OID = #OID#
+      </isNotNull>
     </select>
 
-    <insert id="InsErrorPrrof" parameterClass="ErrorPrrof">
+    <insert id="InsErrorProof" parameterClass="ErrorProof">
       INSERT INTO T_DQMS_ERROR_PRROF
       (ModuleOID,
       EstDt,
@@ -735,7 +740,7 @@
       #CheckUserOID#)
     </insert>
 
-    <update id="UdtErrorPrrof" parameterClass="ErrorPrrof">
+    <update id="UdtErrorProof" parameterClass="ErrorProof">
       UPDATE T_DQMS_ERROR_PRROF
       SET
       EstDt = #EstDt#,
