@@ -248,3 +248,25 @@ WebUtils.CommonFileDownload = function(FileOID) {
 
     window.location.href = url;
 }
+
+WebUtils.GetGrdSearchData = function (callBackFunction, source, grdId, pagenum, param) {
+    if (WebUtils.isEmpty(callBackFunction) && typeof (callBackFunction) !== "string") {
+        alert("검색 함수가 존재 하지 않습니다.");
+        return;
+    }
+
+    source.data.searchModel = {};
+    source.data.searchModel = callBackFunction(param);
+
+    var paginginformation = $('#' + grdId).jqxGrid('getpaginginformation');
+    var pagesize = paginginformation.pagesize;
+
+    if (WebUtils.isEmpty(pagenum)) {
+        pagenum = 0;
+    }
+
+    source.data.pagenum = pagenum;
+    source.data.pagesize = paginginformation.pagesize;
+
+    $("#" + grdId).jqxGrid({ source: new $.jqx.dataAdapter(source) });
+}

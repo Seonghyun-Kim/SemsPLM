@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -3359,6 +3360,8 @@
     <Content Include="Views\Qms\Dialog\dlgEditErrorProof.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAIncongruity.cshtml" />
     <Content Include="Views\Qms\Dialog\dlgEditLPAMeasure.cshtml" />
+    <Content Include="Views\Qms\WorkerEducationList.cshtml" />
+    <Content Include="Views\Qms\InfoWorkerEducation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
