@@ -47,8 +47,10 @@
     <Compile Include="Models\DetectCountermeasure.cs" />
     <Compile Include="Models\ErrorPrrof.cs" />
     <Compile Include="Models\ImproveCounterMeasure.cs" />
+    <Compile Include="Models\ImproveCounterMeasureItem.cs" />
     <Compile Include="Models\LpaMeasure.cs" />
     <Compile Include="Models\LpaUnfit.cs" />
+    <Compile Include="Models\OccurrenceCause.cs" />
     <Compile Include="Models\OccurrenceCauseItem.cs" />
     <Compile Include="Models\OpenIssue.cs" />
     <Compile Include="Models\QmsCheck.cs" />

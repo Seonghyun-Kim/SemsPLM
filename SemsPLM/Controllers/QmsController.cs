@@ -231,16 +231,6 @@ namespace SemsPLM.Controllers
             return View();
         }
 
-        public ActionResult InfoBlockade(int OID)
-        {
-            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
-            ViewBag.Blockade = Module;
-            ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
-            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
-            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
-            return View();
-        }
-
         /*
         public ActionResult CreateQuickResponse(QuickResponse quickResponse)
         {
@@ -329,12 +319,12 @@ namespace SemsPLM.Controllers
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
                     {
-                        quickResponseView.ModuleErrorPrrofOID = m.OID;
-                        quickResponseView.ModuleErrorPrrofStatusNm = m.BPolicyNm;
-                        quickResponseView.ModuleErrorPrrofFl = m.ModuleFl;
-                        quickResponseView.ModuleErrorPrrofEstEndDt = m.EstEndDt;
-                        quickResponseView.ModuleErrorPrrofChargeUserOID = m.ChargeUserOID;
-                        quickResponseView.ModuleErrorPrrofChargeUserNm = m.ChargeUserNm;
+                        quickResponseView.ModuleErrorProofOID = m.OID;
+                        quickResponseView.ModuleErrorProofStatusNm = m.BPolicyNm;
+                        quickResponseView.ModuleErrorProofFl = m.ModuleFl;
+                        quickResponseView.ModuleErrorProofEstEndDt = m.EstEndDt;
+                        quickResponseView.ModuleErrorProofChargeUserOID = m.ChargeUserOID;
+                        quickResponseView.ModuleErrorProofChargeUserNm = m.ChargeUserNm;
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
                     {
@@ -549,7 +539,7 @@ namespace SemsPLM.Controllers
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
                 {
-                    ViewBag.ErrorPrrof = v;
+                    ViewBag.ErrorProof = v;
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
                 {
@@ -603,6 +593,17 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 봉쇄조치 
+
+        public ActionResult InfoBlockade(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.Blockade = Module;
+            ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
+            return View();
+        }
+
         public ActionResult EditQuickBlockade(QuickResponseModule _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
@@ -648,6 +649,31 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 발생원인분석 
+
+        public ActionResult InfoOccurrenceCause(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.OccurrenceCause = Module;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+
+            Library occurrenceCauseKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_CAUSE" });
+            List<Library> occurrenceCauseList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceCauseKey.OID });  // 검사유형
+            ViewBag.OccurrenceCauseLibList = occurrenceCauseList;
+
+            List<OccurrenceCauseItem> OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = OID });
+            OccurrenceCauseItems.ForEach(v =>
+            {
+                v.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = v.OID });
+            });
+            ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
+
+            DetectCounterMeasure detectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = OID });
+            ViewBag.DetectCounterMeasure = detectCounterMeasure == null ? new DetectCounterMeasure() { ModuleOID = OID } : detectCounterMeasure;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OCCURRENCE_CAUSE });
+            
+            return View();
+        }
+
         public ActionResult EditQuickOccurrenceCause(QuickResponseModule _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
@@ -670,13 +696,13 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditQuickOccurrenceCause");
         }
 
-        public JsonResult SaveQuickOccurrenceCause(List<OccurrenceCauseItem> occurrenceCauses, DetectCounterMeasure measure)
+        public JsonResult SaveQuickOccurrenceCause(OccurrenceCause param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
-
-                occurrenceCauses.ForEach(v =>
+                param.Type = QmsConstant.TYPE_OCCURRENCE_CAUSE;
+                param.OccurrenceCauseItems.ForEach(v =>
                 {
                     int? CauseOID = v.OID;
                     if (v.OID == null)
@@ -723,7 +749,20 @@ namespace SemsPLM.Controllers
                     });
                 });
 
-                DetectCounterMeasureRepository.UdtDetectCounterMeasure(measure);
+                DetectCounterMeasureRepository.UdtDetectCounterMeasure(param.DetectCounterMeasure);
+
+                if (param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
 
                 DaoFactory.Commit();
                 return Json("1");
@@ -737,32 +776,42 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 개선대책 
+        public ActionResult InfoImproveCounterMeasure(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.ImproveCounterMeasure = Module;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = OID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE });
+            return View();
+        }
+
         public ActionResult EditQuickImproveCounterMeasure(QuickResponseModule _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
             ViewBag.ModuleOID = _param.OID;
 
-            ViewBag.ImproveCounterMeasures = ImproveCounterMeasureRepository.SelImproveCounterMeasures(new ImproveCounterMeasure() { ModuleOID = _param.OID });
+            ViewBag.ImproveCounterMeasures = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = _param.OID });
 
             return View("Dialog/dlgEditQuickImproveCounterMeasure");
         }
 
-        public JsonResult SavetQuickImproveCounterMeasure(List<ImproveCounterMeasure> _params)
+        public JsonResult SaveQuickImproveCounterMeasure(ImproveCounterMeasure param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
-
-                _params.ForEach(v =>
+                param.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE;
+                param.ImproveCounterMeasureItems.ForEach(v =>
                 {
                     if(v.OID == null)
                     {
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
-                        dobj.Name = "WHY";
+                        dobj.Name = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
                         v.OID = DObjectRepository.InsDObject(dobj);
                        
-                        ImproveCounterMeasureRepository.InsImproveCounterMeasure(v);
+                        ImproveCounterMeasureItemRepository.InsImproveCounterMeasureItem(v);
                     }
                     else
                     {
@@ -774,11 +823,24 @@ namespace SemsPLM.Controllers
                         else
                         {
                             v.ModifyUs = 73;
-                            ImproveCounterMeasureRepository.UdtImproveCounterMeasure(v);
+                            ImproveCounterMeasureItemRepository.UdtImproveCounterMeasureItem(v);
                             DObjectRepository.UdtDObject(v);
                         }
                     }
                 });
+
+                if (param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
 
                 DaoFactory.Commit();
                 return Json("1");
@@ -793,12 +855,28 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- Error Proof  
+
+        public ActionResult InfoErrorProof(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
+            if(errorproof == null)
+            {
+                errorproof = new ErrorProof();
+                errorproof.OID = OID;
+                errorproof.ModuleOID = OID;
+            }
+            ViewBag.ErrorProof = errorproof;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_ERROR_PRROF });
+            return View();
+        }
         /// <summary>
         /// 2020.11.15
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditErrorProof(ErrorPrrof _param)
+        public ActionResult EditErrorProof(ErrorProof _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
             ViewBag.ModuleOID = _param.OID;
@@ -806,14 +884,56 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditErrorProof", _param);
         }
 
-        public JsonResult InsErrorProof(ErrorPrrof _param)
+        public JsonResult SaveQuickErrorProof(ErrorProof param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+                param.Type = QmsConstant.TYPE_ERROR_PRROF;
+
+                ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = param.OID });
+
+                DObjectRepository.UdtDObject(param);
+                if (errorproof == null)
+                {
+                    ErrorProofRepository.InsErrorProof(param);
+                }
+                else
+                {
+                    ErrorProofRepository.UdtErrorProof(param);
+                }
+
+                if (param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
+
+                DaoFactory.Commit();
+                return Json("1");
+            }
+            catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
+        public JsonResult InsErrorProof(ErrorProof _param)
         {
             int returnValue = 0;
             try
             {
                 DaoFactory.BeginTransaction();
 
-                ErrorPrrof errorPrrof = new ErrorPrrof()
+                ErrorProof ErrorProof = new ErrorProof()
                 {
                     ModuleOID = _param.ModuleOID,
                     EstDt = _param.EstDt,
@@ -822,7 +942,7 @@ namespace SemsPLM.Controllers
                     CheckUserOID = _param.CheckUserOID,
                 };
 
-                returnValue = ErrorPrrofRepository.InsErrorPrrof(errorPrrof);
+                returnValue = ErrorProofRepository.InsErrorProof(ErrorProof);
 
                 DaoFactory.Commit();
 

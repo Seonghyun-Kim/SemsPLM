@@ -1,0 +1,452 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="InfoOccurrenceCause_@ViewBag.OccurrenceCause.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>원인분석</h3>
+                <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.OccurrenceCause.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoOccurrenceCause_defaultBtn_@ViewBag.OccurrenceCause.OID">
+                            <button id="InfoOccurrenceCause_EditBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            @*<button id="InfoOccurrenceCause_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                            <button id="InfoOccurrenceCause_EditCancleBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoOccurrenceCause_SaveBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoOccurrenceCause_ApprovalBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <label><i class="fas fa-search-plus"></i> 원인분석</label>
+            <table id="tbOccurrenceCause_@ViewBag.OccurrenceCause.OID" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:15%" />
+                    <col style="width:78%" />
+                    <col style="width:7%" />
+                </colgroup>
+                <tr>
+                    <th>발생원인</th>
+                    <th>발생원인 내역</th>
+                    <th><button id="btnCauseAdd_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="BUTTON">원인추가</button></th>
+                </tr>
+            </table>
+
+            <label><i class="fas fa-tools"></i> 검출대책</label>
+            <table id="tbDetectCounterMeasure_@ViewBag.OccurrenceCause.OID" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:15%" />
+                    <col style="width:10%" />
+                    <col style="width:25%" />
+                    <col style="width:15%" />
+                    <col style="width:35%" />
+                </colgroup>
+                <tr>
+                    <th>검출장소</th>
+                    <th>Yes/No</th>
+                    <th colspan="3">해당공정 내용(상세위치, 작업자, 검사원 등)</th>
+                </tr>
+                <tr>
+                    <th>제조공정</th>
+                    <td><div id="btnDetectMFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                    <td colspan="3">
+                        <input type="text" id="txtDetectMDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectMDetail" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>품질</th>
+                    <td><div id="btnDetectSFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                    <td colspan="3">
+                        <input type="text" id="txtDetectSDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectSDetail" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>출하단계</th>
+                    <td><div id="btnDetectQFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                    <td colspan="3">
+                        <input type="text" id="txtDetectQDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectQDetail" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>기타</th>
+                    <td><div id="btnDetectEFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                    <td colspan="3">
+                        <input type="text" id="txtDetectEDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectEDetail" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>유출원인1</th>
+                    <td colspan="4">
+                        <input type="text" id="txtLeakCause1_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause1" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>유출원인2</th>
+                    <td colspan="4">
+                        <input type="text" id="txtLeakCause2_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>유출원인3</th>
+                    <td colspan="4">
+                        <input type="text" id="txtLeakCause3_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause3" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>검출일</th>
+                    <td colspan="4">
+                        <div id="dtDetectDt_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="DATE"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>검출대책</th>
+                    <td colspan="4">
+                        <input type="text" id="txtmeasure_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.Measure" />
+                    </td>
+                </tr>
+            </table>
+
+            <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+            <div id="InfoOccurrenceCause_FileList_@ViewBag.OccurrenceCause.OID">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+        const OccurrenceCauseOID = '@ViewBag.OccurrenceCause.OID';
+        var fileUpload = $("#InfoOccurrenceCause_FileList_" + OccurrenceCauseOID).FileUpload({ OID: OccurrenceCauseOID });
+
+        $("#btnCauseAdd_@ViewBag.OccurrenceCause.OID").jqxButton({ disabled: true });
+        $('#btnDetectMFl_@ViewBag.OccurrenceCause.OID').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectM" == "True" ? true : false), onLabel: "Yes", offLabel: "No", disabled: true });
+        $('#btnDetectSFl_@ViewBag.OccurrenceCause.OID').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectS" == "True" ? true : false), onLabel: "Yes", offLabel: "No", disabled: true });
+        $('#btnDetectQFl_@ViewBag.OccurrenceCause.OID').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectQ" == "True" ? true : false), onLabel: "Yes", offLabel: "No", disabled: true });
+        $('#btnDetectEFl_@ViewBag.OccurrenceCause.OID').jqxSwitchButton({ height: 30, width: 80, checked: ("@ViewBag.DetectCounterMeasure.DetectE" == "True" ? true : false), onLabel: "Yes", offLabel: "No", disabled: true });
+
+        $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").jqxDateTimeInput(DateFormat);
+        $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").jqxDateTimeInput({
+            width: 140,
+            height:30,
+            theme: "Light",
+            disabled: true
+        });
+        @if(ViewBag.DetectCounterMeasure.DetectDt == null)
+        {
+        <text>
+        $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").val(WebUtils.GetDate(0, "d", "-"));
+        </text>
+        }
+        else
+        {
+        <text>
+        $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").val("@ViewBag.DetectCounterMeasure.DetectDt.ToString("yyyy-MM-dd")");
+        </text>
+        }
+
+        $('#InfoOccurrenceCause_EditBtn_' + OccurrenceCauseOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + OccurrenceCauseOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);  
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + OccurrenceCauseOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + OccurrenceCauseOID).parent().append(modifyTag);
+
+            $("#InfoOccurrenceCause_EditBtn_" + OccurrenceCauseOID).css("display", "none");            
+            $("#InfoOccurrenceCause_SaveBtn_" + OccurrenceCauseOID).css("display", "inline-block");
+            $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).css("display", "inline-block");  
+
+            fileUpload.EditMode();
+        });
+
+        $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).jqxButton();
+        $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + OccurrenceCauseOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);             
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoOccurrenceCause_EditBtn_" + OccurrenceCauseOID).css("display", "inline-block");  
+            $("#InfoOccurrenceCause_SaveBtn_" + OccurrenceCauseOID).css("display", "none");
+            $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).css("display", "none");      
+
+            fileUpload.ReadOnlyMode();
+        });
+
+        $("#InfoOccurrenceCause_SaveBtn_" + OccurrenceCauseOID).jqxButton();
+        $('#InfoOccurrenceCause_SaveBtn_' + OccurrenceCauseOID).on("click", function () {
+            var param = {};
+            param.OID =  '@ViewBag.OccurrenceCause.OID';
+            param.OccurrenceCauseItems = [];
+            param.DetectCounterMeasure = {};
+
+            var trOccurrenceCauses$ = $("#tbOccurrenceCause_@ViewBag.OccurrenceCause.OID tr[Data='Y']");
+            var errMsg = "";
+
+            trOccurrenceCauses$.each(function (i, v) {
+                var data = {};
+                var cbOccurrenceCause$ = $(v).find("[DataId='cbOccurrenceCause']")[0];
+                data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
+                data.ModuleOID = "@ViewBag.OccurrenceCause.OID";
+                data.OccurrenceCauseLibOID = WebUtils.GetComboObjectValue(cbOccurrenceCause$);
+                if (data.OccurrenceCauseLibOID === null) {
+                    errMsg += "[" + (i + 1).toString() + "] 발생 원인이 선택되지 않았습니다.\n";
+                }
+                data.OccurrenceWhys = [];
+
+                var tbWhys$ = $(v).find("[TableType='Why'][CauseOID='" + data.OID + "']")[0];
+                var trWhys$ = $(tbWhys$).children();
+
+                trWhys$.each(function (index, value) {
+                    var why = {};
+                    why.OID = $(value).attr("OID") === "null" ? null : $(value).attr("OID");
+                    why.OccurrenceCauseDetail = $($(value).find("[DataId='WhyDetail']")[0]).val();
+
+                    if ($(value).attr("Remove") === "Y" && why.OID !== null) {
+                        why.IsRemove = "Y";
+                    }
+
+                    data.OccurrenceWhys.push(why);
+                })
+
+                param.OccurrenceCauseItems.push(data);
+            });
+
+            if (errMsg.length != 0) {
+                alert(errMsg); return;
+            }
+            param.DetectCounterMeasure.ModuleOID = "@ViewBag.OccurrenceCause.OID";
+            param.DetectCounterMeasure.DetectM = $("#btnDetectMFl_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectMDetail = $("#txtDetectMDetail_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectS = $("#btnDetectSFl_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectSDetail = $("#txtDetectSDetail_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectQ = $("#btnDetectQFl_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectQDetail = $("#txtDetectQDetail_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectE = $("#btnDetectEFl_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectEDetail = $("#txtDetectEDetail_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.LeakCause1 = $("#txtLeakCause1_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.LeakCause2 = $("#txtLeakCause2_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.LeakCause3 = $("#txtLeakCause3_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.DetectDt = $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").val();
+            param.DetectCounterMeasure.Measure = $("#txtmeasure_@ViewBag.OccurrenceCause.OID").val();
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+           SendDataWithFile('/Qms/SaveQuickOccurrenceCause', param, Files, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+               alert("저장되었습니다.");
+               PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        var OccurrenceCauseItems = @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseItems));
+
+        if (OccurrenceCauseItems.length === 0) {
+            AddOccurrenceCause(null);
+        } else {
+            OccurrenceCauseItems.forEach(function (v, i) {
+                AddOccurrenceCause(v);
+            });
+        }
+
+        var ModifyAttr = $('.Modifiable_' + OccurrenceCauseOID);
+
+        ModifyAttr.each(function (i, v) {
+            ContentReadMode(v);             
+        });
+
+        $("#btnCauseAdd_@ViewBag.OccurrenceCause.OID").on("click", function () {
+            AddOccurrenceCause(null);
+            $(".modifyTag").remove();
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + @ViewBag.OccurrenceCause.OID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + @ViewBag.OccurrenceCause.OID).parent().append(modifyTag);
+
+        });
+    });
+
+    var AddOccurrenceCause = function (data) {
+        var OID = data == null ? null : data.OID;
+        var table$ = $("#tbOccurrenceCause_@ViewBag.OccurrenceCause.OID tbody");
+
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("Data", "Y");
+        tr$.setAttribute("OID", OID);
+
+        var tdOccurrenceCause$ = document.createElement("td");
+        var cbOccurrenceCause$ = document.createElement("div");
+        cbOccurrenceCause$.className = "Modifiable_@ViewBag.OccurrenceCause.OID";
+        cbOccurrenceCause$.setAttribute("DataId", "cbOccurrenceCause");
+        cbOccurrenceCause$.setAttribute("AttrType", "COMBO");
+
+        tdOccurrenceCause$.appendChild(cbOccurrenceCause$);
+        $(cbOccurrenceCause$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.OccurrenceCauseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 220, height: 30 });
+        if (data != null) {
+                $(cbOccurrenceCause$).jqxComboBox('selectItem', data.OccurrenceCauseLibOID);
+        }
+        var tdOccurrenceCauseDetail$ = document.createElement("td");
+        tdOccurrenceCauseDetail$.style.padding = "0px";
+
+        var divOccurrenceCauseDetail$ = document.createElement("div");
+
+        var tbWhy$ = document.createElement("table");
+        tbWhy$.style.width = "100%";
+        tbWhy$.setAttribute("TableType", "Why");
+        tbWhy$.setAttribute("CauseOID", OID);
+        tbWhy$.className = "infoTable";
+
+        if (data != null) {
+            data.OccurrenceWhys.forEach(function (v, i) {
+                AddWhy(tbWhy$, v);
+            })
+        } else {
+            for (var i = 0; i < 5; i++) {
+                AddWhy(tbWhy$, null);
+            }
+        }
+
+        divOccurrenceCauseDetail$.appendChild(tbWhy$);
+
+        tdOccurrenceCauseDetail$.appendChild(divOccurrenceCauseDetail$);
+
+        var tdBtn$ = document.createElement("td");
+        var btnWhyAdd = document.createElement("button");
+        btnWhyAdd.className = "Modifiable_@ViewBag.OccurrenceCause.OID";
+        btnWhyAdd.setAttribute("AttrType", "BUTTON");
+        btnWhyAdd.innerText = "Why추가";
+        tdBtn$.appendChild(btnWhyAdd);
+        $(btnWhyAdd).jqxButton();
+
+        $(btnWhyAdd).on("click", function () {
+            AddWhy(tbWhy$);
+            $(".modifyTag").remove();
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + @ViewBag.OccurrenceCause.OID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + @ViewBag.OccurrenceCause.OID).parent().append(modifyTag);
+        });
+
+        tr$.appendChild(tdOccurrenceCause$);
+        tr$.appendChild(tdOccurrenceCauseDetail$);
+        tr$.appendChild(tdBtn$);
+
+        table$.append(tr$);       
+    }
+
+    var AddWhy = function (tbWhy$, data) {
+        var trWhy$ = document.createElement("tr");
+        if (data != null) {
+            trWhy$.setAttribute("OID", data.OID);
+        } else {
+            trWhy$.setAttribute("OID", null);
+        }
+        var tdWhy$ = document.createElement("th");
+        tdWhy$.style.width = "8%";
+        tdWhy$.style.border = "1px solid #a2dfsd";
+        tdWhy$.innerText = "why" + ($(tbWhy$).children().length + 1).toString();
+
+        var tdWhyDetail$ = document.createElement("td");
+        tdWhyDetail$.style.width = "84%";
+        var txtWhyDetail$ = document.createElement("input");
+        txtWhyDetail$.setAttribute("type", "text");
+        txtWhyDetail$.style.width = "100%";
+        txtWhyDetail$.className = "Modifiable_@ViewBag.OccurrenceCause.OID";
+        txtWhyDetail$.setAttribute("AttrType", "TEXT");
+        txtWhyDetail$.setAttribute("DataId", "WhyDetail");
+        if (data != null) {
+            txtWhyDetail$.value = data.OccurrenceCauseDetail;
+        }
+
+        tdWhyDetail$.appendChild(txtWhyDetail$);
+
+        var tdWhyBtn$ = document.createElement("td");
+        tdWhyBtn$.style.textAlign = "center";
+        var btnWhyDelAdd$ = document.createElement("button");
+        btnWhyDelAdd$.innerText = "삭제";
+        btnWhyDelAdd$.className = "Modifiable_@ViewBag.OccurrenceCause.OID";
+        btnWhyDelAdd$.setAttribute("AttrType", "BUTTON");
+        tdWhyBtn$.appendChild(btnWhyDelAdd$);
+        $(btnWhyDelAdd$).jqxButton();
+
+        $(btnWhyDelAdd$).on("click", function () {
+            trWhy$.setAttribute("Remove", "Y");
+            trWhy$.style.display = "none";
+        });
+
+        trWhy$.appendChild(tdWhy$);
+        trWhy$.appendChild(tdWhyDetail$);
+        trWhy$.appendChild(tdWhyBtn$);
+
+        tbWhy$.appendChild(trWhy$);
+    }
+    
+</script>

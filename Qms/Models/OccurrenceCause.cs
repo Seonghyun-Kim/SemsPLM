@@ -8,9 +8,11 @@ using System.Web;
 
 namespace Qms.Models
 {
-    public class ImproveCounterMeasure : QuickResponseModule, IObjectFile
+    public class OccurrenceCause : QuickResponseModule, IObjectFile
     {
-        public List<ImproveCounterMeasureItem> ImproveCounterMeasureItems { get; set; }
+        public List<OccurrenceCauseItem> OccurrenceCauseItems { get; set; }
+
+        public DetectCounterMeasure DetectCounterMeasure { get; set; }
 
         public List<HttpPostedFileBase> Files { get; set; }
 

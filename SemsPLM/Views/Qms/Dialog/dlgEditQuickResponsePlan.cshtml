@@ -7,7 +7,7 @@
         <input type="hidden" id="hiddenDlgBlockadeOID" value="@ViewBag.Blockade.OID" />
         <input type="hidden" id="hiddenDlgOccurrenceCauseOID" value="@ViewBag.OccurrenceCause.OID" />
         <input type="hidden" id="hiddenDlgImproveCountermeasureOID" value="@ViewBag.ImproveCountermeasure.OID" />
-        <input type="hidden" id="hiddenDlgErrorPrrofOID" value="@ViewBag.ErrorPrrof.OID" />
+        <input type="hidden" id="hiddenDlgErrorProofOID" value="@ViewBag.ErrorProof.OID" />
         <input type="hidden" id="hiddenDlgLpaOID" value="@ViewBag.Lpa.OID" />
         <input type="hidden" id="hiddenDlgCheckOID" value="@ViewBag.Check.OID" />
         <input type="hidden" id="hiddenDlgStandardOID" value="@ViewBag.Standard.OID" />
@@ -110,7 +110,7 @@
                 <td>
                     <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
                         <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ErrorPrrof.ChargeUserNm" />
+                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ErrorProof.ChargeUserNm" />
                         <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgErrorProofPlanUserNm');"><i class="fas fa-search"></i></button>
                     </div>
                 </td>
@@ -270,13 +270,13 @@
             height:30,
             theme: "Light"
         });
-        @if(ViewBag.ErrorPrrof.EstEndDt == null)
+        @if(ViewBag.ErrorProof.EstEndDt == null)
         {
             <text>$("#txtDlgErrorProofPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
         }
         else
         {
-            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.ErrorPrrof.EstEndDt.ToString("yyyy-MM-dd")")</text>
+            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.ErrorProof.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
 
         $("#txtDlgLpaUnfitPlanDt").jqxDateTimeInput(DateFormat);
@@ -400,15 +400,15 @@
             return;
         }
 
-        var errorprrof = {};
-        errorprrof.QuickOID = $("#hiddenDlgQuickOID").val();
-        errorprrof.OID = $("#hiddenDlgErrorPrrofOID").val();
-        errorprrof.ModuleFl = $("#btnErrorProofUseFl").val();
-        errorprrof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
-        errorprrof.ChargeUserOID = $("#txtDlgErrorProofPlanUserNm").attr("UserOID");
-        params.push(errorprrof);
+        var ErrorProof = {};
+        ErrorProof.QuickOID = $("#hiddenDlgQuickOID").val();
+        ErrorProof.OID = $("#hiddenDlgErrorProofOID").val();
+        ErrorProof.ModuleFl = $("#btnErrorProofUseFl").val();
+        ErrorProof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
+        ErrorProof.ChargeUserOID = $("#txtDlgErrorProofPlanUserNm").attr("UserOID");
+        params.push(ErrorProof);
 
-        if (errorprrof.ModuleFl && WebUtils.isBlank(errorprrof.ChargeUserOID)) {
+        if (ErrorProof.ModuleFl && WebUtils.isBlank(ErrorProof.ChargeUserOID)) {
             alert("Error Proof 항목이 YES 인데 처리담당자가 없습니다.");
             return;
         }

@@ -90,12 +90,12 @@
             { name: 'ModuleImproveCountermeasureChargeUserNm', type: 'string' },
             { name: 'ModuleImproveCountermeasureEstEndDt', type: 'string' },
             
-            { name: 'ModuleErrorPrrofOID', type: 'number' },
-            { name: 'ModuleErrorPrrofStatusNm', type: 'string' },
-            { name: 'ModuleErrorPrrofFl', type: 'bool' },
-            { name: 'ModuleErrorPrrofChargeUserOID', type: 'number' },
-            { name: 'ModuleErrorPrrofChargeUserNm', type: 'string' },
-            { name: 'ModuleErrorPrrofEstEndDt', type: 'string' },
+            { name: 'ModuleErrorProofOID', type: 'number' },
+            { name: 'ModuleErrorProofStatusNm', type: 'string' },
+            { name: 'ModuleErrorProofFl', type: 'bool' },
+            { name: 'ModuleErrorProofChargeUserOID', type: 'number' },
+            { name: 'ModuleErrorProofChargeUserNm', type: 'string' },
+            { name: 'ModuleErrorProofEstEndDt', type: 'string' },
             
             { name: 'ModuleLpaOID', type: 'number' },
             { name: 'ModuleLpaStatusNm', type: 'string' },
@@ -205,7 +205,7 @@
 
                         var status = GridStatus(rowData.ModuleOccurrenceCauseFl, rowData.ModuleOccurrenceCauseStatusNm, rowData.ModuleOccurrenceCauseEstEndDt, rowData.ModuleOccurrenceCauseChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenOccurrenceCause(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -221,7 +221,7 @@
 
                         var status = GridStatus(rowData.ModuleImproveCountermeasureFl, rowData.ModuleImproveCountermeasureStatusNm, rowData.ModuleImproveCountermeasureEstEndDt, rowData.ModuleImproveCountermeasureChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenImproveCountermeasure(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -229,15 +229,15 @@
                 {
                     text: 'Error Proof', dataField: 'ErrorProof', width: '8%', align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
-                        if (rowData.ModuleErrorPrrofOID === null || rowData.ModuleErrorPrrofEstEndDt === null) {
+                        if (rowData.ModuleErrorProofOID === null || rowData.ModuleErrorProofEstEndDt === null) {
                             var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;'><a href='javascript:alert(\"" + aa + "\")'></a></div>";
                             var wrapChargerUser = "<div style='width:100%;text-align:center;'></div>";
                             return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                         }
 
-                        var status = GridStatus(rowData.ModuleErrorPrrofFl, rowData.ModuleErrorPrrofStatusNm, rowData.ModuleErrorPrrofEstEndDt, rowData.ModuleErrorPrrofChargeUserNm);
+                        var status = GridStatus(rowData.ModuleErrorProofFl, rowData.ModuleErrorProofStatusNm, rowData.ModuleErrorProofEstEndDt, rowData.ModuleErrorProofChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenErrorProof(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -375,6 +375,31 @@
 
         TabPageLoad(linkUrl, linkName);
     }
+
+    function OpenOccurrenceCause(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] 원인분석";
+        var linkUrl = '/Qms/InfoOccurrenceCause?OID=' + rowData.ModuleOccurrenceCauseOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
+    function OpenImproveCountermeasure(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] 개선대책";
+        var linkUrl = '/Qms/InfoImproveCountermeasure?OID=' + rowData.ModuleImproveCountermeasureOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+    
+    function OpenErrorProof(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] Error Prrof";
+        var linkUrl = '/Qms/InfoErrorProof?OID=' + rowData.ModuleErrorProofOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
 
     function OpenDlgQuickResponse(QuickResponseOID) {
         var popTitle = "";
