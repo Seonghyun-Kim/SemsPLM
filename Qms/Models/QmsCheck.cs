@@ -46,6 +46,10 @@ namespace Qms.Models
         // 1차, 2차, 3차 유효성 검증 등록
         public List<QmsCheck> QmsCheckList { get; set; }
         #endregion
+
+        #region -- Search & View
+        public string CheckUserNm { get; set; }
+        #endregion
     }
 
     public static class QmsCheckRepository

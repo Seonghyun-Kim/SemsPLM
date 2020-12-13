@@ -269,7 +269,7 @@
 
                         var status = GridStatus(rowData.ModuleCheckFl, rowData.ModuleCheckStatusNm, rowData.ModuleCheckEstEndDt, rowData.ModuleCheckChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenQuickValidation(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -285,7 +285,7 @@
 
                         var status = GridStatus(rowData.ModuleStandardFl, rowData.ModuleStandardStatusNm, rowData.ModuleStandardEstEndDt, rowData.ModuleStandardChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenStandardFollowUp(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -301,7 +301,7 @@
 
                         var status = GridStatus(rowData.ModuleWorkerEduFl, rowData.ModuleWorkerEduStatusNm, rowData.ModuleWorkerEduEstEndDt, rowData.ModuleWorkerEduChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenWorkerEducation(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
@@ -400,10 +400,35 @@
         TabPageLoad(linkUrl, linkName);
     }
 
-    function OpenLpaUnfit(uid) {
+    /**
+     * 유효성 상세화면
+     */
+    function OpenQuickValidation(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
-        var linkName = "[" + rowData.Title + "] LPA 부적합현황";
-        var linkUrl = '/Qms/InfoLpaUnfit?OID=' + rowData.ModuleLpaOID;
+        var linkName = "[" + rowData.Title + "] 유효성 검증";
+        var linkUrl = '/Qms/InfoQuickValidation?OID=' + rowData.ModuleCheckOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
+    /**
+     * 표준화 상세화면
+     */
+    function OpenStandardFollowUp(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] 표준화";
+        var linkUrl = '/Qms/InfoStandardFollowUp?OID=' + rowData.ModuleStandardOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
+    /**
+     * 작업자교육 상세화면
+     */
+    function OpenWorkerEducation(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] 작업자 교육";
+        var linkUrl = '/Qms/InfoWorkerEducation?OID=' + rowData.ModuleWorkerEduOID;
 
         TabPageLoad(linkUrl, linkName);
     }

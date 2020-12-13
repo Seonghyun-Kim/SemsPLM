@@ -625,9 +625,14 @@
 
     <!-- QuickValidation SQL-->
     <select id="SelQmsCheck" parameterClass="QmsCheck" resultClass="QmsCheck">
-      SELECT A.*, B.Name, B.Description
+      SELECT
+      A.*
+      , B.Name
+      , B.Description
+      , C.Name AS CheckUserNm
       FROM T_DQMS_CHECK A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -662,7 +667,7 @@
     </insert>
 
     <update id="UdtQmsCheck" parameterClass="QmsCheck">
-      UPDATE T_DQMS_WORKER_EDU
+      UPDATE T_DQMS_CHECK
       SET
       CheckSt = #CheckSt#,
       CheckEt = #CheckEt#,
@@ -672,7 +677,7 @@
       CheckDetail = #CheckDetail#,
       FinishFl = #FinishFl#,
       FinishDetail = #FinishDetail#
-      WHERE ModuleOID = #ModuleOID#
+      WHERE ModuleOID = #ModuleOID# AND OID = #OID#
     </update>
     
     <!-- StdDoc SQL -->
