@@ -1,15 +1,17 @@
 ﻿using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Qms.Models
 {
-    public class LpaUnfit : QuickResponseModule, IDObject
+    public class LpaUnfit : QuickResponseModule, IDObject, IObjectFile
     {
         public int? ModuleOID { get; set; }
         // 레이어 
@@ -30,6 +32,8 @@ namespace Qms.Models
         // 심사자(LPA 담당자) 
         public int? LpaCheckUserOID { get; set; }
 
+        public string LpaCheckUserNm { get; set; }
+
         // LPA 점검일자 
         public DateTime? LpaCheckDt { get; set; }
 
@@ -39,8 +43,12 @@ namespace Qms.Models
         // 품번/품명 
         public int? PartOID { get; set; }
 
+        public string PartNm { get; set; }
+
         // 담당자 
         public int? LpaUserOID { get; set; }
+
+        public string LpaUserNm { get; set; }
 
         // 완료요청일 
         public DateTime? FinishRequestDt { get; set; }
@@ -48,9 +56,14 @@ namespace Qms.Models
         // 대책서 담당자 
         public int? MeasureUserOID { get; set; }
 
-        #region -- 저장용
-        public LpaUnfitCheck LpaUnfitCheck { get; set; }
-        #endregion
+        public string MeasureUserNm { get; set; }
+
+        public List<HttpPostedFileBase> Files { get; set; }
+
+        public List<HttpFile> delFiles { get; set; }
+
+        public List<LpaUnfitCheck> LpaUnfitChecks { get; set; }
+    
 
     }
 
@@ -93,6 +106,8 @@ namespace Qms.Models
 
         // 개선대책 
         public string ImproveCountermeasure { get; set; }
+
+        public string IsRemove { get; set; }
 
     }
 

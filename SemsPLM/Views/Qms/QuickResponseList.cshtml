@@ -253,7 +253,7 @@
 
                         var status = GridStatus(rowData.ModuleLpaFl, rowData.ModuleLpaStatusNm, rowData.ModuleLpaEstEndDt, rowData.ModuleLpaChargeUserNm);
 
-                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:alert(\"" + aa + "\")'>"+ status.EstDt + "</a></div>";
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenLpaUnfit(" + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }

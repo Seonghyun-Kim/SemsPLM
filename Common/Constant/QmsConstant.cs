@@ -84,6 +84,8 @@ namespace Common.Constant
 
         public static string RELATIONSHIP_QUICK_MODULE { get { return "QUICK_MODULE"; } }
 
+        public static string RELATIONSHIP_LPA { get { return "LPA_UNFIT_MEASURE"; } }
+
         public static string TYPE_OPEN_ISSUE_ITEM { get { return "OPEN_ISSUE_ITEM"; } }
     }
 }
