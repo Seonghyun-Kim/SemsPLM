@@ -1065,14 +1065,17 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 유효성 검증
+
+
         public ActionResult QuickMyProcessDocumentList()
         {
             return View();
         }
 
+        #region -- 화면
         /// <summary>
         /// 2020.11.15
-        /// 유효성 검증 등록
+        /// 유효성 검증 등록 화면
         /// </summary>
         /// <returns></returns>
         public ActionResult EditQuickValidation(QmsCheck _param)
@@ -1080,41 +1083,88 @@ namespace SemsPLM.Controllers
             ViewBag.QuickOID = _param.QuickOID;
             ViewBag.ModuleOID = _param.OID;
 
-            return View("Dialog/dlgEditQuickValidation", _param);
+            return View("Dialog/dlgEditQuickValidation");
         }
 
         /// <summary>
+        /// 2020.12.13
+        /// 유효성 검증 상세화면
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InfoQuickValidation(int? OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.QmsCheck = Module;
+
+            ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = OID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK });
+
+            return View();
+        }
+        #endregion
+
+        #region -- 등록, 수정, 삭제, 조회
+        /// <summary>
         /// 2020.11.21
-        /// 유효성 검증 저장
+        /// 유효성 검증 등록
         /// </summary>
         /// <param name="_param"></param>
         /// <returns></returns>
         public JsonResult InsQuickValidation(QmsCheck _param)
         {
-            int ModuleOID = 0;
-            int returnValue = 0;
             try
             {
                 DaoFactory.BeginTransaction();
 
                 foreach (QmsCheck qmsCheck in _param.QmsCheckList)
                 {
-                    /*qmsCheck.OID = qmsCheck.Cnt;
-                    qmsCheck.ModuleOID = qmsCheck.Cnt;*/
-
                     if (qmsCheck.OID == null)
                     {
-                        returnValue = QmsCheckRepository.InsQmsCheck(qmsCheck);
-                    }
-                    else
-                    {
-                        QmsCheckRepository.UdtQmsCheck(qmsCheck);
+                        DObject dobj = new DObject();
+                        dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_ITEM;
+                        dobj.Name = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_ITEM + "_" + qmsCheck.ModuleOID;
+                        qmsCheck.OID = DObjectRepository.InsDObject(dobj);
+
+                        QmsCheckRepository.InsQmsCheck(qmsCheck);
                     }
                 }
 
                 DaoFactory.Commit();
 
-                return Json(returnValue);
+                return Json(1);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
+        /// <summary>
+        /// 2020.12.13
+        /// 유효성 검증 수정
+        /// </summary>
+        /// <param name="_param"></param>
+        /// <returns></returns>
+        public JsonResult UdtQuickValidation(QmsCheck _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                foreach (QmsCheck qmsCheck in _param.QmsCheckList)
+                {
+                    if (qmsCheck.OID == null)
+                    {
+                        throw new Exception("잘못된 호출");
+                    }
+
+                    QmsCheckRepository.UdtQmsCheck(qmsCheck);
+                }
+
+                DaoFactory.Commit();
+
+                return Json(1);
             }
             catch (Exception ex)
             {
@@ -1125,7 +1175,11 @@ namespace SemsPLM.Controllers
 
         #endregion
 
+        #endregion
+
         #region -- 표준화
+
+        #region -- 화면
         /// <summary>
         /// 2020.11.15
         /// 작업자 교육 등록
@@ -1139,6 +1193,38 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditStandardFollowUp", _param);
         }
 
+        /// <summary>
+        /// 2020.12.13
+        /// 작업자 교육 상세화면
+        /// PFMEA, Drawing, ManagePlan, WorkStd, Inspect 문서타입이 정해지면 추가 작업 진행 예정
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InfoStandardFollowUp(int? OID)
+        {
+            ViewBag.ModuleOID = OID;
+
+            /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
+            // TEST
+            List<StandardDoc> StandardDocs = new List<StandardDoc>();
+            for (int i=0; i<5; i++)
+            {
+                StandardDocs.Add(new StandardDoc() { 
+                    OID = i, 
+                    ModuleOID = 100,
+                    DocOID = 100 + i,
+                    DocNm = "TEST",
+                    DocSummary = "TEST",
+                    DocCompleteDt = DateTime.Now,
+                });
+            }
+            ViewBag.StandardDocDetail = StandardDocs.ToList();
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });
+
+            return View();
+        }
+        #endregion
+
+        #region -- 등록, 수정, 삭제, 조회
         public JsonResult InsStandardFollowUp(StandardDoc _param)
         {
             int ModuleOID = 0;
@@ -1149,16 +1235,14 @@ namespace SemsPLM.Controllers
 
                 foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
                 {
-                    /*qmsCheck.OID = qmsCheck.Cnt;
-                    qmsCheck.ModuleOID = qmsCheck.Cnt;*/
-
                     if (standardDoc.OID == null)
                     {
-                        returnValue = StandardDocRepository.InsStandardDoc(_param);
-                    }
-                    else
-                    {
-                        StandardDocRepository.UdtStandardDoc(_param);
+                        DObject dobj = new DObject();
+                        dobj.Type = QmsConstant.TYPE_STANDARD_DOC_ITEM;
+                        dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + standardDoc.ModuleOID;
+                        standardDoc.OID = DObjectRepository.InsDObject(dobj);
+
+                        returnValue = StandardDocRepository.InsStandardDoc(standardDoc);
                     }
                 }
 
@@ -1172,6 +1256,35 @@ namespace SemsPLM.Controllers
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
         }
+
+        public JsonResult UdtStandardFollowUp(StandardDoc _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
+                {
+                    if (standardDoc.OID == null)
+                    {
+                        throw new Exception("잘못된 호출");
+                    }
+
+                    StandardDocRepository.UdtStandardDoc(standardDoc);
+                }
+
+                DaoFactory.Commit();
+
+                return Json(1);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+        #endregion
+
         #endregion
 
         #region -- 교육

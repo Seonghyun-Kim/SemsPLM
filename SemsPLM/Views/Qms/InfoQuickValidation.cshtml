@@ -1,0 +1,326 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="InfoQuickValidation_@ViewBag.QmsCheck.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>유효성 검증</h3>
+                <p>제 목 : <span></span></p>
+            </div>
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.QmsCheck.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
+                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <label><i class="fas fa-caret-square-down"></i> 유효성검증</label>
+            <table id="tbQmsCheckList_@ViewBag.QmsCheck.OID" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:10%" />
+                    <col style="width:30%" />
+                    <col style="width:30%" />
+                    <col style="width:30%" />
+                </colgroup>
+                <tr>
+                    <th>구분</th>
+                    <th>1차 유효성검증</th>
+                    <th>2차 유효성검증</th>
+                    <th>3차 유효성검증</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID">
+                    <th>검증시작일</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmEt_@ViewBag.QmsCheck.OID">
+                    <th>검증완료일</th>
+                </tr>
+                <tr id="tbQmsCheckListUser_@ViewBag.QmsCheck.OID">
+                    <th>담당자</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmBaseDt_@ViewBag.QmsCheck.OID">
+                    <th>검증일</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmJudgment_@ViewBag.QmsCheck.OID">
+                    <th>판정</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmDesc_@ViewBag.QmsCheck.OID">
+                    <th>검증내용요약</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmEnd_@ViewBag.QmsCheck.OID">
+                    <th>종료여부</th>
+                </tr>
+                <tr id="tbQmsCheckListEndDesc_@ViewBag.QmsCheck.OID">
+                    <th>종료사유</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var QmsCheckList = @Html.Raw(Json.Encode(ViewBag.QmsCheckItems));
+    $(document).ready(function () {
+        const QmsCheckOID = '@ViewBag.QmsCheck.OID';
+        PrintQmsCheck();
+
+        // 수정
+        $('#InfoQuickValidation_EditBtn_' + QmsCheckOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + QmsCheckOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + QmsCheckOID).parent().append(modifyTag);
+
+            $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "none");
+            $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "inline-block");
+            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "inline-block");
+        });
+
+        // 취소
+        $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).jqxButton();
+        $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "inline-block");
+            $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "none");
+            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "none");
+        });
+
+
+        // 저장
+        $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).jqxButton();
+        $('#InfoQuickValidation_SaveBtn_' + QmsCheckOID).on("click", function () {
+            var param = {};
+            param.QmsCheckList = [];
+            QmsCheckList.forEach(function (v, i) {
+                var item = $("[QmsCheckCnt=" + v.OID + "_" + v.Cnt + "]");
+                var data = {};
+
+                data.ModuleOID = v.ModuleOID // OID
+                data.OID = v.OID // OID
+                data.CheckSt = $(item[0]).jqxDateTimeInput("val"); // 검증시작일
+                data.CheckEt = $(item[1]).jqxDateTimeInput("val"); // 검증종료일
+                data.CheckUserOID = $(item[2]).attr("CheckUserOID"); // 담당자 OID
+                data.CheckDt = $(item[3]).jqxDateTimeInput("val"); // 검증일
+                data.CheckFl = $(item[4]).val() === true ? 1 : 0; // CheckFl
+                data.CheckDetail = $(item[5]).val(); // 검증내용요약
+                data.FinishFl = $(item[6]).val() === true ? 1 : 0; // FinishFl
+                data.FinishDetail = $(item[7]).val(); // 종료사유
+
+                if (data.CheckUserOID === undefined || data.CheckUserOID === null) {
+                    alert("담당자를 지정 해주세요.");
+                    return;
+                }
+
+                console.log(data);
+
+                param.QmsCheckList.push(data);
+            });
+
+            $.post('/Qms/UdtQuickValidation', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+    });
+
+    function PrintQmsCheck() {
+        for (var i = 0; i < QmsCheckList.length; i++) {
+            var innerHtml = "";
+            var item = QmsCheckList[i];
+
+            // 검증 시작일
+            innerHtml += "<td>";
+            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmSt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt +"'></div>";
+            innerHtml += "</td>";
+            $("#tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID").append(innerHtml);
+
+            $("#dtQmsCheckListConfirmSt_" + item.OID).jqxDateTimeInput(DateFormat);
+            $("#dtQmsCheckListConfirmSt_" + item.OID).jqxDateTimeInput({
+                width: 140,
+                height: 30,
+                theme: "Light",
+                disabled: true
+            });
+
+            if (item.CheckSt === null) {
+                $("#dtQmsCheckListConfirmSt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            } else {
+                var milli = item.CheckSt.replace(/\/Date\((-?\d+)\)\//, '$1');
+                var d = new Date(parseInt(milli));
+                $("#dtQmsCheckListConfirmSt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+            }
+
+            // 검증 완료일
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmEt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt+"'></div>";
+            innerHtml += "</td>";
+            $("#tbQmsCheckListConfirmEt_@ViewBag.QmsCheck.OID").append(innerHtml);
+
+            $("#dtQmsCheckListConfirmEt_" + item.OID).jqxDateTimeInput(DateFormat);
+            $("#dtQmsCheckListConfirmEt_" + item.OID).jqxDateTimeInput({
+                width: 140,
+                height: 30,
+                theme: "Light",
+                disabled: true
+            });
+
+            if (item.CheckEt === null) {
+                $("#dtQmsCheckListConfirmEt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            } else {
+                var milli = item.CheckEt.replace(/\/Date\((-?\d+)\)\//, '$1');
+                var d = new Date(parseInt(milli));
+                $("#dtQmsCheckListConfirmEt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+            }
+
+            // 담당자
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<input type='text' id='txtQmsCheckListUser_" + item.OID + "' readonly='readonly' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "'></input>";
+            innerHtml += "<button id='btnQmsCheckListUserSearch_" + item.OID + "' class='custom-button' style='display:none;'><i class='fas fa-search'></i>검색</button>"
+            innerHtml += "</td>";
+            $("#tbQmsCheckListUser_@ViewBag.QmsCheck.OID").append(innerHtml);
+
+            if (WebUtils.isEmpty(item.CheckUserOID)) {
+                $("#txtQmsCheckListUser_" + item.OID).val(null);
+            } else {
+                $("#txtQmsCheckListUser_" + item.OID).attr("CheckUserOID", item.CheckUserOID);
+                $("#txtQmsCheckListUser_" + item.OID).val(item.CheckUserNm);
+            }
+
+            $("#btnQmsCheckListUserSearch_" + item.OID).attr("onclick", "QmsCheckListSearchUser(" + item.OID + ")");
+
+            // 검증일
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmBaseDt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt+"'></div>";
+            innerHtml += "</td>";
+            $("#tbQmsCheckListConfirmBaseDt_@ViewBag.QmsCheck.OID").append(innerHtml);
+
+            $("#dtQmsCheckListConfirmBaseDt_" + item.OID).jqxDateTimeInput(DateFormat);
+            $("#dtQmsCheckListConfirmBaseDt_" + item.OID).jqxDateTimeInput({
+                width: 140,
+                height: 30,
+                theme: "Light",
+                disabled: true
+            });
+
+            if (item.CheckDt === null) {
+                $("#dtQmsCheckListConfirmBaseDt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            } else {
+                var milli = item.CheckDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+                var d = new Date(parseInt(milli));
+                $("#dtQmsCheckListConfirmBaseDt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+            }
+
+            // 판정
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='SWITCH' id='btnQmsCheckListJudgment_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt +"'></div>";
+            innerHtml += "</td>";
+
+            $("#tbQmsCheckListConfirmJudgment_@ViewBag.QmsCheck.OID").append(innerHtml);
+            $('#btnQmsCheckListJudgment_' + item.OID).jqxSwitchButton({ height: 30, width: 80, checked: (item.CheckFl === 1 ? true : false), onLabel: "OK", offLabel: "NG", disabled: true });
+
+            // 검증내용요약
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<input class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='TEXT' type='text' id='txtQmsCheckListConfirmDesc_" + item.OID + "' style='100%' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "' value='" + item.CheckDetail +"'></input>";
+            innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#tbQmsCheckListConfirmDesc_@ViewBag.QmsCheck.OID").append(innerHtml);
+
+            // 종료여부
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='SWITCH' id='btnQmsCheckListQmsCheckListConti_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "'></div>";
+            innerHtml += "</td>";
+
+            $("#tbQmsCheckListConfirmEnd_@ViewBag.QmsCheck.OID").append(innerHtml);
+            $('#btnQmsCheckListQmsCheckListConti_' + item.OID).jqxSwitchButton({ height: 30, width: 80, checked: (item.FinishFl === 1 ? true : false), onLabel: "OK", offLabel: "NG", disabled:true });
+
+            // 종료사유
+            innerHtml = "";
+            innerHtml += "<td>";
+            innerHtml += "<input class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='TEXT' type='text' id='txtQmsCheckListEndDesc_" + item.OID + "' style='100%' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "' value='" + item.FinishDetail+"'></input>";
+            innerHtml += "</div>"
+            innerHtml += "</td>";
+
+            $("#tbQmsCheckListEndDesc_@ViewBag.QmsCheck.OID").append(innerHtml);
+        }
+
+    }
+
+    function QmsCheckListSearchUser(OID) {
+        OpenApprovalPersonDialog(function (res) {
+            if (res.length > 1) {
+                alert("담당자는 한명만 지정 할 수 있습니다.");
+                return;
+            }
+            $("#txtQmsCheckListUser_" + OID).val(res[0].Name);
+            $("#txtQmsCheckListUser_" + OID).attr("CheckUserOID", res[0].OID);
+
+        }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+    }
+</script>

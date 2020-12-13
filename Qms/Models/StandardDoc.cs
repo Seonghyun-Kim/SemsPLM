@@ -24,9 +24,14 @@ namespace Qms.Models
         // 반영내용 
         public string DocSummary { get; set; }
 
-        public string DocCompleteDt { get; set; }
+        public DateTime? DocCompleteDt { get; set; }
 
         public List<StandardDoc> StandardFollowUpList { get; set; }
+
+        #region -- Search & View
+        public string DocTypeNm { get; set; }
+        public string DocNm { get; set; }
+        #endregion
     }
 
     public static class StandardDocRepository

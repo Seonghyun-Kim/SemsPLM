@@ -3365,6 +3365,8 @@
     <Content Include="Views\Qms\InfoErrorProof.cshtml" />
     <Content Include="Views\Qms\WorkerEducationList.cshtml" />
     <Content Include="Views\Qms\InfoWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\InfoStandardFollowUp.cshtml" />
+    <Content Include="Views\Qms\InfoQuickValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

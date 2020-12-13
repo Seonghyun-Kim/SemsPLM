@@ -196,7 +196,6 @@
                 var data = {};
                 var validationClass = $(".ValidationClass_" + (i + 1));
 
-                data.OID = $(validationClass[0]).attr("OID"); // ModuleOID
                 data.ModuleOID = $(validationClass[0]).attr("ModuleOID"); // ModuleOID
                 data.Cnt = $(validationClass[0]).attr("Cnt"); // N차수
                 data.CheckSt = $(validationClass[1]).jqxDateTimeInput("val"); // 검증시작일
@@ -245,13 +244,12 @@
     function InitDlgValidation() {
         var innerHtml = "";
         var ValidationClassNm = "ValidationClass";
-        var ModuleOID = "@Model.ModuleOID";
-        var OID = "@Model.OID";
+        var ModuleOID = "@ViewBag.ModuleOID";
 
         // 검증시작일
         for (var i = 0; i < Cnt; i++) {
             innerHtml += "<td>";
-            innerHtml += "<div class='ValidationClass_" + (i + 1) + "' OID='" + OID + "' ModuleOID='" + ModuleOID + "' style='display:none;' Cnt='" + (i + 1)+"'></div>"
+            innerHtml += "<div class='ValidationClass_" + (i + 1) + "' ModuleOID='" + ModuleOID + "' style='display:none;' Cnt='" + (i + 1)+"'></div>"
             innerHtml += "<div id='dtEditQuickValidationConfirmSt_" + (i + 1) + "' class='ValidationClass_" + (i + 1)+"' data-Cnt=" + (i + 1)+"></div>";
             innerHtml += "</td>";
             $("#EditQuickValidationConfirmSt").append(innerHtml);
