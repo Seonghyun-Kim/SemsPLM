@@ -20,6 +20,7 @@
     <typeAlias alias="ErrorProof" type="Qms.Models.ErrorProof" />
     <typeAlias alias="LpaUnfit" type="Qms.Models.LpaUnfit" />
     <typeAlias alias="LpaUnfitCheck" type="Qms.Models.LpaUnfitCheck" />
+    <typeAlias alias="LpaMeasure" type="Qms.Models.LpaMeasure" />
     <typeAlias alias="WorkerEdu" type="Qms.Models.WorkerEdu" />
     <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
     <typeAlias alias="StandardDoc" type="Qms.Models.StandardDoc" />
@@ -624,9 +625,14 @@
 
     <!-- QuickValidation SQL-->
     <select id="SelQmsCheck" parameterClass="QmsCheck" resultClass="QmsCheck">
-      SELECT A.*, B.Name, B.Description
+      SELECT
+      A.*
+      , B.Name
+      , B.Description
+      , C.Name AS CheckUserNm
       FROM T_DQMS_CHECK A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -661,7 +667,7 @@
     </insert>
 
     <update id="UdtQmsCheck" parameterClass="QmsCheck">
-      UPDATE T_DQMS_WORKER_EDU
+      UPDATE T_DQMS_CHECK
       SET
       CheckSt = #CheckSt#,
       CheckEt = #CheckEt#,
@@ -671,7 +677,7 @@
       CheckDetail = #CheckDetail#,
       FinishFl = #FinishFl#,
       FinishDetail = #FinishDetail#
-      WHERE ModuleOID = #ModuleOID#
+      WHERE ModuleOID = #ModuleOID# AND OID = #OID#
     </update>
     
     <!-- StdDoc SQL -->
@@ -754,12 +760,20 @@
     <select id="SelLpaUnfit" parameterClass="LpaUnfit" resultClass="LpaUnfit">
       SELECT
       A.*
+      , B.OID
+      , B.BPolicyOID
       , B.Name
       , B.Description
-      , C.*
+      , C.Name AS LpaCheckUserNm
+      , D.Name AS PartNm
+      , E.Name AS LpaUserNm
+      , F.Name AS MeasureUserNm
       FROM T_DQMS_LPA_UNFIT A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
-      LEFT JOIN T_DQMS_LPA_UNFIT_CHECK C ON A.ModuleOID = C.ModuleOID
+      LEFT JOIN T_DOBJECT C ON A.LpaCheckUserOID = C.OID
+      LEFT JOIN T_DOBJECT D ON A.PartOID = D.OID
+      LEFT JOIN T_DOBJECT E ON A.LpaUserOID = E.OID
+      LEFT JOIN T_DOBJECT F ON A.MeasureUserOID = F.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -822,7 +836,7 @@
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
-        A.OID = #OID#
+        A.ModuleOID = #ModuleOID#
       </isNotNull>
     </select>
 
@@ -844,10 +858,48 @@
     <update id="UdtLpaUnfitCheck" parameterClass="LpaUnfitCheck">
       UPDATE T_DQMS_LPA_UNFIT_CHECK
       SET
+      CheckPoin = #CheckPoin#,
       CauseAnalysis = #CauseAnalysis#,
       ImproveCountermeasure = #ImproveCountermeasure#
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
+
+    <insert id="InsLpaMeasure" parameterClass="LpaMeasure">
+      INSERT INTO T_DQMS_LPA_MEASURE
+      (ModuleOID,
+      CauseAnalysis,
+      ImproveCountermeasure)
+      VALUES
+      (#ModuleOID#,
+      #CauseAnalysis#,
+      #ImproveCountermeasure#)
+    </insert>
+    
+    <update id="UdtLpaMeasure" parameterClass="LpaMeasure">
+      UPDATE T_DQMS_LPA_MEASURE
+      SET
+      CauseAnalysis = #CauseAnalysis#,
+      ImproveCountermeasure = #ImproveCountermeasure#
+      WHERE ModuleOID = #ModuleOID#;
+
+    </update>
+
+    <select id="SelLpaMeasure" parameterClass="LpaMeasure" resultClass="LpaMeasure">
+      SELECT A.ModuleOID, A.CauseAnalysis, A.ImproveCountermeasure
+      , B.OID
+      , B.BPolicyOID
+      , B.Name
+      , B.Description
+      FROM T_DQMS_LPA_MEASURE A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="ModuleOID">
+        A.ModuleOID = #ModuleOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="OID">
+        B.OID = #OID#
+      </isNotNull>
+    </select>
 
     <!-- OpenIssue SQL -->
     <select id="SelOpenIssue" parameterClass="OpenIssue" resultClass="OpenIssue">

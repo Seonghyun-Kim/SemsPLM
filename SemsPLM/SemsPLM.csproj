@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -3365,6 +3364,10 @@
     <Content Include="Views\Qms\InfoErrorProof.cshtml" />
     <Content Include="Views\Qms\WorkerEducationList.cshtml" />
     <Content Include="Views\Qms\InfoWorkerEducation.cshtml" />
+    <Content Include="Views\Qms\InfoLpaUnfit.cshtml" />
+    <Content Include="Views\Qms\InfoLpaMeasure.cshtml" />
+    <Content Include="Views\Qms\InfoStandardFollowUp.cshtml" />
+    <Content Include="Views\Qms\InfoQuickValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

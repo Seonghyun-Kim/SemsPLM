@@ -1,0 +1,278 @@
+﻿@{
+    Layout = null;
+}
+
+    <div id="InfoLpaMeasure_@ViewBag.LpaMeasure.OID" class="info_project clearfix">
+        <div class="info_menubar">
+            <ul>
+                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+            </ul>
+        </div>
+        <div class="doc_content">
+            <div class="project_basic clearfix">
+                <div class="basic_info">
+                    <h3>LPA 대책서 등록</h3>
+                    <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
+                </div>
+                <div class="basic_image">
+                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+                </div>
+                <div class="basic_status">
+                    <div class="pointer_wrap">
+                        @for (int i = 0; i < ViewBag.Status.Count; i++)
+                        {
+                            if (ViewBag.LpaMeasure.BPolicyOID == ViewBag.Status[i].StatusOID)
+                            {
+                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <p>설명 : <span></span></p>
+                </div>
+            </div>
+            <div id="properties" class="basic_grid">
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoLpaMeasure_defaultBtn_@ViewBag.LpaMeasure.OID">
+                                <button id="InfoLpaMeasure_EditBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                @*<button id="InfoLpaMeasure_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                                <button id="InfoLpaMeasure_EditCancleBtn_@ViewBag.LpaMeasure.OID" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoLpaMeasure_SaveBtn_@ViewBag.LpaMeasure.OID" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoLpaMeasure_ApprovalBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table width="100%" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:180px;" />
+                        <col style="width:auto;" />
+                    </colgroup>
+                    <tr>
+                        <th>지적사항</th>
+                        <td style="margin:0px;padding:0px;">
+                            <table id="tbLpaUnfitCheck_@ViewBag.LpaMeasure.OID" class="infoTable" style="table-layout:fixed;">
+                                <colgroup>
+                                    <col style="width:4%" />
+                                    <col style="width:22%" />
+                                    <col style="width:37%" />
+                                    <col style="width:37%" />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>지적사항</th>
+                                        <th>원인분석</th>
+                                        <th>개선대책</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>검토원인상세</th>
+                        <td>
+                            <textarea style="width:100%; height:70px;" id="txtDlgEditLPAMeasureCauseAnalysis_@ViewBag.LpaMeasure.OID" class="Modifiable_@ViewBag.LpaMeasure.OID" AttrType="TEXT">@ViewBag.LpaMeasure.CauseAnalysis</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>재발방지대책</th>
+                        <td>
+                            <textarea style="width:100%; height:70px;" id="txtDlgEditLPAMeasureImproveCountermeasure_@ViewBag.LpaMeasure.OID" class="Modifiable_@ViewBag.LpaMeasure.OID" AttrType="TEXT">@ViewBag.LpaMeasure.ImproveCountermeasure</textarea>
+                        </td>
+                    </tr>
+                </table>
+
+                <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+                <div id="InfoLpaMeasure_FileList_@ViewBag.LpaMeasure.OID">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+     const LpaMeasureOID = '@ViewBag.LpaMeasure.OID';
+        var fileUpload = $("#InfoLpaMeasure_FileList_" + LpaMeasureOID).FileUpload({ OID: LpaMeasureOID });
+
+        $('#InfoLpaMeasure_EditBtn_' + LpaMeasureOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + LpaMeasureOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);  
+            });
+
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+
+            $('.Modifiable_' + LpaMeasureOID).parent().css('position', 'relative');
+
+            $('.Modifiable_' + LpaMeasureOID).parent().append(modifyTag);
+
+            $("#InfoLpaMeasure_EditBtn_" + LpaMeasureOID).css("display", "none");            
+            $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).css("display", "inline-block");
+            $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).css("display", "inline-block");  
+
+            fileUpload.EditMode();
+        });
+
+        $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).jqxButton();
+        $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + LpaMeasureOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);             
+            });
+
+            $(".modifyTag").remove();
+            $("#InfoLpaMeasure_EditBtn_" + LpaMeasureOID).css("display", "inline-block");  
+            $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).css("display", "none");
+            $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).css("display", "none");      
+
+            fileUpload.ReadOnlyMode();
+        });
+
+        $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).jqxButton();
+        $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).on("click", function () {
+            var param = {};
+            param.OID = LpaMeasureOID;
+            param.ModuleOID = LpaMeasureOID;
+            param.CauseAnalysis = $("#txtDlgEditLPAMeasureCauseAnalysis_@ViewBag.LpaMeasure.OID").val();
+            param.ImproveCountermeasure = $("#txtDlgEditLPAMeasureImproveCountermeasure_@ViewBag.LpaMeasure.OID").val();
+            param.LpaUnfitChecks = [];
+
+            var trLpaUnfitCheck$ = $("#tbLpaUnfitCheck_@ViewBag.LpaMeasure.OID tr[Data='Y']");
+            var errMsg = "";
+
+            trLpaUnfitCheck$.each(function (i, v) {
+                var data = {};
+                data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
+                data.ModuleOID = "@ViewBag.LpaUnfitOID";
+                data.CheckPoin = $($(v).find("[name='CheckPoin']")[0]).val();
+                data.CauseAnalysis = $($(v).find("[name='CauseAnalysis']")[0]).val();
+                data.ImproveCountermeasure = $($(v).find("[name='ImproveCountermeasure']")[0]).val();
+
+                if (WebUtils.isBlank(data.CauseAnalysis)) {
+                    errMsg += "[" + (i + 1).toString() + "] 행의 원인분석 내용이 입력되지 않았습니다..\n";
+                }
+
+                if (WebUtils.isBlank(data.ImproveCountermeasure)) {
+                    errMsg += "[" + (i + 1).toString() + "] 행의 개선대책 내용이 입력되지 않았습니다..\n";
+                }
+
+                param.LpaUnfitChecks.push(data);
+            });
+
+            if (errMsg.length != 0) {
+                alert(errMsg); return;
+            }
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+           SendDataWithFile('/Qms/SaveQuickLpaMeasure', param, Files, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+               alert("저장되었습니다.");
+               PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        var LpaUnfitCheck = @Html.Raw(Json.Encode(ViewBag.LpaUnfitCheck));
+
+        if (LpaUnfitCheck.length === 0) {
+            AddLpaUnfitCheckMeasureAdd(null);
+        } else {
+            LpaUnfitCheck.forEach(function (v, i) {
+                AddLpaUnfitCheckMeasureAdd(v);
+            });
+        }
+
+        var ModifyAttr = $('.Modifiable_' + LpaMeasureOID);
+
+        ModifyAttr.each(function (i, v) {
+            ContentReadMode(v);             
+        });
+    });
+
+    function AddLpaUnfitCheckMeasureAdd(data) {
+        var OID = data == null ? null : data.OID;
+        var table$ = $("#tbLpaUnfitCheck_@ViewBag.LpaMeasure.OID tbody");
+        var trCnt$ = $("#tbLpaUnfitCheck_@ViewBag.LpaMeasure.OID tbody tr");
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("Data", "Y");
+        tr$.setAttribute("OID", OID);
+
+        var tdNo = document.createElement("td");
+        tdNo.style.textAlign = "center";
+        tdNo.innerText = (trCnt$.length + 1);  
+
+        var tdCheckPoin$ = document.createElement("td");
+        var txtCheckPoin$ = document.createElement("input");
+        txtCheckPoin$.setAttribute("type", "text");
+        txtCheckPoin$.setAttribute("name", "CheckPoin");
+        txtCheckPoin$.setAttribute("readonly", "readonly");
+        txtCheckPoin$.style.width = "100%";
+         if (data !== null) {
+            txtCheckPoin$.value = data.CheckPoin;
+        }
+        tdCheckPoin$.appendChild(txtCheckPoin$);
+
+        var tdCauseAnalysisPoin$ = document.createElement("td");
+        var txtCauseAnalysisPoin$ = document.createElement("input");
+        txtCauseAnalysisPoin$.setAttribute("type", "text");
+        txtCauseAnalysisPoin$.setAttribute("name", "CauseAnalysis");
+        txtCauseAnalysisPoin$.style.width = "100%";
+         if (data !== null) {
+	        txtCauseAnalysisPoin$.value = data.CauseAnalysis;
+        }
+        txtCauseAnalysisPoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";
+        txtCauseAnalysisPoin$.setAttribute("AttrType", "TEXT");     
+        tdCauseAnalysisPoin$.appendChild(txtCauseAnalysisPoin$);
+
+        var tdImproveCountermeasurePoin$ = document.createElement("td");
+        var txtImproveCountermeasurePoin$ = document.createElement("input");
+        txtImproveCountermeasurePoin$.setAttribute("type", "text");
+        txtImproveCountermeasurePoin$.setAttribute("name", "ImproveCountermeasure");
+        txtImproveCountermeasurePoin$.style.width = "100%";
+        if (data !== null) {
+	        txtImproveCountermeasurePoin$.value = data.ImproveCountermeasure;
+        }
+        txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";
+        txtImproveCountermeasurePoin$.setAttribute("AttrType", "TEXT");     
+        tdImproveCountermeasurePoin$.appendChild(txtImproveCountermeasurePoin$);
+
+        tr$.appendChild(tdNo);
+        tr$.appendChild(tdCheckPoin$);
+        tr$.appendChild(tdCauseAnalysisPoin$);
+        tr$.appendChild(tdImproveCountermeasurePoin$);
+
+        table$.append(tr$);
+    }
+</script>

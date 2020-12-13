@@ -73,7 +73,6 @@
                 var data = {};
                 var dataList = $("[data-field='" + datafield+"']");
 
-                data.OID = $(dataList[0]).attr("OID"); // ModuleOID
                 data.ModuleOID = $(dataList[0]).attr("ModuleOID"); // ModuleOID
                 data.DocSummary = $(dataList[1]).val(); // 반영내용
                 data.DocCompleteDt = $(dataList[2]).val(); // 완료일
@@ -91,7 +90,7 @@
 
             console.log(param.StandardFollowUpList);
 
-            $.post('/Qms/InsQuickValidation', param, function (response) {
+            $.post('/Qms/InsStandardFollowUp', param, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
