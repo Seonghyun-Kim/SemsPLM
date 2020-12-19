@@ -16,7 +16,7 @@
         </tbody>
     </table>
 </div>
-<div>
+@*<div>
     <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 기본정보</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
         <colgroup>
@@ -138,7 +138,7 @@
         </tr>
     </table>
 </div>
-
+*@
 <div style="margin-top:25px;">
     <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 유효성검증</h3>
     <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
@@ -184,7 +184,7 @@
         dtEditQuickValidationCreateDt$.text(WebUtils.GetDate(-1, "m", "-"));
         dtEditQuickValidationOccurDt$.text(WebUtils.GetDate(-1, "m", "-"));
 
-        InitDlgValidation();
+        PrintQmsCheck();
 
         // 저장
         var btnDlgSave$ = $("#btnEditQuickValidation").jqxButton();
@@ -203,9 +203,9 @@
                 data.CheckEt = $(validationClass[2]).jqxDateTimeInput("val"); // 검증종료일
                 data.CheckUserOID = $(validationClass[3]).attr("UserOID"); // 담당자 OID
                 data.CheckDt = $(validationClass[4]).jqxDateTimeInput("val"); // 검증일
-                data.CheckFl = $(validationClass[5]).jqxRadioButton('checked') ? 1 : 0; // CheckFl
+                data.CheckFl = $(validationClass[5]).val() === true ? 1 : 0; // CheckFl
                 data.CheckDetail = $(validationClass[7]).val(); // 검증내용요약
-                data.FinishFl = $(validationClass[8]).jqxRadioButton('checked') ? 1 : 0; // FinishFl
+                data.FinishFl = $(validationClass[8]).val() === true ? 1 : 0; // FinishFl
                 data.FinishDetail = $(validationClass[10]).val(); // 종료사유
 
                 if (data.CheckUserOID === undefined || data.CheckUserOID === null) {
@@ -241,7 +241,7 @@
     /**
      * 유효성 검증 테이블 구성
      * */
-    function InitDlgValidation() {
+    function PrintQmsCheck() {
         var innerHtml = "";
         var ValidationClassNm = "ValidationClass";
         var ModuleOID = "@ViewBag.ModuleOID";
@@ -306,17 +306,13 @@
         // 판정
         for (var i = 0; i < Cnt; i++) {
             innerHtml += "<td>";
-            innerHtml += "<div style='display:flex;'>"
-            innerHtml += "<div id='radioEditQuickValidationConfirmJudgmentOk_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>OK</spen></div>";
-            innerHtml += "<div id='radioEditQuickValidationConfirmJudgmentNg_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>NG</spen></div>";
-            innerHtml += "</div>"
+            innerHtml += "<div id='btnEditQuickValidationConfirmJudgment_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "></div>";
             innerHtml += "</td>";
 
             $("#EditQuickValidationConfirmJudgment").append(innerHtml);
-            innerHtml = "";
+            $('#btnEditQuickValidationConfirmJudgment_' + (i + 1)).jqxSwitchButton({ height: 30, width: 80, checked: false, onLabel: "OK", offLabel: "NG" });
 
-            $("#radioEditQuickValidationConfirmJudgmentOk_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("Judgment" + (i + 1)), checked: true });
-            $("#radioEditQuickValidationConfirmJudgmentNg_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("Judgment" + (i + 1)), checked: false });
+            innerHtml = "";
         }
 
         // 검증내용요약
@@ -332,17 +328,12 @@
         // 종료여부
         for (var i = 0; i < Cnt; i++) {
             innerHtml += "<td>";
-            innerHtml += "<div style='display:flex;'>"
-            innerHtml += "<div id='radioEditQuickValidationConfirmConti_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>OK</spen></div>";
-            innerHtml += "<div id='radioEditQuickValidationConfirmEnd_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "><spen>NG</spen></div>";
-            innerHtml += "</div>"
+            innerHtml += "<div id='btnEditQuickValidationConfirm_" + (i + 1) + "' class='ValidationClass_" + (i + 1) + "' data-Cnt=" + (i + 1) + "></div>";
             innerHtml += "</td>";
 
             $("#EditQuickValidationConfirmEnd").append(innerHtml);
+            $('#btnEditQuickValidationConfirm_' + (i + 1)).jqxSwitchButton({ height: 30, width: 80, checked: false, onLabel: "OK", offLabel: "NG" });
             innerHtml = "";
-
-            $("#radioEditQuickValidationConfirmConti_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("ConfirmEnd" + (i + 1)), checked: true });
-            $("#radioEditQuickValidationConfirmEnd_" + (i + 1)).jqxRadioButton({ width: 80, height: 18, groupName: ("ConfirmEnd" + (i + 1)), checked: false });
         }
 
         // 종료사유

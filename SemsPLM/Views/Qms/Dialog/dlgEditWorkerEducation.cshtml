@@ -47,21 +47,16 @@
 
 <div style="margin-top:25px;">
     <h3 class="qmsDlgH"><i class="fas fa-caret-square-down"></i> 교육자료</h3>
-    <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-        <tr>
-            <th class="reqVal">
-                <i class="fa fa-caret-right"></i>
-                <button id="btnEditWorkerEducationFileSearch" class="custom-button"><i class="fas fa-plus-square"></i> 파일등록</button>
-            </th>
-            <td>
-                <div id="txtEditWorkerEducationFileNm"></div>
-            </td>
-        </tr>
-    </table>
+    <div id="DlgEditWorkerEducation_FileList">
+
+    </div>
 </div>
 
 <script>
+    var fileUpload = $("#DlgEditWorkerEducation_FileList").FileUpload({ OID: '@ViewBag.ModuleOID' });
+
     $(function () {
+        fileUpload.EditMode();
         var dtEditWorkerEducationProcess$ = $("#dtEditWorkerEducationProcess");
 
         dtEditWorkerEducationProcess$.jqxDateTimeInput(DateFormat);
@@ -86,6 +81,7 @@
         btnDlgSave$.on("click", function () {
             var param = {};
 
+            param.OID = "@ViewBag.ModuleOID";
             param.QuickOID = "@ViewBag.QuickOID";
             param.ModuleOID = "@ViewBag.ModuleOID";
             param.EduDetail = $("#txtEditWorkerEducationDesc").val();
@@ -98,17 +94,21 @@
                 return;
             }
 
-            $.post('/Qms/InsWorkerEducation', param, function (response) {
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+            SendDataWithFile("/Qms/InsWorkerEducation", param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
                 alert("저장되었습니다.");
-                //CloseDlgWorkerEducation();
-
                 PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
 

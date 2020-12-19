@@ -24,7 +24,7 @@
                 <div class="pointer_wrap">
                     @for (int i = 0; i < ViewBag.Status.Count; i++)
                     {
-                        if (ViewBag.WorkerEduDetail.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        if (ViewBag.WorkerEdu.BPolicyOID == ViewBag.Status[i].StatusOID)
                         {
                             <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
                                 <div class="project_status">@ViewBag.Status[i].StatusNm</div>
@@ -88,14 +88,14 @@
             </table>
 
             <label><i class="fas fa-caret-square-down"></i> 교육자료</label>
-            <div id="InfoWorkerEducation__FileList_@ViewBag.WorkerEduDetail.OID">
+            <div id="InfoWorkerEducation_FileList_@ViewBag.WorkerEduDetail.OID">
 
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    var fileUpload = $("#InfoWorkerEducation__FileList_@ViewBag.WorkerEduDetail.OID").FileUpload({ OID: '@ViewBag.WorkerEduDetail.OID' });
+    var fileUpload = $("#InfoWorkerEducation_FileList_@ViewBag.WorkerEduDetail.OID").FileUpload({ OID: '@ViewBag.WorkerEduDetail.OID' });
 
     $(document).ready(function () {
         const WorkerEduDetailOID = '@ViewBag.WorkerEduDetail.OID';
@@ -185,16 +185,13 @@
                 param.delFiles = removeFiles;
             }
 
-            $.post('/Qms/UdtWorkerEducation', param, function (response) {
-                  if (response.isError) {
+            SendDataWithFile("/Qms/UdtWorkerEducation", param, Files, function (response) {
+                if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
                 alert("저장되었습니다.");
-
                 PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
     })
