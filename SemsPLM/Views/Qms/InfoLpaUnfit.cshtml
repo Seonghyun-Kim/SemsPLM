@@ -46,12 +46,12 @@
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
-                                <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
                                 @*<button id="InfoLpaUnfit_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
                                 <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" style="display:none;"><i class="fas fa-times"></i> 취소</button>
                                 <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 확정</button>
-                                <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
+                                <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i> 확정</button>
+                                <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
                             </td>
                         </tr>
                     </tbody>
@@ -179,6 +179,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        if ("@ViewBag.CurrentSt" === "Started") {
+            $("InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
+            $("InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
+            $("InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
+        }
+
         const LpaUnfitOID = '@ViewBag.LpaUnfit.OID';
         var fileUpload = $("#InfoLpaUnfit_FileList_" + LpaUnfitOID).FileUpload({ OID: LpaUnfitOID });
 
@@ -310,7 +316,7 @@
         });
 
         $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").jqxButton();
-        $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () { 
+        $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {
             var linkName = "[" + "@ViewBag.QuickDetail.Title" + "] LPA 대책서 등록";
             var linkUrl = '/Qms/InfoLpaMeasure?OID=' + "@ViewBag.LpaMeasureOID";
 
@@ -336,21 +342,21 @@
         comboAuditLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.AuditLibOID");
         </text>
         }
-        
+
         @if(ViewBag.LpaUnfit.LpaGrpLibOID != null)
         {
         <text>
         comboLpaGrpLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.LpaGrpLibOID");
         </text>
         }
-        
+
         @if(ViewBag.LpaUnfit.LpaUseLibOID != null)
         {
         <text>
         comboLpaUseLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.LpaUseLibOID");
         </text>
         }
-        
+
         @if(ViewBag.LpaUnfit.LpaCheckProcessLibOID != null)
         {
         <text>
@@ -364,7 +370,7 @@
 
         // 심사일자
         dtDlgEditLPAIncongruityLpaCheckDt$.jqxDateTimeInput(DateFormat);
-        dtDlgEditLPAIncongruityLpaCheckDt$.jqxDateTimeInput({ width: 150, height: 32, disabled: true  });    
+        dtDlgEditLPAIncongruityLpaCheckDt$.jqxDateTimeInput({ width: 150, height: 32, disabled: true  });
         @if(ViewBag.LpaUnfit.LpaCheckDt == null)
         {
         <text>
@@ -472,7 +478,7 @@
         var ModifyAttr = $('.Modifiable_' + LpaUnfitOID);
 
         ModifyAttr.each(function (i, v) {
-            ContentReadMode(v);             
+            ContentReadMode(v);
         });
     });
 
@@ -486,7 +492,7 @@
 
         var tdNo = document.createElement("td");
         tdNo.style.textAlign = "center";
-        tdNo.innerText = (trCnt$.length + 1);  
+        tdNo.innerText = (trCnt$.length + 1);
 
         var tdCheckPoin$ = document.createElement("td");
         var txtCheckPoin$ = document.createElement("input");
@@ -495,16 +501,16 @@
         txtCheckPoin$.style.width = "100%";
          if (data !== null) {
             txtCheckPoin$.value = data.CheckPoin;
-        }     
+        }
         txtCheckPoin$.className = "Modifiable_@ViewBag.LpaUnfit.OID";
-        txtCheckPoin$.setAttribute("AttrType", "TEXT");     
+        txtCheckPoin$.setAttribute("AttrType", "TEXT");
         tdCheckPoin$.appendChild(txtCheckPoin$);
 
         var tdBtn$ = document.createElement("td");
         tdBtn$.style.textAlign = "center";
         var btnDel = document.createElement("button");
         btnDel.className = "Modifiable_@ViewBag.LpaUnfit.OID";
-        btnDel.setAttribute("AttrType", "BUTTON");     
+        btnDel.setAttribute("AttrType", "BUTTON");
         btnDel.innerText = "행 삭제";
         $(btnDel).jqxButton();
         tdBtn$.appendChild(btnDel);
@@ -513,7 +519,7 @@
             tr$.setAttribute("Remove", "Y");
             tr$.style.display = "none";
         });
-        
+
         tr$.appendChild(tdNo);
         tr$.appendChild(tdCheckPoin$);
         tr$.appendChild(tdBtn$);

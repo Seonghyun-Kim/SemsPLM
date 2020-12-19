@@ -2,7 +2,7 @@
     Layout = null;
 }
 
-<div id="InfoStandardFollowUp_@ViewBag.ModuleOID" class="info_project clearfix">
+<div id="InfoStandardFollowUp_@ViewBag.StandardDoc.OID" class="info_project clearfix">
     <div class="info_menubar">
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
@@ -45,10 +45,11 @@
             <table class="tableTopButtonBox">
                 <tbody>
                     <tr>
-                        <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.ModuleOID">
-                            <button id="InfoStandardFollowUp_EditBtn_@ViewBag.ModuleOID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.ModuleOID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.ModuleOID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                        <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.StandardDoc.OID">
+                            <button id="InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
+                            <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i> 결재</button>
                         </td>
                     </tr>
                 </tbody>
@@ -78,17 +79,17 @@
                             </td>
                             <th><label class="lbText">완료일</label></th>
                             <td>
-                                <div class="Modifiable_@ViewBag.ModuleOID" AttrType="DATE" id="InfoStandardFollowUp_txtDocCompleteDt_@ViewBag.StandardDocDetail[i].OID" value="@(ViewBag.StandardDocDetail[i].DocCompleteDt == null ? "" : ViewBag.StandardDocDetail[i].DocCompleteDt.ToString("yyyy-MM-dd"))"></div>
+                                <div class="Modifiable_@ViewBag.StandardDoc.OID" AttrType="DATE" id="InfoStandardFollowUp_txtDocCompleteDt_@ViewBag.StandardDocDetail[i].OID" value="@(ViewBag.StandardDocDetail[i].DocCompleteDt == null ? "" : ViewBag.StandardDocDetail[i].DocCompleteDt.ToString("yyyy-MM-dd"))"></div>
                             </td>
                             <th><label class="lbText">첨부파일</label></th>
                             <td>
-                                <input class="Modifiable_@ViewBag.ModuleOID" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocFIle_@ViewBag.StandardDocDetail[i].OID" value="첨부파일.txt" />
+                                <input class="Modifiable_@ViewBag.StandardDoc.OID" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocFIle_@ViewBag.StandardDocDetail[i].OID" value="첨부파일.txt" />
                             </td>
                         </tr>
                         <tr>
                             <th><label class="lbText">반영내용</label></th>
                             <td colspan="5">
-                                <input class="Modifiable_@ViewBag.ModuleOID" AttrType="TEXT" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocSummary_@ViewBag.StandardDocDetail[i].OID" value="@ViewBag.StandardDocDetail[i].DocSummary" />
+                                <input class="Modifiable_@ViewBag.StandardDoc.OID" AttrType="TEXT" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocSummary_@ViewBag.StandardDocDetail[i].OID" value="@ViewBag.StandardDocDetail[i].DocSummary" />
                             </td>
                         </tr>
                     </tbody>
@@ -112,10 +113,15 @@
     }*@
 
     $(document).ready(function () {
-        const StandardDocDetailOID = '@ViewBag.ModuleOID';
-        const StandardDocDetailDiv$ = $('#InfoStandardFollowUp_' + StandardDocDetailOID);
+        if ("@ViewBag.CurrentSt" === "Started") {
+            $("InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID").css("display", "inline-block");
+            $("InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID").css("display", "inline-block");
+        }
 
-        var ModifyAttrDate = $('.Modifiable_' + StandardDocDetailOID + '[AttrType="DATE"]');
+        const StandardDocOID = '@ViewBag.StandardDoc.OID';
+        const StandardDocDetailDiv$ = $('#InfoStandardFollowUp_' + StandardDocOID);
+
+        var ModifyAttrDate = $('.Modifiable_' + StandardDocOID + '[AttrType="DATE"]');
         ModifyAttrDate.each(function (i, v) {
             $(v).jqxDateTimeInput(DateFormat);
             $(v).jqxDateTimeInput({
@@ -126,6 +132,11 @@
             });
         });
 
+        $('#InfoStandardFollowUp_ApprovalBtn_' + StandardDocOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: StandardDocOID }, '/Common/Approval', '결재');
+        });
         @*
         // 수정
         $('#InfoStandardFollowUp_EditBtn_' + StandardDocDetailOID).on('click', function () {

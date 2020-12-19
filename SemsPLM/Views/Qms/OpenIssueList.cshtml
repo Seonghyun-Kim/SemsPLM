@@ -149,7 +149,6 @@
         const btnRefresh$ = $("#SearchOpenIssueList_btnRefresh").jqxButton();
         btnRefresh$.on("click", function () {
             var RefreshFunc = function (inputType, nodeId, removeAttrs) {
-                debugger;
                 const node$ = $("#" + nodeId);
                 if (inputType === "txt") {
                     node$.val(null);
