@@ -198,6 +198,12 @@
             $('.Modifiable_' + @ViewBag.ImproveCounterMeasure.OID).parent().append(modifyTag);
         });
 
+        $("#InfoImproveCounterMeasure_ApprovalBtn_" + ImproveCounterMeasureOID).on("click", function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ImproveCounterMeasureOID }, '/Common/Approval', '결재');
+        });
+
 
         var ImproveCounterMeasureItems = @Html.Raw(Json.Encode(ViewBag.ImproveCounterMeasureItems));
 

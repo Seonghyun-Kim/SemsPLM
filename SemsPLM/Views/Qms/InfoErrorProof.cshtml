@@ -150,10 +150,6 @@
             var param = {};
             param.OID = ErrorProofOID;
             param.ModuleOID = ErrorProofOID;
-            param.EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
-            param.ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
-            param.CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
-            param.CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
 
             var Files = fileUpload.Files();
 
@@ -173,6 +169,37 @@
             }).fail(function (err) {
                 alert(err.responseText);
             });
+        });
+
+        $("#InfoErrorProof_ApprovalBtn_" + ErrorProofOID).on("click", function () {
+            var EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
+            var ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
+            var CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
+            var CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
+
+            if (WebUtils.isEmpty(EstDt)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(ActDt)) {
+                alert("처리일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(CheckDetail)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+            
+            if (WebUtils.isEmpty(CheckUserOID)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ErrorProofOID }, '/Common/Approval', '결재');
         });
 
         var dtDlgEditErrorProofEstDt$ = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID);

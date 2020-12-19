@@ -462,13 +462,17 @@ namespace SemsPLM.Controllers
                 SetQuickModule(QmsConstant.TYPE_IMPROVE_COUNTERMEASURE);
 
                 // ERROR PROOF
-                SetQuickModule(QmsConstant.TYPE_ERROR_PRROF);
+                int ErrorProofOID = SetQuickModule(QmsConstant.TYPE_ERROR_PRROF);
+
+                ErrorProofRepository.InsErrorProof(new ErrorProof() { ModuleOID = ErrorProofOID });
 
                 // LPA 부적합 등록
                 int LpaUnfitOID = SetQuickModule(QmsConstant.TYPE_LPA_UNFIT);
+                LpaUnfitRepository.InsLpaUnfit(new LpaUnfit() { ModuleOID = LpaUnfitOID });
 
                 // LPA 부적합 대책서 
                 int LpaUnMeasureOID = SetQuickModule(QmsConstant.TYPE_LPA_MEASURE);
+                LpaMeasureRepository.InsLpaMeasure(new LpaMeasure() { ModuleOID = LpaUnMeasureOID });
 
                 DRelationship dRelLpa = new DRelationship();
                 dRelLpa.Type = QmsConstant.RELATIONSHIP_LPA;
@@ -587,6 +591,15 @@ namespace SemsPLM.Controllers
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
                     DObject dObject = DObjectRepository.SelDObject(Session, v);
+
+                    if(dObject.Type == QmsConstant.TYPE_LPA_UNFIT)
+                    {
+                        QuickResponseModule LpaMeasureModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = v.QuickOID, ModuleType = QmsConstant.TYPE_LPA_MEASURE });
+
+                        LpaMeasureModule.ModuleFl = v.ModuleFl;
+
+                        QuickResponseModuleRepository.UdtQuickResponseModule(LpaMeasureModule);
+                    }
 
                     if (dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
                     {
@@ -1089,6 +1102,35 @@ namespace SemsPLM.Controllers
             }
         }
 
+        public JsonResult ConfirmQuickLpaUnfit(LpaUnfit param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                if(param.ModuleOID == null) { throw new Exception("잘못된 호출입니다."); }
+
+                DObjectRepository.UdtDObject(Session, new DObject() { OID = param.ModuleOID, BPolicyOID = 79 });
+
+                QuickResponseModule quickResponse = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { OID = param.ModuleOID });
+
+                QuickResponseModule LpaMeasureModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = quickResponse.QuickOID, ModuleFl = 1, ModuleType = QmsConstant.TYPE_LPA_MEASURE });
+
+                List<BPolicy> nextModluePolicies = BPolicyRepository.SelBPolicy(new BPolicy() { Type = QmsConstant.TYPE_LPA_MEASURE, Name = "Started" });
+
+                DObjectRepository.UdtDObject(Session, new DObject() { OID = LpaMeasureModule.OID, BPolicyOID = nextModluePolicies[0].OID });
+
+                DaoFactory.Commit();
+
+                return Json(param.ModuleOID);
+            }
+            catch(Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
         public ActionResult EditLPAIncongruity(LpaUnfit _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
@@ -1195,7 +1237,7 @@ namespace SemsPLM.Controllers
             ViewBag.lpaMeasure = lpaMeasure;
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
-            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_UNFIT });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_MEASURE });
             ViewBag.CurrentSt = Module.BPolicyNm;
             ViewBag.LpaUnfitOID = LpaUnfitOID;
 

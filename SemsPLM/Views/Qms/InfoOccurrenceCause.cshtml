@@ -302,6 +302,12 @@
             });
         });
 
+        $("#InfoOccurrenceCause_ApprovalBtn_" + OccurrenceCauseOID).on("click", function () {
+             OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: OccurrenceCauseOID }, '/Common/Approval', '결재');
+        });
+
         var OccurrenceCauseItems = @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseItems));
 
         if (OccurrenceCauseItems.length === 0) {

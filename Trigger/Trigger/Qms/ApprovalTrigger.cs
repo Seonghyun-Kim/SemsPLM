@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.Constant;
+using Common.Models;
 using Qms.Models;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,15 @@ namespace Qms.Trigger
                     {
                         DObjectRepository.UdtDObject(Context, new DObject() { OID = nextModule.OID, BPolicyOID = v.OID });
                     });
+                }
 
+                if(quickResponse.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                {
+                    QuickResponseModule LpaUnfitModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = quickResponse.QuickOID, ModuleFl = 1, ModuleType = QmsConstant.TYPE_LPA_UNFIT });
+
+                    List<BPolicy> LpaUnfitePolicies = BPolicyRepository.SelBPolicy(new BPolicy() { Type = QmsConstant.TYPE_LPA_UNFIT, Name = "Compleated" });
+
+                    DObjectRepository.UdtDObject(Context, new DObject() { OID = LpaUnfitModule.OID, BPolicyOID = LpaUnfitePolicies[0].OID });
                 }
             }
             catch (Exception ex)
