@@ -43,6 +43,23 @@ function fArrayRecusive(_row, _arrResult, _removeTypes) {
     }
 }
 
+function fPmsParentArray(_rows) {
+    var returnList = [];
+    if (_rows != null && _rows.length > 0) {
+        fArrayParentRecusive(_rows, returnList);
+    }
+    return returnList;
+}
+
+function fArrayParentRecusive(_row, _arrResult) {
+    for (var i = 0; i < _row.length; i++) {
+        _arrResult.push(_row[i]);
+        if (_row[i].parent) {
+            fArrayParentRecusive([_row[i].parent], _arrResult);
+        }
+    }
+}
+
 function fMasterLink(_arrTasks) {
     var returnList = [];
     var arryTasks = _arrTasks;

@@ -6,9 +6,10 @@
     <div class="info_menubar" style="width:250px;">
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
-            <li class="tab" info="ebomHistory"><i class="fas fa-stream"></i> 설계변경이력</li>
             <li class="tab" info="approvHistory"><i class="fas fa-stream"></i> 결재이력</li>
             <li class="tab" info="downloadHistory"><i class="fas fa-stream"></i> 다운로드이력</li>
+            <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
+            <li class="tab" info="ECRRelation"><i class="fas fa-file"></i> 연관 변경요청</li>
             <li class="tab" info="ebomList"><i class="fas fa-list"></i> 설계변경리스트 <small>(EBOM)</small></li>
             <li class="tab" info="ebomStatement"><i class="fas fa-file"></i> 설계변경내역서 <small>(EBOM)</small></li>
         </ul>
@@ -42,8 +43,17 @@
                 <tbody>
                     <tr>
                         <td style="text-align: right;" id="InfoChangeOrder_defaultBtn_@ViewBag.ECODetail.OID">
+                            @if (ViewBag.ECODetail.BPolicyOID == 34 || ViewBag.ECODetail.BPolicyOID ==37)
+                            {
                             <button id="InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            <button id="InfoChangeOrder_CancelBtn_@ViewBag.ECODetail.OID" class="custom-button"  hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
+                            <button id="InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID" class="custom-button"  hidden="hidden"><i class="fas fa-save"></i> 저장</button>
+                            }
+                            else
+                            {
+
+                            }
                         </td>
                     </tr>
                 </tbody>
@@ -51,309 +61,174 @@
             <div style="overflow-y:scroll;height:625px;">
                 <table class="infoTable">
                     <colgroup>
-                        <col style="width:14%;" />
-                        <col style="width:auto;" />
-                        <col style="width:14%;" />
-                        <col style="width:auto;" />
-                        <col style="width:14%;" />
-                        <col style="width:auto;" />
+                        <col width="10%" />
+                        <col width="40%" />
+                        <col width="10%" />
+                        <col width="40%" />
                     </colgroup>
-                    <tr>
-                        <th class="reqVal">EO NO</th>
-                        <td colspan="3">
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Name_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Name" style="width:63%;"/>
-                            <input type="hidden" id="InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID" value="T" />
-                            <button class="custom-button ModifiableEditCustomBox_@ViewBag.ECODetail.OID" id="InfoChangeOrder_checkbtn_@ViewBag.ECODetail.OID" style="line-height:1;"><i class="fas fa-check"></i> 중복 확인</button>
-                        </td>
-                        <th>EO 일자</th>
-                        <td>
-                            <input type="text" readonly="readonly" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" id="" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.EoDt)" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <input type="text" class="" id="InfoChangeOrder_EoDt_@ViewBag.ECODetail.OID" value="" maxlength="10" />
-                            </div>
-
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <th class="reqVal">품번</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_EPart_No_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.EPart_No" style="width:50%;"/> 외 <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Count_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Count" style="width:10%;"/> 종
-                        </td>
-                        <th>품명</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Title_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Title" />
-                        </td>
-                        <th>도면 접수일</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.DrwDt)" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <input type="text" class="" id="InfoChangeOrder_DrwDt_@ViewBag.ECODetail.OID" value="" maxlength="10" />
-                            </div>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="reqVal">OEM</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_Oem_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Oem_Lib_OID_KorNm" />
-                        </td>
-                        <th class="reqVal">차종</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_Car_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Car_Lib_OID_KorNm" />
-                        </td>
-                        <th class="reqVal">프로젝트</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_Pms_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Pms_OID_KorNm" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="reqVal">EO 유형</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_EoType_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.EoType" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_CUSTOMER" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_CUSTOMER_KorNm </label>
-                                <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_HOUSE" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_HOUSE_KorNm </label>
-                            </div>
-
-                        </td>
-                        <th class="reqVal">EO ID</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_EoId_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.EoID_Nm" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoId" value="N" style="width:20px; height:15px;" /> N(@Common.Constant.EoConstant.ID_N)</label>
-                                <label><input type="radio" name="selEoId" value="D" style="width:20px; height:15px;" /> D(@Common.Constant.EoConstant.ID_D)</label>
-                                <label><input type="radio" name="selEoId" value="R" style="width:20px; height:15px;" /> R(@Common.Constant.EoConstant.ID_R)</label>
-                            </div>
-
-                        </td>
-                        <th class="reqVal">EO 처리유형</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_EoProType_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.EoProType" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoProType" value="N" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_N</label>
-                                <label><input type="radio" name="selEoProType" value="R" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_R</label>
-                                <label><input type="radio" name="selEoProType" value="M" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_M</label>
-                            </div>
-
-                        </td>
-                    </tr>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th class="reqVal">서비스지침</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_IsService_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.IsService" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selServiceInfo" value="Y" style="width:20px; height:15px;" /> YES</label>
-                                <label><input type="radio" name="selServiceInfo" value="N" style="width:20px; height:15px;" /> NO</label>
-                            </div>
-
-                        </td>
-                        <th class="reqVal">설계원가</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.DesignCost" />
-                        </td>
-                        <th class="reqVal">중량변경</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.WtChange" />
-                        </td>
-                    </tr>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th class="reqVal">금형 변경</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_IsMold_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.IsMold" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selMoldChange" value="Y" style="width:20px; height:15px;" /> YES</label>
-                                <label><input type="radio" name="selMoldChange" value="N" style="width:20px; height:15px;" /> NO</label>
-                            </div>
-
-                        </td>
-                        <th class="reqVal">금형 벌수</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.DieQt" />
-                        </td>
-                        <th class="reqVal">금형비</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.DieCost" />
-                        </td>
-                    </tr>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th class="reqVal">변경사유부분<small>(E/C CLASS)</small></th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_EoClass_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.EoClass_Nm" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_EMERGENCY" style="width:20px; height:15px;" /> EMERGENCY(@Common.Constant.EoConstant.CLASS_EMERGENCY_KorNm)</label>
-                                <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MPR" style="width:20px; height:15px;" /> M.P.R(@Common.Constant.EoConstant.CLASS_MPR_KorNm)</label>
-                                <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MAJOR" style="width:20px; height:15px;" /> MAJOR(@Common.Constant.EoConstant.CLASS_MAJOR_KorNm)</label>
-                                <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MINOR" style="width:20px; height:15px;" /> MINOR(@Common.Constant.EoConstant.CLASS_MINOR_KorNm)</label>
-                            </div>
-
-                        </td>
-                        <th class="reqVal">재고처리</th>
-                        <td colspan="3">
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Eo_InvClr_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Eo_InvClr_Nm" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_NONE" style="width:20px; height:15px;" /> NONE(@Common.Constant.EoConstant.INV_NONE_KorNm)</label>
-                                <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_USE" style="width:20px; height:15px;" /> USE(@Common.Constant.EoConstant.INV_USE_KorNm)</label>
-                                <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_SCRAP" style="width:20px; height:15px;" /> SCRAP(@Common.Constant.EoConstant.INV_SCRAP_KorNm)</label>
-                                <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_REWORK" style="width:20px; height:15px;" /> REWORK(@Common.Constant.EoConstant.INV_REWORK_KorNm)</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th class="reqVal">EO 귀책</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Eo_Fault_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Eo_Fault_Nm" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_CUST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_CUST_KorNm</label>
-                                <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_COMP" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_COMP_KorNm</label>
-                                <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_SELF" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_SELF_KorNm</label>
-                                <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_EMPTY" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_EMPTY_KorNm</label>
-                            </div>
-                        </td>
-                        <th class="reqVal">팀명</th>
-                        <td colspan="3">
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.TeamNm" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="reqVal">작성자</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_CreateUs_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.CreateUsNm" />
-                        </td>
-                        <th class="reqVal">작성일</th>
-                        <td colspan="3">
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_CreateDt_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.CreateDt" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th class="reqVal">승인일</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_ApprovDt_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.ApprovDt" />
-                        </td>
-                        <th class="reqVal">상태</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_Status_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.BPolicy.Name" />
-                        </td>
-                        <th class="reqVal">C/N</th>
-                        <td>
-                            <input type="text" readonly="readonly" id="InfoChangeOrder_Revision_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Revision" />
-                        </td>
-                    </tr>
-
-                </table>
-                <div class="Rental_@ViewBag.ECODetail.OID">
-                    <h3 class="infoH3"><i class="fas fa-caret-down"></i> 연관 ECR</h3>
-                    <table width="100%" id="EcrRelation" class="infoTable">
-                        <colgroup>
-                            <col style="width:14%;" />
-                            <col style="width:19.4%;" />
-                            <col style="width:14%;" />
-                            <col style="width:auto;" />
-                        </colgroup>
+                    <tbody>
                         <tr>
-                            <th>ECRNO</th>
-                            <td></td>
-                            <th>상태 </th>
-                            <td></td>
+                            <th>설계변경번호</th>
+                            <td><input type="text" value="@ViewBag.ECODetail.Name" /></td>
+                            <th>품목그룹</th>
+                            <td><input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" value="@ViewBag.ECODetail.ItemGroup" id="InfoChangeOrder_ItemGroup_@ViewBag.ECODetail.OID" /></td>
                         </tr>
-                    </table>
-
-                    <h3 class="infoH3"><i class="fas fa-caret-down"></i>  OEM 정보</h3>
-                    <table width="100%" cellpadding="0" cellspacing="0" class="infoTable">
-                        <colgroup>
-                            <col style="width:14%;" />
-                            <col style="width:19.4%;" />
-                            <col style="width:14%;" />
-                            <col style="width:auto;" />
-                        </colgroup>
                         <tr>
-                            <th>OEM EO 번호</th>
-                            <td>  <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Oem_Eo_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Oem_Eo" /></td>
-                            <th>OEM EO 발생일</th>
+                            <th>제목</th>
+                            <td><input class="required Modifiable_@ViewBag.ECODetail.OID" type="text" value="@ViewBag.ECODetail.Title" id="InfoChangeOrder_Title_@ViewBag.ECODetail.OID" readonly="readonly" /></td>
+                            <th>설계변경일자</th>
                             <td>
-                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.OemDt)" />
-
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID required" readonly="readonly" id="" value="@ViewBag.ECODetail.DesignChangeDt" />
                                 <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                    <input type="text" class="" id="InfoChangeOrder_OemDt_@ViewBag.ECODetail.OID" value="" maxlength="10" />
+                                    <div class="ECODatetimeInput_@ViewBag.ECODetail.OID" id="InfoChangeOrder_DesignChangeDt_@ViewBag.ECODetail.OID">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>변경사유</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.ReasonChangeNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID required" style="width:100%;">
+                                    <div id="InfoChangeOrder_reasonChange_@ViewBag.ECODetail.OID" class="ECOComboBox"></div>
+                                </div>
+                            </td>
+                            <th>호환성</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.CompatibleNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOCompatibleY" class="ECORadioBtn" group="InfoECOcompatible_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_YES">있음</div>
+                                    <div id="InfoECOCompatibleN" class="ECORadioBtn" group="InfoECOcompatible_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_NO">없음</div>
+                                    <div id="InfoECOCompatibleS" class="ECORadioBtn" group="InfoECOcompatible_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_SAME">동시적용품</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>금형수정</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.IsMoldNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOIsMoldI" class="ECORadioBtn" group="InfoECOisMold_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_IRRELEVANT">무관</div>
+                                    <div id="InfoECOIsMoldY" class="ECORadioBtn" group="InfoECOisMold_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_YES">있음</div>
+                                    <div id="InfoECOIsMoldN" class="ECORadioBtn" group="InfoECOisMold_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규제작</div>
+                                </div>
+                            </td>
+                            <th>등록사유</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.ReasonRegistrationNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOReasonRegistrationCO" class="ECORadioBtn" group="InfoECOreason_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_ECO">설계변경</div>
+                                    <div id="InfoECOReasonRegistrationN" class="ECORadioBtn" group="InfoECOreason_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>보안여부</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.SecurityNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOSecurityS" class="ECORadioBtn" group="InfoECOsecurity_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_SECURITY">보안</div>
+                                    <div id="InfoECOSecurityI" class="ECORadioBtn" group="InfoECOsecurity_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_IMPORTANT">중요</div>
+                                    <div id="InfoECOSecurityL" class="ECORadioBtn" group="InfoECOsecurity_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_LAW">법규</div>
+                                    <div id="InfoECOSecurityN" class="ECORadioBtn" group="InfoECOsecurity_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_COMMON">일반</div>
+                                </div>
+                            </td>
+                            <th>변경내용</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.ChangesNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOChangesDrw" class="ECOCheckBox" name="InfoECOCheckBox_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_DRW">도면</div>
+                                    <div id="InfoECOChangesBOM" class="ECOCheckBox" name="InfoECOCheckBox_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_BOM">BOM</div>
+                                    <div id="InfoECOChangesProd" class="ECOCheckBox" name="InfoECOCheckBox_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_PRODUCE">생산원단위</div>
+                                    <div id="InfoECOChangesNew" class="ECOCheckBox" name="InfoECOCheckBox_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규사양</div>
+                                    <div id="InfoECOChangesAdd" class="ECOCheckBox" name="InfoECOCheckBox_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_ADD">생관도번추가</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>재고처리</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.StockNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOStockS" class="ECORadioBtn" group="InfoECOstock_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_IRRELEVANT">무관</div>
+                                    <div id="InfoECOStockI" class="ECORadioBtn" group="InfoECOstock_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_EXHAUST">소진</div>
+                                    <div id="InfoECOStockL" class="ECORadioBtn" group="InfoECOstock_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_REWORK">REWORK</div>
+                                    <div id="InfoECOStockN" class="ECORadioBtn" group="InfoECOstock_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_DISPOSAL">폐기</div>
+                                </div>
+                            </td>
+                            <th>메모사양</th>
+                            <td><input type="text" class="Modifiable_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Memo" id="InfoChangeOrder_Memo_@ViewBag.ECODetail.OID" /></td>
+                        </tr>
+                        <tr>
+                            <th>유첨자료</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.IsAttachedNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoECOIsAttachedN" class="ECORadioBtn" group="InfoECOisAttached_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_NO">없음</div>
+                                    <div id="InfoECOIsAttachedY" class="ECORadioBtn" group="InfoECOisAttached_@ViewBag.ECODetail.OID" data-value="@Common.Constant.EoConstant.TYPE_YES">있음</div>
+                                </div>
+                            </td>
+                            <th>고객요구일자</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.SelRequestDt" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID" class="ECODatetimeInput_@ViewBag.ECODetail.OID"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>고객품번</th>
+                            <td><input type="text" class="Modifiable_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.SelPartNo" id="InfoChangeOrder_SelPartNo_@ViewBag.ECODetail.OID" /></td>
+                            <th>E-BOM</th>
+                            <td>
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.EBom" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
+                                    <div id="InfoChangeOrder_EBom_@ViewBag.ECODetail.OID" class="ECODatetimeInput_@ViewBag.ECODetail.OID"></div>
                                 </div>
 
                             </td>
                         </tr>
                         <tr>
-                            <th> OEM 담당자</th>
-                            <td>  <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_OemUs_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.OemUs" /></td>
-                            <th>접수일자</th>
+                            <th>개발/양산 구분</th>
                             <td>
-
-                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.Oem_RecDt)" />
-
-                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                    <input type="text" class="" id="InfoChangeOrder_Oem_RecDt_@ViewBag.ECODetail.OID" value="" maxlength="10" />
+                                <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="" value="@ViewBag.ECODetail.DevMPNm" />
+                                <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID required">
+                                    <div id="InfoChangeOrder_devType_@ViewBag.ECODetail.OID" class="ECOComboBox"></div>
                                 </div>
-
+                            </td>
+                            <th>차종</th>
+                            <td><input class="Modifiable_@ViewBag.ECODetail.OID" type="text" value="@ViewBag.ECODetail.CarType" id="InfoChangeOrder_CarType_@ViewBag.ECODetail.OID" readonly="readonly" /></td>
+                        </tr>
+                        <tr>
+                            <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
+                            <td colspan="3">
+                                <textarea class="Modifiable_@ViewBag.ECODetail.OID" id="InfoChangeOrder_Description_@ViewBag.ECODetail.OID" readonly="readonly">@ViewBag.ECODetail.Description</textarea>
                             </td>
                         </tr>
-                    </table>
-
-                </div>
-                <h3 class="infoH3"><i class="fas fa-caret-down"></i>  변경내역 정보</h3>
-                <table width="100%" cellpadding="0" cellspacing="0" class="infoTable">
-                    <colgroup>
-                        <col style="width:14%;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th>기술사양변경 사유</th>
-                        <td>
-                            <input type="text" class="ModifiableCustomBox_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Eo_Reason_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Eo_Reason_Nm" />
-
-                            <div class="ModifiableEditCustomBox_@ViewBag.ECODetail.OID">
-                                <label><input type="checkbox" name="selEoReason" value="SR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.SR</label>
-                                <label><input type="checkbox" name="selEoReason" value="PI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PI</label>
-                                <label><input type="checkbox" name="selEoReason" value="IC" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IC</label>
-                                <label><input type="checkbox" name="selEoReason" value="CS" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CS</label>
-                                <label><input type="checkbox" name="selEoReason" value="CR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CR</label>
-                                <label><input type="checkbox" name="selEoReason" value="QI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.QI</label>
-                                <label><input type="checkbox" name="selEoReason" value="ST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.ST</label>
-                                <label><input type="checkbox" name="selEoReason" value="IR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IR</label>
-                                <label><input type="checkbox" name="selEoReason" value="WD" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.WD</label>
-                                <label><input type="checkbox" name="selEoReason" value="LO" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.LO</label>
-                                <label><input type="checkbox" name="selEoReason" value="RA" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.RA</label>
-                                <label><input type="checkbox" name="selEoReason" value="GR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.GR</label>
-                            </div>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>적용요구시점</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Effective_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Effective" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>변경사유</th>
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Description_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Description" />
-                    </tr>
-                    <tr class="Rental_@ViewBag.ECODetail.OID">
-                        <th>기술사양변경 내역서</th>
-
-                        <td>
-                            <input type="text" class="Modifiable_@ViewBag.ECODetail.OID" readonly="readonly" id="InfoChangeOrder_Statement_@ViewBag.ECODetail.OID" value="@ViewBag.ECODetail.Statement" />
-                        </td>
-                    </tr>
+                    </tbody>
                 </table>
             </div>
+        </div>
+        <div id="ECOEffectAssess" class="basic_grid dective">
+            <div style="height:668px;overflow-x:hidden;overflow-y:scroll;padding-top:44px;box-sizing:border-box;">
+                <table class="tableTopButtonBox infoTopFix" style="left:270px;width:1623px;">
+                    <tr>
+                        <td>
+                            <button class="custom-button" id="InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID"><i class="fas fa-pen"></i> 수정</button>
+                            <button class="custom-button" id="InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
+                            <button class="custom-button" id="InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 저장</button>
+                            <button class="custom-button" id="InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 최신 평가표 불러오기</button>
+                        </td>
+                    </tr>
+                </table>
+                <table class="effectAssessList effectAssessList_@ViewBag.ECODetail.OID">
+                </table>
+                <table class="effectAssessList effectAssessListNew_@ViewBag.ECODetail.OID" hidden="hidden">
+                </table>
+            </div>
+        </div>
+        <div id="ECRRelation" class="basic_grid">
+            <div id="InfoChangeOrder_ECRRelation_@ViewBag.ECODetail.OID"></div>
         </div>
         <div id="ebomList" class="basic_grid">
             <div id="InfoChangeOrder_ebomList_@ViewBag.ECODetail.OID"></div>
@@ -378,13 +253,247 @@
 </div>
 
 <script>
+    var loadFlag = 'F';
+    var newList = $('.effectAssessListNew_@ViewBag.ECODetail.OID');
+    var InfoAssess$ = $('.effectAssessList_@ViewBag.ECODetail.OID');
+    var InfodevType$ = $('#InfoChangeOrder_devType_@ViewBag.ECODetail.OID');
+    var InforeasonChange$ = $('#InfoChangeOrder_reasonChange_@ViewBag.ECODetail.OID');
     var ebomGridId = '#InfoChangeOrder_ebomList_@ViewBag.ECODetail.OID';
+    var InfoOriginList$ = @Html.Raw(Json.Encode(ViewBag.originList));
+    var InforeasonList$ =  @Html.Raw(Json.Encode(ViewBag.reasonList));
+    var InfoSelassessList$ =  @Html.Raw(Json.Encode(ViewBag.SelassessList));
+    var Compatible = '@ViewBag.ECODetail.Compatible';
+    var IsMold = '@ViewBag.ECODetail.IsMold';
+    var ReasonRegistration = '@ViewBag.ECODetail.ReasonRegistration';
+    var Security = '@ViewBag.ECODetail.Security';
+    var Stock = '@ViewBag.ECODetail.Stock';
+    var IsAttached = '@ViewBag.ECODetail.IsAttached';
+    var checkList = [];
+    var ECOListData = [];
+    var loadAssessData;
+    var ECRRelationData = [];
     $(function () {
         $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').attr('hidden', true);
+        $('.ECOCheckBox').jqxCheckBox({ width: 120, height: 32 });
+        $('.ECODatetimeInput_@ViewBag.ECODetail.OID').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
+
+        var DesignChangeDt = "@ViewBag.ECODetail.DesignChangeDt";
+
+        if (DesignChangeDt == null || DesignChangeDt == "") {
+            $('#InfoChangeOrder_DesignChangeDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', null);
+        } else {
+            DesignChangeDt = DesignChangeDt.substring(0, 10);
+            $('#InfoChangeOrder_DesignChangeDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', DesignChangeDt);
+        }
+         var ReqDt = "@ViewBag.ECODetail.SelRequestDt";
+
+        if (ReqDt == null || ReqDt == "") {
+            $('#InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', null);
+        } else {
+            ReqDt = ReqDt.substring(0, 10);
+            $('#InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', ReqDt);
+        }
+     var Ebom = "@ViewBag.ECODetail.EBom";
+
+        if (Ebom == null || Ebom == "") {
+            $('#InfoChangeOrder_EBom_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', null);
+        } else {
+            Ebom = Ebom.substring(0, 10);
+            $('#InfoChangeOrder_EBom_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', Ebom);
+        }
+
+
+        $('.ECORadioBtn').jqxRadioButton({ width: 120, height: 32 });
+        $('[group="InfoECOcompatible_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOcompatible_@ViewBag.ECODetail.OID' });
+        $('[group="InfoECOisMold_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOisMold_@ViewBag.ECODetail.OID' });
+        $('[group="InfoECOreason_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOreason_@ViewBag.ECODetail.OID' });
+        $('[group="InfoECOsecurity_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOsecurity_@ViewBag.ECODetail.OID' });
+        $('[group="InfoECOstock_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOstock_@ViewBag.ECODetail.OID' });
+        $('[group="InfoECOisAttached_@ViewBag.ECODetail.OID"]').jqxRadioButton({ groupName: 'InfoECOisAttached_@ViewBag.ECODetail.OID' });
+
+        _.each($('div[group="InfoECOcompatible_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.Compatible") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+
+        _.each($('div[group="InfoECOisMold_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.IsMold") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+
+        _.each($('div[group="InfoECOreason_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.ReasonRegistration") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+
+        _.each($('div[group="InfoECOsecurity_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.Security") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+
+        _.each($('div[group="InfoECOstock_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.Stock") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+
+        _.each($('div[group="InfoECOisAttached_@ViewBag.ECODetail.OID"]'), function (item) {
+            if ($(item).data('value') == "@ViewBag.ECODetail.IsAttached") {
+                $(item).jqxRadioButton('check');
+            }
+        });
+        var InfoEcrChanges = "@ViewBag.ECODetail.Changes";
+        var InfoEcrChange = InfoEcrChanges.split(',');
+        _.each($('div[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]'), function (item) {
+            if (InfoEcrChanges.indexOf(',') > -1) {
+                _.each(InfoEcrChanges.split(','), function (Changes) {
+                    if ($(item).data('value') == Changes) {
+                        $(item).jqxCheckBox('check');
+                    }
+                });
+            } else {
+                if ($(item).data('value') == InfoEcrChanges) {
+                    $(item).jqxCheckBox('check');
+                }
+            }
+        });
+        var InfoDevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+                { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
+                var InfoDevTypeSource =
+                {
+                    localdata: InfoDevTypeList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'type', type: 'string' },
+                            { name: 'value', type: 'string' },
+                        ]
+                };
+        var InfodevAdapter = new $.jqx.dataAdapter(InfoDevTypeSource);
+        InfodevType$.jqxComboBox({ source: InfodevAdapter, displayMember: "type", valueMember: "value", width: 100, height: 32 });
+        InfodevType$.val('@ViewBag.ECODetail.DevMP');
+
+        var InforeasonSource =
+        {
+            localdata: InforeasonList$,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var InforeasonAdapter = new $.jqx.dataAdapter(InforeasonSource);
+        InforeasonChange$.jqxComboBox({ source: InforeasonAdapter, displayMember: "KorNm", valueMember: "OID",width: 220, height: 32 });
+        InforeasonChange$.val('@ViewBag.ECODetail.ReasonChange');
+
+        for (var i = 0; i < InfoOriginList$.length; i++) {
+            var tr;
+            var td = document.createElement("td");
+            if (i % 2 != 1) {
+                tr = document.createElement("tr");
+                var td = document.createElement("td");
+                var nametag = document.createElement("h4");
+                nametag.innerHTML = InfoOriginList$[i].Name;
+                var div$ = document.createElement("div");
+                div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
+                td.append(nametag);
+                td.append(div$);
+                tr.append(td);
+            } else {
+                var td = document.createElement("td");
+                var nametag = document.createElement("h4");
+                nametag.innerHTML = InfoOriginList$[i].Name;
+                var div$ = document.createElement("div");
+                div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
+                td.append(nametag);
+                td.append(div$);
+                tr.append(td);
+            }
+            InfoAssess$.append(tr);
+
+
+            var source = {
+                localdata: InfoOriginList$[i].Cdata,
+                datatype: "json",
+                datafields: [
+                    { name: 'Name' },
+                    { name: 'OID' },
+                    { name: 'FromOID' }
+                ],
+            }
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#assessList_" + i+"_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
+
+        }
+        for (var i = 0; i < InfoSelassessList$.length; i++) {
+            for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
+                var check = InfoSelassessList$[i].CheckData[j].FromOID;
+                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
+
+            }
+            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                disabled: true
+            });
+        }
+        $('[group="InfoECOcompatible_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (Compatible == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                Compatible = null;
+            } else {
+                Compatible = $(this).data('value');
+            }
+        });
+        $('div[group="InfoECOisMold_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (IsMold == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                IsMold = null;
+            } else {
+                IsMold = $(this).data('value');
+            }
+        });
+        $('div[group="InfoECOreason_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (ReasonRegistration == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                ReasonRegistration = null;
+            } else {
+                ReasonRegistration = $(this).data('value');
+            }
+        });
+        $('div[group="InfoECOsecurity_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (Security == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                Security = null;
+            } else {
+                Security = $(this).data('value');
+            }
+        });
+        $('div[group="InfoECOstock_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (Stock == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                Stock = null;
+            } else {
+                Stock = $(this).data('value');
+            }
+        });
+        $('div[group="InfoECOisAttached_@ViewBag.ECODetail.OID"]').on('click', function (event) {
+            if (IsAttached == $(this).data('value')) {
+                $(this).jqxRadioButton('uncheck');
+                IsAttached = null;
+            } else {
+                IsAttached = $(this).data('value');
+            }
+        });
+
         const ECOOID = '@ViewBag.ECODetail.OID';
         const DocDiv$ = $('#InfoChangeOrder_' + ECOOID);
         const headerStatus = $('#InfoChangeOrder_' + ECOOID + ' .pointer_wrap .pointer');
         const current = @ViewBag.ECODetail.BPolicyOID;
+
         if (headerStatus != null && headerStatus.length > 0) {
             headerStatus.removeClass('pointer_focus');
             const currentStatus = headerStatus.filter(function (index, item) {
@@ -394,205 +503,91 @@
                 currentStatus[0].className += ' ' + 'pointer_focus';
             }
         }
-        if ('@ViewBag.ECODetail.EoType' == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
-            $('.Rental_@ViewBag.ECODetail.OID').attr('hidden', true);
-
-        } else if ('@ViewBag.ECODetail.EoType' == '@Common.Constant.EoConstant.TYPE_HOUSE') {
-            $('.Rental_@ViewBag.ECODetail.OID').attr('hidden', false);
-        }
         $('#InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID').on('click', function () {
             $('.Modifiable_@ViewBag.ECODetail.OID').removeAttr('readonly');
             $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').attr('hidden', true);
             $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').attr('hidden', false);
+            $('#InfoChangeOrder_CancelBtn_@ViewBag.ECODetail.OID').attr('hidden', false);
+            $('#InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID').attr('hidden', false);
+            $('#InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID').attr('hidden', true);
+            $('#InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID').attr('hidden', true);
 
             //수정 가능한 항목을 표시
             var modifyTag = document.createElement('div');
             modifyTag.className = "modifyTag";
 
             $('.Modifiable_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
-            $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
+            $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').parent().css('position', 'relative');
             $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
 
-            $('.Modifiable_@ViewBag.ECODetail.OID').parent().append(modifyTag);
-            $('.ModifiableCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
-            $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').parent().append(modifyTag);
+            $('.required').parent().append(modifyTag);
 
 
-
-            var InfoEoDt$ = $('#InfoChangeOrder_EoDt_@ViewBag.ECODetail.OID'); //EO일자
-            InfoEoDt$.jqxDateTimeInput(DateFormat);
-            InfoEoDt$.jqxDateTimeInput('setDate', "@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.EoDt)");
-            InfoEoDt$.jqxDateTimeInput({ width: 200, height: 32 });
-
-            var InfoDrwDt$ = $('#InfoChangeOrder_DrwDt_@ViewBag.ECODetail.OID'); //도면접수일
-            InfoDrwDt$.jqxDateTimeInput(DateFormat);
-            InfoDrwDt$.jqxDateTimeInput('setDate', "@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.DrwDt)");
-            InfoDrwDt$.jqxDateTimeInput({ width: 200, height: 32 });
-
-            var InfoOemDt$ = $('#InfoChangeOrder_OemDt_@ViewBag.ECODetail.OID'); //EO 발생일
-            InfoOemDt$.jqxDateTimeInput(DateFormat);
-            InfoOemDt$.jqxDateTimeInput('setDate', "@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.OemDt)");
-            InfoOemDt$.jqxDateTimeInput({ width: 200, height: 32 });
-
-            var InfoRecDt$ = $('#InfoChangeOrder_Oem_RecDt_@ViewBag.ECODetail.OID'); //EO 접수일
-            InfoRecDt$.jqxDateTimeInput(DateFormat);
-            InfoRecDt$.jqxDateTimeInput('setDate', "@string.Format("{0:yyyy-MM-dd}", ViewBag.ECODetail.Oem_RecDt)");
-            InfoRecDt$.jqxDateTimeInput({ width: 200, height: 32 });
-
-            $('input[name="selEoType"]:radio[value="@ViewBag.ECODetail.EoType"]').prop("checked", true);
-            $('input[name="selEoId"]:radio[value="@ViewBag.ECODetail.EoID"]').prop("checked", true);
-            $('input[name="selEoProType"]:radio[value="@ViewBag.ECODetail.EoProType"]').prop("checked", true);
-            $('input[name="selServiceInfo"]:radio[value="@ViewBag.ECODetail.IsService"]').prop("checked", true);
-            $('input[name="selMoldChange"]:radio[value="@ViewBag.ECODetail.IsMold"]').prop("checked", true);
-            $('input[name="selEoClass"]:radio[value="@ViewBag.ECODetail.EoClass"]').prop("checked", true);
-            $('input[name="selEoInvClr"]:radio[value="@ViewBag.ECODetail.Eo_InvClr"]').prop("checked", true);
-            $('input[name="selEoFault"]:radio[value="@ViewBag.ECODetail.Eo_Fault"]').prop("checked", true);
-
-
-            $('input:radio[name=selEoType]').on('change', function () {
-                if ($("input[name='selEoType']:checked").val() == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
-                    $('.Rental_@ViewBag.ECODetail.OID').attr('hidden', true);
-                }
-                if ($("input[name='selEoType']:checked").val() == '@Common.Constant.EoConstant.TYPE_HOUSE') {
-                    $('.Rental_@ViewBag.ECODetail.OID').attr('hidden', false);
-                }
-            });
-
-            $('input:radio[name=selServiceInfo]').on('change', function () {
-                if ($("input[name='selServiceInfo']:checked").val() == 'Y') {
-                    $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                    $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                }
-                if ($("input[name='selServiceInfo']:checked").val() == 'N') {
-                    $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-                    $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-                }
-            });
-            $('input:radio[name=selMoldChange]').on('change', function () {
-                if ($("input[name='selMoldChange']:checked").val() == 'Y') {
-                    $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                    $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                }
-                if ($("input[name='selMoldChange']:checked").val() == 'N') {
-                    $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-                    $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-                }
-            });
-            $('input:radio[name=selEoFault]').on('change', function () {
-                if ($("input[name='selEoFault']:checked").val() == '@Common.Constant.EoConstant.FAULT_SELF') {
-                    $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').removeAttr('readonly');
-                } else {
-                    $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').attr('readonly', 'readonly');
-                }
-
-            });
-
-            var eoReason = '@ViewBag.ECODetail.Eo_Reason';
-            if (eoReason != null && eoReason != undefined && eoReason.length > 0) {
-                if (eoReason.indexOf(',') > -1) {
-                    _.each(eoReason.split(','), function (item) {
-                        $('input:checkbox[name=selEoReason]:input[value=' + item + ']').attr("checked", true);
-                    })
-                } else {
-                    $('input:checkbox[name=selEoReason]:input[value=' + eoReason + ']').attr("checked", true);
-                }
-            }
 
         });
-
-        $('#InfoChangeOrder_Name_@ViewBag.ECODetail.OID').on('change paste keyup', function () {
-            $('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val('F');
+        $('#InfoChangeOrder_CancelBtn_@ViewBag.ECODetail.OID').on('click', function () {
+            PageReload();
         });
-
-        $('#InfoChangeOrder_checkbtn_@ViewBag.ECODetail.OID').on('click', function () {
-            var param = {};
-            param.Name = $('#InfoChangeOrder_Name_@ViewBag.ECODetail.OID').val();
-            if (param.Name == null || param.Name == '') {
-                alert('EONO를 입력해주세요.');
-                return;
-            }
-
-            RequestData('/ChangeOrder/SelChangeOrderCheck', param, function (response) {
-                if (response == 1) {
-                    alert("이미 존재하는 EONO 입니다.");
-                    $('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val('F');
-                    return;
-                } else {
-                    alert("사용가능한 EONO 입니다.");
-                    $('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val('T');
-                }
-            });
-
+        $('#InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID').on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ECOOID }, '/Common/Approval', '결재');
         });
 
         $('#InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID').on('click', function () {
-            if ($('#InfoChangeOrder_checkFlag_@ViewBag.ECODetail.OID').val() == 'F') {
-                alert('EONO 중복확인을 해주세요.');
-                return;
-            }
             var param = {};
             param.OID = @ViewBag.ECODetail.OID;
-            param.Name = $('#InfoChangeOrder_Name_@ViewBag.ECODetail.OID').val();
-            param.EoDt = $('#InfoChangeOrder_EoDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('val');
-            param.Description = $('#InfoChangeOrder_Description_@ViewBag.ECODetail.OID').val();
-            param.EPart_No = $('#InfoChangeOrder_EPart_No_@ViewBag.ECODetail.OID').val();
+            param.ItemGroup = $('#InfoChangeOrder_ItemGroup_@ViewBag.ECODetail.OID').val();
             param.Title = $('#InfoChangeOrder_Title_@ViewBag.ECODetail.OID').val();
-            param.DrwDt = $('#InfoChangeOrder_DrwDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('val');
-            param.EoType = $("input[name='selEoType']:checked").val();
-            param.Count = $('#InfoChangeOrder_Count_@ViewBag.ECODetail.OID').val();
-            param.EoProType = $("input[name='selEoProType']:checked").val();
-            if (param.EoType == '@Common.Constant.EoConstant.TYPE_CUSTOMER') {
-
-            } else if (param.EoType == '@Common.Constant.EoConstant.TYPE_HOUSE') {
-                param.EoID = $("input[name='selEoId']:checked").val();
-                param.IsService = $("input[name='selServiceInfo']:checked").val();
-
-                if (param.IsService == "Y") {
-                    param.DesignCost = $('#InfoChangeOrder_DesignCost_@ViewBag.ECODetail.OID').val();
-                    param.WtChange = $('#InfoChangeOrder_WtChange_@ViewBag.ECODetail.OID').val();
+            param.DesignChangeDt = $('#InfoChangeOrder_DesignChangeDt_@ViewBag.ECODetail.OID').val();
+            param.ReasonChange = InforeasonChange$.val();
+            param.Compatible = Compatible;
+            param.IsMold = IsMold;
+            param.ReasonRegistration = ReasonRegistration;
+            param.Security = Security;
+            param.Stock = Stock;
+            param.Memo = $('#InfoChangeOrder_Memo_@ViewBag.ECODetail.OID').val();
+            param.IsAttached = IsAttached;
+            param.SelRequestDt = $('#InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID').val();
+            param.SelPartNo = $('#InfoChangeOrder_SelPartNo_@ViewBag.ECODetail.OID').val();
+            param.EBom = $('#InfoChangeOrder_EBom_@ViewBag.ECODetail.OID').val();
+            param.DevMP = InfodevType$.val();
+            param.CarType = $('#InfoChangeOrder_CarType_@ViewBag.ECODetail.OID').val();
+            param.Description = $('#InfoChangeOrder_Description_@ViewBag.ECODetail.OID').val();
+            var chkReason = [];
+            for (var i = 0; i < $('input[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]').length; i++) {
+                if ($('input[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]')[i].value == "true") {
+                    chkReason.push($('div[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]').eq(i).data('value'));
                 }
-
-                param.IsMold = $("input[name='selMoldChange']:checked").val();
-
-                if (param.IsMold == "Y") {
-                    param.DieQt = $('#InfoChangeOrder_DieQt_@ViewBag.ECODetail.OID').val();
-                    param.DieCost = $('#InfoChangeOrder_DieCost_@ViewBag.ECODetail.OID').val();
-                }
-
-                param.EoClass = $("input[name='selEoClass']:checked").val();
-                param.Eo_InvClr = $("input[name='selEoInvClr']:checked").val();
-                param.Eo_Fault = $("input[name='selEoFault']:checked").val();
-
-                if (param.Eo_Fault == '@Common.Constant.EoConstant.FAULT_SELF') {
-                    param.TeamNm = $('#InfoChangeOrder_TeamNm_@ViewBag.ECODetail.OID').val();
-                }
-
-                param.Oem_Eo = $('#InfoChangeOrder_Oem_Eo_@ViewBag.ECODetail.OID').val();
-                param.OemDt = $('#InfoChangeOrder_EoDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('val');
-                param.OemUs = $('#InfoChangeOrder_OemUs_@ViewBag.ECODetail.OID').val();
-                param.Oem_RecDt = $('#InfoChangeOrder_EoDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('val');
-
-                param.Effective = $('#InfoChangeOrder_Effective_@ViewBag.ECODetail.OID').val();
-
-                param.Statement = $('#InfoChangeOrder_Statement_@ViewBag.ECODetail.OID').val();
-
-                var chkReason = [];
-                _.each($('input[name="selEoReason"]:checked'), function (item) {
-                    chkReason.push(item.value);
-                });
-                param.Eo_Reason = chkReason.join(',');
-
-                RequestData('/ChangeOrder/UdtChangeOrder', param, function (response) {
-                    if (response.isError) {
-                        alert(response.resultMessage);
-                        return;
-                    }
-                    alert("수정되었습니다.");
-                    PageReload();
-                }).fail(function (err) {
-                    alert(err.responseText);
-                });
             }
+            param.Changes = chkReason.join(',');;
+
+
+            if (param.Title == "" || param.Title == null) {
+                alert('제목을 입력하여 주세요.');
+                return;
+            }
+            if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
+                alert('설계변경일자를 선택하여 주세요.');
+                return;
+            }
+            if (param.ReasonChange == "" || param.ReasonChange == null) {
+                alert('변경사유를 선택하여 주세요.');
+                return;
+            }
+            if (param.DevMP == "" || param.DevMP == null) {
+                alert('개발/양산 구분을 선택하여 주세요.');
+                return;
+            }
+            RequestData('/ChangeOrder/UdtChangeOrder',param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+                PageReload();
+            });
+
 
         });
 
@@ -605,7 +600,230 @@
             DocDiv$.find('[class="basic_grid"]').addClass('dective');
             DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
 
-            if (infoValue == 'properties') {
+            if (infoValue == 'ECOEffectAssess') {
+                $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').on('click', function () {
+                    $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                    $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').removeAttr('hidden');
+                    $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').removeAttr('hidden');
+                    $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').removeAttr('hidden');
+                    for (var i = 0; i < InfoOriginList$.length; i++) {
+                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                            disabled: false
+                        });
+                    }
+                });
+                $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').on('click', function () {
+                    loadFlag = 'F';
+                    $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
+                    $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                    $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                    $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                    InfoAssess$.removeAttr('hidden');
+                    newList.attr('hidden', 'hidden');
+                    for (var i = 0; i < InfoOriginList$.length; i++) {
+                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('clearSelection');
+                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('uncheckAll');
+
+                        for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
+                            var check = InfoSelassessList$[i].CheckData[j].FromOID;
+                            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
+
+                        }
+                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                            disabled: true
+                        });
+                    }
+                });
+                $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').on('click', function () {
+                    if (confirm('저장 하시겠습니까?')) {
+                        var iData = {};
+                        iData.RootOID = @ViewBag.ECODetail.OID;
+                        iData.Type = '@Common.Constant.EoConstant.TYPE_ASSESSLIST';
+                        var checkList = [];
+                        if (loadFlag == "F") { //기존 리비전 평가표로 작업시
+                            for (var i = 0; i < InfoOriginList$.length; i++) {
+                                var list = [];
+                                var data = {};
+                                data.OID = InfoOriginList$[i].OID;
+                                list.push(data);
+                                var a = $('#assessList_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
+                                for (var j = 0; j < a.length; j++) {
+                                    list.push(a[j].originalItem);
+                                }
+                                checkList.push(list);
+
+                            }
+                        } else if (loadFlag == "T") { //최신 평가표로 불러온후 작업시
+                            for (var i = 0; i < loadAssessData.length; i++) {
+                                var list = [];
+                                var data = {};
+                                data.OID = loadAssessData[i].OID;
+                                list.push(data);
+                                var a = $('#assessListNew_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
+                                for (var j = 0; j < a.length; j++) {
+                                    list.push(a[j].originalItem);
+                                }
+                                checkList.push(list);
+
+                            }
+                        }
+                        RequestData('/ChangeOrder/UpdateECOAssess', { _assessList: checkList, delData: iData }, function (response) {
+                            if (response.isError) {
+                                alert(response.resultMessage);
+                                return;
+                            }
+                            alert("저장되었습니다.");
+                            PageReload();
+                        });
+
+                    }
+                });
+                $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').on('click', function () {
+                    if (confirm('최신 평가표를 불러오시겠습니까?')) {
+                        RequestData('/Manage/SelAssessLibrary', param, function (response) {
+                            if (response.isError) {
+                                alert(response.resultMessage);
+                                return;
+                            }
+                            loadFlag = 'T';
+                            InfoAssess$.attr('hidden', 'hidden');
+                            newList.removeAttr('hidden');
+                            newList.empty();
+                            loadAssessData = response;
+                            for (var i = 0; i < response.length; i++) {
+                                var tr;
+                                var td = document.createElement("td");
+                                if (i % 2 != 1) {
+                                    tr = document.createElement("tr");
+                                    var td = document.createElement("td");
+                                    var nametag = document.createElement("h4");
+                                    nametag.innerHTML = response[i].Name;
+                                    var div$ = document.createElement("div");
+                                    div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
+                                    td.append(nametag);
+                                    td.append(div$);
+                                    tr.append(td);
+                                } else {
+                                    var td = document.createElement("td");
+                                    var nametag = document.createElement("h4");
+                                    nametag.innerHTML = response[i].Name;
+                                    var div$ = document.createElement("div");
+                                    div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
+                                    td.append(nametag);
+                                    td.append(div$);
+                                    tr.append(td);
+                                }
+                                newList.append(tr);
+
+
+                                var source = {
+                                    localdata: response[i].Cdata,
+                                    datatype: "json",
+                                    datafields: [
+                                        { name: 'Name' },
+                                        { name: 'OID' },
+                                        { name: 'FromOID' }
+                                    ],
+                                }
+                                var dataAdapter = new $.jqx.dataAdapter(source);
+                                $("#assessListNew_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 800, checkboxes: true });
+                            }
+                        });
+                    }
+                });
+
+            } else if (infoValue == "ECRRelation") {
+                var selRow;
+                var rowKey = null;
+                var param = {};
+                param.Type = '@Common.Constant.EoConstant.TYPE_ECR_RELATION';
+                param.RootOID = @ViewBag.ECODetail.OID;
+                var ECRRelationSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'DesignChangeDt',type:'date' },
+                        { name: 'CreateUs' },
+                        { name: 'BPolicy' },
+                        { name: 'BPolicyOID' },
+                    ],
+                }
+
+                const ECRRelationGrid$ = $('#InfoChangeOrder_ECRRelation_@ViewBag.ECODetail.OID');
+                ECRRelationGrid$.jqxGrid({
+                    theme: "kdnc",
+                    width: "100%",
+                    height: 665,
+                    rowsheight: 28,
+                    columnsheight: 30,
+                    selectionmode: 'checkbox',
+                    sortable: false,
+                    pageable: false,
+                    columns: [
+                        {
+                            text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        { text: 'ECR_NO', datafield: 'Name', width: '30%', },
+                        { text: 'ECR_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd' },
+                        { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                    ],
+                    showtoolbar: true,
+                    toolbarheight: 45,
+                    renderToolbar: function (statusbar) {
+                        statusbar.empty();
+                        var container$ = $('<div class="lGridComponent"></div>');
+                        var ECRRelationAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                        var ECRRelationdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+
+                        container$.append(ECRRelationAddBtn$);
+                        container$.append(ECRRelationdelBtn$);
+                        statusbar.append(container$);
+                        //행 추가
+                        ECRRelationAddBtn$.on('click', function (e) {
+                            var datarow = {};
+                            OpenSearchECRDialog(function (res) {
+                                getECRRelationList(ECRRelationSource, ECRRelationGrid$, param);
+                            }, null, param, '/ChangeOrder/dlgSearchECR?Type=' + param.Type, '변경요청 선택', ECRRelationGrid$, ECRRelationSource, "Edit");
+
+                        });
+                        ECRRelationdelBtn$.on('click', function (e) {
+                            var rowindex = ECRRelationGrid$.jqxGrid('selectedrowindexes');
+                            var selectedRecords = new Array();
+                            if (rowindex == null || rowindex == undefined || rowindex.length <=0) {
+                                alert('삭제할 행을 선택하여 주세요');
+                            } else {
+                                if (confirm('삭제하시겠습니까?')) {
+                                    for (var m = 0; m < rowindex.length; m++) {
+                                        var row = ECRRelationGrid$.jqxGrid('getrowdata', rowindex[m]);
+                                        row.Type = param.Type;
+                                        row.ToOID = row.OID;
+                                        selectedRecords.push(row);
+                                    }
+                                    RequestData('/ChangeOrder/DelEOContents', { _param: selectedRecords }, function (response) {
+                                        if (response.isError) {
+                                            alert(response.resultMessage);
+                                            return;
+                                        }
+                                        alert("삭제 되었습니다.");
+                                        getECRRelationList(ECRRelationSource, ECRRelationGrid$, param);
+                                        ECRRelationGrid$.jqxGrid('clearselection');
+                                    });
+                                }
+
+                            }
+                        });
+                    }
+                });
+                getECRRelationList(ECRRelationSource, ECRRelationGrid$, param);
 
             } else if (infoValue == 'ebomList') {
                 var selRow;
@@ -618,23 +836,27 @@
                     datatype: 'json',
                     datafields: [
                         { name: 'OID' },
-                        { name: 'Name' },
                         { name: 'RootOID' },
                         { name: 'ToOID' },
                         { name: 'Type' },
+                        { name: 'Name' },
+                        { name: 'BPolicyOID' },
+                        { name: 'BPolicy' },
                         { name: 'CreateUsNm' },
                         { name: 'CreateDt', type: 'date' },
-                        { name: 'Title' },
-                        { name: 'Rep_Part_No' },
-                        { name: 'Car_Lib_NM' },
-                        { name: 'Eo_No' },
-                        { name: 'Eo_No_ApplyDt', type: 'date' },
+                        { name: 'Car_Lib_OID' },
+                        { name: 'Car_Lib_Nm' },
+                        { name: 'ITEM_No' },
+                        { name: 'ITEM_NoNm' },
+                        { name: 'Block_No' },
+                        { name: 'Block_NoNm' },
+                        { name: 'Material_OID' },
+                        { name: 'Material_Nm' },
                         { name: 'EPartType' },
-                        { name: 'Spec' },
+                        { name: 'Sel_Eo' },
+                        { name: 'Sel_Eo_Dt', type: 'date' },
+                        { name: 'Thumbnail' },
                         { name: 'Revision' },
-                        { name: 'Surface' },
-                        { name: 'BPolicy' },
-                        { name: 'BPolicyOID', type: 'number' },
                     ],
                 }
 
@@ -650,36 +872,27 @@
                     pageable: false,
                     columns: [
                         {
-
-                            text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
-                            cellsrenderer: function (row, column, value) {
+                            text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                             }
                         },
-                        { text: '차종', datafield: 'Car_Lib_NM', width: "9%", align: 'center', cellsalign: 'center', },
-
-
-                        { text: '품번', datafield: 'Name', width: "18%", align: 'center', cellsalign: 'center', },
-                        { text: 'S/ON 품번', datafield: 'Rep_Part_No', width: "10%", align: 'center', cellsalign: 'center', },
-                        { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
-                        { text: 'EO NO', datafield: 'Eo_No', width: "9%", align: 'center', cellsalign: 'center', },
-                        { text: '재질', datafield: 'Spec', width: "9%", align: 'center', cellsalign: 'center', },
-                        { text: 'C/N', datafield: 'Revision', width: "8%", align: 'center', cellsalign: 'center', },
-
+                        { text: '품번', datafield: 'Name', width: '15%', },
+                        { text: 'Block_No', datafield: 'Block_NoNm', width: '15%', },
+                        { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
+                        { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
+                        { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
                         {
-                            text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                            text: '상태', datafield: 'BPolicy', width: '15%',
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                             },
                         },
-                        { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center' },
-                        { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                        //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
                     ],
                     showtoolbar: true,
                     toolbarheight: 45,
                     renderToolbar: function (statusbar) {
-
+                        statusbar.empty();
                         var container$ = $('<div class="lGridComponent"></div>');
                         var ebomListAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
                         var ebomListAddChildBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 하위부품 추가</button>').jqxButton();
@@ -700,7 +913,7 @@
                             var datarow = {};
                             OpenSearchEPartDialog(function (res) {
                                 getBomList(ebomListSource, ebomListGrid$, param);
-                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart');
+                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart','Edit');
 
                         });
                         ebomListAddChildBtn$.on('click', function (e) {
@@ -712,7 +925,7 @@
                                 param.FromOID = datarow.OID;
                                 OpenSearchEPartDialog(function (res) {
                                     getBomList(ebomListSource, ebomListGrid$, param);
-                                }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild');
+                                }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild', 'Edit');
                             } else {
                                 alert('품목을 선택해주세요');
                             }
@@ -721,7 +934,7 @@
                         ebomListdelBtn$.on('click', function (e) {
                             var rowindex = ebomListGrid$.jqxGrid('selectedrowindexes');
                             var selectedRecords = new Array();
-                            if (rowindex == null || rowindex == undefined) {
+                            if (rowindex == null || rowindex == undefined || rowindex.length <= 0) {
                                 alert('삭제할 행을 선택하여 주세요');
                             } else {
                                 if (confirm('삭제하시겠습니까?')) {
@@ -811,7 +1024,7 @@
                 var rowKey = null;
                 var rowDataField = null;
                 var param = {};
-              
+
                 param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
                 param.RootOID = @ViewBag.ECODetail.OID;
 
@@ -851,11 +1064,11 @@
                         {
                             text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
                             cellsrenderer: function (row, column, value) {
-                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:200px;'>" + (value + 1) + "</div>";
                             }
                         },
                         {
-                            text: 'P/NO', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
+                            text: '품번', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
                             validation: function (cell, value) {
                                 if (value == '' || value == null) {
                                     return { result: false, message: "P/NO를 입력해주세요" };
@@ -864,7 +1077,7 @@
                             }
                         },
                         {
-                            text: 'P/NAME', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
+                            text: '품명', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
                         },
                         {
                             text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
@@ -914,7 +1127,7 @@
                     showtoolbar: true,
                     toolbarheight: 45,
                     renderToolbar: function (statusbar) {
-
+                        statusbar.empty();
                         var container$ = $('<div class="lGridComponent"></div>');
                         var ebomStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
                         var ebomStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
@@ -971,7 +1184,7 @@
                         ebomStatementDelBtn$.on('click', function (e) {
                             var rowindex = ebomStatementGrid$.jqxGrid('selectedrowindexes');
                             rowindex.sort();
-                            if (rowindex == null || rowindex == undefined) {
+                            if (rowindex == null || rowindex == undefined || rowindex.length <= 0) {
                                 alert('삭제할 행을 선택하여 주세요');
                             } else {
                                 if (confirm('삭제하시겠습니까?')) {
@@ -991,6 +1204,12 @@
 
     function getBomList(_Source, _Grid$, _param) {
         RequestData("/ChangeOrder/SelEOContents", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+    function getECRRelationList(_Source, _Grid$, _param) {
+        RequestData("/ChangeOrder/SelECRRelation", _param, function (res) {
+            ECRRelationData = res;
             PrintJqxGrid(_Source, _Grid$, res);
         });
     }

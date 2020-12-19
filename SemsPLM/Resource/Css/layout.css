@@ -209,107 +209,176 @@ nav {
 
 #loading {
     width: 100%;
-    background-color: rgba(255,255,255,.5);
+    /*background-color: rgba(255,255,255,.5);*/
     z-index: 9999;
     height: 880px;
-    padding-top:100px;
+    padding-top:200px;
     text-align:center;
     -ms-overflow-style:none;
 }
 
-.lds-spinner {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
+.loader-inner{
+    margin:0 auto;
 }
 
-    .lds-spinner div {
-        transform-origin: 40px 40px;
-        animation: lds-spinner 1.2s linear infinite;
+@-webkit-keyframes ball-grid-pulse {
+    0% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0;
     }
 
-        .lds-spinner div:after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 3px;
-            left: 37px;
-            width: 6px;
-            height: 18px;
-            border-radius: 20%;
-            background: #000;
-        }
-
-        .lds-spinner div:nth-child(1) {
-            transform: rotate(0deg);
-            animation-delay: -1.1s;
-        }
-
-        .lds-spinner div:nth-child(2) {
-            transform: rotate(30deg);
-            animation-delay: -1s;
-        }
-
-        .lds-spinner div:nth-child(3) {
-            transform: rotate(60deg);
-            animation-delay: -0.9s;
-        }
-
-        .lds-spinner div:nth-child(4) {
-            transform: rotate(90deg);
-            animation-delay: -0.8s;
-        }
-
-        .lds-spinner div:nth-child(5) {
-            transform: rotate(120deg);
-            animation-delay: -0.7s;
-        }
-
-        .lds-spinner div:nth-child(6) {
-            transform: rotate(150deg);
-            animation-delay: -0.6s;
-        }
-
-        .lds-spinner div:nth-child(7) {
-            transform: rotate(180deg);
-            animation-delay: -0.5s;
-        }
-
-        .lds-spinner div:nth-child(8) {
-            transform: rotate(210deg);
-            animation-delay: -0.4s;
-        }
-
-        .lds-spinner div:nth-child(9) {
-            transform: rotate(240deg);
-            animation-delay: -0.3s;
-        }
-
-        .lds-spinner div:nth-child(10) {
-            transform: rotate(270deg);
-            animation-delay: -0.2s;
-        }
-
-        .lds-spinner div:nth-child(11) {
-            transform: rotate(300deg);
-            animation-delay: -0.1s;
-        }
-
-        .lds-spinner div:nth-child(12) {
-            transform: rotate(330deg);
-            animation-delay: 0s;
-        }
-
-@keyframes lds-spinner {
-    0% {
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
         opacity: 1;
     }
 
     100% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0.3;
+    }
+}
+
+@keyframes ball-grid-pulse {
+    0% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0;
+    }
+
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0.3;
+    }
+}
+
+@keyframes center-pulse {
+    0% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0;
+    }
+
+    25% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+        opacity: 0.3;
+    }
+
+    75% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
         opacity: 0;
     }
 }
+
+
+.ball-grid-pulse {
+    width: 57px;
+}
+
+    .ball-grid-pulse > div:nth-child(1) {
+        -webkit-animation-delay: 0.5s;
+        animation-delay: 0.5s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(2) {
+        -webkit-animation-delay: 0.25s;
+        animation-delay: 0.25s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(3) {
+        -webkit-animation-delay: 0.5s;
+        animation-delay: 0.5s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(4) {
+        -webkit-animation-delay: 0.25s;
+        animation-delay: 0.25s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(5) {
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+        -webkit-animation-duration: 2.4s;
+        animation-duration: 2.4s;
+        animation-name: center-pulse !important;
+    }
+
+    .ball-grid-pulse > div:nth-child(6) {
+        -webkit-animation-delay: 0.25s;
+        animation-delay: 0.25s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(7) {
+        -webkit-animation-delay: 0.5s;
+        animation-delay: 0.5s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(8) {
+        -webkit-animation-delay: 0.25s;
+        animation-delay: 0.25s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div:nth-child(9) {
+        -webkit-animation-delay: 0.5s;
+        animation-delay: 0.5s;
+        -webkit-animation-duration: 1.2s;
+        animation-duration: 1.2s;
+    }
+
+    .ball-grid-pulse > div {
+        width: 15px;
+        height: 15px;
+        box-shadow: 1px 1px 20px #fff;
+        border-radius: 100%;
+        margin: 2px;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        display: inline-block;
+        float: left;
+        -webkit-animation-name: ball-grid-pulse;
+        animation-name: ball-grid-pulse;
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+        -webkit-animation-delay: 0;
+        animation-delay: 0;
+    }
 
 
 .custom-button{
@@ -529,6 +598,7 @@ button > .fas{
 .searchData {
     float: left;
     margin-right: 30px;
+    padding-bottom:15px;
 }
 
 .searchButton{
@@ -537,28 +607,21 @@ button > .fas{
 
 .searchData > div {
     display: inline-block;
+    float:left;
 }
 
 .searchData input[type=text]{
-    height:33px;
-    line-height:33px;
+    height:32px;
+    line-height:32px;
     width:150px;
     margin-left:5px;
-    margin-bottom:14px;
     text-indent:5px;
     background-color:#fff;
 }
 
-.searchData .jqx-combobox, .searchData .jqx-datetimeinput{
-    margin-bottom:11px;
-}
-
-.searchData > .comboBoxLabel {
-    transform: translateY(-23px);
-}
-
-.searchData > .checkBoxLabel{
-    transform:translateY(-5px);
+.searchData > div:first-child{
+    line-height:32px;
+    padding-right:8px;
 }
 
 
@@ -767,9 +830,9 @@ button > .fas{
         color: #ccc !important;
     }
 
-.changeOrderImg > .image_inputbox{
-    z-index:100;
-}
+    .changeOrderImg > .image_inputbox, .ChangeRequestImg > .image_inputbox {
+        z-index: 100;
+    }
 
 
 .pointer_wrap{
@@ -839,9 +902,21 @@ button > .fas{
     line-height:0;
 }
 
+.infoTable td > div, .infoTable td > div > div{
+    float:left;
+}
+
+.infoTable textarea{
+    width:100%;
+}
+
 .tr_tall{
     vertical-align:initial;
     height:96px;
+}
+
+.tr_tall > th{
+    line-height:40px;
 }
 
 .infoH3{
@@ -850,31 +925,142 @@ button > .fas{
     line-height:22px;
 }
 
+.wbsMember {
+    position: relative;
+    width:100px;
+    height:21px;
+    padding-left:32px;
+    float:left;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+}
+
+.wbsMember:first-child ~ .wbsMember::before{
+    content:",";
+    padding-right:32px;
+    margin-left:-42px;
+}
+
+.wbsDlgMember {
+    position: relative;
+    width: 100%;
+    line-height:45px;
+    padding-left:50px;
+}
+
+.pmsMember {
+    position: relative;
+    width: 70%;
+    line-height: 24px;
+    padding-left: 50px;
+    display:inline-block;
+}
+
 .memberImg{
     width:35px;
     height:35px;
     position:absolute;
-    top:-23px;
+    top:5px;
     left:5px;
     overflow:hidden;
     border-radius:50%;
     border:1px solid #c5c5c5;
+    float:left;
 }
 
-.memberImg_s{
-    width:25px !important;
-    height:25px !important;
-    top:-18px !important;
-    left:12px !important;
+.wbsMember .memberImg {
+    width: 20px;
+    height: 20px;
+    top:0px;
+    left: 8px;
+    float: left;
+    margin-right:5px;
 }
 
-.memberImg > img {
-    width:100%;
-    height:auto;
+.pmsMember .memberImg{
+    top:-5px !important;
 }
+
+.wbsDlgMember .memberImg > img {
+    width: 35px;
+    height: auto;
+}
+
+.wbsDlgMember .memberImg > i, .pmsMember .memberImg > i{
+    font-size: 34px;
+    transform: translateY(-1px);
+}
+
+.wbsMember .memberImg > img {
+    width: 20px;
+    height: auto;
+}
+
+.wbsMember .memberImg > i {
+    font-size: 18px;
+}
+
 
 .import_excel td{
     padding:5px 0;
+}
+
+
+/* dlgGateSignOffReport */
+.dlgGateReportTab{
+    height:40px;
+    box-sizing:border-box;
+    padding:5px 0 0 5px;
+    background-color:#888;
+}
+
+.dlgGateReportTab > input[type=radio]{
+    display:none;
+}
+
+input[name=gateReportRadio] + label {
+    display: inline-block;
+    width: 200px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background-color: #aaa;
+    cursor: pointer;
+}
+
+input[name=gateReportRadio]:checked + label {
+    background-color: #fff !important;
+}
+
+.dlgGateReportContent{
+    overflow-y:hidden;
+    overflow-x:hidden;
+}
+
+.dlgGateReportContent h4{
+    font-size:14px;
+    line-height:30px;
+}
+
+.dlgGateReportTable{
+    width:100%;
+    height:60px;
+    margin-bottom:10px;
+}
+
+.dlgGateReportTable td{
+    border:1px solid #aaa;
+}
+
+.dlgGateReportTable thead td{
+    background-color:#e8e8e8;
+    text-align:center;
+    height:30px;
+}
+
+.dlgGateReportTable .remark{
+    width:240px;
 }
 
 /* createtable */
@@ -965,6 +1151,11 @@ button > .fas{
 
 .createChangeOrder_table > .createtable td {
     width: 38%;
+}
+
+.createtable .issueRadioBtn, .createtable .issueCheckBox {
+    float: left;
+    margin-right: 8px;
 }
 
 /* UserManage */
@@ -1081,7 +1272,7 @@ button > .fas{
     float: left;
     text-align: right;
     height: 100%;
-    padding: 0 20px 45px 40px;
+    padding: 0 20px 170px 40px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
 }
@@ -1157,6 +1348,29 @@ button > .fas{
         margin: 0 4px;
         cursor: pointer;
     }
+
+.gateicons{
+    padding-bottom:8px;
+}
+
+.gateicons > button {
+    width: 100%;
+    font-size: 12px;
+    line-height: 22px;
+    border: none;
+    background-color: #fff;
+    padding-bottom: 3px;
+    text-align:left;
+}
+
+.gateicons > button:hover{
+    background-color:#eee;
+}
+
+.gateicons > button > img{
+    transform:translateY(5px);
+    margin:0 8px;
+}
 
 /* ApprovalLine, dlgApprovalPerson */
 
@@ -1730,6 +1944,18 @@ input[name=rscRadio] + label{
 /* CreateOptimalDesign */
 .optimalDesignTable {
     width: 100%;
+    table-layout: fixed;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.optimalDesignTable td>div{
+    margin:0 auto;
+}
+
+.optimalDesignTable input[type=text]{
+    width:130px;
+    height:32px;
 }
 
 /* QuickResponse */
@@ -1765,7 +1991,7 @@ table[TableType=Why] th, table[TableType=Why] td {
 
 /* CreateChangeOrder, CreateChangeRequest */
 
-.eBomChangeTopMenu{
+/*.eBomChangeTopMenu{
     margin-bottom:10px;
 }
 
@@ -1783,15 +2009,33 @@ table[TableType=Why] th, table[TableType=Why] td {
 
 .eBomChangeTopMenu > ul > li:hover{
     background-color:rgba(55, 152, 174, 0.3);
-}
+}*/
 
 .eBomChangeContents > div {
     width: 100%;
 }
 
-.eBomChangeContents h3{
+.eBomChangeContents > .eBomChangeTitle{
+    height:50px;
+    position:relative;
+}
+
+.eBomChangeTitle > button{
+    position:absolute;
+    right:0;
+    top:8px;
+}
+
+.eBomChangeTitle > h2{
     line-height:50px;
+    font-size:21px;
     text-indent:4px;
+}
+
+.eBomChangeContents h3 {
+    line-height: 50px;
+    text-indent: 4px;
+    font-size:18px;
 }
 
 .eBomChangeContents table{
@@ -1816,7 +2060,6 @@ table[TableType=Why] th, table[TableType=Why] td {
 .effectAssessList td{
     width:50%;
     vertical-align:top;
-    padding:5px;
 }
 
 .effectAssessList h4{
@@ -1869,6 +2112,15 @@ table[TableType=Why] th, table[TableType=Why] td {
     margin-left:4px !important;
 }
 
+.infoTopFix {
+    /* 인포페이지 상단 버튼박스 고정 */
+    border-bottom: 1px solid #c5c5c5 !important;
+    position: fixed;
+    top: 285px;
+    left:220px;
+    z-index: 100;
+}
+
 .jqx-tree-item-li > .jqx-tree-item {
     margin-left:8px !important;
 }
@@ -1897,6 +2149,23 @@ table.tableTopButtonBox input[type=text]{
     text-indent:5px;
 }
 
+.jqx-listitem-element .jqx-fill-state-disabled{
+    color:inherit;
+    opacity:unset;
+    background:inherit;
+    filter:unset;
+}
+
+.issueRadioBtn {
+    color: inherit !important;
+    opacity: unset !important;
+    background: inherit !important;
+    filter: unset !important;
+}
+
+#resource .jqx-tree-grid-checkbox {
+    transform: translateY(3px);
+}
 
 /* IE6,7,8 */
 @media \0screen\,screen\9 {

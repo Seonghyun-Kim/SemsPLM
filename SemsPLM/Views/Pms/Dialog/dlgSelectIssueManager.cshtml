@@ -1,0 +1,90 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="basic_grid">
+    <table class="tableTopButtonBox" style="width:100.3%;">
+        <tr>
+            <td style="text-align:right;"><button class='custom-button' id="dlgSelMember"><i class='fas fa-save'></i> 등록</button></td>
+        </tr>
+    </table>
+    <div id="dlgMemberInfo"></div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var selectFromMethod = false;
+        var dlgMemberData = [];
+        const procRole = @Html.Raw(Json.Encode(ViewBag.Role));
+        const dlgMemberSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'OID', type: 'number' },
+                { name: 'Ord', type: 'number' },
+                { name: 'RoleOID', type: 'number' },
+                { name: 'RoleOIDNm', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'PersonNm', type: 'string' },
+                { name: 'DepartmentNm', type: 'string' },
+                { name: 'Action', type: 'string' },
+                { name: 'diseditable', type: 'array' },
+                { name: 'Thumbnail', type: 'string' },
+            ],
+        };
+
+        var dlgMemberAdapter = new $.jqx.dataAdapter(dlgMemberSource);
+        const dlgMemberGrd$ = $("#dlgMemberInfo");
+        dlgMemberGrd$.jqxGrid(
+        {
+            width: '100%',
+            height: '560px',
+            theme: "kdnc",
+            rowsheight:45,
+            source: dlgMemberAdapter,
+            showaggregates: true,
+            selectionmode: 'checkbox',
+            columns: [
+                {
+                    text: '멤버', width: "25%", datafield: 'PersonNm', align: 'center', editable: false,
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                        var rowData = dlgMemberData[row];
+                         if (rowData.Thumbnail == null) {
+                            return "<div class='wbsDlgMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value + "</div>";
+                        } else {
+                            return "<div class='wbsDlgMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData.Thumbnail + "'></div>" + value+"</div>";
+                        }
+                    }
+                },
+                { text: '역할', datafield: 'RoleOIDNm', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '부서', datafield: 'DepartmentNm', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '설명', datafield: 'Description', width: "41.5%", align: 'center', cellsalign: 'left', },
+            ],
+            pagerrenderer: function () {
+                var peRole = procRole.filter(function (item) {
+                    return item.Name == '@Common.Constant.PmsConstant.ROLE_PE';
+                });
+                RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID', 'RoleOID': peRole[0].OID }, function (res) {
+                    dlgMemberData = [];
+                    dlgMemberData = res;
+                    PrintJqxGrid(dlgMemberSource, dlgMemberGrd$, res);
+                });
+            }
+        });
+        dlgMemberGrd$.jqxGrid('pagerrenderer')
+        
+        dlgMemberGrd$.on('rowselect', function (event) {
+            var rowBoundIndex = (event.args).rowindex;
+            if (!selectFromMethod) {
+                dlgMemberGrd$.jqxGrid('clearselection');
+                selectFromMethod = true;
+                dlgMemberGrd$.jqxGrid('selectrow', rowBoundIndex);
+            }
+            selectFromMethod = false;
+        });
+        
+    });
+</script>

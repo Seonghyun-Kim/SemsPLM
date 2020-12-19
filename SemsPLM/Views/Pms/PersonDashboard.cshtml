@@ -1,0 +1,322 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="dashboardTop clearfix">
+    <div>
+        <p>내 작업<span>16</span></p>
+        <p style="color:#f00;">내 지연작업<span>2</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>내 프로젝트<span>3</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>결재중 작업<span>5</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>산출물<span>12</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>이슈/리스크<span>4</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>DV/PV 현황<span>6</span></p>
+        <button>+</button>
+    </div>
+</div>
+
+<div class="dashboardGraphs clearfix">
+    <div class="piechart">
+        <div class="graphH">
+            프로젝트별 작업진행 상태
+            <div class="dashboardSelBox"></div>
+        </div>
+        <div id="personalTaskRate"></div>
+    </div>
+    <div class="piechart">
+        <div class="graphH">
+            이슈/리스크 DV/PV 현황
+            <div class="dashboardSelBox"></div>
+        </div>
+        <div id="personalIssueRate"></div>
+    </div>
+    <div class="barchart">
+        <div class="graphH">
+            작업 &colon; Total <span></span>
+        </div>
+        <div id="personalTaskChart"></div>
+    </div>
+    <div class="barchart">
+        <div class="graphH">
+            이슈 &colon; Total <span></span>
+        </div>
+        <div id="personalIssueChart"></div>
+    </div>
+</div>
+
+<div class="dashboardGrids clearfix">
+    <div>
+        <div class="graphH">
+            예정작업
+            <button>+</button>
+        </div>
+        <div id="personalScheduleList"></div>
+    </div>
+    <div>
+        <div class="graphH">
+            상세지연현황
+            <button>+</button>
+        </div>
+        <div id="personalDelayList"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+
+        $('.dashboardSelBox').jqxComboBox({
+            width: 120,
+            height: 32,
+        });
+
+        var taskRatePersonSample = [
+            { status: '완료', amount: 10 },
+            { status: '지연', amount: 40 },
+            { status: '준비', amount: 20 },
+            { status: '진행', amount: 30 },
+        ];
+        var taskRatePersonDonutSetting = {
+            title: '',
+            description: '',
+            colorScheme: 'scheme26',
+            padding: {
+                left: 5,
+                top: 5,
+                right: 5,
+                bottom: 15
+            },
+            borderLineColor: 'transparent',
+            showLegend: true,
+            legendLayout: { flow: 'horizon' },
+            source: taskRatePersonSample,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'status',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'pie',
+                useGradient: false,
+                showLabels:true,
+                series: [
+                    {
+                        dataField: 'amount',
+                        displayText: 'status',
+                        labelRadius: 100,
+                        initialAngle: 15,
+                        radius: 90,
+                        innerRadius: 60,
+                        legendFormatFunction: function (value, itemIndex, serie, group) {
+                            return value;
+                        },
+                        formatSettings: { sufix: '%'}
+                    }
+                ]
+            }],
+        };
+
+        $('#personalTaskRate').jqxChart(taskRatePersonDonutSetting);
+
+        var issuePersonSample = [
+            { status: '진행', amount: 10 },
+            { status: '완료', amount: 40 },
+            { status: '지연', amount: 30 },
+        ];
+        var issuePersonDonutSetting = {
+            title: '',
+            description: '',
+            colorScheme: 'scheme26',
+            padding: {
+                left: 5,
+                top: 5,
+                right: 5,
+                bottom: 15
+            },
+            borderLineColor: 'transparent',
+            showLegend: true,
+            legendLayout: { flow: 'horizon' },
+            source: issuePersonSample,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'status',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'pie',
+                useGradient: false,
+                showLabels:true,
+                series: [
+                    {
+                        dataField: 'amount',
+                        displayText: 'status',
+                        labelRadius: 100,
+                        initialAngle: 15,
+                        radius: 90,
+                        innerRadius: 60,
+                        legendFormatFunction: function (value, itemIndex, serie, group) {
+                            return value;
+                        },
+                        formatSettings: { sufix: '%'}
+                    }
+                ]
+            }],
+        };
+
+        $('#personalIssueRate').jqxChart(issuePersonDonutSetting);
+
+        var dsbdPersonTaskChartSample = [
+            { data: 'task1', finish: 18, delay: 10, ready: 20, onprocess: 30 },
+            { data: 'task2', finish: 5, delay: 2, ready: 10, onprocess: 12 },
+            { data: 'task3', finish: 12, delay: 16, ready: 23, onprocess: 18 },
+            { data: 'task4', finish: 20, delay: 10, ready: 43, onprocess: 23 },
+        ]
+
+        var dsbdPersonTaskChartSetting = {
+            title: '',
+            description: '',
+            colorScheme: 'scheme26',
+            padding: {
+                left: 10,
+                top: 10,
+                right: 10,
+                bottom: 15
+            },
+            borderLineColor: 'transparent',
+            showLegend: true,
+            source: dsbdPersonTaskChartSample,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'data',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'column',
+                useGradient: false,
+                valueAxis: {
+                    minValue: 0,
+                    maxValue: 50,
+                    unitInterval: 10,
+                },
+                series: [
+                    {dataField:'finish', displayText:'완료'},
+                    {dataField:'delay', displayText:'지연'},
+                    {dataField:'ready', displayText:'준비'},
+                    {dataField:'onprocess', displayText:'진행'},
+                ],
+            }],
+        }
+
+        $('#personalTaskChart').jqxChart(dsbdPersonTaskChartSetting);
+
+        var dsbdPersonIssueChartSample = [
+            { data: 'task1', finish: 18, delay: 10, onprocess: 30 },
+            { data: 'task2', finish: 5, delay: 2, onprocess: 12 },
+            { data: 'task3', finish: 12, delay: 16, onprocess: 18 },
+            { data: 'task4', finish: 20, delay: 10, onprocess: 23 },
+        ]
+
+        var dsbdPersonIssueChartSetting = {
+            title: '',
+            description: '',
+            colorScheme: 'scheme26',
+            padding: {
+                left: 10,
+                top: 10,
+                right: 10,
+                bottom: 15
+            },
+            borderLineColor: 'transparent',
+            showLegend: true,
+            source: dsbdPersonIssueChartSample,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'data',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'column',
+                useGradient: false,
+                valueAxis: {
+                    minValue: 0,
+                    maxValue: 50,
+                    unitInterval: 10,
+                },
+                series: [
+                    {dataField:'finish', displayText:'완료'},
+                    {dataField:'delay', displayText:'지연'},
+                    {dataField:'onprocess', displayText:'진행'},
+                ],
+            }],
+        }
+
+        $('#personalIssueChart').jqxChart(dsbdPersonIssueChartSetting);
+
+
+        $('#personalScheduleList').jqxGrid({
+            width: '100%',
+            height: 320,
+            editable: false,
+            columnsHeight: 44,
+            columns: [
+                { text: 'NO', format: 'number', width: '4%', },
+                { text: '프로젝트명', width: '18%', },
+                { text: '작업명(Task)', width: '18%', },
+                { text: '예상시작일', width: '14%', },
+                { text: '예상완료일', width: '14%', },
+                { text: '기간', width: '6%', },
+                { text: '진행상태', width: '10%', },
+                { text: '진행률', width: '16%', },
+            ]
+        });
+
+        $('#personalDelayList').jqxGrid({
+            width: '100%',
+            height: 320,
+            editable: false,
+            showtoolbar: true,
+            toolbarheight: 44,
+            rendertoolbar: function (statusbar) {
+                statusbar.empty();
+                var container = $("<div class='lGridComponent'></div>");
+                var carType = $("<div></div>").jqxComboBox({ width: 150, height:32 });
+                var item = $("<div></div>").jqxComboBox({ width: 150, height:32 });
+                var project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                var delay = $("<input type='text' placeholder='지연일수'>");
+                var btnSearch = $("<button class='custom-button'><i class='fas fa-search'></i> 검색</button>");
+                var btnExport = $("<button class='custom-button'>Excel Export</button>");
+                container.append(carType);
+                container.append(item);
+                container.append(delay);
+                container.append(project);
+                container.append(btnSearch);
+                container.append(btnExport);
+                statusbar.append(container);
+            },
+            columns: [
+                { text: 'NO', format: 'number', width: '4%', },
+                { text: '프로젝트명', width: '22%', },
+                { text: '작업 NO', width: '8%', },
+                { text: '작업명(Task)', width: '22%', },
+                { text: '예상시작일', width: '17%', },
+                { text: '예상완료일', width: '17%', },
+                { text: '지연일수', width: '10%', },
+            ],
+        });
+    });
+
+
+</script>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          

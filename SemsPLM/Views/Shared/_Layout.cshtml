@@ -9,6 +9,7 @@
     @Scripts.Render("~/bundles/modernizr")
     <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Css/dashboard.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/jqwidgets-ver11.0.0/styles/jqx.kdc.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/all.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/brands.css" />
@@ -19,6 +20,9 @@
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/v4-shims.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/basic.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/basic.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Dropzone/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/apexcharts-bundle/dist/apexcharts.css" />
 </head>
 <body>
     <header>
@@ -37,31 +41,35 @@
                 </div>*@
             <span class="btn_icon"><img src="~/images/user.png" alt="user"></span>
             <span class="btn_icon"><img src="~/images/settings.png" alt="settings"></span>
-            <span class="btn_icon"><img src="~/images/logout.png" alt="logout"></span>
+            <span class="btn_icon">
+                @using (Html.BeginForm("TryLogOut", "Authority", FormMethod.Post, new { id = "logoutForm" }))
+                {
+                    <img src="~/images/logout.png" alt="logout" onclick="javascript:document.getElementById('logoutForm').submit()">
+                }
+            </span>
         </div>
 
     </header>
 
     <div id="loading">
-        <div class="lds-spinner">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+        <div class="loader-inner ball-grid-pulse">
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#d11e1e"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
         </div>
     </div>
     <div id="wrapContent" style="width:calc(100% - 2px);min-width:1920px;min-height:870px;">
         <div id='tabMenu' style="display:none;">
             <ul>
                 <li>새로고침</li>
+                <li>URL 보기</li>
+                <li>닫기</li>
             </ul>
         </div>
         <div id='tabContent' style="float: left;">
@@ -142,6 +150,8 @@
     <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxchart.core.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/scripts/jszip.min.js")></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxSwitchButton.js")></script>
+    <script defer type="text/javascript" src="@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxSortable.js")"></script>
+    <script defer type="text/javascript" src="@Url.Content("~/Resource/jqwidgets-ver11.0.0/jqxkanban.js")"></script>
 
     <!--EPart-->
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEPartUtils.js")></script>
@@ -150,10 +160,20 @@
     <!--Econtents-->
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebEcontentsDialog.js")></script>
 
+    <!--ECR-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebECR.js")></script>
+
+    <!--DOCCLASS-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebDocClassDialog.js")></script>
+
     <!--QMS-->
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebQMSUtils.js")></script>
 
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebFileUpload.js")></script>
+
+    <!--ApexChart-->
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.min.js")></script>
+
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         $(document).ready(function () {
@@ -228,9 +248,27 @@
                 });
             });
 
-            var contextMenu = $("#tabMenu").jqxMenu({ width: '120px', height: '80px', autoOpenPopup: false, mode: 'popup' });
+            var contextMenu = $("#tabMenu").jqxMenu({ width: '120px', height: '100px', autoOpenPopup: false, mode: 'popup' });
             $("#tabMenu").bind('itemclick', function (event) {
-                PageReload();
+                var selectedItem = $('#tabContent').jqxTabs('selectedItem');
+                var item = $(event.args).text();
+
+                switch (item) {
+                    case "새로고침":
+                    case "":
+                        PageReload();
+                        break;
+                    case "URL 보기":
+                        var selectedItem = $('#tabContent').jqxTabs('selectedItem');
+                        var tabHtml = $('#tabContent').jqxTabs('getContentAt', selectedItem);
+                        alert($(tabHtml).children().attr("tabUrl"));
+                        break;
+                    case "닫기":
+                        var items = $('#tabContent').jqxTabs('length');
+                        if (items > 1)
+                            $('#tabContent').jqxTabs('removeAt', selectedItem);
+                        break;
+                }
             });
 
             $("#tabContent").bind('mousedown', function (event) {

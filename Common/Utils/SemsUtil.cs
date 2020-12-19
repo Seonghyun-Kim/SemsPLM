@@ -16,32 +16,6 @@ namespace Common
             return seq.ToString(format);
         }
 
-        //_classSpace include(namespace)
-        public static string Invoke(string _classSpace, string _methodName, object[] _args)
-        {
-            object resultObj = null;
-            Type type = Type.GetType(_classSpace);
-            object obj = Activator.CreateInstance(type);
-            MethodInfo[] mis = type.GetMethods();
-            bool hasMethod = false;
-            for (int i = 0; i < mis.Length; i++)
-            {
-                MethodInfo mi = mis[i];
-                if (mi.Name == _methodName)
-                {
-                    hasMethod = true;
-                    break;
-                }
-            }
-            if (hasMethod)
-            {
-                object[] args = new object[] { _args };
-                resultObj = type.InvokeMember(_methodName, BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance, null, obj, args);
-            }
-            return Convert.ToString(resultObj);
-        }
-
-        
         public static Boolean IsBatter(string baseRev, string targetRev)
         {
             Boolean result = true;
@@ -61,9 +35,16 @@ namespace Common
         public static string MakeMajorRevisonUp(string str)
         {
             if (String.IsNullOrEmpty(str)) return CommonConstant.REVISION_PREFIX + CommonConstant.INIT_REVISION;
-
-            string[] ss = str.Split('.');
-            string sR = ss[0].Replace(Convert.ToChar(CommonConstant.REVISION_PREFIX), ' ').Trim();
+            string sR = "";
+            if (str.IndexOf('.') > 0)
+            {
+                string[] ss = str.Split('.');
+                sR = ss[0].Replace(Convert.ToChar(CommonConstant.REVISION_PREFIX), ' ').Trim();
+            }
+            else
+            {
+                sR = str;
+            }
             string newR = CommonConstant.REVISION_PREFIX + NumberToletters((CurrentLettersToNumber(sR) + 1));
             return newR;
         }
@@ -71,9 +52,16 @@ namespace Common
         public static string MakeMajorRevisionDown(string str)
         {
             if (String.IsNullOrEmpty(str) || str.Equals(CommonConstant.REVISION_PREFIX + CommonConstant.INIT_REVISION)) return CommonConstant.REVISION_PREFIX + CommonConstant.INIT_REVISION;
-
-            string[] ss = str.Split('.');
-            string sR = ss[0].Replace(Convert.ToChar(CommonConstant.REVISION_PREFIX), ' ').Trim();
+            string sR = "";
+            if (str.IndexOf('.') > 0)
+            {
+                string[] ss = str.Split('.');
+                sR = ss[0].Replace(Convert.ToChar(CommonConstant.REVISION_PREFIX), ' ').Trim();
+            }
+            else
+            {
+                sR = str;
+            }
             string newR = CommonConstant.REVISION_PREFIX + NumberToletters((CurrentLettersToNumber(sR) - 1));
             return newR;
         }
@@ -87,7 +75,7 @@ namespace Common
             var x = value;
             for (int i = 0; i < length; i++)
             {
-                int threshold = (int)Math.Pow(36, length - i - 1);
+                int threshold = (int)Math.Pow(Convert.ToDouble(map.Length), length - i - 1);
                 var index = Math.Min(map.Length - 1, x / threshold);
                 result[i] = map[index];
                 x -= threshold * index;

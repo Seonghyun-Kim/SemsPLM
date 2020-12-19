@@ -16,7 +16,7 @@
       FROM T_DOBJECT A
       LEFT OUTER JOIN T_DPROBLEMS_LIBRARY B ON B.OID = A.OID
       WHERE A.DeleteDt IS NULL
-      AND A.Type = 'ECONTENT'
+      AND A.Type = #Type#
       <isNotNull property="OID">
         AND A.OID = #OID#
       </isNotNull>
@@ -26,6 +26,7 @@
     <insert id="InsProblemsLibrary" parameterClass="ProblemsLibrary" >
       INSERT INTO T_DPROBLEMS_LIBRARY
       ( OID
+      , Oem_Lib_OID
       , Car_Lib_OID
       , Product
       , Part
@@ -42,6 +43,7 @@
       )
       VALUES
       ( #OID#
+      , #Oem_Lib_OID#
       , #Car_Lib_OID#
       , #Product#
       , #Part#

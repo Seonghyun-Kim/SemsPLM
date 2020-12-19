@@ -245,6 +245,8 @@
             $(this).parents('span').remove();
         });
 
+
+
         var approvComboSource = {
             datatype: "json",
             datafields: [
@@ -253,17 +255,32 @@
             ],
             async: false
         }
+
+        var ViewBagSelApproval = @Html.Raw(Json.Encode(ViewBag.SelApproval));
+        var approvalLineComboSource = {
+            localdata: ViewBagSelApproval,
+            datatype: "json",
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' }
+            ],
+            async: false
+        }
+
         var approvalLineComboBox$ = $('#approvalLineComboBox');
+        var approvalLineAdapter = new $.jqx.dataAdapter(approvalLineComboSource);
         approvalLineComboBox$.jqxComboBox({
             width: 245,
             height: 33,
             displayMember: "Name",
             valueMember: "OID",
+            source: approvalLineAdapter
         });
 
-        RequestData('/Common/SelApproval', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
-            PrintJqxCombo(approvComboSource, approvalLineComboBox$, res);
-        });
+
+        //RequestData('/Common/SelApproval', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
+        //    PrintJqxCombo(approvComboSource, approvalLineComboBox$, res);
+        //});
 
         $('#docEditor').jqxEditor({
             width: '100%',
@@ -271,10 +288,65 @@
         });
 
         $('#btnSaveApprov').on('click', function () {
-            RequestData('/Common/InsApproval', foDataApprov(), function () {
+            var CheckStep = foDataApprov('Save');
+            if (CheckStep.InboxStep.length == 0) {
+                return;
+            }
+            RequestData('/Common/InsApproval', CheckStep, function () {
                 alert('저장되었습니다.');
-                RequestData('/Common/SelApproval', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
+                RequestData('/Common/SelSaveApprovalsLoad', { Type: '@Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL' }, function (res) {
                     PrintJqxCombo(approvComboSource, approvalLineComboBox$, res);
+                });
+            });
+        });
+
+        approvalLineComboBox$.on('select', function (e) {
+            var row = e.args;
+            if (row == undefined) {
+                return;
+            }
+            if (row.item == undefined) {
+                return;
+            }
+            var data = row.item.originalItem;
+            
+            tableTbody$.empty();
+            distPartList$.empty();
+            RequestData('/Common/SelApprovalPersonHistory', data, function (res) {
+                res.forEach(function (val) {
+                    if (val.ApprovalType == "@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV") {
+                        var dataInx = tableTbody$.children().get();
+                        var newTr = '<tr>';
+                        newTr += '<th>' + (dataInx.length + 1) + '</th><td>결재</td><td><span class="approver" data-id="' + val.PersonOID + '" data-type="' + val.ApprovalType +'">' + val.PersonNm + ' <small>' + val.DepartmentNm + '</small></span><i class="fas fa-window-close"></i></td>';
+                        tableTbody$.append(newTr);
+                    } else if (val.ApprovalType == "@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE") {
+                        var trArr$ = tableTbody$.children().get();
+                        var selAgreeTr$ = $('.selectedAgree ul');
+                        if ((trArr$.length === 0 || trArr$[trArr$.length - 1].getElementsByClassName('agreeTd').length === 0) && selAgreeTr$.length < 1) {
+                            //마지막 행이 '합의'가 아닌 경우 새로운 ul을 추가
+                            var newTr = document.createElement('tr');
+                            newTr.setAttribute("class", "agreeTr");
+                            newTr.setAttribute("data-id", "agreeTr" + (trArr$.length + 1));
+                            var idName = "agreeList" + (trArr$.length + 1);
+                            tableTbody$.append(newTr);
+                            newTr.innerHTML = '<th>' + (trArr$.length + 1) + '</th><td>합의</td><td class="agreeTd"><ul id="' + idName + '" class="agreeList" data-group="' + (trArr$.length + 1) + '"><li><span class="approver" data-id="' + val.PersonOID + '" data-type="@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE" data-group="' + (trArr$.length + 1) + '">' + val.PersonNm + ' <small>' + val.DepartmentNm + '</small><i class="fas fa-times"></i></span></li></ul><i class="fas fa-window-close"></i></td>';
+                        } else {
+                            var newLi = document.createElement('li');
+                            if (selAgreeTr$.length < 1) {
+                                newLi.innerHTML = '<span class="approver" data-id="' + val.PersonOID + '" data-type="' + val.ApprovalType + '" data-group="' + trArr$.length + '">' + val.PersonNm + ' <small>' + val.DepartmentNm + '</small><i class="fas fa-times"></i></span>';
+                                var idName = "agreeList" + (trArr$.length);
+                                $("#" + idName).append(newLi);
+                            } else {
+                                newLi.innerHTML = '<span class="approver" data-id="' + val.PersonOID + '" data-type="' + val.ApprovalType + '" data-group="' + selAgreeTr$.attr('data-group') + '">' + val.PersonNm + ' <small>' + val.DepartmentNm + '</small><i class="fas fa-times"></i></span>';
+                                selAgreeTr$.append(newLi);
+                            }
+                        }
+                    } else if (val.ApprovalType == "@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST") {
+                        var dataInx = tableTbody$.children().get();
+                        var newSpan = '<span>';
+                        newSpan += '<span class="approver" data-id="' + val.PersonOID + '" data-type="' + val.ApprovalType + '">' + val.PersonNm + ' <small>' + val.DepartmentNm + '</small><i class="fas fa-window-close"></i></span>';
+                        distPartList$.append(newSpan);
+                    }
                 });
             });
         });
@@ -299,12 +371,16 @@
         return result;
     }
 
-    var foDataApprov = function () {
+    var foDataApprov = function (_param) {
         var approv$ = $('span.approver');
         var approval = {};
         approval.Name = $("#approvalLineComboBox").jqxComboBox('val');
         approval.InboxStep = [];
-        approval.TargetOID = @ViewBag.TargetOID;
+        if (_param != null) {
+            approval.TargetOID = '';
+        } else {
+            approval.TargetOID = @ViewBag.TargetOID;
+        }
         approval.Description = $('#txtTitle').val();
         approval.Comment = $('#docEditor').jqxEditor('val');
 

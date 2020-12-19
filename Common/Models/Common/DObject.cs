@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Common.Models
 {
@@ -59,89 +60,91 @@ namespace Common.Models
     public static class DObjectRepository
     {
 
-        public static string SelTdmxOID(DObject _param)
+        public static string SelTdmxOID(HttpSessionStateBase Context, DObject _param)
         {
             return DaoFactory.GetData<string>("Comm.SelMaxTDMXOID", new DObject { Type = _param.Type });
         }
 
-        public static int SelNameSeq(DObject _param)
+        public static int SelNameSeq(HttpSessionStateBase Context, DObject _param)
         {
             return DaoFactory.GetData<int>("Comm.SelNameSeq", _param);
         }
 
-        public static int UdtLatestDObject(DObject _param)
+        public static int UdtLatestDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            _param.ModifyUs = 1;
+            _param.ModifyUs = Convert.ToInt32(Context["UserOID"]);
             result = DaoFactory.SetUpdate("Comm.UdtLatestDObject", _param);
             return result;
         }
 
-        public static int UdtReleaseLatestDObject(DObject _param)
+        public static int UdtReleaseLatestDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            _param.ModifyUs = 1;
+            _param.ModifyUs = Convert.ToInt32(Context["UserOID"]);
             result = DaoFactory.SetUpdate("Comm.UdtReleasedLatestDObject", _param);
             return result;
         }
 
-        public static DObject SelDObject(DObject _param)
+        public static DObject SelDObject(HttpSessionStateBase Context, DObject _param)
         {
             DObject dObject = DaoFactory.GetData<DObject>("Comm.SelDObject", _param);
             if (dObject != null)
             {
                 dObject.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObject.Type, OID = dObject.BPolicyOID }).First();
+                dObject.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObject);
             }
             return dObject;
         }
 
-        public static List<DObject> SelDObjects(DObject _param)
+        public static List<DObject> SelDObjects(HttpSessionStateBase Context, DObject _param)
         {
             List<DObject> lDObject = DaoFactory.GetList<DObject>("Comm.SelDObject", _param);
             lDObject.ForEach(dObj =>
             {
                 dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj);
             });
             return lDObject;
         }
 
-        public static int CopyDObject(DObject _param)
+        public static int CopyDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = _param.OID });
+            DObject targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = _param.OID });
             targetDobj.BPolicyOID = null;
             targetDobj.Revision = null;
             if (_param.Name != null)
             {
                 targetDobj.Name = _param.Name;
             }
-            result = DObjectRepository.InsDObject(targetDobj);
+            result = DObjectRepository.InsDObject(Context, targetDobj);
             return result;
         }
 
-        public static int ReviseDObject(DObject _param)
+        public static int ReviseDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = _param.OID });
-            DObjectRepository.UdtReleaseLatestDObject(new DObject { OID = _param.OID, IsReleasedLatest = 0 });
+            DObject targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = _param.OID });
+            DObjectRepository.UdtReleaseLatestDObject(Context, new DObject { OID = _param.OID, IsReleasedLatest = 0 });
             targetDobj.BPolicyOID = null;
             targetDobj.Revision = SemsUtil.MakeMajorRevisonUp(targetDobj.Revision);
-            result = DObjectRepository.InsDObject(targetDobj);
+            result = DObjectRepository.InsDObject(Context, targetDobj);
             return result;
         }
 
-        public static int CloneDObject(DObject _param)
+        public static int CloneDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = _param.OID });
-            result = DObjectRepository.InsDObject(targetDobj);
+            DObject targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = _param.OID });
+            result = DObjectRepository.InsDObject(Context, targetDobj);
             return result;
         }
 
-        public static int InsDObject(DObject _param)
+        public static int InsDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             if (_param.BPolicyOID == null)
             {
                 _param.BPolicyOID = BPolicyRepository.SelBPolicy(new BPolicy { Type = _param.Type }).First().OID;
@@ -152,7 +155,7 @@ namespace Common.Models
                 BPolicy tmpBPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = _param.BPolicyOID }).First();
                 if (tmpBPolicy.IsRevision != null && tmpBPolicy.IsRevision.Equals("Y"))
                 {
-                    _param.TdmxOID = DObjectRepository.SelTdmxOID(new DObject { Type = _param.Type });
+                    _param.TdmxOID = DObjectRepository.SelTdmxOID(Context, new DObject { Type = _param.Type });
                     _param.Revision = CommonConstant.REVISION_PREFIX + CommonConstant.INIT_REVISION;
                 }
             }
@@ -163,98 +166,19 @@ namespace Common.Models
             return result;
         }
 
-        public static int UdtDObject(DObject _param)
+        public static int UdtDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            _param.ModifyUs = 1;
+            _param.ModifyUs = Convert.ToInt32(Context["UserOID"]);
             result = DaoFactory.SetUpdate("Comm.UdtDObject", _param);
             return result;
         }
 
-        public static int DelDObject(DObject _param)
+        public static int DelDObject(HttpSessionStateBase Context, DObject _param)
         {
             int result = -1;
-            _param.DeleteUs = 1;
+            _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             result = DaoFactory.SetUpdate("Comm.DelDObject", _param);
-            return result;
-        }
-
-        public static string StatusCheckPromote(string RelType, string CurrentStatus, int OID, int RootOID, string Action, string Comment)
-        {
-            string result = "";
-            List<Dictionary<string,string>> checkProgram = BPolicyRepository.SelCheckProgram(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) });
-            if (checkProgram != null && checkProgram.Count > 0)
-            {
-                checkProgram.ForEach(item =>
-                {
-                    if (result == null || result.Length < 1)
-                    {
-                        string returnMessage = SemsUtil.Invoke(item[CommonConstant.POLICY_TRIGGER_CLASS], item[CommonConstant.POLICY_TRIGGER_FUNCTION], new string[] { RelType, CurrentStatus, Convert.ToString(OID), Convert.ToString(RootOID), Action, Comment });
-                        if (returnMessage != null && returnMessage.Length > 0)
-                        {
-                            result = returnMessage;
-                        }
-                    }
-                });
-            }
-            return result;
-        }
-
-        public static string StatusPromote(bool Transaction, string RelType, string CurrentStatus, int OID, int RootOID, string Action, string Comment)
-        {
-            string result = "";
-            try
-            {
-                if (Transaction)
-                {
-                    DaoFactory.BeginTransaction();
-                }
-                string checkProgram = StatusCheckPromote(RelType, CurrentStatus, OID, RootOID, Action, Comment);
-                if (checkProgram != null && checkProgram.Length > 0)
-                {
-                    throw new Exception(checkProgram);
-                }
-
-                List<Dictionary<string, string>> actionProgram = BPolicyRepository.SelActionProgram(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) });
-                if (actionProgram != null && actionProgram.Count > 0)
-                {
-                    actionProgram.ForEach(item =>
-                    {
-                        string returnMessage = SemsUtil.Invoke(item[CommonConstant.POLICY_TRIGGER_CLASS], item[CommonConstant.POLICY_TRIGGER_FUNCTION], new string[] { RelType, CurrentStatus, Convert.ToString(OID), Convert.ToString(RootOID), Action, Comment });
-                        if (returnMessage != null && returnMessage.Length > 0)
-                        {
-                            throw new Exception(returnMessage);
-                        }
-                    });
-                }
-                
-                string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) }).First().NextActionOID;
-                string strActionOID = "";
-                if (strNextAction != null)
-                {
-                    strNextAction.Split(',').ToList().ForEach(action =>
-                    {
-                        if(action.IndexOf(Action) > -1)
-                        {
-                            strActionOID = action.Substring(action.IndexOf(":") + 1);
-                            return;
-                        }
-                    });
-                }
-                DObjectRepository.UdtDObject(new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
-                if (Transaction)
-                {
-                    DaoFactory.Commit();
-                }
-            }
-            catch(Exception ex)
-            {
-                if (Transaction)
-                {
-                    DaoFactory.Rollback();
-                }
-                result = ex.Message;
-            }
             return result;
         }
 

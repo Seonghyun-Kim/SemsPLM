@@ -1,0 +1,426 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="dashboardTop clearfix">
+    <div>
+        <p>내 작업<span>16</span></p>
+        <p style="color:#f00;">내 지연작업<span>2</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>내 프로젝트<span>3</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>결재중 작업<span>5</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>산출물<span>12</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>이슈/리스크<span>4</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>DV/PV 현황<span>6</span></p>
+        <button>+</button>
+    </div>
+</div>
+
+<div class="dashboardGraphs clearfix">
+    <div style="width:100%;">
+        <div class="graphH">
+            프로젝트 진행 상태
+            <div class="dashboardSelBox"></div>
+        </div>
+        <div id="pmTaskRate" style="width:92%;height:90%;float:left;"></div>
+        <div class="pmDelayTask">
+            <h4>지연일수</h4>
+            <ul id="delaySumList">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="dashboardGrids clearfix">
+    <div>
+        <div class="graphH">
+            <i></i> 예정작업
+            <button>+</button>
+        </div>
+        <div id="pmScheduleList"></div>
+    </div>
+    <div>
+        <div class="graphH">
+            상세지연현황
+            <button>+</button>
+        </div>
+        <div id="pmDelayList"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+
+        $('.dashboardSelBox').jqxComboBox({
+            width: 120,
+            height: 32,
+        });
+
+        //var sampleTaskRate = [
+        //    { project: '프로젝트1', rfq: 16, design: 10, develop: 25, master: 16, etc:5 },
+        //        { project: '프로젝트2', rfq: 5, design: 12, develop: 17, master: 2, etc:14 },
+        //        { project: '프로젝트3', rfq: 22, design: 12, develop: 25, master: 33, etc:10 },
+        //];
+
+        //var pmTaskRateSetting = {
+        //    title: '',
+        //    description: '',
+        //    colorScheme: 'scheme26',
+        //    enableAnimations: true,
+        //    showLegend: false,
+        //    padding: { left: 50, top: 10, right: 50, bottom: 15 },
+        //    source: sampleTaskRate,
+        //    borderLineColor: 'transparent',
+        //    xAxis:
+        //    {
+        //        dataField: 'project',
+        //        flip:true,
+        //        axisSize: 'auto',
+        //        labels: {angle :90,}
+        //    },
+        //    valueAxis:
+        //    {
+        //        unitInterval: 10,
+        //        flip:true,
+        //        tickMarks: {color: '#BCBCBC'},
+        //        gridLines: {color: '#BCBCBC'},
+        //        labels: {
+        //            horizontalAlignment: 'left',
+        //            formatSettings: { sufix: '%'}
+        //        },
+        //    },
+        //    seriesGroups:
+        //        [
+        //            {
+        //                type: 'stackedcolumn100',
+        //                orientation:'horizontal',
+        //                useGradient: false,
+        //                columnsGapPercent: 40,
+        //                seriesGapPercent: 5,
+        //                series: [
+        //                        { dataField: 'rfq', displayText: 'RFQ접수' },
+        //                        { dataField: 'design', displayText: '제품설계' },
+        //                        { dataField: 'develop', displayText: '시작개발' },
+        //                        { dataField: 'master', displayText: '마스터카' },
+        //                        { dataField: 'etc', displayText: 'etc' },
+        //                    ]
+        //            }
+        //        ]
+        //};
+        //$('#pmTaskRate').jqxChart(pmTaskRateSetting);
+
+
+        $('#pmScheduleList').jqxGrid({
+            width: '100%',
+            height: 320,
+            editable: false,
+            columnsHeight: 44,
+            columns: [
+                { text: 'NO', format: 'number', width: '4%', },
+                { text: '프로젝트명', width: '18%', },
+                { text: '작업명(Task)', width: '18%', },
+                { text: '예상시작일', width: '14%', },
+                { text: '예상완료일', width: '14%', },
+                { text: '기간', width: '6%', },
+                { text: '진행상태', width: '10%', },
+                { text: '진행률', width: '16%', },
+            ]
+        });
+
+        $('#pmDelayList').jqxGrid({
+            width: '100%',
+            height: 320,
+            editable: false,
+            showtoolbar: true,
+            toolbarheight: 44,
+            rendertoolbar: function (statusbar) {
+                statusbar.empty();
+                var container = $("<div class='lGridComponent'></div>");
+                var carType = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                var item = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                var project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                var delay = $("<input type='text' placeholder='지연일수'>");
+                var btnSearch = $("<button class='custom-button'><i class='fas fa-search'></i> 검색</button>");
+                var btnExport = $("<button class='custom-button'>Excel Export</button>");
+                container.append(carType);
+                container.append(item);
+                container.append(delay);
+                container.append(project);
+                container.append(btnSearch);
+                container.append(btnExport);
+                statusbar.append(container);
+            },
+            columns: [
+                { text: 'NO', format: 'number', width: '4%', },
+                { text: '프로젝트명', width: '22%', },
+                { text: '작업 NO', width: '8%', },
+                { text: '작업명(Task)', width: '22%', },
+                { text: '예상시작일', width: '17%', },
+                { text: '예상완료일', width: '17%', },
+                { text: '지연일수', width: '10%', },
+            ],
+        });
+
+
+        var sampleTaskRateArray = [
+            // 상태
+            {
+                name: 'Gate1',
+                data: [{
+                    x: 'project1',
+                    y: [
+                        new Date('2020-1-1').getTime(),
+                        new Date('2020-2-4').getTime()
+                    ],
+                    delay: 2,
+                },
+                {
+                    x: 'project2',
+                    y: [
+                        new Date('2020-1-1').getTime(),
+                        new Date('2020-3-4').getTime()
+                    ],
+                    delay: 1,
+                },
+                {
+                    x: 'project3',
+                    y: [
+                        new Date('2020-1-1').getTime(),
+                        new Date('2020-3-6').getTime()
+                    ],
+                    delay: 0,
+                },
+                ],
+            },
+            // 상태
+            {
+                name: 'Gate2',
+                data: [{
+                    x: 'project1',
+                    y: [
+                        new Date('2020-2-5').getTime(),
+                        new Date('2020-5-4').getTime()
+                    ],
+                    delay: 4,
+                },
+                {
+                    x: 'project2',
+                    y: [
+                        new Date('2020-3-5').getTime(),
+                        new Date('2020-7-12').getTime()
+                    ],
+                    delay: 2,
+                },
+                {
+                    x: 'project3',
+                    y: [
+                        new Date('2020-3-7').getTime(),
+                        new Date('2020-5-28').getTime()
+                    ],
+                    delay: 6,
+                }
+                ]
+            },
+            // 상태
+            {
+                name: 'Gate3',
+                data: [{
+                    x: 'project1',
+                    y: [
+                        new Date('2020-5-5').getTime(),
+                        new Date('2020-8-4').getTime()
+                    ],
+                    delay: 3,
+                },
+                {
+                    x: 'project2',
+                    y: [
+                        new Date('2020-7-13').getTime(),
+                        new Date('2020-8-4').getTime()
+                    ],
+                    delay: 7,
+                },
+                {
+                    x: 'project3',
+                    y: [
+                        new Date('2020-5-29').getTime(),
+                        new Date('2020-8-31').getTime()
+                    ],
+                    delay: 1,
+                }
+                ]
+            },
+            // 상태
+            {
+                name: 'Gate4',
+                data: [{
+                    x: 'project1',
+                    y: [
+                        new Date('2020-8-5').getTime(),
+                        new Date('2020-12-4').getTime()
+                    ],
+                    delay: 5,
+                },
+                {
+                    x: 'project2',
+                    y: [
+                        new Date('2020-8-5').getTime(),
+                        new Date('2020-11-14').getTime()
+                    ],
+                    delay: 1,
+                },
+                {
+                    x: 'project3',
+                    y: [
+                        new Date('2020-9-1').getTime(),
+                        new Date('2020-11-29').getTime()
+                    ],
+                    delay: 7,
+                }
+                ]
+            },
+            // 상태
+            {
+                name: 'Gate5',
+                data: [{
+                    x: 'project1',
+                    y: [
+                        new Date('2020-12-5').getTime(),
+                        new Date('2020-12-31').getTime()
+                    ],
+                    delay: 2,
+                },
+                {
+                    x: 'project2',
+                    y: [
+                        new Date('2020-11-15').getTime(),
+                        new Date('2020-12-31').getTime()
+                    ],
+                    delay: 0,
+                },
+                {
+                    x: 'project3',
+                    y: [
+                        new Date('2020-11-30').getTime(),
+                        new Date('2020-12-31').getTime()
+                    ],
+                    delay: 1,
+                }
+                ]
+            },
+        ]
+
+        var today = new Date();
+
+        var pmTaskRateOptions = {
+            series: sampleTaskRateArray,
+            chart: {
+                height: 300,
+                type: 'rangeBar'
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    barHeight: '50%',
+                    rangeBarGroupRows: true
+                }
+            },
+            colors: [
+                "#008FFB", "#00E396", "#FEB019", "#FF4560", "#775DD0",
+            ],
+            fill: {
+                type: 'solid'
+            },
+            xaxis: {
+                type: 'datetime',
+                position: 'top',
+                min: new Date('2020-01-01').getTime(),
+                max: new Date('2020-12-31').getTime(),
+                labels: {
+                    datetimeFormatter: {
+                        month: "yyyy/MM",
+                    },
+                },
+            },
+            yaxis: {
+                labels: {
+                    show: true,
+                    align: 'center',
+                    minWidth: 150,
+                    style: { fontSize: '16px', }
+                }
+            },
+            legend: {
+                show: false,
+            },
+            annotations: {
+                position: 'front',
+                xaxis: [{
+                    x: today.getTime(),
+                    strokeDashArray: 1,
+                    borderColor: '#444',
+                    opacity: 0.5,
+                    label: {
+                        borderColor: '#c2c2c2',
+                        borderWidth: 1,
+                        borderRadius: 2,
+                        text: '현재',
+                        textAnchor: 'right',
+                        position: 'bottom',
+                        orientation: 'horizontal',
+                        offsetX: 5,
+                        offsetY: -9,
+                        style: {
+                            background: 'rgba(255,255,255,0.8)',
+                            color: '#777',
+                            fontSize: '12px',
+                            padding: {
+                            left: 5,
+                            right: 5,
+                            top: 12,
+                            bottom: 0,
+                        }
+                        },
+                        
+                    },
+                }]
+            }
+        };
+
+        var pmTaskRateChart = new ApexCharts(document.querySelector("#pmTaskRate"), pmTaskRateOptions);
+        pmTaskRateChart.render();
+
+
+        function loadDelayDate() {
+            const delayUl = $("#delaySumList");
+            var dataLength = sampleTaskRateArray[0].data.length;
+            for (i = 0; i < dataLength; i++) {
+                var sum = 0;
+                sampleTaskRateArray.forEach(function (e) {
+                    sum += e.data[i].delay;
+                });
+
+                var li = '<li>';
+                li += sum + '</li>';
+                delayUl.append(li);
+            };
+        };
+        loadDelayDate();
+    });
+
+
+
+</script>

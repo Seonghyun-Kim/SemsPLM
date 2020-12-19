@@ -71,13 +71,13 @@
                     {
                         text: '승인자', width: '10%', datafield: 'PersonNm', align: 'center', cellsalign: 'center',
                         cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
-                            var appTag = "<span style='text-align:center;width:100%;line-height:45px;padding-left:25px;'>";
+                            var appTag = "<div class='wbsDlgMember'>";
                                 if (lApprovalHistory[row].PersonObj.Thumbnail != null) {
-                                    appTag += "<div style='display:inline-block;position:relative;width:45px;'><span class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + lApprovalHistory[row].PersonObj.Thumbnail + "'></span></div>&nbsp;" + value;
+                                    appTag += "<div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + lApprovalHistory[row].PersonObj.Thumbnail + "'></div>"+ value;
                                 } else {
-                                    appTag += "<i class='fa fa-user-circle-o' aria-hidden='true'></i> & nbsp; " + value;
+                                    appTag += "<div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value;
                                 }
-                            appTag += "</span>";
+                            appTag += "</div>";
                             return appTag;
                         }
                     },

@@ -11,90 +11,6 @@
             <label><i class="fas fa-folder-open"></i> &nbsp;E-BOM 검색</label>
         </div>
         <div class="searchContent">
-            @*<div class="searchData">
-                    <div class="comboBoxLabel">고객사</div>
-                    <div>
-                        <div id="SearchEPartOEM" class="searchEpartComboBox"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">차종</div>
-                    <div>
-                        <div id="SearchEPartCar" class="searchEpartComboBox"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">프로젝트</div>
-                    <div>
-                        <div id="SearchEPartPms" class="searchEpartComboBox"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">프로젝트 라이브러리</div>
-                    <div>
-                        <div id="" class="searchEpartComboBox"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>품번</div>
-                    <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div>S/ON 품번</div>
-                    <div><input id="SearchEPartRepPartNo" type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div>대체 품번</div>
-                    <div><input id="SearchEPartRepPartNo2" type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div>품명</div>
-                    <div><input id="SearchEPartTitle" type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">재질</div>
-                    <div>
-                        <div id="" class="searchEpartComboBox"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>EO No</div>
-                    <div><input id="SearchEPartEoNo" type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">EO 일자</div>
-                    <div>
-                        <div id="SearchEPartEoNoApplyDt" class="searchEpartDateTimeInput"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>고객사 EO</div>
-                    <div>
-                        <input id="SearchEPartSelEo" type="text" class="txtBox" value="" />
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="checkBoxLabel">타입</div>
-                    <div>
-                        <div id="SearchEPartTypeAssy" class="custom-checkbox">
-                            Assy
-                        </div>
-                        <div id="SearchEPartTypeSAssy" class="custom-checkbox">
-                            S/Assy
-                        </div>
-                        <div id="SearchEPartTypeDetail" class="custom-checkbox">
-                            Detail
-                        </div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">작성일</div>
-                    <div><div id="SearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
-                </div>
-                <div class="searchData">
-                    <div class="checkBoxLabel">별납품</div>
-                    <div><div id="searchEpart_isSeperate" class="custom-checkbox"></div></div>
-                </div>*@
             <div class="searchData">
                 <div>부품번호</div>
                 <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
@@ -116,6 +32,12 @@
             <div class="searchData">
                 <div class="comboBoxLabel">ITEM_NO</div>
                 <div> <div id="SearchEPartItemNo" class="searchEpartComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchEPartOem" class="dlgSearchEPartComboBox"></div>
+                </div>
             </div>
             <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
@@ -149,23 +71,45 @@
         //CreEPartSelEoDate$.jqxDateTimeInput(DateFormat);
         //CreEPartSelEoDate$.val(WebUtils.GetDate(-1, "m", "-"));
         //CreEPartSelEoDate$.jqxDateTimeInput({ width: "98%", height: 32 });
-
+        var SearchEPartOemLib$ = $('#SearchEPartOem');
         var SearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
-        var SearchEPartCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var SearchEPartItemLib$ = $('#SearchEPartItemNo');
         var SearchEPartCarLib$ = $('#SearchEPartCar');
-        var CarSource =
+        var oemSource =
         {
-            localdata: SearchEPartCarList,
+            localdata: SearchEPartOemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
-        SearchEPartCarLib$.jqxComboBox({width: 250, height: 32, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:250, height: 32 });
+        SearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchEPartOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchEPartOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
 
         var ItemSource =
         {
@@ -181,15 +125,10 @@
         SearchEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
 
 
-        $(document).on('change', '#SearchEPartOEM', function () {
-            //   SearchChangeEPartLib($('#SearchEPartOEM').jqxComboBox('getSelectedItem').value, $('#SearchEPartCar'));
-            //SearchChangeEPartLib(SearchEPartOemLib$.jqxComboBox('getSelectedItem').value, SearchEPartCarLib$);
-        });
-
         $('#SearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: true });
         $('#SearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
         $('#SearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+        $('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchEPartSource = {
             datatype: 'json',

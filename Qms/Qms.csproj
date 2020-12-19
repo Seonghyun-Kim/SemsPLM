@@ -46,6 +46,7 @@
     <Compile Include="Models\BlockadeItem.cs" />
     <Compile Include="Models\DetectCountermeasure.cs" />
     <Compile Include="Models\ErrorProof.cs" />
+    <Compile Include="Models\ErrorPrrof.cs" />
     <Compile Include="Models\ImproveCounterMeasure.cs" />
     <Compile Include="Models\ImproveCounterMeasureItem.cs" />
     <Compile Include="Models\LpaMeasure.cs" />
@@ -59,9 +60,7 @@
     <Compile Include="Models\WorkerEdu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Trigger\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{fc5bf52d-1116-4c8c-b25f-be81c0b7065f}</Project>

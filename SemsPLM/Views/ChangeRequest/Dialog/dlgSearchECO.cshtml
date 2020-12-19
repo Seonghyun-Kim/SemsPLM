@@ -1,0 +1,119 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="searchBox" id="">
+    <div class="searchContent" style="padding-bottom:0px;">
+        <div class="searchData">
+            <div class="comboBoxLabel">변경 사유</div>
+            <div>
+                <input type="text" class="txtBox" id="" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>품번</div>
+            <div>
+                <input type="text" class="txtBox" id="dlgSearchECOName" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>제목</div>
+            <div>
+                <input type="text" class="txtBox" id="dlgSearchECOTitle" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">OEM</div>
+            <div>
+                <div id="dlgSearchECOOemLib"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">차종</div>
+            <div>
+                <div id="dlgSearchECOCarLib"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">프로젝트</div>
+            <div>
+                <div id="dlgSearchECOPmsLib"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div>작성자</div>
+            <div>
+                <input type="text" class="txtBox" id="dlgSearchECOCreatUs" />
+            </div>
+        </div>
+        <div class="searchButton">
+            <button id="SearchChangeOrder_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+        </div>
+    </div>
+</div>
+<div id="dlgSearchECOgrid"></div>
+
+<script>
+    var dlgSearchECOOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var dlgSearchECOOemLib$ = $('#dlgSearchECOOemLib');
+    var dlgSearchECOCarLib$ = $('#dlgSearchECOCarLib');
+    var dlgSearchECOPmsLib$ = $('#dlgSearchECOPmsLib');
+    $(function () {
+        var dlgSearchECOdataAdapterOemSource =
+        {
+            localdata: dlgSearchECOOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var SearchECO_DataAdapter = new $.jqx.dataAdapter(dlgSearchECOdataAdapterOemSource);
+        dlgSearchECOOemLib$.jqxComboBox({ source: SearchECO_DataAdapter, displayMember: "KorNm", valueMember: "OID", height: 32, });
+
+        var SearchECO_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
+        dlgSearchECOCarLib$.jqxComboBox({ source: SearchECO_DefaultCar, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        dlgSearchECOCarLib$.jqxComboBox({ selectedIndex: 0 });
+
+        var SearchECO_DefaultPms = [{ KorNm: '등록 프로젝트 없음', OID: null }];
+        dlgSearchECOPmsLib$.jqxComboBox({ source: SearchECO_DefaultPms, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        dlgSearchECOPmsLib$.jqxComboBox({ selectedIndex: 0 });
+
+        dlgSearchECOOemLib$.on('change', function (event) {
+            changeSearchECOComboBox(2, dlgSearchECOOemLib$.val());
+        });
+    });
+
+    function changeSearchECOComboBox(ID, OID) {
+        var ChangeECOComboBox$ = dlgSearchECOCarLib$
+        var param = {};
+        param.fromOID = OID;
+        var ChangeECOComboSource;
+        RequestData("/Manage/SelCodeLibrary", param, function (res) {
+            if (res.length > 0) {
+                ChangeECOComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+                ChangeECOComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+</script>
+
+
+

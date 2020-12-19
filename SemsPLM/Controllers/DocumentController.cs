@@ -78,7 +78,7 @@ namespace SemsPLM.Controllers
                 dobj.Name = _param.Name;
                 dobj.Description = _param.Description;
                 //dobj.TdmxOID = DObjectRepository.SelTdmxOID(new DObject { Type = DocumentContant.TYPE_DOCUMENT });
-                resultOid = DObjectRepository.InsDObject(dobj);
+                resultOid = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = resultOid;
                 //_param.DocType = _param.DocType;
@@ -113,7 +113,7 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
-                DObjectRepository.UdtDObject(_param);
+                DObjectRepository.UdtDObject(Session, _param);
                 DocRepository.UdtDocObject(_param);
 
                 DaoFactory.Commit();

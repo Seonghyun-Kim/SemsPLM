@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Common.Models
 {
@@ -20,12 +21,12 @@ namespace Common.Models
 
     public static class ApprovalCommentRepository
     {
-        public static List<ApprovalComment> SelApprovalComment(ApprovalComment _param)
+        public static List<ApprovalComment> SelApprovalComment(HttpSessionStateBase Context, ApprovalComment _param)
         {
             List<ApprovalComment> lTmpApprovalComment = DaoFactory.GetList<ApprovalComment>("Comm.SelApprovalComment", _param);
             lTmpApprovalComment.ForEach(approvComment =>
             {
-                approvComment.CreateUsNm = PersonRepository.SelPerson(new Person { OID = approvComment.CreateUs }).Name;
+                approvComment.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = approvComment.CreateUs }).Name;
             });
             return lTmpApprovalComment;
         }

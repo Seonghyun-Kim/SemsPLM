@@ -17,10 +17,17 @@ namespace Common.Models
         public string isRequired { get; set; } //필수여부
         public string Code1 { get; set; } //코드1
         public string Code2 { get; set; } //코드2
+        public string isChange { get; set; } //변경여부
+        public string isMove { get; set; } //순서변경여부
+        public string isParentMove { get; set; } //순서변경여부
+        public string isDelete{ get; set; } //부모삭제여부
+
+        public List<Library> Cdata { get; set; }
     }
 
     public static class LibraryRepository
     {
+        #region 라이브러리
         public static int updateLibrary(Library _param)
         {
             return DaoFactory.SetUpdate("Library.updateLibrary", _param);
@@ -43,7 +50,9 @@ namespace Common.Models
             //Library.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = Library.Type, OID = Library.BPolicyOID }).First();
             return Library;
         }
+#endregion
 
+        #region 코드라이브러리
         public static int updateCodeLibrary(Library _param)
         {
             return DaoFactory.SetUpdate("Library.updateCodeLibrary", _param);
@@ -67,9 +76,110 @@ namespace Common.Models
         {
             Library temp = DaoFactory.GetData<Library>("Library.SelCodeLibrary", _param);
 
-            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelCodeLibrary", new Library {FromOID = temp.OID });
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelCodeLibrary", new Library { FromOID = temp.OID });
             return lLibrary;
         }
+        #endregion
+
+        #region 영향성평가표 
+        public static List<Library> SelAssessLibrary(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelAssessLibrary", _param);
+            return lLibrary;
+        }
+        public static List<Library> SelAssessLibraryLatest(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelAssessLibraryLatest", _param);
+            return lLibrary;
+        }
+        public static Library SelAssessLibraryObject(Library _param)
+        {
+            Library Library = DaoFactory.GetData<Library>("Library.SelAssessLibrary", _param);
+            return Library;
+        }
+        public static List<Library> SelAssessLibraryChild(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelAssessLibrarySub", _param);
+            return lLibrary;
+        }
+        public static int UpdateAssessIsLatest(Library _param)
+        {
+            return DaoFactory.SetUpdate("Library.UpdateAssessIsLatest", _param);
+        }
+        #endregion
+
+        #region 고객대일정 템플릿
+        public static List<Library> SelCustomerScheduleTemplate(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelCustomerScheduleTemplate", _param);
+            return lLibrary;
+        }
+        public static List<Library> SelCustomerScheduleTemplateChild(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelCustomerScheduleTemplateSub", _param);
+            return lLibrary;
+        }
+        #endregion
+        public static int delCustomerScheduleTemplateSub(Library _param)
+        {
+            return DaoFactory.SetDelete("Library.delCustomerScheduleTemplateSub", _param);
+        }
+
+        #region -- Project
+        public static List<JqTreeModel> SelTotalProjMngt()
+        {
+            List<Library> CodeLibrary = LibraryRepository.SelCodeLibrary(new Library { FromOID = 932 });
+            List<JqTreeModel> jqTreeModelList = new List<JqTreeModel>();
+            foreach (Library obj in CodeLibrary)
+            {
+                JqTreeModel jqTreeModel = new JqTreeModel();
+                jqTreeModel.id = obj.OID;
+                jqTreeModel.label = obj.KorNm;
+                jqTreeModel.icon = CommonConstant.ICON_COMPANY;
+                jqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
+                jqTreeModel.expanded = true;
+                jqTreeModel.type = PmsConstant.ATTRIBUTE_OEM;
+                jqTreeModel.items = new List<JqTreeModel>();
+                jqTreeModelList.Add(jqTreeModel);
+            }
+            
+            for (var i = 0; i < jqTreeModelList.Count; i++)
+            {
+                LibraryRepository.SelCodeLibraryChild(new Library { OID = jqTreeModelList[i].id }).ForEach(item =>
+                {
+                    JqTreeModel innerJqTreeModel = new JqTreeModel();
+                    innerJqTreeModel.id = item.OID;
+                    innerJqTreeModel.label = item.KorNm;
+                    innerJqTreeModel.icon = PmsConstant.ICON_CARTYPE;
+                    innerJqTreeModel.iconsize = PmsConstant.DEFAULT_ICONSIZE;
+                    innerJqTreeModel.expanded = true;
+                    innerJqTreeModel.type = PmsConstant.ATTRIBUTE_CAR;
+                    innerJqTreeModel.items = new List<JqTreeModel>();
+                    SelCarLibrary(innerJqTreeModel, item);
+                    jqTreeModelList[i].items.Add(innerJqTreeModel);
+                });
+            }
+
+            return jqTreeModelList;
+        }
+
+        public static void SelCarLibrary(JqTreeModel _jqxTree, DObject _param)
+        {
+            LibraryRepository.SelCodeLibraryChild(new Library { OID = _param.OID }).ForEach(item =>
+            {
+                JqTreeModel innerJqTreeModel = new JqTreeModel();
+                innerJqTreeModel.id = item.OID;
+                innerJqTreeModel.label = item.KorNm;
+                innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
+                innerJqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
+                innerJqTreeModel.expanded = true;
+                innerJqTreeModel.type = "Project";
+                innerJqTreeModel.items = new List<JqTreeModel>();
+                SelCarLibrary(innerJqTreeModel, item);
+                _jqxTree.items.Add(innerJqTreeModel);
+            });
+        }
+        #endregion
 
     }
 }

@@ -3,7 +3,13 @@
 }
 
 <div id="listView">
-    <div style="width:100%; margin-right:20px;">
+      <div class="user_tree clearfix">
+        <div class="treeButtonWrap">
+            <h3><i class="fas fa-building"></i> &nbsp;고객사/차종</h3>
+        </div>
+        <div id="ProjOemCarTree" style="overflow-y: auto;"></div>
+    </div>
+    <div class="user_list">
         <!--검색창-->
         <div class="searchBox">
             <div class="searchTitle">
@@ -62,6 +68,10 @@
 </div>
 
 <script type="text/javascript">
+    var selCarOID =null;
+    var selCarText = "";
+    var selOemOID = null;
+    var selOemText="";
     $(function () {
 
         var ProjectSource = {
@@ -73,6 +83,10 @@
                 { name: 'BPolicy' },
                 { name: 'BPolicyOID' },
                 { name: 'CreateUsNm' },
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_Nm' },
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_Nm' },
                 { name: 'EstStartDt', type: "date" },
                 { name: 'EstEndDt', type: "date" },
                 { name: 'ActEndDt', type: "date" },
@@ -81,11 +95,40 @@
             ],
         }
 
+        var ProjOemCarTree$ = $('#ProjOemCarTree');
+        //var ProjOemCarSource = @Html.Raw(Json.Encode(ViewBag.ProjOemCarSource));
+        ProjOemCarTree$.jqxTree({
+            width: '100%',
+            height: 740,
+            //source: ProjOemCarSource,
+        });
+
+        RequestData("/Pms/SelOemCarData", {}, function (res) {
+            ProjOemCarTree$.jqxTree({ source: res });
+        });
+
+        ProjOemCarTree$.on('select', function (event) {
+            var args = event.args;
+            var item = ProjOemCarTree$.jqxTree('getItem', args.element);
+
+            selCarOID = item.id;
+            selCarText = item.label;
+            selOemOID = item.parentId;
+            var parentval = ProjOemCarTree$.jqxTree('getItem', args.element.parentElement.parentElement);
+            if (parentval != null) {
+                selOemText = parentval.label;
+            }
+
+            var param = {};
+            param.Car_Lib_OID = selCarOID;
+            getPmsProjectList(ProjectSource, Grd$, param);
+        });
+
         const Grd$ = $('#grd');
         Grd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 680,
+            height: 610,
             rowsheight: 28,
             columnsheight: 30,
             sortable: false,
@@ -98,7 +141,9 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'left', },
+                { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "13%", align: 'center', cellsalign: 'center', },
                 { text: '구분', datafield: 'ProjectType', width: "5%", align: 'center', cellsalign: 'center', },
                 {
                     text: '상태', datafield: 'BPolicy', width: "5%", align: 'center', cellsalign: 'center',
@@ -111,11 +156,12 @@
                 { text: '예상 종료일', datafield: 'EstEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                 { text: '실제 종료일', datafield: 'ActEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                 { text: '생성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '내용', datafield: 'Description', width: "25%", align: 'center', cellsalign: 'center', },
+               // { text: '내용', datafield: 'Description', width: "25%", align: 'center', cellsalign: 'center', },
             ],
             showtoolbar: true,
             toolbarheight: 45,
             rendertoolbar: function (statusbar) {
+                statusbar.empty();
                 var container = $("<div class='rGridComponent'></div>");
                 var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 프로젝트 등록</button>").jqxButton();
                 var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 프로젝트 수정</button>").jqxButton();
@@ -127,13 +173,18 @@
                 statusbar.append(container);
 
                 btnAdd.on('click', function () {
+
+                    if (selCarOID == null || selCarOID == "") {
+                        alert('차종을 선택하여주세요.');
+                        return;
+                    }
                     OpenPmsCreateDialog(function () {
                         getPmsProjectList(ProjectSource, Grd$);
                     }, null, null, '/Pms/CreateProject', '프로젝트 등록');
                 });
 
                 btnMod.on('click', function () {
-                    
+
                 });
             },
         });
@@ -174,12 +225,12 @@
             });
         });
 
-        $('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 33, });
-        getPmsProjectList(ProjectSource, Grd$);
+        $('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 32, });
+        getPmsProjectList(ProjectSource, Grd$,null);
     });
 
-    function getPmsProjectList(_Source, _Grid$) {
-        RequestData("/Pms/SelProjects", null, function (res) {
+    function getPmsProjectList(_Source, _Grid$,_Param) {
+        RequestData("/Pms/SelProjects", _Param, function (res) {
             PrintJqxGrid(_Source, _Grid$, res);
         });
     }

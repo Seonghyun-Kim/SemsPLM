@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Pms.Models
 {
@@ -74,14 +75,14 @@ namespace Pms.Models
     public static class PmsRelationshipRepository
     {
 
-        public static int InsPmsRelationship(PmsRelationship _param)
+        public static int InsPmsRelationship(HttpSessionStateBase Context, PmsRelationship _param)
         {
-            List<PmsRelationship> duplication = PmsRelationshipRepository.SelPmsRelationship(_param);
+            List<PmsRelationship> duplication = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
             if (duplication != null && duplication.Count > 0)
             {
                 return -1;
             }
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
 
             string query = "";
             if (_param.Ord != null)
@@ -95,19 +96,19 @@ namespace Pms.Models
             return DaoFactory.SetInsert(query, _param);
         }
 
-        public static int UdtPmsRelationship(PmsRelationship _param)
+        public static int UdtPmsRelationship(HttpSessionStateBase Context, PmsRelationship _param)
         {
             return DaoFactory.SetUpdate("Pms.UdtPmsRelationship", _param);
         }
 
-        public static List<PmsRelationship> SelPmsRelationship(PmsRelationship _param)
+        public static List<PmsRelationship> SelPmsRelationship(HttpSessionStateBase Context, PmsRelationship _param)
         {
             return DaoFactory.GetList<PmsRelationship>("Pms.SelPmsRelationship", _param);
         }
 
-        public static int DelPmsRelaionship(PmsRelationship _param)
+        public static int DelPmsRelaionship(HttpSessionStateBase Context, PmsRelationship _param)
         {
-            _param.DeleteUs = 1;
+            _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             if (_param.OID == null)
             {
                 return DaoFactory.SetUpdate("Pms.DelPmsRelationshipByData", _param);
@@ -115,7 +116,7 @@ namespace Pms.Models
             return DaoFactory.SetUpdate("Pms.DelPmsRelationship", _param);
         }
         
-        public static PmsRelationship GetObjWbsStructure(int _level, int _fromOID, PmsProject _proj)
+        public static PmsRelationship GetObjWbsStructure(HttpSessionStateBase Context, int _level, int _fromOID, PmsProject _proj)
         {
             List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = _proj.OID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
             string strHoliday = string.Join(",", CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = _proj.OID, IsHoliday = 1 }).Select(value => value.FullDate.ToString().ToArray()));
@@ -155,14 +156,14 @@ namespace Pms.Models
                     getStructure.Delay = PmsUtils.CalculateDelay(Convert.ToDateTime(_proj.EstEndDt), DateTime.Now, Convert.ToInt32(_proj.WorkingDay), lHoliday);
                 }
             }
-            GetWbsStructure(getStructure, _fromOID, Convert.ToInt32(_proj.WorkingDay), strHoliday, _proj, lHoliday);
+            GetWbsStructure(Context, getStructure, _fromOID, Convert.ToInt32(_proj.WorkingDay), strHoliday, _proj, lHoliday);
             return getStructure;
         }
 
-        public static void GetWbsStructure(PmsRelationship _relObj, int _projOID, int _workingDay, string _holiday, PmsProject _proj, List<DateTime> _lHoliday)
+        public static void GetWbsStructure(HttpSessionStateBase Context, PmsRelationship _relObj, int _projOID, int _workingDay, string _holiday, PmsProject _proj, List<DateTime> _lHoliday)
         {
             _relObj.RootOID = _projOID;
-            _relObj.Children = PmsRelationshipRepository.SelPmsRelationship(new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = _relObj.ToOID });
+            _relObj.Children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = _relObj.ToOID });
             _relObj.Children.ForEach(item =>
             {
                 item.Level = _relObj.Level + 1;
@@ -186,9 +187,9 @@ namespace Pms.Models
                 item.Complete = tmpToData.Complete;
                 item.WorkingDay = _workingDay;
                 item.Members = new List<PmsRelationship>();
-                PmsRelationshipRepository.SelPmsRelationship(new PmsRelationship { FromOID = item.ToOID, Type = PmsConstant.RELATIONSHIP_MEMBER }).ForEach(member =>
+                PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = item.ToOID, Type = PmsConstant.RELATIONSHIP_MEMBER }).ForEach(member =>
                 {
-                    Person person = PersonRepository.SelPerson(new Person { OID = member.ToOID });
+                    Person person = PersonRepository.SelPerson(Context, new Person { OID = member.ToOID });
                     item.Members.Add(new PmsRelationship { FromOID = item.ToOID, ToOID = person.OID, PersonNm = person.Name, Thumbnail = person.Thumbnail });
                     person = null;
                 });
@@ -210,14 +211,14 @@ namespace Pms.Models
                         item.Delay = PmsUtils.CalculateDelay(Convert.ToDateTime(tmpToData.EstEndDt), DateTime.Now, Convert.ToInt32(_proj.WorkingDay), _lHoliday);
                     }
                 }
-                GetWbsStructure(item, _projOID, _workingDay, _holiday, _proj, _lHoliday);
+                GetWbsStructure(Context, item, _projOID, _workingDay, _holiday, _proj, _lHoliday);
             });
         }
 
-        public static List<Dictionary<string, object>> GetLDGanttWbs(string OID)
+        public static List<Dictionary<string, object>> GetLDGanttWbs(HttpSessionStateBase Context, string OID)
         {
             int Level = 0;
-            PmsProject proj = PmsProjectRepository.SelPmsObject(new PmsProject { OID = Convert.ToInt32(OID) });
+            PmsProject proj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = Convert.ToInt32(OID) });
             List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
             List<Dictionary<string, object>> ldPmsWbs = new List<Dictionary<string, object>>();
 
@@ -273,13 +274,13 @@ namespace Pms.Models
             dProj.Add("collapsed", false);
             dProj.Add("assigs", new List<object>());
             ldPmsWbs.Add(dProj);
-            GetGanttSturcture(dProj, ldPmsWbs, Convert.ToInt32(proj.WorkingDay), lHoliday);
+            GetGanttSturcture(Context, dProj, ldPmsWbs, Convert.ToInt32(proj.WorkingDay), lHoliday);
             return ldPmsWbs;
         }
 
-        public static void GetGanttSturcture(Dictionary<string, object> _dParent, List<Dictionary<string, object>> _ldStructure, int _iWorkingDay, List<DateTime> _lHoliday)
+        public static void GetGanttSturcture(HttpSessionStateBase Context, Dictionary<string, object> _dParent, List<Dictionary<string, object>> _ldStructure, int _iWorkingDay, List<DateTime> _lHoliday)
         {
-            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(new PmsRelationship { FromOID = Convert.ToInt32(_dParent["oid"]), Type = PmsConstant.RELATIONSHIP_WBS });
+            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_dParent["oid"]), Type = PmsConstant.RELATIONSHIP_WBS });
             if (children != null && children.Count > 0)
             {
                 _dParent.Add("hasChild", true);
@@ -348,9 +349,9 @@ namespace Pms.Models
                 tmpChildren.Add("collapsed", false);
 
                 List<Dictionary<string, object>> lPerson = new List<Dictionary<string, object>>();
-                PmsRelationshipRepository.SelPmsRelationship(new PmsRelationship { FromOID = tmpProcess.OID, Type = PmsConstant.RELATIONSHIP_MEMBER }).ForEach(member =>
+                PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = tmpProcess.OID, Type = PmsConstant.RELATIONSHIP_MEMBER }).ForEach(member =>
                 {
-                    Person personData = PersonRepository.SelPerson(new Person { OID = member.ToOID });
+                    Person personData = PersonRepository.SelPerson(Context, new Person { OID = member.ToOID });
                     Dictionary<string, object> person = new Dictionary<string, object>();
                     person.Add("resourceId", Convert.ToInt32(personData.OID));
                     person.Add("id", Convert.ToInt32(personData.OID));
@@ -362,7 +363,7 @@ namespace Pms.Models
 
                 tmpChildren.Add("assigs", lPerson);
                 _ldStructure.Add(tmpChildren);
-                GetGanttSturcture(tmpChildren, _ldStructure, _iWorkingDay, _lHoliday);
+                GetGanttSturcture(Context, tmpChildren, _ldStructure, _iWorkingDay, _lHoliday);
             });
         }
 

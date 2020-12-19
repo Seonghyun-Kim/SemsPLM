@@ -1,93 +1,87 @@
 ﻿@{
     Layout = null;
 }
-    <div class="searchBox" id="dlgSearchEPart_searchForm">
-        <div class="searchContent" style="padding-bottom:0px;">
-            <div class="searchData">
-                <div class="comboBoxLabel">OEM</div>
-                <div>
-                    <div id="dlgSearchEPart_Oem_Lib"></div>
+<div class="searchBox" id="dlgSearchEPart_searchForm">
+    <div class="searchContent" style="padding-bottom:0px;">
+        <input type="hidden" id="parentOID" />
+        <div class="searchData">
+            <div>부품번호</div>
+            <div><input id="dlgSearchEPart_Name" type="text" class="txtBox" value="" style="height:32px;" /></div>
+        </div>
+        <div class="searchData">
+            <div class="checkBoxLabel">구분</div>
+            <div>
+                <div id="dlgSearchEPartAssemble" class="custom-checkbox">
+                    조립도
                 </div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">차종</div>
-                <div>
-                    <div id="dlgSearchEPart_Car_Lib"></div>
+                <div id="dlgSearchEPartSingle" class="custom-checkbox">
+                    단품도
                 </div>
-            </div>
-            <div class="searchData">
-                <div class="comboBoxLabel">프로젝트</div>
-                <div>
-                    <div id="dlgSearchEPart_Pms_Lib"></div>
+                <div id="dlgSearchEPartStandard" class="custom-checkbox">
+                    스탠다드
                 </div>
-            </div>
-            <div class="searchData">
-                <div>
-                    <input type="hidden" id="parentOID" />
-                    <input type="text" id="dlgSearchEPart_Name" />
-                </div>
-            </div>
-            <div class="searchButton">
-                <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
         </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">ITEM_NO</div>
+            <div> <div id="dlgSearchEPartItemNo" class="dlgSearchEPartComboBox"></div></div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">고객사</div>
+            <div>
+                <div id="dlgSearchEPartOem" class="dlgSearchEPartComboBox"></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">차종</div>
+            <div>
+                <div id="dlgSearchEPartCar" class="dlgSearchEPartComboBox"></div>
+            </div>
+        </div>
+        @*<div class="searchData">
+            <div class="comboBoxLabel">작성일</div>
+            <div><div id="dlgSearchEPartCreateDt" class="dlgSearchEPartDateTimeInput"></div></div>
+        </div>*@
+        <div class="searchButton">
+            <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+        </div>
     </div>
-    <div id="dlgSearchEPart_grid"></div>
+</div>
+<div id="dlgSearchEPart_grid"></div>
 
- 
-    <script>
-    var dlgSearchEPart_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-    var dlgSearchEPart_OemLib$ = $('#dlgSearchEPart_Oem_Lib');
-    var dlgSearchEPart_CarLib$ = $('#dlgSearchEPart_Car_Lib');
-    var dlgSearchEPart_PmsLib$ = $('#dlgSearchEPart_Pms_Lib');
-    var EPartSearch = $('#dlgSearchEPart_Name');
+
+<script>
+    var SearchDivision = null;
     var partOIDList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.partOIDList))');
+    var dlgSearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+    var dlgSearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var dlgSerarchEPartOemLib$ = $('#dlgSearchEPartOem');
+        var dlgSearchEPartItemLib$ = $('#dlgSearchEPartItemNo');
+        var dlgSearchEPartCarLib$ = $('#dlgSearchEPartCar');
+    var EPartSearch = $('#dlgSearchEPart_Name');
     $(function () {
 
-        var dlgSearchEPart_dataAdapterOemSource =
+        var oemSource =
         {
-            localdata: dlgSearchEPart_OemList,
+            localdata: dlgSearchEPartOemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var dlgSearchEPart_DataAdapter = new $.jqx.dataAdapter(dlgSearchEPart_dataAdapterOemSource);
-        dlgSearchEPart_OemLib$.jqxComboBox({ source: dlgSearchEPart_DataAdapter, displayMember: "KorNm", valueMember: "OID", height: 33, });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        dlgSerarchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSerarchEPartOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = dlgSerarchEPartOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
 
-        var dlgSearchEPart_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
-        dlgSearchEPart_CarLib$.jqxComboBox({ source: dlgSearchEPart_DefaultCar, displayMember: "KorNm", valueMember: "OID", height: 33, });
-        dlgSearchEPart_CarLib$.jqxComboBox({ selectedIndex: 0 });
-
-        var dlgSearchEPart_DefaultPms = [{ KorNm: '등록 프로젝트 없음', OID: null }];
-        dlgSearchEPart_PmsLib$.jqxComboBox({ source: dlgSearchEPart_DefaultPms, displayMember: "KorNm", valueMember: "OID", height: 33, });
-        dlgSearchEPart_PmsLib$.jqxComboBox({ selectedIndex: 0 });
-
-        dlgSearchEPart_OemLib$.on('change', function (event) {
-            changedlgSearchEPartComboBox(2, dlgSearchEPart_OemLib$.jqxComboBox('getSelectedItem').value);
-        });
-
-
-
-
-    });
-
-    function getEPartList(_Source, _Grid$) {
-        RequestData('/EBom/SelEPart', {}, function (res) {
-            PrintJqxGrid(_Source, _Grid$, res);
-        });
-    }
-
-    function changedlgSearchEPartComboBox(ID, OID) {
-        var dlgSearchEPartComboBox$ = dlgSearchEPart_CarLib$
-        var param = {};
-        param.fromOID = OID;
-        var dlgSearchEPartComboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                dlgSearchEPartComboSource =
+                var CarSource =
                 {
                     localdata: res,
                     datatype: "json",
@@ -97,15 +91,60 @@
                             { name: 'OID', type: 'int' },
                         ]
                 };
-                var dlgSearchEPartComboAdapter = new $.jqx.dataAdapter(dlgSearchEPartComboSource);
-                dlgSearchEPartComboBox$.jqxComboBox({ source: dlgSearchEPartComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-            } else {
-                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
-                var dlgSearchEPartComboAdapter = new $.jqx.dataAdapter(dlgSearchEPartComboSource);
-                dlgSearchEPartComboBox$.jqxComboBox({ source: dlgSearchEPartComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-                dlgSearchEPartComboBox$.jqxComboBox({ selectedIndex: 0 });
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                dlgSearchEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+       
+
+        var ItemSource =
+        {
+            localdata: dlgSearchEPartItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+
+        $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: true });
+        $('#dlgSearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#dlgSearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
+
+
+        $("#dlgSearchEPartAssemble").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
             }
+        });
+
+        $("#dlgSearchEPartSingle").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+            }
+        });
+
+        $("#dlgSearchEPartStandard").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+            }
+        });
+
+    });
+
+    function getEPartList(_Source, _Grid$) {
+        RequestData('/EBom/SelEPart', {}, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
         });
     }
 
-    </script>
+
+
+</script>

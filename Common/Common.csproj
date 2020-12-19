@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant\CommonConstant.cs" />
+    <Compile Include="Constant\DocClassConstant.cs" />
     <Compile Include="Constant\DocumentContant.cs" />
     <Compile Include="Constant\EBomConstant.cs" />
     <Compile Include="Constant\EcontentsConstant.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="Models\Menu\Menu.cs" />
     <Compile Include="Models\Company\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Trigger\ApprovalTrigger.cs" />
     <Compile Include="Utils\SemsEncrypt.cs" />
     <Compile Include="Utils\SemsSecureEDecode.cs" />
     <Compile Include="Utils\SemsUtil.cs" />

@@ -44,7 +44,9 @@ namespace Common.Constant
             ,"ObjPms_OID"
             ,"ObjOem_Lib_NM"
             ,"ObjCar_Lib_NM"
-            ,"ObjPms_NM" };
+            ,"ObjPms_NM"
+            ,"Ord"
+            ,"Count"};
         }
         public static List<string> FLOWEDITABLE
         {

@@ -236,12 +236,17 @@
             <ul id="ECOMenu">
                 <li class="tab info_focus" info="ECOprofile"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
                 <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
+                <li class="tab" info="ECRRelation"><i class="fas fa-file"></i> 연관 변경요청</li>
                 <li class="tab" info="ECOList"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
-                <li class="tab" info="ECOBreakdown"><i class="fas fa-stream"></i> 설계변경 내역서</li>
+                <li class="tab" info="ECOStatement"><i class="fas fa-stream"></i> 설계변경 내역서</li>
             </ul>
         </div>
 
         <div class="eBomChangeContents">
+            <div class="eBomChangeTitle">
+                <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
+                <button id="ECOSaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+            </div>
             <div id="ECOprofile" class="ecoContents">
                 <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
                 <table class="infoTable">
@@ -254,98 +259,98 @@
                     <tbody>
                         <tr>
                             <th>설계변경번호</th>
-                            <td class="required"><input type="text" value="" /></td>
+                            <td class="required"><input type="text" readonly="readonly" value="자동 발번" /></td>
                             <th>품목그룹</th>
-                            <td><input type="text" value="" /></td>
+                            <td><input type="text" value="" id="CreateChangeOrder_ItemGroup" /></td>
                         </tr>
                         <tr>
                             <th>제목</th>
-                            <td class="required"><input type="text" value="" /></td>
+                            <td class="required"><input type="text" value="" id="CreateChangeOrder_Title" /></td>
                             <th>설계변경일자</th>
-                            <td class="required"><div class="ECODatetimeInput"></div></td>
+                            <td class="required"><div class="ECODatetimeInput" id="CreateChangeOrder_DesignChangeDt"></div></td>
                         </tr>
                         <tr>
                             <th>변경사유</th>
-                            <td class="required"><div id="" class="ECOComboBox"></div></td>
+                            <td class="required"><div id="CreateChangeOrder_reasonChange" class="ECOComboBox"></div></td>
                             <th>호환성</th>
                             <td>
-                                <div class="ECORadioBtn" group="compatible">있음</div>
-                                <div class="ECORadioBtn" group="compatible">없음</div>
-                                <div class="ECORadioBtn" group="compatible">동시적용품</div>
+                                <div class="ECORadioBtn" group="Compatible" data-value="@Common.Constant.EoConstant.TYPE_YES">있음</div>
+                                <div class="ECORadioBtn" group="Compatible" data-value="@Common.Constant.EoConstant.TYPE_NO">없음</div>
+                                <div class="ECORadioBtn" group="Compatible" data-value="@Common.Constant.EoConstant.TYPE_SAME">동시적용품</div>
                             </td>
                         </tr>
                         <tr>
                             <th>금형수정</th>
                             <td>
-                                <div class="ECORadioBtn" group="moldMod">무관</div>
-                                <div class="ECORadioBtn" group="moldMod">있음</div>
-                                <div class="ECORadioBtn" group="moldMod">신규제작</div>
+                                <div class="ECORadioBtn" group="IsMold" data-value="@Common.Constant.EoConstant.TYPE_IRRELEVANT">무관</div>
+                                <div class="ECORadioBtn" group="IsMold" data-value="@Common.Constant.EoConstant.TYPE_YES">있음</div>
+                                <div class="ECORadioBtn" group="IsMold" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규제작</div>
                             </td>
                             <th>등록사유</th>
                             <td>
-                                <div class="ECORadioBtn" group="reason">설계변경</div>
-                                <div class="ECORadioBtn" group="reason">신규</div>
+                                <div class="ECORadioBtn" group="ReasonRegistration" data-value="@Common.Constant.EoConstant.TYPE_ECO">설계변경</div>
+                                <div class="ECORadioBtn" group="ReasonRegistration" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규</div>
                             </td>
                         </tr>
                         <tr>
                             <th>보안여부</th>
                             <td>
-                                <div class="ECORadioBtn" group="security">보안</div>
-                                <div class="ECORadioBtn" group="security">중요</div>
-                                <div class="ECORadioBtn" group="security">법규</div>
-                                <div class="ECORadioBtn" group="security">일반</div>
+                                <div class="ECORadioBtn" group="Security" data-value="@Common.Constant.EoConstant.TYPE_SECURITY">보안</div>
+                                <div class="ECORadioBtn" group="Security" data-value="@Common.Constant.EoConstant.TYPE_IMPORTANT">중요</div>
+                                <div class="ECORadioBtn" group="Security" data-value="@Common.Constant.EoConstant.TYPE_LAW">법규</div>
+                                <div class="ECORadioBtn" group="Security" data-value="@Common.Constant.EoConstant.TYPE_COMMON">일반</div>
                             </td>
                             <th>변경내용</th>
                             <td>
-                                <div class="ECOCheckBox">도면</div>
-                                <div class="ECOCheckBox">BOM</div>
-                                <div class="ECOCheckBox">생산원단위</div>
-                                <div class="ECOCheckBox">신규사양</div>
-                                <div class="ECOCheckBox">생관도번추가</div>
+                                <div class="ECOCheckBox" name="Changes" data-value="@Common.Constant.EoConstant.TYPE_DRW">도면</div>
+                                <div class="ECOCheckBox" name="Changes" data-value="@Common.Constant.EoConstant.TYPE_BOM">BOM</div>
+                                <div class="ECOCheckBox" name="Changes" data-value="@Common.Constant.EoConstant.TYPE_PRODUCE">생산원단위</div>
+                                <div class="ECOCheckBox" name="Changes" data-value="@Common.Constant.EoConstant.TYPE_NEW">신규사양</div>
+                                <div class="ECOCheckBox" name="Changes" data-value="@Common.Constant.EoConstant.TYPE_ADD">생관도번추가</div>
                             </td>
                         </tr>
                         <tr>
                             <th>재고처리</th>
                             <td>
-                                <div class="ECORadioBtn" group="stock">보안</div>
-                                <div class="ECORadioBtn" group="stock">중요</div>
-                                <div class="ECORadioBtn" group="stock">법규</div>
-                                <div class="ECORadioBtn" group="stock">일반</div>
+                                <div class="ECORadioBtn" group="Stock" data-value="@Common.Constant.EoConstant.TYPE_IRRELEVANT">무관</div>
+                                <div class="ECORadioBtn" group="Stock" data-value="@Common.Constant.EoConstant.TYPE_EXHAUST">소진</div>
+                                <div class="ECORadioBtn" group="Stock" data-value="@Common.Constant.EoConstant.TYPE_REWORK">REWORK</div>
+                                <div class="ECORadioBtn" group="Stock" data-value="@Common.Constant.EoConstant.TYPE_DISPOSAL">폐기</div>
                             </td>
                             <th>메모사양</th>
-                            <td><input type="text" value="" /></td>
+                            <td><input type="text" value="" id="CreateChangeOrder_Memo" /></td>
                         </tr>
                         <tr>
                             <th>유첨자료</th>
                             <td>
-                                <div class="ECORadioBtn" group="dataYN">없음</div>
-                                <div class="ECORadioBtn" group="dataYN">있음</div>
+                                <div class="ECORadioBtn" group="IsAttached" data-value="@Common.Constant.EoConstant.TYPE_YES">없음</div>
+                                <div class="ECORadioBtn" group="IsAttached" data-value="@Common.Constant.EoConstant.TYPE_NO">있음</div>
                             </td>
                             <th>고객요구일자</th>
-                            <td><div class="ECODatetimeInput"></div></td>
+                            <td><div class="ECODatetimeInput" id="CreateChangeOrder_SelRequestDt"></div></td>
                         </tr>
                         <tr>
                             <th>고객품번</th>
-                            <td><input type="text" value="" /></td>
+                            <td><input type="text" value="" id="CreateChangeOrder_SelPartNo" /></td>
                             <th>E-BOM</th>
-                            <td><div class="ECODatetimeInput"></div></td>
+                            <td><div class="ECODatetimeInput" id="CreateChangeOrder_EBom"></div></td>
                         </tr>
                         <tr>
                             <th>개발/양산 구분</th>
-                            <td class="required"><div id="" class="ECOComboBox"></div></td>
+                            <td class="required"><div id="CreateChangeOrder_devType" class="ECOComboBox"></div></td>
                             <th>차종</th>
-                            <td><input type="text" value="" /></td>
+                            <td><input type="text" value="" id="CreateChangeOrder_CarType" /></td>
                         </tr>
                         <tr>
                             <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
                             <td colspan="3">
-                                <textarea></textarea>
+                                <textarea id="CreateChangeOrder_Description"></textarea>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECR 정보</h3>
+                @*<h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECR 정보</h3>
                 <table class="infoTable">
                     <colgroup>
                         <col width="10%" />
@@ -361,7 +366,7 @@
                             <td></td>
                         </tr>
                     </tbody>
-                </table>
+                </table>*@
 
                 <table class="infoTable">
                     <colgroup>
@@ -376,180 +381,692 @@
             </div>
 
             <div id="ECOEffectAssess" class="ecoContents dective">
-                <div style="height:820px;overflow-x:hidden;overflow-y:scroll;">
+                <div style="height:770px;overflow-x:hidden;overflow-y:scroll;">
                     <table class="effectAssessList">
-                        <tr>
-                            <td>
-                                <h4>공용부품에 대한 검토 (연구소)</h4>
-                                <div id="assessList1"></div>
-                            </td>
-                            <td>
-                                <h4>원가변동에 대한 검토 (원가팀)</h4>
-                                <div id="assessList2"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h4>변경 자재에 대한 재고검토 (구매,생관)</h4>
-                                <div id="assessList3"></div>
-                            </td>
-                            <td>
-                                <h4>고객 승인에 대한 검토 (QC,QA)</h4>
-                                <div id="assessList4"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h4>성능에 대한 검토 (연구소)</h4>
-                                <div id="assessList5"></div>
-                            </td>
-                            <td>
-                                <h4>공정에 대한 검토 (QC,QA)</h4>
-                                <div id="assessList6"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h4>변경 자재에 대한 재고검토 (자관,제관)</h4>
-                                <div id="assessList7"></div>
-                            </td>
-                            <td>
-                                <h4>재고처리에 대한 검토 (영업,제관)</h4>
-                                <div id="assessList8"></div>
-                            </td>
-                        </tr>
                     </table>
                 </div>
             </div>
-
+            <div id="ECRRelation" class="ecoContents dective">
+                <div id="ECRRelationGrid"></div>
+            </div>
             <div id="ECOList" class="ecoContents dective">
                 <div id="ECOListGrid"></div>
             </div>
 
-            <div id="ECOBreakdown" class="ecoContents dective">
-                <div id="ECOBreakdownGrid"></div>
+            <div id="ECOStatement" class="ecoContents dective">
+                <div id="ECOStatementGrid"></div>
             </div>
         </div>
     </div>
-<script type="text/javascript">
+    <script type="text/javascript">
+        var ECRRelationGrid$ = $('#ECRRelationGrid');
+        var ECOListGrid$ = $('#ECOListGrid');
+        var ECOStatementGrid$ = $('#ECOStatementGrid');
+        var devType$ = $('#CreateChangeOrder_devType');
+        var reasonChange$ = $('#CreateChangeOrder_reasonChange');
+        var effectAssessList$ = $('.effectAssessList');
+        var assessList$ = @Html.Raw(Json.Encode(ViewBag.assessList));
+        var reasonList$ =  @Html.Raw(Json.Encode(ViewBag.reasonList));
+        var Compatible = null;
+        var IsMold = null;
+        var ReasonRegistration = null;
+        var Security = null;
+        var Stock = null;
+        var IsAttached = null;
+        var checkList = [];
+        var ECOListData = [];
+        var ECRRelationData = [];
     $('.ECOComboBox').jqxComboBox({width:'50%', height:32});
     $('.ECOCheckBox').jqxCheckBox({width:120, height:32});
     $('.ECODatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
 
     $('.ECORadioBtn').jqxRadioButton({width:120, height:32});
-    $('[group="compatible"]').jqxRadioButton({ groupName: 'compatible' });
-    $('[group="moldMod"]').jqxRadioButton({ groupName: 'moldMod' });
-    $('[group="reason"]').jqxRadioButton({ groupName: 'reason' });
-    $('[group="security"]').jqxRadioButton({ groupName: 'security' });
-    $('[group="stock"]').jqxRadioButton({ groupName: 'stock' });
-    $('[group="dataYN"]').jqxRadioButton({ groupName: 'dataYN' });
+        $('[group="Compatible"]').jqxRadioButton({ groupName: 'compatible' });
+        $('[group="IsMold"]').jqxRadioButton({ groupName: 'moldMod' });
+        $('[group="ReasonRegistration"]').jqxRadioButton({ groupName: 'reason' });
+        $('[group="Security"]').jqxRadioButton({ groupName: 'security' });
+        $('[group="Stock"]').jqxRadioButton({ groupName: 'stock' });
+        $('[group="IsAttached"]').jqxRadioButton({ groupName: 'dataYN' });
 
-    $('#ECOMenu > .tab').on('click', function () {
-        if ($(this).hasClass('info_focus')) {
-            return;
-        }
-        const menu$ = $('#ECOMenu'),
-            contents$ = $('.eBomChangeContents');
-        const self$ = $(this);
-        const ecoValue = self$.attr('info');
-        menu$.find('[class="tab info_focus"]').removeClass('info_focus');
-        self$.addClass('info_focus');
-        contents$.find('[class="ecoContents"]').addClass('dective');
-        contents$.find('[id="' + ecoValue + '"]').removeClass('dective');
+        $('#ECOMenu > .tab').on('click', function () {
+            if ($(this).hasClass('info_focus')) {
+                return;
+            }
+            const menu$ = $('#ECOMenu'),
+                contents$ = $('.eBomChangeContents');
+            const self$ = $(this);
+            const ecoValue = self$.attr('info');
+            menu$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            contents$.find('[class="ecoContents"]').addClass('dective');
+            contents$.find('[id="' + ecoValue + '"]').removeClass('dective');
 
-        if (ecoValue == 'ECOProfile') {
+            if (ecoValue == 'ECOProfile') {
 
-        } else if (ecoValue == 'ECOEffectAssess') {
-            $('#assessList1').jqxListBox({
-                width: '100%',
-                source: ['공용부품은 LIST-UP 되어있는가?',
-                    '공용부품에 대한 영향성 평가는 되었는가?',
-                    '공용부품에 대한 역전개 BOM은 확보 되었는가? (기술관리 확인 항목)'],
-                checkboxes: true,
+            } else if (ecoValue == 'ECOEffectAssess') {
+
+            } else if (ecoValue == 'ECRRelation') {
+                var rowKey = null;
+                var param = {};
+                param.Type = '@Common.Constant.EoConstant.TYPE_ECR_RELATION';
+                var ECRRelationSource = {
+                    datatype: 'json',
+                    localdata: ECRRelationData,
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'Title' },
+                        { name: 'DesignChangeDt',type:'date'},
+                        { name: 'CreateUs' },
+                        { name: 'BPolicy' },
+                        { name: 'BPolicyOID' },
+                    ],
+                }
+                ECRRelationGrid$.jqxGrid({
+                    width: '100%',
+                    height: 767,
+                    columns: [
+                        {
+                            text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        { text: 'ECR_NO', datafield: 'Name', width: '30%', },
+                        { text: '제목', datafield: 'Title', width: '40%', },
+                        { text: 'ECR_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd' },
+                        { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                    ],
+                    selectionmode: 'checkbox',
+                    showtoolbar: true,
+                    toolbarheight: 44,
+                    renderToolbar: function (statusbar) {
+                        statusbar.empty();
+                        var container$ = $('<div class="lGridComponent"></div>');
+                        var ECRRelationAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                        var ECRRelationdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                        var test = $('<button class="custom-button"><i class="fas fa-minus-square"></i> test</button>').jqxButton();
+                        statusbar.append(container$);
+                        container$.append(ECRRelationAddBtn$);
+                        container$.append(test);
+                        container$.append(ECRRelationdelBtn$);
+
+
+                        //행 추가
+                        ECRRelationAddBtn$.on('click', function (e) {
+                            var datarow = {};
+                            OpenSearchECRDialog(function (res) {
+                                PrintJqxGrid(ECRRelationSource, ECRRelationGrid$, ECRRelationData);
+                            }, null, param, '/ChangeOrder/dlgSearchECR?Type=' + param.Type, '변경요청 선택', ECRRelationGrid$, ECRRelationSource,"Create");
+
+                        });
+                        ECRRelationdelBtn$.on('click', function (e) {
+                            var rowindex = ECRRelationGrid$.jqxGrid('selectedrowindexes');
+                            rowindex.sort();
+                            var selectedRecords = new Array();
+                            if (rowindex == null || rowindex == undefined) {
+                                alert('삭제할 행을 선택하여 주세요');
+                            } else {
+                                if (confirm('삭제하시겠습니까?')) {
+                                    for (var i = rowindex.length - 1; i >= 0; i--) {
+                                        var id = ECRRelationGrid$.jqxGrid('getrowid', rowindex[i]);
+                                        ECRRelationData.splice(id, 1);
+                                        ECRRelationGrid$.jqxGrid('deleterow', id);
+                                    }
+                                    ECRRelationGrid$.jqxGrid('clearselection');
+                                }
+
+                            }
+                        });
+                        test.on('click', function (e) {
+                            console.log(ECRRelationData);
+                        });
+
+                    }
+                });
+           // PrintJqxGrid(ECRRelationSource, ECRRelationGrid$, ECRRelationData);
+
+            ECRRelationGrid$.on('rowselect', function (event) {
+                var args = event.args;
+                rowKey = args.rowindex;
             });
-            $('#assessList2').jqxListBox({
-                width: '100%',
-                source: ['원가변동 무',
-                    '원가변동 유',
-                    '기타사항',
-                    '원가변동에 대한 Risk는 검토되었는가?',
-                    '고객사 제품인상',
-                    '우리산업 흡수'],
-                checkboxes: true,
-            });
-            $('#assessList3').jqxListBox({
-                width: '100%',
-                source: ['Excess 자재가 발생 없음 (재고소진)',
-                    'Excess 자재가 발생되는가?',
-                    '협력업체 재고현황이 검토되었는가?'],
-                checkboxes: true,
-            });
-            $('#assessList4').jqxListBox({
-                width: '100%',
-                source: ['고객 신고 항목',
-                    '4M 적용',
-                    'ISIR 적용'
-                ],
-                checkboxes: true,
-            });
-            $('#assessList5').jqxListBox({
-                width: '100%',
-                source: ['설계변경에 의한 성능변화는 없는가? 성능변화가 있다면, 설계변경 불가'],
-                checkboxes: true,
-            });
-            $('#assessList6').jqxListBox({
-                width: '100%',
-                source: ['공정변화 발생이 없음.',
-                    '공정변화 발생이 있음.',
-                    '공정개발에 대한 검토가 이루어졌는가?'],
-                checkboxes: true,
-            });
-            $('#assessList7').jqxListBox({
-                width: '100%',
-                source: ['Excess 자재가 발생 없음 (재고소진)',
-                    'Excess 자재가 발생되는가?',
-                    'Excess 제품 발생 없음 (재고소진)',
-                    'Excess 자재가 발생되는가?'],
-                checkboxes: true,
-            });
-            $('#assessList8').jqxListBox({
-                width: '100%',
-                source: ['고객사에 재고 통보하였는가?',
-                    '재고 처리 협의는 하였는가?'],
-                checkboxes: true,
-            });
+
+
+
+
+
         } else if (ecoValue == 'ECOList') {
-            $('#ECOListGrid').jqxGrid({
+            var rowKey = null;
+            var param = {};
+            param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_LIST';
+            var ECOListSource = {
+                datatype: 'json',
+                localdata: ECOListData,
+                datafields: [
+                    { name: 'OID' },
+                    { name: 'Name' },
+                    { name: 'BPolicyOID' },
+                    { name: 'BPolicy' },
+                    { name: 'CreateUsNm' },
+                    { name: 'CreateDt', type: 'date' },
+                    { name: 'Car_Lib_OID' },
+                    { name: 'Car_Lib_Nm' },
+                    { name: 'ITEM_No' },
+                    { name: 'ITEM_NoNm' },
+                    { name: 'Block_No' },
+                    { name: 'Block_NoNm' },
+                    { name: 'Material_OID' },
+                    { name: 'Material_Nm' },
+                    { name: 'EPartType' },
+                    { name: 'Sel_Eo' },
+                    { name: 'Sel_Eo_Dt', type: 'date' },
+                    { name: 'Thumbnail' },
+                    { name: 'Revision' },
+                ],
+            }
+            ECOListGrid$.jqxGrid({
                 width: '100%',
-                height: 817,
+                height: 767,
                 columns: [
-                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
-                    { text: '품번', width: '15%', },
-                    { text: '품명', width: '15%', },
-                    { text: '규격', width: '15%', },
-                    { text: '차수(리비전)', width: '10%', align: 'center', },
-                    { text: '작성일', width: '15%', align: 'center', },
-                    { text: '작성자', width: '10%', },
-                    { text: '상태', width: '15%', },
-                ]
+                    {
+                        text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '품번', datafield: 'Name', width: '15%', },
+                    { text: 'Block_No', datafield: 'Block_NoNm', width: '15%', },
+                    { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
+                    { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
+                    { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
+                    { text: '상태', datafield: 'BPolicy', width: '15%',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                    },
+                ],
+                selectionmode: 'checkbox',
+                showtoolbar: true,
+                toolbarheight:44,
+                renderToolbar: function (statusbar) {
+                    statusbar.empty();
+                    var container$ = $('<div class="lGridComponent"></div>');
+                    var ECOListAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    var ECOListAddChildBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 하위부품 추가</button>').jqxButton();
+                    var ECOListdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    var ECOListUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    var ECOListDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                    var ECOListOrdSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i> 순서 적용</button>').jqxButton();
+                    statusbar.append(container$);
+                    container$.append(ECOListAddBtn$);
+                    container$.append(ECOListAddChildBtn$);
+                    container$.append(ECOListdelBtn$);
+                    container$.append(ECOListUpBtn$);
+                    container$.append(ECOListDownBtn$);
+                    container$.append(ECOListOrdSaveBtn$);
+
+                    //행 추가
+                    ECOListAddBtn$.on('click', function (e) {
+                        var datarow = {};
+                        OpenSearchEPartDialog(function (res) {
+                            PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
+                        }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');
+
+                    });
+                    ECOListAddChildBtn$.on('click', function (e) {
+
+                        var datarowIdx = ECOListGrid$.jqxGrid('getselectedrowindexes');
+                        if (datarowIdx.length == 1) {
+                            var datarow = ECOListGrid$.jqxGrid('getrowdata', datarowIdx);
+                            param.FromOID = datarow.OID;
+                            OpenSearchEPartDialog(function (res) {
+                                PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
+                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild','Create');
+                        } else {
+                            alert('품목을 선택해주세요');
+                        }
+
+                    });
+                    ECOListdelBtn$.on('click', function (e) {
+                        var rowindex = ECOListGrid$.jqxGrid('selectedrowindexes');
+                        rowindex.sort();
+                        var selectedRecords = new Array();
+                        if (rowindex == null || rowindex == undefined) {
+                            alert('삭제할 행을 선택하여 주세요');
+                        } else {
+                            if (confirm('삭제하시겠습니까?')) {
+                                for (var i = rowindex.length - 1; i >= 0; i--) {
+                                    var id = ECOListGrid$.jqxGrid('getrowid', rowindex[i]);
+                                    ECOListData.splice(id, 1);
+                                    ECOListGrid$.jqxGrid('deleterow', id);
+                                }
+                            }
+
+                        }
+                    });
+                    ECOListUpBtn$.on('click', function (e) {
+                        var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
+                        var idx = row.boundindex - 1;
+                        if (row.uid == 0) {
+                            return;
+                        }
+                        const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
+                        fMoveGridRecusive(ECODataSource, row.OID, 'UP');
+                        ECOListGrid$.jqxGrid('updatebounddata');
+                        ECOListGrid$.jqxGrid('clearselection');
+                        if (idx >= 0) {
+                            ECOListGrid$.jqxGrid('selectrow', idx);
+                        } else {
+                            ECOListGrid$.jqxGrid('selectrow', 0);
+                        }
+                    });
+                    ECOListDownBtn$.on('click', function (e) {
+                        var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
+                        var idx = row.boundindex + 1;
+
+                        var maxLength = ECOListGrid$.jqxGrid('getrows').length;
+                        if (row.uid == maxLength) {
+                            return;
+                        }
+                        const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
+                        var midx = ECODataSource.length - 1;
+                        fMoveGridRecusive(ECODataSource, row.OID, 'DOWN');
+                        ECOListGrid$.jqxGrid('updatebounddata');
+                        ECOListGrid$.jqxGrid('clearselection');
+                        if (idx <= midx) {
+                            ECOListGrid$.jqxGrid('selectrow', idx);
+                        } else {
+                            ECOListGrid$.jqxGrid('selectrow', midx);
+                        }
+                    });
+
+                    ECOListOrdSaveBtn$.on('click', function (e) {
+                        console.log(ECOListData);
+
+                    });
+                }
             });
-        } else if (ecoValue == 'ECOBreakdown') {
-            $('#ECOBreakdownGrid').jqxGrid({
+           // PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
+
+            ECOListGrid$.on('rowselect', function (event) {
+                var args = event.args;
+                rowKey = args.rowindex;
+            });
+
+
+        } else if (ecoValue == 'ECOStatement') {
+            var rowKey = null;
+            var rowDataField = null;
+
+            var ECOStatementSource = {
+                unboundmode: true,
+                datatype: 'json',
+                datafields: [
+                    { name: 'OID' },
+                    { name: 'PNo' },
+                    { name: 'RootOID' },
+                    { name: 'Type' },
+                    { name: 'PName' },
+                    { name: 'BfThumbnail' },
+                    { name: 'AfThumbnail' },
+                    { name: 'Statement' },
+                    { name: 'Description' },
+                    { name: 'Stamp' },
+                    { name: 'CreateUsNm' },
+                    { name: 'CreateDt', type: 'date' },
+                ],
+            }
+
+            ECOStatementGrid$.jqxGrid({
                 width: '100%',
-                height: 817,
+                height: 767,
+                rowsheight: 200,
+                editable: true,
+                selectionmode: 'checkbox',
                 columns: [
-                    { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
-                    { text: '품번', width: '15%', },
-                    { text: '품명', width: '15%', },
-                    { text: '변경 전', width: '10%', },
-                    { text: '변경 후', width: '10%', },
-                    { text: '변경내용', width: '30%', },
-                    { text: '비고', width: '15%', },
-                ]
+                    {
+                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:200px;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    {
+                        text: '품번', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
+                        validation: function (cell, value) {
+                            if (value == '' || value == null) {
+                                return { result: false, message: "P/NO를 입력해주세요" };
+                            }
+                            return true;
+                        }
+                    },
+                    {
+                        text: '품명', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
+                    },
+                    {
+                        text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                        createwidget: function (row, column, value, htmlElement) {
+                            var uid = row.bounddata.uid;
+                            var div = '<div class="basic_image changeOrderImg">';
+                            div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
+                            div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                            div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
+                            $(htmlElement).append(div);
+                            if (value != null && value != '') {
+                                $(htmlElement).find('#dropZone1_' + uid).empty();
+                                $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                            }
+                        },
+                        initwidget: function (row, column, value, htmlElement) {
+
+                        }
+                    },
+                    {
+                        text: '변경 후', datafield: 'AfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                        createwidget: function (row, column, value, htmlElement) {
+                            var uid = row.bounddata.uid;
+                            var div = '<div class="basic_image changeOrderImg">';
+                            div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
+                            div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                            div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
+                            $(htmlElement).append(div);
+                            if (value != null && value != '') {
+                                $(htmlElement).find('#dropZone2_' + uid).empty();
+                                $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                            }
+                            dropImage(uid);
+                        },
+                        initwidget: function (row, column, value, htmlElement) {
+
+                        }
+                    },
+                    { text: '변경내용', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
+                    { text: '비고', datafield: 'Description', width: "20%", align: 'center', cellsalign: 'center', },
+
+                    { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center', hidden: true },
+                    { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', hidden: true },
+
+                    //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+                ],
+                showtoolbar: true,
+                toolbarheight:44,
+                renderToolbar: function (statusbar) {
+                    statusbar.empty();
+                    var container$ = $('<div class="lGridComponent"></div>');
+                    var ECOStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    var ECOStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
+
+                    container$.append(ECOStatementAddBtn$);
+                    container$.append(ECOStatementDelBtn$);
+                    statusbar.append(container$);
+                    //행 추가
+                    ECOStatementAddBtn$.on('click', function (e) {
+                        ECOStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
+                        var rowData = {};
+                        rowData.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
+                        ECOStatementGrid$.jqxGrid('addrow', null, rowData);
+                        ECOStatementGrid$.jqxGrid({ editable: true });
+                    });
+                    ECOStatementGrid$.on('cellclick', function (event) {
+                        // event arguments.
+                        var args = event.args;
+                        rowKey = args.rowindex;
+                        rowDataField = args.datafield;
+
+                    });
+
+                    ECOStatementDelBtn$.on('click', function (e) {
+                        var rowindex = ECOStatementGrid$.jqxGrid('selectedrowindexes');
+                        rowindex.sort();
+                        if (rowindex == null || rowindex == undefined) {
+                            alert('삭제할 행을 선택하여 주세요');
+                        } else {
+                            if (confirm('삭제하시겠습니까?')) {
+                                for (var i = rowindex.length - 1; i >= 0; i--) {
+                                    var id = ECOStatementGrid$.jqxGrid('getrowid', rowindex[i]);
+                                    ECOStatementGrid$.jqxGrid('deleterow', id);
+                                }
+                            }
+                        }
+                    });
+                }
+
             });
+         //   PrintJqxGrid(ECOStatementSource, ECOStatementGrid$, null);
         }
     });
-</script>
+
+        $(function () {
+            for (var i = 0; i < assessList$.length; i++) {
+                var tr;
+                var td = document.createElement("td");
+                if (i % 2 != 1) {
+                    tr = document.createElement("tr");
+                    var td = document.createElement("td");
+                    var nametag = document.createElement("h4");
+                    nametag.innerHTML = assessList$[i].Name;
+                    var div$ = document.createElement("div");
+                    div$.id = "assessList_" + i;
+                    td.append(nametag);
+                    td.append(div$);
+                    tr.append(td);
+                } else {
+                    var td = document.createElement("td");
+                    var nametag = document.createElement("h4");
+                    nametag.innerHTML = assessList$[i].Name;
+                    var div$ = document.createElement("div");
+                    div$.id = "assessList_" + i;
+                    td.append(nametag);
+                    td.append(div$);
+                    tr.append(td);
+                }
+                effectAssessList$.append(tr);
+
+
+                var source = {
+                    localdata: assessList$[i].Cdata,
+                    datatype: "json",
+                    datafields: [
+                        { name: 'Name' },
+                        { name: 'OID' },
+                        { name: 'FromOID' }
+                    ],
+                }
+                var dataAdapter = new $.jqx.dataAdapter(source);
+                $("#assessList_" + i).jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
+
+            }
+                var reasonSource =
+                {
+                    localdata: reasonList$,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var reasonAdapter = new $.jqx.dataAdapter(reasonSource);
+                reasonChange$.jqxComboBox({ source: reasonAdapter, displayMember: "KorNm", valueMember: "OID" });
+
+
+                var DevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+                { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
+                var DevTypeSource =
+                {
+                    localdata: DevTypeList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'type', type: 'string' },
+                            { name: 'value', type: 'string' },
+                        ]
+                };
+                var devAdapter = new $.jqx.dataAdapter(DevTypeSource);
+            devType$.jqxComboBox({ source: devAdapter, displayMember: "type", valueMember: "value" });
+
+            $('[group="Compatible"]').on('checked', function (event) {
+                    Compatible = $(this).data('value');
+            });
+            $('[group="IsMold"]').on('checked', function (event) {
+                IsMold = $(this).data('value');
+            });
+            $('[group="ReasonRegistration"]').on('checked', function (event) {
+                ReasonRegistration = $(this).data('value');
+            });
+            $('[group="Security"]').on('checked', function (event) {
+                Security = $(this).data('value');
+            });
+            $('[group="Stock"]').on('checked', function (event) {
+                Stock = $(this).data('value');
+            });
+            $('[group="IsAttached"]').on('checked', function (event) {
+                IsAttached = $(this).data('value');
+            });
+
+
+            $('#ECOSaveBtn').on('click', function () {
+                var param = {};
+                param.ItemGroup = $('#CreateChangeOrder_ItemGroup').val();
+                param.Title = $('#CreateChangeOrder_Title').val();
+                param.DesignChangeDt = $('#CreateChangeOrder_DesignChangeDt').val();
+                param.ReasonChange = reasonChange$.val();
+                param.Compatible = Compatible;
+                param.IsMold = IsMold;
+                param.ReasonRegistration = ReasonRegistration;
+                param.Security = Security;
+                param.Stock = Stock;
+                param.Memo = $('#CreateChangeOrder_Memo').val();
+                param.IsAttached = IsAttached;
+                param.SelRequestDt = $('#CreateChangeOrder_SelRequestDt').val();
+                param.SelPartNo = $('#CreateChangeOrder_SelPartNo').val();
+                param.EBom = $('#CreateChangeOrder_EBom').val();
+                param.DevMP = devType$.val();
+                param.CarType = $('#CreateChangeOrder_CarType').val();
+                param.Description = $('#CreateChangeOrder_Description').val();
+                var chkReason = [];
+                for (var i = 0; i < $('input[name="Changes"]').length; i++) {
+                    if ($('input[name="Changes"]')[i].value == "true") {
+                        chkReason.push($('div[name="Changes"]').eq(i).data('value'));
+                    }
+                }
+                param.Changes = chkReason.join(',');;
+
+
+                if (param.Title == "" || param.Title == null) {
+                    alert('제목을 입력하여 주세요.');
+                    return;
+                }
+                if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
+                    alert('설계변경일자를 선택하여 주세요.');
+                    return;
+                }
+                if (param.ReasonChange == "" || param.ReasonChange == null) {
+                    alert('변경사유를 선택하여 주세요.');
+                    return;
+                }
+                if (param.DevMP == "" || param.DevMP == null) {
+                    alert('개발/양산 구분을 선택하여 주세요.');
+                    return;
+                }
+                for (var i = 0; i < assessList$.length; i++) {
+                    var list = [];
+                    var data = {};
+                    data.OID = assessList$[i].OID;
+                    list.push(data);
+                    var a = $('#assessList_' + i).jqxListBox('getCheckedItems');
+                    for (var j = 0; j < a.length; j++) {
+                        list.push(a[j].originalItem);
+                    }
+                    checkList.push(list);
+
+                }
+                var EoData = [];
+                EoData = EoData.concat(ECOListData);
+                var statementList = ECOStatementGrid$.jqxGrid('getrows');
+                if (statementList != null && statementList != undefined) {
+                    for (var i = 0; i < statementList.length; i++) {
+                        if (statementList[i].PNo == null || statementList[i].PNo == "") {
+                            alert("설계변경 내역서를 확인해주세요");
+                            return;
+                        }
+                    }
+                    EoData = EoData.concat(statementList);
+                }
+                EoData = EoData.concat(ECRRelationData);
+
+
+
+
+                ECOListData = ECOListData.concat(statementList);;
+
+                RequestData('/ChangeOrder/InsertChangeOrder', { _param: param, _assessList: checkList, _eo: EoData }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    PageReload();
+                });
+
+
+            });
+
+
+        });
+
+        function dropImage(uid) {
+        $('#dropZone1_' + uid).simpleUpload({
+            url: '/Common/ImgUploadFile',
+            params: {},
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+            dropZone: '#dropZone1_' + uid,
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#uploadResult1_' + uid).empty();
+            $('#uploadResult1_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
+            var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
+            rowd.BfThumbnail = data;
+            $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
+            $('.imgPlaceholder').hide();
+        });
+         $('#dropZone2_' + uid).simpleUpload({
+            url: '/Common/ImgUploadFile',
+            params: {},
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+            dropZone: '#dropZone2_' + uid,
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#uploadResult2_' + uid).empty();
+            $('#uploadResult2_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
+            var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
+            rowd.AfThumbnail = data;
+            $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
+            $('.imgPlaceholder').hide();
+        });
+    }
+
+    </script>
 
 
 

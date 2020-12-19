@@ -1,0 +1,59 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="searchBox" id="">
+    <div class="searchContent" style="padding-bottom:0px;">
+        @*<div class="searchData">
+            <div class="comboBoxLabel"></div>
+            <div>
+                <div id=""></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel"></div>
+            <div>
+                <div id=""></div>
+            </div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel"></div>
+            <div>
+                <div id=""></div>
+            </div>
+        </div>*@
+        <div class="searchData">
+                <div>ECR_NO</div>
+            <div>
+    <input type="hidden" id="" />
+    <input type="text" id="dlgSearchECR_Name" />
+</div>
+        </div>
+        <div class="searchData">
+            <div>제목</div>
+            <div>
+                <input type="hidden" id="" />
+                <input type="text" id="dlgSearchECR_Title" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>변경요청일자</div>
+            <div>
+                <input type="hidden" id="" />
+                <input type="text" id="dlgSearchECR_DesignChangeDt" />
+            </div>
+        </div>
+        <div class="searchButton">
+            <button id="dlgSearchECR_SearchBtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+        </div>
+    </div>
+</div>
+<div id="dlgSearchECRgrid"></div>
+
+<script>
+    $(function () {
+        $('#dlgSearchECR_DesignChangeDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+    });
+
+
+</script>

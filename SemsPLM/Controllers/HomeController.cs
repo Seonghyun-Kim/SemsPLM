@@ -1,5 +1,6 @@
 ﻿using Common;
 using IBatisNet.DataMapper;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class HomeController : Controller
     {
         public ActionResult Index()

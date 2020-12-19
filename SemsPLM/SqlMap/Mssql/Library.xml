@@ -98,7 +98,7 @@
        <selectKey type="pre" resultClass="int" property="OID">
         SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DCODELIBRARY
       </selectKey>
-        INSERT INTO T_DCODELIBRARY
+      INSERT INTO T_DCODELIBRARY
       (OID
       ,KorNm
       ,FromOID
@@ -121,7 +121,7 @@
       ,#DeleteUs#
       ,#Code1#
       ,#Code2#
-      ,#CreateDt#
+      ,GETDATE()
       ,#CreateUs#
       ,#Description#)
     </insert>
@@ -135,6 +135,207 @@
       ,Ord = #Ord#
       WHERE OID = #OID#
     </update>
+
+    <update id="deleteCodeLibrary" parameterClass="Library">
+      UPDATE T_DCODELIBRARY SET
+      DeleteUs = #DeleteUs#
+      ,DeleteDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
     
+
+    <select id="SelAssessLibrary" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DASSESSLIBRARY A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name  LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+
+    <select id="SelAssessLibraryLatest" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DASSESSLIBRARY A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name  LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
+      AND A.IsLatest=1
+      AND A.DeleteDt is null
+      ORDER BY Ord
+    </select>
+
+    <select id="SelAssessLibrarySub" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DASSESSLIBRARY_DETAIL A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        A.FromOID = #FromOID#
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+    
+    <update id="UpdateAssessIsLatest" parameterClass="Library">
+      UPDATE T_DASSESSLIBRARY SET
+      IsLatest = 0
+      WHERE OID = #OID#
+    </update>
+
+    <update id="UpdateAssessChildOrd" parameterClass="Library">
+      UPDATE T_DASSESSLIBRARY_DETAIL SET
+      Ord = #Ord#
+      WHERE OID = #OID#
+    </update>
+    
+     <update id="UpdateAssessParentOrd" parameterClass="Library">
+       UPDATE T_DASSESSLIBRARY SET
+       Ord = #Ord#
+       WHERE OID = #OID#
+     </update>
+
+    <insert id="InsAssessParent" parameterClass="Library">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DASSESSLIBRARY
+      </selectKey>
+      INSERT INTO T_DASSESSLIBRARY
+      (OID
+      ,Name
+      ,Ord
+      ,IsLatest
+      ,Revision
+      ,CreateUs
+      ,CreateDt
+      )
+      VALUES
+      (
+      #OID#
+      ,#Name#
+      ,#Ord#
+      ,1
+      ,#Revision#
+      ,#CreateUs#
+      ,GETDATE()
+      )
+    </insert>
+
+    <insert id="InsAssessChild" parameterClass="Library">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DASSESSLIBRARY_DETAIL
+      </selectKey>
+      INSERT INTO T_DASSESSLIBRARY_DETAIL
+      (OID
+      ,FromOID
+      ,Name
+      ,Ord
+      )
+      VALUES
+      (#OID#
+      ,#FromOID#
+      ,#Name#
+      ,#Ord#)
+    </insert>
+    
+    <update id="deleteAssessLibrary" parameterClass="Library">
+      UPDATE T_DASSESSLIBRARY SET
+      IsLatest = 0
+      ,DeleteUs = #DeleteUs#
+      ,DeleteDt = GETDATE()
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelCustomerScheduleTemplate" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DCUSTOMER_SCHEDULE_TEMPLATE A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name  LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+
+    <select id="SelCustomerScheduleTemplateSub" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        A.FromOID = #FromOID#
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+
+    <update id="UpdateCustomerScheduleTemplateSubOrd" parameterClass="Library">
+      UPDATE T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL SET
+      Ord = #Ord#
+      WHERE OID = #OID#
+    </update>
+
+    <update id="UpdateCustomerScheduleTemplate" parameterClass="Library">
+      UPDATE T_DCUSTOMER_SCHEDULE_TEMPLATE SET
+      Name = #Name#
+      ,Ord = #Ord#
+      WHERE OID = #OID#
+    </update>
+
+    <insert id="InCustomerScheduleTemplate" parameterClass="Library">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DCUSTOMER_SCHEDULE_TEMPLATE
+      </selectKey>
+      INSERT INTO T_DCUSTOMER_SCHEDULE_TEMPLATE
+      (OID
+      ,Name
+      ,Ord)
+      VALUES
+      (#OID#
+      ,#Name#
+      ,#Ord#)
+    </insert>
+
+    <insert id="InCustomerScheduleTemplateSub" parameterClass="Library">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL
+      </selectKey>
+      INSERT INTO T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL
+      (OID
+      ,FromOID
+      ,Name
+      ,Ord
+      )
+      VALUES
+      (#OID#
+      ,#FromOID#
+      ,#Name#
+      ,#Ord#)
+    </insert>
+
+    <delete id="delCustomerScheduleTemplateSub" parameterClass="Library">
+      DELETE FROM T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+      </dynamic>
+    </delete>
+
   </statements>
 </sqlMap>

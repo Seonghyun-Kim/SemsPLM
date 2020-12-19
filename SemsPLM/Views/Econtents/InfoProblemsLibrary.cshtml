@@ -43,6 +43,7 @@
                                 <h3 style="padding-left:8px;"><i class="fas fa-file-alt"></i> &nbsp;과거차 문제 라이브러리 PROFILE</h3>
                             </td>
                             <td style="text-align: right;">
+                                <button id="EditApprovalBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 결재</button>
                                 <button id="EditBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
                                 <button id="EditSaveBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-check-square"></i> 저장</button>
                                 <button id="EditCancelBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
@@ -53,8 +54,10 @@
 
                 <table class="infoTable">
                     <tr>
+                        <th>고객사</th>
+                        <td>@Model.Car_Lib_OID</td>
                         <th>차종</th>
-                        <td colspan="3">@Model.Car_Lib_OID</td>
+                        <td>@Model.Car_Lib_OID</td>
                         <th>제품</th>
                         <td>@Model.Product</td>
                         <th>부품</th>
@@ -83,8 +86,8 @@
                     <tr>
                         <th>Issues(문제점)</th>
                         <td colspan="3">
-                            <div class="problemsLibraryDetailBox">
-                                <textarea id="CreateProblemIssues">@Model.Issues</textarea>
+                            <div class="problemsLibraryDetailBox" style="width:100%;">
+                                <textarea id="CreateProblemIssues" style="width:55% !important;" readonly="readonly">@Model.Issues</textarea>
                                 @if (@Model.Issues_Thumbnail != null)
                                 {
                                     <img src="~/images/Thumbnail/@Model.Issues_Thumbnail" />
@@ -100,8 +103,8 @@
                         </td>
                         <th>Cause(원인)</th>
                         <td colspan="3">
-                            <div class="problemsLibraryDetailBox">
-                                <textarea id="CreateProblemCause">@Model.Cause</textarea>
+                            <div class="problemsLibraryDetailBox" style="width:100%;">
+                                <textarea id="CreateProblemCause" style="width:55% !important;" readonly="readonly">@Model.Cause</textarea>
                                 @if (@Model.Cause_Thumbnail != null)
                                 {
                                     <img src="~/images/Thumbnail/@Model.Cause_Thumbnail" />
@@ -119,8 +122,8 @@
                     <tr>
                         <th>Countermeasures<br />(대책)</th>
                         <td colspan="7">
-                            <div class="problemsLibraryDetailBox">
-                                <textarea id="CreateProblemCountermeasures">@Model.Countermeasures</textarea>
+                            <div class="problemsLibraryDetailBox" style="width:100%;">
+                                <textarea id="CreateProblemCountermeasures" readonly="readonly">@Model.Countermeasures</textarea>
                                 @if (@Model.Countermeasures_Thumbnail != null)
                                 {
                                     <img src="~/images/Thumbnail/@Model.Countermeasures_Thumbnail" />
@@ -172,6 +175,12 @@
             }
         }
 
+        $('#EditApprovalBtn_' + ProblemsLibraryOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ProblemsLibraryOID }, '/Common/Approval', '결재');
+        });
+
         $('#InfoProblemsLibrary_' + ProblemsLibraryOID + ' .tab').on('click', function () {
             const self$ = $(this);
             const infoValue = self$.attr('info');
@@ -182,6 +191,10 @@
             DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
 
             if (infoValue == 'properties') {
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: EPartOID }, function (res) {
+                    $('#ApphisInfo_' + EPartOID).html(res);
+                });
             }
         });
     });

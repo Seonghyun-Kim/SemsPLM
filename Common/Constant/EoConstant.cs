@@ -16,6 +16,9 @@ namespace Common.Constant
         public static string TYPE_EBOM_STATEMENT = "EBOM_STATEMENT";
         public static string TYPE_MBOM_LIST = "MBOM_LIST";
         public static string TYPE_MBOM_STATEMENT = "MBOM_STATEMENT";
+        public static string TYPE_ASSESSLIST = "ASSESSLIST";
+        public static string TYPE_ASSESSLIST_CHILD = "ASSESSLIST_CHILD";
+
 
 
         public static string TYPE_CHANGE_REQUEST = "CHANGE_REQUEST";
@@ -24,76 +27,54 @@ namespace Common.Constant
 
         public static string TYPE_ECR_STATEMENT = "ECR_STATEMENT"; //변경요청내역
         public static string TYPE_ECO_RELATION = "ECO_RELATION"; //연관 ECO
-
-        //EO 타입
-        public static string TYPE_CUSTOMER_KorNm = "대여도(Customer)";
-        public static string TYPE_HOUSE_KorNm = "승인도(In House)";
-
-        public static string TYPE_CUSTOMER = "CUSTOMER";
-        public static string TYPE_HOUSE = "HOUSE";
-
-        //EO FAULT 귀책사유
-        public static string FAULT_CUST_KorNm = "고객사";
-        public static string FAULT_COMP_KorNm = "협력사";
-        public static string FAULT_SELF_KorNm = "자체";
-        public static string FAULT_EMPTY_KorNm = "내용없음";
-
-        public static string FAULT_CUST = "CUST";
-        public static string FAULT_COMP = "COMP";
-        public static string FAULT_SELF = "SELP";
-        public static string FAULT_EMPTY = "EMPTY";
-
-        //EO 처리유형
-        public static string PRO_M = "Migration";
-        public static string PRO_N = "New";
-        public static string PRO_R = "Revision";
-
-        //EO ID 
-        public static string ID_N = "정규사양";
-        public static string ID_D = "임시사양";
-        public static string ID_R = "기각사양";
+        public static string TYPE_ECR_RELATION = "ECR_RELATION"; //연관 ECR
 
 
-        //EO CLASS 
-        public static string CLASS_EMERGENCY_KorNm = "긴급";
-        public static string CLASS_MPR_KorNm = "필수";
-        public static string CLASS_MAJOR_KorNm = "일반";
-        public static string CLASS_MINOR_KorNm = "정정";
+        //개발 양산 구분
+        public static string TYPE_DEV_KorNm = "개발";
+        public static string TYPE_MP_KorNm = "양산";
 
-        public static string CLASS_EMERGENCY = "EMERGENCY";
-        public static string CLASS_MPR = "MPR";
-        public static string CLASS_MAJOR = "MAJOR";
-        public static string CLASS_MINOR = "MINOR";
+        public static string TYPE_DEV = "DEV";
+        public static string TYPE_MP = "MP";
 
-
-        //재고처리
-        public static string INV_NONE_KorNm = "구형재고무관";
-        public static string INV_USE_KorNm = "재고소진";
-        public static string INV_SCRAP_KorNm = "폐기";
-        public static string INV_REWORK_KorNm = "수정";
-
-        public static string INV_NONE = "NONE";
-        public static string INV_USE = "USE";
-        public static string INV_SCRAP = "SCRAP";
-        public static string INV_REWORK = "REWORK";
-
-        //시작 리비전
-        public static string INIT_REIVISION = "R00";
-
-        //기술 변경 사유
-        public static string SR = "SR(법규관련)";
-        public static string PI = "PI(작업성향상)";
-        public static string IC = "IC(경쟁력 강화)";
-        public static string CS = "CS(SPEC변경)";
-        public static string CR = "CR(원가관련)";
-        public static string QI = "QI(품질향상)";
-        public static string ST = "ST(표준화)";
-        public static string IR = "IR(초도출도)";
-        public static string WD = "WD(중량감소)";
-        public static string LO = "LO(국산화)";
-        public static string RA = "RA(사양정리)";
-        public static string GR = "GR(기타)";
-
+        //Button value
+        public static string TYPE_YES = "YES";                                //있음
+        public static string TYPE_NO = "NO";                                  //없음
+        public static string TYPE_IRRELEVANT = "IRRELEVANT";                  //무관
+        public static string TYPE_NEW= "NEW";                                 //신규
+        public static string TYPE_SECURITY = "SECURITY";                      //보안
+        public static string TYPE_IMPORTANT = "IMPORTATN";                    //중요
+        public static string TYPE_LAW = "LAW";                                //법규
+        public static string TYPE_COMMON = "COMMON";                          //일반
+        public static string TYPE_ECO = "ECO";                                //설계변경
+        public static string TYPE_SAME = "SAME";                              //동시적용품
+        public static string TYPE_DRW = "DRW";                                //도면
+        public static string TYPE_BOM = "BOM";                                //봄
+        public static string TYPE_PRODUCE = "PRODUCE";                        //생산원단위
+        public static string TYPE_ADD = "ADD";                                //생관도번추가
+        public static string TYPE_EXHAUST = "EXHAUST";                        //소진
+        public static string TYPE_REWORK = "REWORK";                          //REWORK
+        public static string TYPE_DISPOSAL = "DISPOSAL";                      //폐기
+                                                                          
+        public static string TYPE_YES_KorNm = "있음";                         //있음
+        public static string TYPE_NO_KorNm = "없음";                          //없음
+        public static string TYPE_IRRELEVANT_KorNm = "무관";                  //무관
+        public static string TYPE_NEW_KorNm = "신규";                         //신규
+        public static string TYPE_NEWDEV_KorNm = "신규제작";                  //신규제작
+        public static string TYPE_NEWSPEC_KorNm = "신규사양";                 //신규사양
+        public static string TYPE_SECURITY_KorNm = "보안";                    //보안
+        public static string TYPE_IMPORTANT_KorNm = "중요";                   //중요
+        public static string TYPE_LAW_KorNm = "법규";                         //법규
+        public static string TYPE_COMMON_KorNm = "일반";                      //일반
+        public static string TYPE_ECO_KorNm = "설계변경";                     //설계변경
+        public static string TYPE_SAME_KorNm = "동시적용품";                  //동시적용품
+        public static string TYPE_DRW_KorNm = "도면";                         //도면
+        public static string TYPE_BOM_KorNm = "BOM";                          //봄
+        public static string TYPE_PRODUCE_KorNm = "생산원단위";               //생산원단위
+        public static string TYPE_ADD_KorNm = "생관도번추가";                 //생관도번추가
+        public static string TYPE_EXHAUST_KorNm = "소진";                     //소진
+        public static string TYPE_REWORK_KorNm = "REWORK";                    //REWORK
+        public static string TYPE_DISPOSAL_KorNm = "폐기";                    //폐기
 
     }
 }

@@ -62,6 +62,9 @@
         <isNotNull prepend="and" property="RootOID">
           RootOID = #RootOID#
         </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
         <isNotNull prepend="and" property="Type">
           Type = #Type#
         </isNotNull>
@@ -76,7 +79,7 @@
           RootOID = #RootOID#
         </isNotNull>
         <isNotNull prepend="and" property="Type">
-          Type = #Type#
+          Type LIKE CONCAT('%',#Type#,'%')
         </isNotNull>
         <isNotEmpty prepend="and" property="ToOID">
           ToOID = #ToOID#

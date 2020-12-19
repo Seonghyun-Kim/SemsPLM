@@ -53,9 +53,9 @@
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
                         var rowData = procResourceData[row];
                          if (rowData.Thumbnail == null) {
-                            return "<i class='fa fa-user-circle-o' aria-hidden='true'></i>&nbsp;" + value;
+                            return "<div class='wbsDlgMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value + "</div>";
                         } else {
-                            return "<div style='display:inline-block;position:relative;width:45px;'><span class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData.Thumbnail + "'></span></div>&nbsp;<span style='line-height:45px;'>" + value+"</span>";
+                            return "<div class='wbsDlgMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData.Thumbnail + "'></div>" + value+"</div>";
                         }
                     }
                 },
@@ -75,7 +75,7 @@
             }
         });
         procResourceGrd$.jqxGrid('pagerrenderer')
-
+        /*
         procResourceGrd$.on('rowselect', function (event) {
             var rowBoundIndex = (event.args).rowindex;
             if (!selectFromMethod) {
@@ -85,5 +85,6 @@
             }
             selectFromMethod = false;
         });
+        */
     });
 </script>

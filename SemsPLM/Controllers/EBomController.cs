@@ -15,10 +15,7 @@ namespace SemsPLM.Controllers
     public class EBomController : Controller
     {
         // GET: EBom
-        public ActionResult Index()
-        {
-            return View();
-        }
+        #region -- EPart View
         public ActionResult EBomStructure()
         {
             return View();
@@ -28,32 +25,32 @@ namespace SemsPLM.Controllers
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
             Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
             Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
             Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
             List<Library> epartList = LibraryRepository.SelLibrary(new Library { FromOID = epartKey.OID });  //제품구분 목록
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
             List<Library> psizeList = LibraryRepository.SelLibrary(new Library { FromOID = psizeKey.OID });  //제품구분 목록
 
             ViewBag.ItemList = ItemList;
             ViewBag.placeList = placeList;
             ViewBag.epartList = epartList;
-            ViewBag.carList = carList;
+            ViewBag.oemList = oemList;
             ViewBag.psizeList = psizeList;
             return View();
         }
         public ActionResult SearchEPart()
         {
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
 
-            ViewBag.carList = carList;
+            ViewBag.oemList = oemList;
             ViewBag.ItemList = ItemList;
             return View();
         }
@@ -61,42 +58,59 @@ namespace SemsPLM.Controllers
         {
             ViewBag.OID = OID;
             EPart InfoEPart = EPartRepository.SelEPartObject(new EPart { OID = OID });
-
-            Library MaterialKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
-            List<Library> MaterialList = LibraryRepository.SelLibrary(new Library { FromOID = MaterialKey.OID });
-            ViewBag.MaterialList = MaterialList;
-
-            Library prodstrKey = LibraryRepository.SelLibraryObject(new Library { Name = "PROD_STRUCTURE" });
-            List<Library> prodstrList = LibraryRepository.SelLibrary(new Library { FromOID = prodstrKey.OID });
-            ViewBag.prodstrList = prodstrList;
-
-            if (InfoEPart.Prod_Lib_Lev2_OID != null && InfoEPart.Prod_Lib_Lev2_OID > 0)
-            {
-                ViewBag.PROD_LIBLv2 = LibraryRepository.SelLibrary(new Library { FromOID = InfoEPart.Prod_Lib_Lev1_OID });
-            }
-            if (InfoEPart.Prod_Lib_Lev3_OID != null && InfoEPart.Prod_Lib_Lev3_OID > 0)
-            {
-                ViewBag.PROD_LIBLv3 = LibraryRepository.SelLibrary(new Library { FromOID = InfoEPart.Prod_Lib_Lev2_OID });
-            }
-
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EBomConstant.TYPE_PART });
+
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
+            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
+            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
+            List<Library> epartList = LibraryRepository.SelLibrary(new Library { FromOID = epartKey.OID });  //제품구분 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+            List<Library> psizeList = LibraryRepository.SelLibrary(new Library { FromOID = psizeKey.OID });  //제품구분 목록
+
+            ViewBag.ItemList = ItemList;
+            ViewBag.placeList = placeList;
+            ViewBag.epartList = epartList;
+            ViewBag.oemList = oemList;
+            ViewBag.psizeList = psizeList;
 
             return View(InfoEPart);
         }
         public ActionResult dlgSearchEBomStructure(int? OID)
         {
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
 
-            ViewBag.carList = carList;
+            ViewBag.oemList = oemList;
             ViewBag.ItemList = ItemList;
             ViewBag.OID = OID;
             return PartialView("Dialog/dlgSearchEBomStructure");
         }
+
+        #region EPart Tree추가 창 검색
+        public ActionResult dlgSetSearchEBomStructure(int? OID)
+        {
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+
+            ViewBag.oemList = oemList;
+            ViewBag.ItemList = ItemList;
+            ViewBag.OID = OID;
+            return PartialView("Dialog/dlgSetSearchEBomStructure");
+        }
+        #endregion
 
         public ActionResult CompareEPart()
         {
@@ -106,13 +120,13 @@ namespace SemsPLM.Controllers
         public ActionResult dlgSearchEPart()
         {
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
 
-            ViewBag.carList = carList;
+            ViewBag.oemList = oemList;
             ViewBag.ItemList = ItemList;
             return PartialView("Dialog/dlgSearchEPart");
         }
@@ -121,23 +135,23 @@ namespace SemsPLM.Controllers
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
             Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
             Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
             Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
             List<Library> epartList = LibraryRepository.SelLibrary(new Library { FromOID = epartKey.OID });  //제품구분 목록
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
             List<Library> psizeList = LibraryRepository.SelLibrary(new Library { FromOID = psizeKey.OID });  //제품구분 목록
 
             ViewBag.ItemList = ItemList;
             ViewBag.placeList = placeList;
             ViewBag.epartList = epartList;
-            ViewBag.carList = carList;
+            ViewBag.oemList = oemList;
             ViewBag.psizeList = psizeList;
             return PartialView("Dialog/dlgCreateEPart");
         }
-
+        #endregion
 
         #region EPart 검색
         public JsonResult SelEPart(EPart _param)
@@ -151,7 +165,7 @@ namespace SemsPLM.Controllers
         public JsonResult InsEPart(EPart _param)
         {
             int resultOid = 0;
-            
+            DObject dobj = new DObject();
             try
             {
                 DaoFactory.BeginTransaction();
@@ -161,29 +175,15 @@ namespace SemsPLM.Controllers
                     DaoFactory.Rollback();
                     return Json(new ResultJsonModel { isError = true, resultMessage = "품번이 이미 존재합니다.", resultDescription = "" });
                 }
-                DObject dobj = new DObject();
+                
                 dobj.Type = EBomConstant.TYPE_PART;
                 dobj.TableNm = EBomConstant.TABLE_PART;
                 dobj.Name = _param.Name;
                 dobj.Description = _param.Description;
                 dobj.Thumbnail = _param.Thumbnail;
-                resultOid = DObjectRepository.InsDObject(dobj);
+                resultOid = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = resultOid;
-
-                //_param.Title              = _param.Title;
-                //_param.Rep_Part_No        = _param.Rep_Part_No;
-                //_param.Rep_Part_No2       = _param.Rep_Part_No2;
-                //_param.Eo_No              = _param.Eo_No;
-                //_param.Eo_No_ApplyDate    = _param.Eo_No_ApplyDate;
-                //_param.Eo_No_History      = _param.Eo_No_History;
-                //_param.Etc                = _param.Etc;
-                //_param.ApprovOID          = _param.ApprovOID;
-                //_param.EPartType          = _param.EPartType;
-                //_param.Sel_Eo             = _param.Sel_Eo;
-                //_param.Sel_Eo_Date        = _param.Sel_Eo_Date;
-                //_param.Spec               = _param.Spec;
-                //_param.Surface            = _param.Surface;
 
                 DaoFactory.SetInsert("EBom.InsEPart", _param);
 
@@ -194,7 +194,7 @@ namespace SemsPLM.Controllers
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
-            return Json(resultOid);
+            return Json(dobj);
         }
         #endregion
 
@@ -231,15 +231,13 @@ namespace SemsPLM.Controllers
         public JsonResult UdtEPartObj(EPart _param)
         {
             int result = 0;
-            DObjectRepository.UdtDObject(_param);
+            DObjectRepository.UdtDObject(Session, _param);
             EPartRepository.UdtEPartObject(_param);
-
 
             return Json(result);
         }
         //UdtDObject
         #endregion
-
 
         #region EPart 하위 리스트
         public JsonResult SelRootChildList(EPart _param)
@@ -302,7 +300,6 @@ namespace SemsPLM.Controllers
             return Json(0);
         }
         #endregion
-
 
         #region EPart Compare
         //public JsonResult EPartCompare(int? LOID, int? ROID)

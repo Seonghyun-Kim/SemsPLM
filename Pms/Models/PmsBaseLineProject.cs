@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Pms.Models
 {
@@ -31,9 +32,9 @@ namespace Pms.Models
             return pmsBaseLineProject;
         }
 
-        public static int InsPmsBaseLineProject(PmsBaseLineProject _param)
+        public static int InsPmsBaseLineProject(HttpSessionStateBase Context, PmsBaseLineProject _param)
         {
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             if (_param.BPolicyOID == null)
             {
                 _param.BPolicyOID = BPolicyRepository.SelBPolicy(new BPolicy { Type = _param.Type }).First().OID;

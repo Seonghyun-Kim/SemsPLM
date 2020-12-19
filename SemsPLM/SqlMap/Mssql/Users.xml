@@ -94,6 +94,9 @@
       <isNotNull prepend="and" property="ID">
         B.ID = #ID#
       </isNotNull>
+      <isNotNull prepend="and" property="Password">
+        B.Password = #Password#
+      </isNotNull>
       <isNotNull prepend="and" property="Rank">
         B.Rank = #Rank#
       </isNotNull>

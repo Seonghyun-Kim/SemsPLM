@@ -8,10 +8,14 @@
     <typeAlias alias="PmsProject" type="Pms.Models.PmsProject" />
     <typeAlias alias="PmsProcess" type="Pms.Models.PmsProcess" />
     <typeAlias alias="PmsRelationship" type="Pms.Models.PmsRelationship" />
+    <typeAlias alias="PmsIssue" type="Pms.Models.PmsIssue" />
     
     <typeAlias alias="PmsBaseLineProject" type="Pms.Models.PmsBaseLineProject" />
     <typeAlias alias="PmsBaseLineProcess" type="Pms.Models.PmsBaseLineProcess" />
     <typeAlias alias="PmsBaseLineRelationship" type="Pms.Models.PmsBaseLineRelationship" />
+
+    <typeAlias alias="CustomerSchedule" type="Pms.Models.CustomerSchedule" />
+    
   </alias>
 
   <statements>
@@ -29,7 +33,14 @@
       , ActDuration
       , WorkingDay
       , CalendarOID
-      , Complete)
+      , Complete
+      ,Oem_Lib_OID
+      ,Car_Lib_OID
+      ,ITEM_No
+      ,ITEM_Middle
+      ,ProjectGrade
+      ,Customer_OID
+      ,ProductNm	)
       VALUES
       ( #OID#
       , #IsTemplate#
@@ -42,7 +53,14 @@
       , #ActDuration#
       , #WorkingDay#
       , #CalendarOID#
-      , #Complete#)
+      , #Complete#
+      ,#Oem_Lib_OID#
+      ,#Car_Lib_OID#
+      ,#ITEM_No#
+      ,#ITEM_Middle#
+      ,#ProjectGrade#
+      ,#Customer_OID#
+      ,#ProductNm#	)
     </insert>
     
     <select id="SelPmsProject" parameterClass="PmsProject" resultClass="PmsProject">
@@ -67,6 +85,9 @@
         <isNotNull prepend="and" property="ProjectType">
           B.ProjectType = #ProjectType#
         </isNotNull>
+        <isNotNull prepend="and" property="Car_Lib_OID">
+          B.Car_Lib_OID = #Car_Lib_OID#
+        </isNotNull>   
         <isNotNull prepend="and" property="IsTemplate">
           IsTemplate IS NOT NULL
         </isNotNull>
@@ -503,6 +524,103 @@
     </select>
 
 
+    <select id="SelProjMngtCustomerSchedule" parameterClass="CustomerSchedule" resultClass="CustomerSchedule">
+      SELECT *
+      FROM T_DCUSTOMER_SCHEDULE
+      WHERE 1 = 1
+      <isNotNull prepend="and" property="OID">
+        OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Car_Lib_OID">
+        Car_Lib_OID = #Car_Lib_OID#
+      </isNotNull>
+      ORDER BY Ord
+    </select>
+
+
+    <insert id="InsProjMngtCustomerSchedule" parameterClass="CustomerSchedule">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DCUSTOMER_SCHEDULE
+      </selectKey>
+      INSERT INTO T_DCUSTOMER_SCHEDULE
+      ( OID
+      , Name
+      , StartDt
+      , Ord
+      , Car_Lib_OID )
+      VALUES
+      ( #OID#
+      , #Name#
+      , #StartDt#
+      , #Ord#
+      , #Car_Lib_OID# )
+    </insert>
+
+    <delete id="DelProjMngtCustomerSchedule" parameterClass="CustomerSchedule">
+      DELETE FROM T_DCUSTOMER_SCHEDULE
+      WHERE Car_Lib_OID = #Car_Lib_OID#
+    </delete>
+
+    <insert id="InsPmsIssue" parameterClass="PmsIssue">
+      INSERT INTO T_DPMS_ISSUE
+      (OID
+      ,Importance
+      ,EstFinDt
+      ,Manager_OID
+      ,IssueType)
+      VALUES
+      (#OID#
+      ,#Importance#
+      ,#EstFinDt#
+      ,#Manager_OID#
+      ,#IssueType#);
+    </insert>
+
+    <select id="SelIssue" parameterClass="PmsIssue" resultClass="PmsIssue">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_ISSUE B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <update id="UdtIssue" parameterClass="PmsIssue">
+      UPDATE T_DPMS_ISSUE  
+      <dynamic prepend="SET">
+        <isNotNull prepend="," property="Importance">
+          Importance = #Importance#
+        </isNotNull>
+        <isNotNull prepend="," property="EstFinDt">
+          EstFinDt = #EstFinDt#
+        </isNotNull>
+        <isNotNull prepend="," property="Manager_OID">
+          Manager_OID = #Manager_OID#
+        </isNotNull>
+        <isNotNull prepend="," property="IssueType">
+          IssueType = #IssueType#
+        </isNotNull>
+        <isNotNull prepend="," property="Contents">
+          Contents = #Contents#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+     
+    </update>
   </statements>
- 
+  
 </sqlMap>

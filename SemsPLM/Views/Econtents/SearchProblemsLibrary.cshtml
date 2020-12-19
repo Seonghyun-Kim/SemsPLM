@@ -10,47 +10,79 @@
             <label><i class="fas fa-folder-open"></i> &nbsp;과거차문제 라이브러리 검색</label>
         </div>
         <div class="searchContent">
-            <div class="searchData">
-                <div class="comboBoxLabel">차종</div>
-                <div>
-                    <div id="SearchEcontentsCar" class="searchEcontentsComboBox"></div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">고객사</div>
+                    <div>
+                        <div id="SearchEcontentsOem" class="dlgSearchEPartComboBox"></div>
+                    </div>
                 </div>
+                <div class="searchData">
+                    <div class="comboBoxLabel">차종</div>
+                    <div>
+                        <div id="SearchEcontentsCar" class="searchEcontentsComboBox"></div>
+                    </div>
+                </div>
+                
                 @*<div class="comboBoxLabel">작성자</div>
-                <div>
-                    <div id="" class="searchEpartComboBox"></div>
-                </div>*@
+        <div>
+            <div id="" class="searchEpartComboBox"></div>
+        </div>*@
+
+            <div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div>
                     <div id="SearchEcontentsCreateDt" class="searchEpartComboBox"></div>
                 </div>
-            </div>
-
-            <div class="searchButton">
+            </div><div class="searchButton">
                 <button id="" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
         </div>
+
     </div>
 </div>
 
 <div id="SearchProblemsLibraryGrid"></div>
 <script type="text/javascript">
     $(function () {
-        var SearchEcontentsCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEcontentsOemLib$ = $('#SearchEcontentsOem');
+        var SearchEcontentsOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var SearchEcontentsCarLib$ = $('#SearchEcontentsCar');
-        var CarSource =
+        var oemSource =
         {
-            localdata: SearchEcontentsCarList,
+            localdata: SearchEcontentsOemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
-        SearchEcontentsCarLib$.jqxComboBox({ width: 250, height: 32, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchEcontentsOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        SearchEcontentsCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchEcontentsOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchEcontentsOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
 
-        $('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchEcontentsCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
+        $('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
 
         var SearchProblemsLibrarySource = {

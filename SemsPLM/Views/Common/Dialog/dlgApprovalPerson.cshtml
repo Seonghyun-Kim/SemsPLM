@@ -70,7 +70,6 @@
                                 person.setAttribute('OID', chkItems[index].id);
                                 person.setAttribute('Name', chkItems[index].label);
                                 person.setAttribute('Depart', chkItems[index].value);
-                                person.setAttribute('DepartOID', chkItems[index].parentId);
                                 person.innerHTML = chkItems[index].label + "<i class='fas fa-window-close'></i>";
                                 selMemList$.append(person);
                                 selMemList$.children('li').children('i').on('click', function () {

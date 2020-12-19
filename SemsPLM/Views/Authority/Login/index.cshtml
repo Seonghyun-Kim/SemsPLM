@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>우리산업 PLM</title>
+    <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Css/login.css" />
+    <script type="text/javascript" src="~/Resource/JQuery/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="~/Resource/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Resource/JQuery/jquery.form.min.js"></script>
+</head>
+<body>
+    <div class="l_top">
+        <h1><a href="#" title="MMA"><img src="~/images/logo_big.png" alt="semsLogo" /></a></h1>
+    </div>
+
+    <div class="login">
+        <div>
+            <input type="text" id="id" placeholder="User ID" /><br />
+            <input type="password" id="pwd" placeholder="Password" /><br />
+            <input type="button" id="check" value="LOGIN" />
+            <input type="hidden" id="hid" value="admin" />
+            <input type="hidden" id="hpwd" value="1234" />
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $('#check').on('click', function () {
+                var tryLoginID = $("#id").val();
+                var tryLoginPW = $("#pwd").val();
+
+                var param = {};
+                param.ID = tryLoginID;
+                param.Password = tryLoginPW;
+
+                $.post('/Authority/TryLogin', param, function (res) {
+                    if (res.isError) {
+                        alert(res.resultMessage);
+                        console.log(res);
+                        return false;
+                    }
+                    location.replace(res.url);
+                }).fail(function (err) {
+                    alert("시스템 오류가 발생하였습니다. 관리자에게 문의 부탁드립니다.");
+                    console.log(err);
+                })
+            });
+
+            $('#pwd, #id').on('keydown', function (e) {
+                if (e.keyCode === 13) $('#check').click();
+            });
+        });
+    </script>
+</body>
+</html>
