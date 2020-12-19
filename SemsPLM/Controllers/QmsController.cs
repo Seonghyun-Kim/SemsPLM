@@ -991,6 +991,7 @@ namespace SemsPLM.Controllers
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_UNFIT });
+            ViewBag.CurrentSt = Module.BPolicyNm;
             relLpa.ForEach(v => { ViewBag.LpaMeasureOID = v.ToOID; });
 
             // 콤보박스용
@@ -1195,6 +1196,7 @@ namespace SemsPLM.Controllers
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_UNFIT });
+            ViewBag.CurrentSt = Module.BPolicyNm;
             ViewBag.LpaUnfitOID = LpaUnfitOID;
 
             return View();
@@ -1290,8 +1292,15 @@ namespace SemsPLM.Controllers
         {
             ViewBag.QuickOID = _param.QuickOID;
             ViewBag.ModuleOID = _param.OID;
+            QuickResponseModule qmsCheckModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { QuickOID = _param.QuickOID, OID = _param.OID });
+            QmsCheck qmsCheck = new QmsCheck()
+            {
+                QuickOID = qmsCheckModule.QuickOID,
+                OID = qmsCheckModule.OID,
+                ModuleOID = qmsCheckModule.OID
+            };
 
-            return View("Dialog/dlgEditQuickValidation");
+            return View("Dialog/dlgEditQuickValidation", qmsCheck);
         }
 
         /// <summary>
@@ -1305,8 +1314,9 @@ namespace SemsPLM.Controllers
             ViewBag.QmsCheck = Module;
 
             ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK });
-
+            ViewBag.CurrentSt = Module.BPolicyNm;
             return View();
         }
         #endregion
@@ -1390,26 +1400,40 @@ namespace SemsPLM.Controllers
         #region -- 화면
         /// <summary>
         /// 2020.11.15
-        /// 작업자 교육 등록
+        /// 표준화 등록 화면
         /// </summary>
         /// <returns></returns>
         public ActionResult EditStandardFollowUp(StandardDoc _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
             ViewBag.ModuleOID = _param.OID;
+            QuickResponseModule standardDocModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { QuickOID = _param.QuickOID, OID = _param.OID });
+            StandardDoc standardDoc = new StandardDoc()
+            {
+                QuickOID = standardDocModule.QuickOID,
+                OID = standardDocModule.OID,
+                ModuleOID = standardDocModule.OID
+            };
 
-            return View("Dialog/dlgEditStandardFollowUp", _param);
+            return View("Dialog/dlgEditStandardFollowUp", standardDoc);
         }
 
         /// <summary>
         /// 2020.12.13
-        /// 작업자 교육 상세화면
+        /// 표준화 상세화면
         /// PFMEA, Drawing, ManagePlan, WorkStd, Inspect 문서타입이 정해지면 추가 작업 진행 예정
         /// </summary>
         /// <returns></returns>
         public ActionResult InfoStandardFollowUp(int? OID)
         {
-            ViewBag.ModuleOID = OID;
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            StandardDoc standardDoc = StandardDocRepository.SelStandardDoc(new StandardDoc() { ModuleOID = OID });
+            if (standardDoc == null)
+            {
+                standardDoc = new StandardDoc();
+                standardDoc.OID = OID;
+                standardDoc.ModuleOID = OID;
+            }
 
             /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
             // TEST
@@ -1426,8 +1450,12 @@ namespace SemsPLM.Controllers
                     DocCompleteDt = DateTime.Now,
                 });
             }
+
+            ViewBag.StandardDoc = standardDoc;
             ViewBag.StandardDocDetail = StandardDocs.ToList();
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });
+            ViewBag.CurrentSt = Module.BPolicyNm;
 
             return View();
         }
@@ -1514,12 +1542,19 @@ namespace SemsPLM.Controllers
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditWorkerEducation(int? QuickOID, int? OID)
+        public ActionResult EditWorkerEducation(WorkerEdu _param)
         {
-            ViewBag.QuickOID = QuickOID;
-            ViewBag.ModuleOID = OID;
+            ViewBag.QuickOID = _param.QuickOID;
+            ViewBag.ModuleOID = _param.OID;
+            QuickResponseModule workerEduModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { QuickOID = _param.QuickOID, OID = _param.OID });
+            WorkerEdu workerEdu = new WorkerEdu()
+            {
+                QuickOID = workerEduModule.QuickOID,
+                OID = workerEduModule.OID,
+                ModuleOID = workerEduModule.OID
+            };
 
-            return View("Dialog/dlgEditWorkerEducation");
+            return View("Dialog/dlgEditWorkerEducation", workerEdu);
         }
 
         /// <summary>
@@ -1530,11 +1565,18 @@ namespace SemsPLM.Controllers
         public ActionResult InfoWorkerEducation(int? OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
-            ViewBag.WorkerEdu = Module;
+            WorkerEdu workerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = OID });
+            if (workerEdu == null)
+            {
+                workerEdu = new WorkerEdu();
+                workerEdu.OID = OID;
+                workerEdu.ModuleOID = OID;
+            }
 
-            ViewBag.WorkerEduDetail = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { OID = OID });
+            ViewBag.WorkerEdu = workerEdu;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
-
+            ViewBag.CurrentSt = Module.BPolicyNm;
             return View();
         }
         #endregion

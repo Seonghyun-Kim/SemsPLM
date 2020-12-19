@@ -14,7 +14,7 @@
         <div class="project_basic clearfix">
             <div class="basic_info">
                 <h3>유효성 검증</h3>
-                <p>제 목 : <span></span></p>
+                <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
             </div>
             <div class="basic_image">
                 <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
@@ -46,9 +46,10 @@
                 <tbody>
                     <tr>
                         <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
-                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
                             <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
                             <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i> 결재</button>
                         </td>
                     </tr>
                 </tbody>
@@ -99,6 +100,11 @@
 <script type="text/javascript">
     var QmsCheckList = @Html.Raw(Json.Encode(ViewBag.QmsCheckItems));
     $(document).ready(function () {
+        if ("@ViewBag.CurrentSt" === "Started") {
+            $("InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID").css("display", "inline-block");
+            $("InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID").css("display", "inline-block");
+        }
+
         const QmsCheckOID = '@ViewBag.QmsCheck.OID';
         PrintQmsCheck();
 
@@ -180,6 +186,12 @@
             }).fail(function (err) {
                 alert(err.responseText);
             });
+        });
+
+        $('#InfoQuickValidation_ApprovalBtn_' + QmsCheckOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: QmsCheckOID }, '/Common/Approval', '결재');
         });
     });
 

@@ -528,6 +528,7 @@
     <select id="SelDetectCounterMeasure" parameterClass="DetectCounterMeasure" resultClass="DetectCounterMeasure">
       SELECT A.ModuleOID, A.DetectM, B.BPolicyOID, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
       FROM T_DQMS_DETECT_COUNTERMEASURE A
+      LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="ModuleOID">
           A.ModuleOID = #ModuleOID#
@@ -580,6 +581,7 @@
       A.*
       ,B.OID
       ,B.Name
+      ,B.BPolicyOID
       ,B.Description
       ,C.Name AS EduUserNm
       ,C.Description
@@ -639,6 +641,7 @@
       SELECT
       A.*
       , B.Name
+      , B.BPolicyOID
       , B.Description
       , C.Name AS CheckUserNm
       FROM T_DQMS_CHECK A

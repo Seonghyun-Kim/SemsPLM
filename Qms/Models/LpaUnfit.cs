@@ -63,8 +63,15 @@ namespace Qms.Models
         public List<HttpFile> delFiles { get; set; }
 
         public List<LpaUnfitCheck> LpaUnfitChecks { get; set; }
-    
 
+        #region
+        // 현재 Object 상태
+        public string CurrentNm { get; set; }
+        public int? CurrentStOID { get; set; }
+        public string CurrentStNm { get; set; }
+        public int? CurrentStOrd { get; set; }
+
+        #endregion
     }
 
     public static class LpaUnfitRepository
