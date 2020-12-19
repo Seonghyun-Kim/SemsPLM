@@ -42,6 +42,8 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
+                @if (ViewBag.ErrorProof.BPolicyOID == 73)
+                {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
@@ -55,6 +57,7 @@
                         </tr>
                     </tbody>
                 </table>
+                }
 
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
@@ -66,7 +69,7 @@
                     <tr>
                         <th>예정일자</th>
                         <td>
-                            <div id="dtDlgEditErrorProofEstDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly" ></div>
+                            <div id="dtDlgEditErrorProofEstDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly"></div>
                         </td>
                         <th>처리일자</th>
                         <td>
@@ -126,7 +129,7 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).jqxButton();
+        //$("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).jqxButton();
         $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + ErrorProofOID);
 
@@ -142,7 +145,7 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).jqxButton();
+        //$("#InfoErrorProof_SaveBtn_" + ErrorProofOID).jqxButton();
         $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).on("click", function () {
             var param = {};
             param.OID = ErrorProofOID;

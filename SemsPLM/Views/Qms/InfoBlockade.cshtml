@@ -41,21 +41,25 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div style="overflow-y:scroll;height:668px;padding-top:45px;box-sizing:border-box;">
+        <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
             <div id="properties" class="basic_grid">
-                <table class="tableTopButtonBox infoTopFix" style="width:1673px;">
+                @if (ViewBag.Blockade.BPolicyOID == 58)
+                {
+                <table class="tableTopButtonBox infoTopFix" style="width:1673px;padding-top:45px;">
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoBlockade_defaultBtn_@ViewBag.Blockade.OID">
+
                                 <button id="InfoBlockade_EditBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                @*<button id="InfoBlockade_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
                                 <button id="InfoBlockade_EditCancleBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
                                 <button id="InfoBlockade_SaveBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
                                 <button id="InfoBlockade_ApprovalBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                                    
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                }
                 @*@{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.Blockade.QuickOID });}*@
 
 
@@ -151,7 +155,6 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).jqxButton();
         $("#InfoBlockade_EditCancleBtn_" + BlockadeOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + BlockadeOID);
 
@@ -167,7 +170,6 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoBlockade_SaveBtn_" + BlockadeOID).jqxButton();
         $('#InfoBlockade_SaveBtn_' + BlockadeOID).on("click", function () {
             var param = {};
             param.OID =  '@ViewBag.Blockade.OID';
@@ -186,7 +188,7 @@
                 data.ActStartDt = $($(v).find("[name='ActStartDt']")[0]).val();
                 data.ActEndDt = $($(v).find("[name='ActEndDt']")[0]).val();
 
-                var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + param.OID + "']")[0];
+                var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + data.OID + "']")[0];
 
                 data.SortSuitableCnt = $($(trCorrectiveAction$).find("[name='SortSuitableCnt']")[0]).val();
                 data.SortIncongruityCnt = $($(trCorrectiveAction$).find("[name='SortIncongruityCnt']")[0]).val();
@@ -207,17 +209,6 @@
                 param.delFiles = removeFiles;
             }
 
-
-            //$.post('/Qms/SaveQuickBlockade', { param: param }, function (response) {
-            //    if (response.isError) {
-            //        alert(response.resultMessage);
-            //        return;
-            //    }
-            //    alert("저장되었습니다.");
-            //}).fail(function (err) {
-            //    alert(err.responseText);
-            //});
-
             SendDataWithFile("/Qms/SaveQuickBlockade", param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
@@ -236,6 +227,11 @@
 
         
     });
+
+    // 필수값 체크
+    function BlockadeRequireValid() {
+
+    }
 
     function PrintBlockade(v) {
         var tr$ = document.createElement("tr");
@@ -279,6 +275,9 @@
         txtTargetCnt$.className = "Modifiable_@ViewBag.Blockade.OID";     
         txtTargetCnt$.setAttribute("readonly", "readonly");   
         txtTargetCnt$.setAttribute("AttrType", "TEXT");
+        $(txtTargetCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdTargetCnt$.appendChild(txtTargetCnt$);
         /*
           <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
@@ -419,6 +418,9 @@
         txtSortSuitableCnt$.setAttribute("AttrType", "TEXT");
         txtSortSuitableCnt$.style.width = "100%";
         txtSortSuitableCnt$.value = v.SortSuitableCnt;   
+        $(txtSortSuitableCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdSortSuitableCnt$.appendChild(txtSortSuitableCnt$);
 
         var tdSortIncongruityCnt$ = document.createElement("td");
@@ -429,6 +431,9 @@
         txtSortIncongruityCnt$.value = v.SortIncongruityCnt;
         txtSortIncongruityCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
         txtSortIncongruityCnt$.setAttribute("AttrType", "TEXT");
+        $(txtSortIncongruityCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdSortIncongruityCnt$.appendChild(txtSortIncongruityCnt$);
 
         var tdReworkCnt$ = document.createElement("td");
@@ -439,6 +444,9 @@
         txtReworkCnt$.value = v.ReworkCnt;
         txtReworkCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
         txtReworkCnt$.setAttribute("AttrType", "TEXT");         
+        $(txtReworkCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdReworkCnt$.appendChild(txtReworkCnt$);
 
         var tdDisuseCnt$ = document.createElement("td");
@@ -448,7 +456,10 @@
         txtDisuseCnt$.style.width = "100%";
         txtDisuseCnt$.value = v.DisuseCnt;
         txtDisuseCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
-        txtDisuseCnt$.setAttribute("AttrType", "TEXT");                 
+        txtDisuseCnt$.setAttribute("AttrType", "TEXT");       
+        $(txtDisuseCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdDisuseCnt$.appendChild(txtDisuseCnt$);
 
         var tdSpecialCnt$ = document.createElement("td");
@@ -458,7 +469,10 @@
         txtSpecialCnt$.style.width = "100%";
         txtSpecialCnt$.value = v.SpecialCnt;
         txtSpecialCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
-        txtSpecialCnt$.setAttribute("AttrType", "TEXT");                
+        txtSpecialCnt$.setAttribute("AttrType", "TEXT");           
+        $(txtSpecialCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdSpecialCnt$.appendChild(txtSpecialCnt$);
 
         var tdEtcCnt$ = document.createElement("td");
@@ -469,6 +483,9 @@
         txtEtcCnt$.value = v.EtcCnt;
         txtEtcCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
         txtEtcCnt$.setAttribute("AttrType", "TEXT");          
+        $(txtEtcCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
         tdEtcCnt$.appendChild(txtEtcCnt$);
 
         var tdDesc$ = document.createElement("td");

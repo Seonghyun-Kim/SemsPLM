@@ -575,15 +575,23 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
-                _params.ForEach(v =>
+                QuickResponseModule blockade = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = _params[0].QuickOID, ModuleType = QmsConstant.TYPE_BLOCKADE });
+              
+                if(!(blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_PREPARE || blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED))
                 {
+                    throw new Exception("봉쇄조치가 진행중인관계로 일정을 수정 할 수 없습니다.");
+                }
+
+                _params.ForEach(v =>
+                {                    
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
                     DObject dObject = DObjectRepository.SelDObject(Session, v);
 
                     if (dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
                     {
-
+                        dObject.BPolicyOID = 58; // 작성중으로 변경
+                        DObjectRepository.UdtDObject(Session, dObject);
                     }
                 });
 

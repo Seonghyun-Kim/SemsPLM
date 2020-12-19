@@ -42,6 +42,8 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
+            @if (ViewBag.OccurrenceCause.BPolicyOID == 63)
+            {
             <table class="tableTopButtonBox">
                 <tbody>
                     <tr>
@@ -55,6 +57,7 @@
                     </tr>
                 </tbody>
             </table>
+            }
 
             <label><i class="fas fa-search-plus"></i> 원인분석</label>
             <table id="tbOccurrenceCause_@ViewBag.OccurrenceCause.OID" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
@@ -206,7 +209,7 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).jqxButton();
+        //$("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).jqxButton();
         $("#InfoOccurrenceCause_EditCancleBtn_" + OccurrenceCauseOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + OccurrenceCauseOID);
 
@@ -222,7 +225,7 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoOccurrenceCause_SaveBtn_" + OccurrenceCauseOID).jqxButton();
+        //$("#InfoOccurrenceCause_SaveBtn_" + OccurrenceCauseOID).jqxButton();
         $('#InfoOccurrenceCause_SaveBtn_' + OccurrenceCauseOID).on("click", function () {
             var param = {};
             param.OID =  '@ViewBag.OccurrenceCause.OID';
