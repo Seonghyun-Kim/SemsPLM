@@ -42,19 +42,21 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
+                @if (ViewBag.LpaMeasure.BPolicyOID == 83)
+                {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoLpaMeasure_defaultBtn_@ViewBag.LpaMeasure.OID">
-                                <button id="InfoLpaMeasure_EditBtn_@ViewBag.LpaMeasure.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
-                                @*<button id="InfoLpaMeasure_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                                <button id="InfoLpaMeasure_EditCancleBtn_@ViewBag.LpaMeasure.OID" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoLpaMeasure_SaveBtn_@ViewBag.LpaMeasure.OID" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoLpaMeasure_EditBtn_@ViewBag.LpaMeasure.OID" class="custom-button" ><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoLpaMeasure_EditCancleBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoLpaMeasure_SaveBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
                                 <button id="InfoLpaMeasure_ApprovalBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                }
 
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
@@ -107,11 +109,7 @@
     </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        if ("@ViewBag.CurrentSt" === "Started") {
-            $("InfoLpaMeasure_EditBtn_@ViewBag.LpaMeasure.OID").css("display", "inline-block");
-        }
-
+    $(document).ready(function () {      
         const LpaMeasureOID = '@ViewBag.LpaMeasure.OID';
         var fileUpload = $("#InfoLpaMeasure_FileList_" + LpaMeasureOID).FileUpload({ OID: LpaMeasureOID });
 
@@ -137,7 +135,6 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).jqxButton();
         $("#InfoLpaMeasure_EditCancleBtn_" + LpaMeasureOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + LpaMeasureOID);
 
@@ -153,7 +150,6 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).jqxButton();
         $("#InfoLpaMeasure_SaveBtn_" + LpaMeasureOID).on("click", function () {
             var param = {};
             param.OID = LpaMeasureOID;
@@ -206,6 +202,12 @@
             }).fail(function (err) {
                 alert(err.responseText);
             });
+        });
+
+        $("#InfoLpaMeasure_ApprovalBtn_" + LpaMeasureOID).on("click", function () {
+             OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: LpaMeasureOID }, '/Common/Approval', '결재');
         });
 
         var LpaUnfitCheck = @Html.Raw(Json.Encode(ViewBag.LpaUnfitCheck));

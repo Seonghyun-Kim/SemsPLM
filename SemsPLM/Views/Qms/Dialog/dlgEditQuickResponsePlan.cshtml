@@ -13,191 +13,196 @@
         <input type="hidden" id="hiddenDlgStandardOID" value="@ViewBag.Standard.OID" />
         <input type="hidden" id="hiddenDlgWorkerEduOID" value="@ViewBag.WorkerEdu.OID" />
     </div>
-<div class="qmsDlgTable">
-    <div style="width:100%;text-align:right;padding-right:10px;position:relative;">
-        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
-        <button id="btnDlgConfirm" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 확정</button>
+    <div class="qmsDlgTable">
+        @if (Model.PlanUserOID == Convert.ToInt32(Session["UserOID"]))
+        {
+            <div style="width:100%;text-align:right;position:relative;margin-bottom:10px;">
+                <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+            </div>
+        }
+
+
+        @{Html.RenderAction("QuickResponseSummary", "Qms");}
+
+        <label><i class="fas fa-toggle-on"></i> 신속대응</label>
+        <table class="infoTable" style="table-layout:fixed;">
+
+            <colgroup>
+                <col style="width:140px;" />
+                <col style="width:auto;" />
+                <col style="width:160px;" />
+                <col style="width:160px;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>Yes/No</th>
+                    <th>항목명</th>
+                    <th>예정일자</th>
+                    <th>처리담당자</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
+                            <div id="btnBlockadeUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">봉쇄조치</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgBloackAdePlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgBlockAdePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgBlockAdePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.Blockade.ChargeUserOID" value="@ViewBag.Blockade.ChargeUserNm" />
+                            <button id="btnDlgBlockAdePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgBlockAdePlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
+                            <div id="btnOccurrenceCauseUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">발생원인분석</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgOccurrenceCausePlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgOccurrenceCausePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgOccurrenceCausePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.OccurrenceCause.ChargeUserOID" value="@ViewBag.OccurrenceCause.ChargeUserNm" />
+                            <button id="btnDlgOccurrenceCausePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgOccurrenceCausePlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnImproveCountermeasureUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">개선대책</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgImproveCountermeasurePlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgImproveCountermeasurePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgImproveCountermeasurePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.ImproveCountermeasure.ChargeUserOID" value="@ViewBag.ImproveCountermeasure.ChargeUserNm" />
+                            <button id="btnDlgImproveCountermeasurePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgImproveCountermeasurePlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnErrorProofUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">Eroor Proof</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgErrorProofPlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.ErrorProof.ChargeUserOID" value="@ViewBag.ErrorProof.ChargeUserNm" />
+                            <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgErrorProofPlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnLpaUnfitUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">LPA 확인</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgLpaUnfitPlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgLpaUnfitPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgLpaUnfitPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.Lpa.ChargeUserOID" value="@ViewBag.Lpa.ChargeUserNm" />
+                            <button id="btnDlgLpaUnfitPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgLpaUnfitPlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnCheckUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">유효성 검증</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgCheckPlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgCheckPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgCheckPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.Check.ChargeUserOID" value="@ViewBag.Check.ChargeUserNm" />
+                            <button id="btnDlgCheckPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgCheckPlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnStandardUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">표준화 & Follow-Up </label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgStandardPlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgStandardPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgStandardPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.Standard.ChargeUserOID" value="@ViewBag.Standard.ChargeUserNm" />
+                            <button id="btnDlgStandardPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgStandardPlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
+                            <div id="btnWorkerEduUseFl"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <label class="lbText">작업자 교육</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtDlgWorkerEduPlanDt" />
+                    </td>
+                    <td>
+                        <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
+                            <input type="text" id="txtDlgWorkerEduPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
+                            <input type="text" id="txtDlgWorkerEduPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" UserOID="@ViewBag.WorkerEdu.ChargeUserOID" value="@ViewBag.WorkerEdu.ChargeUserNm" />
+                            <button id="btnDlgWorkerEduPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgWorkerEduPlanUserNm');"><i class="fas fa-search"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    @{Html.RenderAction("QuickResponseSummary", "Qms");}
-<label><i class="fas fa-toggle-on"></i> 신속대응</label>
-    <table class="infoTable" style="table-layout:fixed;">
-        
-        <colgroup>
-            <col style="width:120px;" />
-            <col style="width:auto;" />
-            <col style="width:160px;" />
-            <col style="width:160px;" />
-        </colgroup>
-        <tbody>
-            <tr>
-                <th>Yes/No</th>
-                <th>항목명</th>
-                <th>예정일자</th>
-                <th>처리담당자</th>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
-                        <div id="btnBlockadeUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">봉쇄조치</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgBloackAdePlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgBlockAdePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgBlockAdePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Blockade.ChargeUserNm" />
-                        <button id="btnDlgBlockAdePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgBlockAdePlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:center;">
-                        <div id="btnOccurrenceCauseUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">발생원인분석</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgOccurrenceCausePlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgOccurrenceCausePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgOccurrenceCausePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.OccurrenceCause.ChargeUserNm" />
-                        <button id="btnDlgOccurrenceCausePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgOccurrenceCausePlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnImproveCountermeasureUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">개선대책</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgImproveCountermeasurePlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgImproveCountermeasurePlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgImproveCountermeasurePlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ImproveCountermeasure.ChargeUserNm" />
-                        <button id="btnDlgImproveCountermeasurePlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgImproveCountermeasurePlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnErrorProofUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">Eroor Proof</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgErrorProofPlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgErrorProofPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgErrorProofPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.ErrorProof.ChargeUserNm" />
-                        <button id="btnDlgErrorProofPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgErrorProofPlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnLpaUnfitUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">LPA 확인</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgLpaUnfitPlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgLpaUnfitPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgLpaUnfitPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Lpa.ChargeUserNm" />
-                        <button id="btnDlgLpaUnfitPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgLpaUnfitPlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnCheckUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">유효성 검증</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgCheckPlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgCheckPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgCheckPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Check.ChargeUserNm" />
-                        <button id="btnDlgCheckPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgCheckPlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnStandardUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">표준화 & Follow-Up </label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgStandardPlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgStandardPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgStandardPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.Standard.ChargeUserNm" />
-                        <button id="btnDlgStandardPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgStandardPlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div style="display: flex;flex-direction: row;align-content: center;justify-content: center;">
-                        <div id="btnWorkerEduUseFl"></div>
-                    </div>
-                </td>
-                <td>
-                    <label class="lbText">작업자 교육</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDlgWorkerEduPlanDt" />
-                </td>
-                <td>
-                    <div style="display:flex;flex-direction:row;align-content:center;justify-content:space-between;width:100%;">
-                        <input type="text" id="txtDlgWorkerEduPlanUserID" class="txtBox" style="width:70px;border:1px solid #CECCCC;display:none;" readonly="readonly" />
-                        <input type="text" id="txtDlgWorkerEduPlanUserNm" class="txtBox" style="width:90px;border:1px solid #CECCCC;" readonly="readonly" value="@ViewBag.WorkerEdu.ChargeUserNm" />
-                        <button id="btnDlgWorkerEduPlanUserSearch" class="searchBtn custom-button" onclick="SelectModulePlanUser('txtDlgWorkerEduPlanUserNm');"><i class="fas fa-search"></i></button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
 <script type="text/javascript">
     $(document).ready(function () {

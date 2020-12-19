@@ -158,6 +158,8 @@ namespace Qms.Models
 
         public string CreateUsNm { get; set; }
 
+        public int? PlanUserOID { get; set; }
+
         public string PlanUserNm { get; set; }
 
 
@@ -165,7 +167,7 @@ namespace Qms.Models
 
         public string ModuleBlockadeStatusNm { get; set; }
 
-        public bool ModuleBlockadeFl { get; set; }
+        public int? ModuleBlockadeFl { get; set; }
 
         public int? ModuleBlockadeChargeUserOID { get; set; }
 
@@ -178,7 +180,7 @@ namespace Qms.Models
 
         public string ModuleOccurrenceCauseStatusNm { get; set; }
 
-        public bool ModuleOccurrenceCauseFl { get; set; }
+        public int? ModuleOccurrenceCauseFl { get; set; }
 
         public int? ModuleOccurrenceCauseChargeUserOID { get; set; }
 
@@ -191,7 +193,7 @@ namespace Qms.Models
 
         public string ModuleImproveCountermeasureStatusNm { get; set; }
 
-        public bool ModuleImproveCountermeasureFl { get; set; }
+        public int? ModuleImproveCountermeasureFl { get; set; }
 
         public int? ModuleImproveCountermeasureChargeUserOID { get; set; }
 
@@ -204,7 +206,7 @@ namespace Qms.Models
 
         public string ModuleErrorProofStatusNm { get; set; }
 
-        public bool ModuleErrorProofFl { get; set; }
+        public int? ModuleErrorProofFl { get; set; }
 
         public int? ModuleErrorProofChargeUserOID { get; set; }
 
@@ -217,7 +219,7 @@ namespace Qms.Models
 
         public string ModuleLpaStatusNm { get; set; }
 
-        public bool ModuleLpaFl { get; set; }
+        public int? ModuleLpaFl { get; set; }
 
         public int? ModuleLpaChargeUserOID { get; set; }
 
@@ -230,7 +232,7 @@ namespace Qms.Models
 
         public string ModuleCheckStatusNm { get; set; }
 
-        public bool ModuleCheckFl { get; set; }
+        public int? ModuleCheckFl { get; set; }
 
         public int? ModuleCheckChargeUserOID { get; set; }
 
@@ -243,7 +245,7 @@ namespace Qms.Models
 
         public string ModuleStandardStatusNm { get; set; }
 
-        public bool ModuleStandardFl { get; set; }
+        public int? ModuleStandardFl { get; set; }
 
         public int? ModuleStandardChargeUserOID { get; set; }
 
@@ -256,7 +258,7 @@ namespace Qms.Models
 
         public string ModuleWorkerEduStatusNm { get; set; }
 
-        public bool ModuleWorkerEduFl { get; set; }
+        public int? ModuleWorkerEduFl { get; set; }
 
         public int? ModuleWorkerEduChargeUserOID { get; set; }
 
@@ -275,6 +277,7 @@ namespace Qms.Models
             this.PartGrpNm = response.PartGrpNm;
             this.Title = response.Title;
             this.CreateUsNm = response.CreateUsNm;
+            this.PlanUserOID = response.PlanUserOID;
             this.PlanUserNm = response.PlanUserNm;
         }
     }
@@ -321,7 +324,7 @@ namespace Qms.Models
         public int? QuickOID { get; set; }
 
         // 모듈 사용유무 
-        public bool ModuleFl { get; set; }
+        public int? ModuleFl { get; set; }
 
         public string ModuleType { get; set; }
 

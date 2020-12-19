@@ -42,6 +42,8 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
+                @if (ViewBag.ErrorProof.BPolicyOID == 73)
+                {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
@@ -55,6 +57,7 @@
                         </tr>
                     </tbody>
                 </table>
+                }
 
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
@@ -66,7 +69,7 @@
                     <tr>
                         <th>예정일자</th>
                         <td>
-                            <div id="dtDlgEditErrorProofEstDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly" ></div>
+                            <div id="dtDlgEditErrorProofEstDt_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="DATE" readonly="readonly"></div>
                         </td>
                         <th>처리일자</th>
                         <td>
@@ -126,7 +129,7 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).jqxButton();
+        //$("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).jqxButton();
         $("#InfoErrorProof_EditCancleBtn_" + ErrorProofOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + ErrorProofOID);
 
@@ -142,15 +145,11 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).jqxButton();
+        //$("#InfoErrorProof_SaveBtn_" + ErrorProofOID).jqxButton();
         $("#InfoErrorProof_SaveBtn_" + ErrorProofOID).on("click", function () {
             var param = {};
             param.OID = ErrorProofOID;
             param.ModuleOID = ErrorProofOID;
-            param.EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
-            param.ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
-            param.CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
-            param.CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
 
             var Files = fileUpload.Files();
 
@@ -170,6 +169,37 @@
             }).fail(function (err) {
                 alert(err.responseText);
             });
+        });
+
+        $("#InfoErrorProof_ApprovalBtn_" + ErrorProofOID).on("click", function () {
+            var EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
+            var ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
+            var CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
+            var CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
+
+            if (WebUtils.isEmpty(EstDt)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(ActDt)) {
+                alert("처리일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(CheckDetail)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+            
+            if (WebUtils.isEmpty(CheckUserOID)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ErrorProofOID }, '/Common/Approval', '결재');
         });
 
         var dtDlgEditErrorProofEstDt$ = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID);

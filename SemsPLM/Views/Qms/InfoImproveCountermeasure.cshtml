@@ -42,6 +42,8 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
+                @if (ViewBag.ImproveCounterMeasure.BPolicyOID == 68)
+                {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
@@ -55,6 +57,7 @@
                         </tr>
                     </tbody>
                 </table>
+                }
 
                 <table id="tbImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
@@ -106,7 +109,7 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoImproveCounterMeasure_EditCancleBtn_" + ImproveCounterMeasureOID).jqxButton();
+        //$("#InfoImproveCounterMeasure_EditCancleBtn_" + ImproveCounterMeasureOID).jqxButton();
         $("#InfoImproveCounterMeasure_EditCancleBtn_" + ImproveCounterMeasureOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + ImproveCounterMeasureOID);
 
@@ -122,7 +125,7 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoImproveCounterMeasure_SaveBtn_" + ImproveCounterMeasureOID).jqxButton();
+        //$("#InfoImproveCounterMeasure_SaveBtn_" + ImproveCounterMeasureOID).jqxButton();
         $("#InfoImproveCounterMeasure_SaveBtn_" + ImproveCounterMeasureOID).on("click", function () {
             var param = {};
             param.OID = ImproveCounterMeasureOID;
@@ -193,6 +196,12 @@
             $('.Modifiable_' + @ViewBag.ImproveCounterMeasure.OID).parent().css('position', 'relative');
 
             $('.Modifiable_' + @ViewBag.ImproveCounterMeasure.OID).parent().append(modifyTag);
+        });
+
+        $("#InfoImproveCounterMeasure_ApprovalBtn_" + ImproveCounterMeasureOID).on("click", function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: ImproveCounterMeasureOID }, '/Common/Approval', '결재');
         });
 
 

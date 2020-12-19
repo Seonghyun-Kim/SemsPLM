@@ -42,21 +42,33 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
+                @if (ViewBag.LpaUnfit.BPolicyOID == 78)
+                {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
-                                <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
-                                @*<button id="InfoLpaUnfit_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                                <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i> 확정</button>
-                                <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
+                                <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 확정</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
+                }
+                else
+                {
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
+                                <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                }
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
                         <col style="width:180px;" />
@@ -68,7 +80,7 @@
                         <tr>
                             <th>Layer</th>
                             <td>
-                                <div id="comboDlgEditLPAIncongruityLayerLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO" ></div>
+                                <div id="comboDlgEditLPAIncongruityLayerLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
                             </td>
                             <th>감사주기</th>
                             <td>
@@ -90,7 +102,7 @@
                             <td>
                                 <div style="display:flex;">
                                     <input type="text" id="txtDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID" style="width:120px;" readonly="readonly" LpaCheckUserOID="@ViewBag.LpaUnfit.LpaCheckUserOID" value="@ViewBag.LpaUnfit.LpaCheckUserNm" />
-                                    <button id="btnDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID"  class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
+                                    <button id="btnDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
                             <th>확인공정</th>
@@ -101,11 +113,11 @@
                         <tr>
                             <th>심사일자</th>
                             <td>
-                                <div id="dtDlgEditLPAIncongruityLpaCheckDt_@ViewBag.LpaUnfit.OID"  class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="DATE"></div>
+                                <div id="dtDlgEditLPAIncongruityLpaCheckDt_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="DATE"></div>
                             </td>
                             <th>설비명</th>
                             <td>
-                                <input type="text" id="txtDlgEditLPAIncongruityEquipmentNm_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="TEXT" readonly="readonly" style="width:100%;" value="@ViewBag.LpaUnfit.EquipmentNm"  />
+                                <input type="text" id="txtDlgEditLPAIncongruityEquipmentNm_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="TEXT" readonly="readonly" style="width:100%;" value="@ViewBag.LpaUnfit.EquipmentNm" />
                             </td>
                         </tr>
                         <tr>
@@ -113,7 +125,7 @@
                             <td colspan="3">
                                 <div style="display:flex;">
                                     <input type="text" id="txtDlgEditLPAIncongruityPartNm_@ViewBag.LpaUnfit.OID" style="width:120px;margin-left:10px;" readonly="readonly" value="@ViewBag.LpaUnfit.PartOID" />
-                                    <input type="text" id="txtDlgEditLPAIncongruityPartCd_@ViewBag.LpaUnfit.OID" style="width:120px;margin-left:10px;" readonly="readonly" PartOID="@ViewBag.LpaUnfit.PartOID"  value="@ViewBag.LpaUnfit.PartNm" />
+                                    <input type="text" id="txtDlgEditLPAIncongruityPartCd_@ViewBag.LpaUnfit.OID" style="width:120px;margin-left:10px;" readonly="readonly" PartOID="@ViewBag.LpaUnfit.PartOID" value="@ViewBag.LpaUnfit.PartNm" />
                                     <button id="btnDlgEditLPAIncongruityPart_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
@@ -135,7 +147,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                     </tbody>
                                 </table>
                             </td>
@@ -151,7 +162,7 @@
                             <th>대책서 담당자</th>
                             <td>
                                 <div style="display:flex;">
-                                    <input type="text" id="txtDlgEditLPAIncongruityMeasureUser_@ViewBag.LpaUnfit.OID" style="width:120px;" readonly="readonly" MeasureUserOID="@ViewBag.LpaUnfit.MeasureUserOID" value="@ViewBag.LpaUnfit.MeasureUserNm"/>
+                                    <input type="text" id="txtDlgEditLPAIncongruityMeasureUser_@ViewBag.LpaUnfit.OID" style="width:120px;" readonly="readonly" MeasureUserOID="@ViewBag.LpaUnfit.MeasureUserOID" value="@ViewBag.LpaUnfit.MeasureUserNm" />
                                     <button id="btnDlgEditLPAIncongruityMeasureUser_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
@@ -160,11 +171,10 @@
                             <th>완료예정일</th>
                             <td>
                                 <div id="dtDlgEditLPAIncongruityEstDt_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="DATE"></div>
-                            </td>                          
-                            <td colspan="2">
-                               
                             </td>
-                        </tr>                       
+                            <td colspan="2">
+                            </td>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -178,13 +188,7 @@
     </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        if ("@ViewBag.CurrentSt" === "Started") {
-            $("InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
-            $("InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
-            $("InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").css("display", "inline-block");
-        }
-
+    $(document).ready(function () {  
         const LpaUnfitOID = '@ViewBag.LpaUnfit.OID';
         var fileUpload = $("#InfoLpaUnfit_FileList_" + LpaUnfitOID).FileUpload({ OID: LpaUnfitOID });
 
@@ -210,7 +214,6 @@
             fileUpload.EditMode();
         });
 
-        $("#InfoLpaUnfit_EditCancleBtn_" + LpaUnfitOID).jqxButton();
         $("#InfoLpaUnfit_EditCancleBtn_" + LpaUnfitOID).on("click", function () {
             var ModifyAttr = $('.Modifiable_' + LpaUnfitOID);
 
@@ -226,7 +229,6 @@
             fileUpload.ReadOnlyMode();
         });
 
-        $("#InfoLpaUnfit_SaveBtn_" + LpaUnfitOID).jqxButton();
         $("#InfoLpaUnfit_SaveBtn_" + LpaUnfitOID).on("click", function () {
             var param = {};
             param.LpaUnfitChecks = [];
@@ -315,7 +317,48 @@
             });
         });
 
-        $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").jqxButton();
+        $("#InfoLpaUnfit_ConfirmBtn_" + LpaUnfitOID).on("click", function () {
+            var LayerLibOID = comboLayerLib$.jqxComboBox("getSelectedItem").value;
+            var AuditLibOID = comboAuditLib$.jqxComboBox("getSelectedItem").value;
+            var LpaGrpLibOID = comboLpaGrpLib$.jqxComboBox("getSelectedItem").value;
+            var LpaUseLibOID = comboLpaUseLib$.jqxComboBox("getSelectedItem").value;
+            var LpaCheckProcessLibOID = comboLpaCheckProcessLib$.jqxComboBox("getSelectedItem").value;
+
+            if (LayerLibOID == undefined || LayerLibOID == null) {
+                alert("레이어를 선택 해주세요.");
+                return;
+            }
+
+            if (AuditLibOID == undefined || AuditLibOID == null) {
+                alert("감사주기를 선택 해주세요.");
+                return;
+            }
+
+            if (LpaGrpLibOID == undefined || LpaGrpLibOID == null) {
+                alert("그룹군을 선택 해주세요.");
+                return;
+            }
+
+            if (LpaUseLibOID == undefined || LpaUseLibOID == null) {
+                alert("사용구분을 선택 해주세요.");
+                return;
+            }
+
+            if (LpaCheckProcessLibOID == undefined || LpaCheckProcessLibOID == null) {
+                alert("확인공정을 선택 해주세요.");
+                return;
+            }
+
+             RequestData('/Qms/ConfirmQuickLpaUnfit', { ModuleOID: LpaUnfitOID, OID: LpaUnfitOID }, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("확정되었습니다.");
+                PageReload();
+            });
+        });
+
         $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {
             var linkName = "[" + "@ViewBag.QuickDetail.Title" + "] LPA 대책서 등록";
             var linkUrl = '/Qms/InfoLpaMeasure?OID=' + "@ViewBag.LpaMeasureOID";

@@ -81,9 +81,12 @@
                     <td><div id="cbDlgInduce"></div></td>
                     <th><label class="lbText">귀책구분</label></th>
                     <td>
-                        <div id="cbDlgImpute"></div>
-                        <div id="cbDlgImputeDepartment" style="display:none;"></div>
-                        <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;" />
+                        <div style="display:flex;flex-direction:row;">
+                            <div id="cbDlgImpute"></div>
+                            <div id="cbDlgImputeDepartment" style="display:none;"></div>
+                            <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;width:140px;height:30px;" readonly="readonly" />
+                            <button id="btnImputeSaerchSupplier" class="custom-button" style="display:none;height:30px;" ><i class="fas fa-search"></i> 검색</button>
+                        </div>                      
                     </td>
                 </tr>
                 <tr>
@@ -182,7 +185,23 @@
         $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
         $("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-       
+
+        $("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: null, displayMember: "text", valueMember: "value", width: 160, height: 30 });
+
+        $("#cbDlgImpute").on('select', function (event) {
+            var args = event.args;
+            if (args.item.label === "자체") {
+                $("#cbDlgImputeDepartment").css("display", "block");
+                $("#txtDlgImputeSupplier").css("display", "none");
+                $("#btnImputeSaerchSupplier").css("display", "none");
+            } else if (args.item.label === "협력사") {
+                $("#cbDlgImputeDepartment").css("display", "none");
+                $("#txtDlgImputeSupplier").css("display", "block");
+                $("#btnImputeSaerchSupplier").css("display", "block");
+            }
+        });
+
+
         $("#txtDlgWriteDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgWriteDt").jqxDateTimeInput({
             width: 160,
@@ -258,8 +277,15 @@
             param.InduceLibOID = WebUtils.GetComboValue("cbDlgInduce");
             param.DefectDegreeLibOID = WebUtils.GetComboValue("cbDlgDefectDegree");
             param.ImputeLibOID = WebUtils.GetComboValue("cbDlgImpute");
-            param.ImputeDepartmentOID = null;
-            param.ImputeSupplierOID = null;
+
+            var item = $("#cbDlgImpute").jqxComboBox('getItemByValue', param.ImputeLibOID);
+
+            if (item.label === "자체") {
+                param.ImputeDepartmentOID = WebUtils.GetComboValue("cbDlgImputeDepartment");
+            } else if (item.label === "협력사") {
+                param.ImputeSupplierOID = $("#txtDlgImputeSupplier").attr("ImputeSupplierOID");
+            }
+
             //param.Summary = $("#txtDlgSummary").val();
             param.PoorDetail = $("#txtDlgPoorDetail").val();
             param.RecurrenceFl = WebUtils.GetCheckBoxValue("chkDlgRecurrenceFl");

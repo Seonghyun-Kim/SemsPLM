@@ -10,6 +10,7 @@
         $(v).jqxCheckBox({ disabled: false });
     } else if (AttrType === "BUTTON") {
         $(v).jqxButton({ disabled: false });
+        $(v).css("display", "block");
     } else if (AttrType === "SWITCH") {
         $(v).jqxSwitchButton({ disabled: false });
     }           
@@ -26,6 +27,7 @@ function ContentReadMode(v) {
     } else if (AttrType === "CHECKBOX") {
         $(v).jqxCheckBox({ disabled: true });
     } else if (AttrType === "BUTTON") {
+        $(v).css("display", "none");
         $(v).jqxButton({ disabled: true });
     } else if (AttrType === "SWITCH") {
         $(v).jqxSwitchButton({ disabled: true });

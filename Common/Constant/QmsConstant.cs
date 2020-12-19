@@ -87,5 +87,12 @@ namespace Common.Constant
         public static string RELATIONSHIP_LPA { get { return "LPA_UNFIT_MEASURE"; } }
 
         public static string TYPE_OPEN_ISSUE_ITEM { get { return "OPEN_ISSUE_ITEM"; } }
+
+
+        public static string POLICY_QMS_MODULE_PREPARE = "Prepare";
+        public static string POLICY_QMS_MODULE_STARTED = "Started";
+        public static string POLICY_QMS_MODULE_REVIEW = "Review";
+        public static string POLICY_QMS_MODULE_COMPLETED = "Completed";
+        public static string POLICY_QMS_MODULE_REJECTED = "Rejected";
     }
 }
