@@ -1542,14 +1542,14 @@ namespace SemsPLM.Controllers
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -1574,14 +1574,14 @@ namespace SemsPLM.Controllers
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
