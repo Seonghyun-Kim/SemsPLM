@@ -579,6 +579,9 @@
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.EduUserOID = C.OID
       WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="OID">
+        B.OID = #OID#
+      </isNotNull>
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
       </isNotNull>

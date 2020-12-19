@@ -1504,10 +1504,10 @@ namespace SemsPLM.Controllers
         /// 작업자 교육 등록
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditWorkerEducation(int? QuickOID, int? ModuleOID)
+        public ActionResult EditWorkerEducation(int? QuickOID, int? OID)
         {
             ViewBag.QuickOID = QuickOID;
-            ViewBag.ModuleOID = ModuleOID;
+            ViewBag.ModuleOID = OID;
 
             return View("Dialog/dlgEditWorkerEducation");
         }
@@ -1519,7 +1519,8 @@ namespace SemsPLM.Controllers
         /// <returns></returns>
         public ActionResult InfoWorkerEducation(int? OID)
         {
-            ViewBag.ModuleOID = OID;
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.WorkerEdu = Module;
 
             ViewBag.WorkerEduDetail = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
@@ -1529,13 +1530,26 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
-        public JsonResult InsWorkerEducation(WorkerEdu _param)
+        public JsonResult InsWorkerEducation(WorkerEdu param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
+                param.Type = QmsConstant.TYPE_WORKER_EDU;
+                int returnValue = WorkerEduRepository.InsWorkerEdu(param);
 
-                int returnValue = WorkerEduRepository.InsWorkerEdu(_param);
+                if (param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
 
                 DaoFactory.Commit();
 
@@ -1548,13 +1562,26 @@ namespace SemsPLM.Controllers
             }
         }
 
-        public JsonResult UdtWorkerEducation(WorkerEdu _param)
+        public JsonResult UdtWorkerEducation(WorkerEdu param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
+                param.Type = QmsConstant.TYPE_WORKER_EDU;
+                int returnValue = WorkerEduRepository.UdtWorkerEdu(param);
 
-                int returnValue = WorkerEduRepository.UdtWorkerEdu(_param);
+                if (param.Files != null)
+                {
+                    HttpFileRepository.InsertData(param);
+                }
+
+                if (param.delFiles != null)
+                {
+                    param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(v);
+                    });
+                }
 
                 DaoFactory.Commit();
 
