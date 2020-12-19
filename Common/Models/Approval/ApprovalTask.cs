@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Common.Models
 {
@@ -51,13 +52,13 @@ namespace Common.Models
 
     public static class ApprovalTaskRepository
     {
-        public static List<ApprovalTask> SelInboxTasks(ApprovalTask _param)
+        public static List<ApprovalTask> SelInboxTasks(HttpSessionStateBase Context, ApprovalTask _param)
         {
             List<ApprovalTask> lApprovalTasks = DaoFactory.GetList<ApprovalTask>("Comm.SelApprovalTask", _param);
             lApprovalTasks.ForEach(task =>
             {
                 task.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = task.BPolicyOID }).First();
-                task.PersonObj = PersonRepository.SelPerson(new Person { OID = task.PersonOID });
+                task.PersonObj = PersonRepository.SelPerson(Context, new Person { OID = task.PersonOID });
                 task.PersonNm = task.PersonObj.Name;
                 task.DepartmentNm = task.PersonObj.DepartmentNm;
             });

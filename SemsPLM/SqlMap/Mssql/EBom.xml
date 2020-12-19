@@ -77,6 +77,7 @@
     <insert id="InsEPart" parameterClass="EPart" >
       INSERT INTO T_DEPART
       ( OID
+      , Oem_Lib_OID
       , Car_Lib_OID
       , Material_OID
       , Division
@@ -87,10 +88,10 @@
       , Block_No
       , Serial
       , Sel_Revision
-
       )
       VALUES
       (#OID#
+      , #Oem_Lib_OID#
       , #Car_Lib_OID#
       , #Material_OID#
       , #Division#
@@ -107,24 +108,17 @@
     <update id="UpdateEPart" parameterClass="EPart">
       UPDATE T_DEPART
       SET
-      Title = #Title#
-      , Rep_Part_No = #Rep_Part_No#
-      , Rep_Part_No2 = #Rep_Part_No2#
-      , Eo_No = #Eo_No#
-      , Eo_No_ApplyDt = #Eo_No_ApplyDt#
-      , Eo_No_History = #Eo_No_History#
-      , Etc = #Etc#
-      , EPartType = #EPartType#
-      , Sel_Eo = #Sel_Eo#
-      , Sel_Eo_Dt = #Sel_Eo_Dt#
-      , Spec = #Spec#
-      , Surface = #Surface#
+      Oem_Lib_OID = #Oem_Lib_OID#
+      , Car_Lib_OID = #Car_Lib_OID#
       , Material_OID = #Material_OID#
-      , Prod_Lib_Lev1_OID = #Prod_Lib_Lev1_OID#
-      , Prod_Lib_Lev2_OID = #Prod_Lib_Lev2_OID#
-      , Prod_Lib_Lev3_OID = #Prod_Lib_Lev3_OID#
-      , CO = #CO#
-      , Etc_Delivery = #Etc_Delivery#
+      , Division = #Division#
+      , EPartType = #EPartType#
+      , ITEM_No = #ITEM_No#
+      , ITEM_Middle = #ITEM_Middle#
+      , Production_Place = #Production_Place#
+      , Block_No = #Block_No#
+      , Serial = #Serial#
+      , Sel_Revision = #Sel_Revision#
       WHERE OID = #OID#
     </update>
 

@@ -6,6 +6,8 @@ using ChangeOrder.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using EBom.Models;
+using System.Linq;
+using ChangeRequest.Models;
 
 namespace SemsPLM.Controllers
 {
@@ -14,64 +16,151 @@ namespace SemsPLM.Controllers
         // GET: ChangeOrder
         public ActionResult CreateChangeOrder()
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  //OEM 목록
-            ViewBag.oemList = oemList;
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            List<Library> assessList = LibraryRepository.SelAssessLibrary(null);
+            assessList.ForEach(item =>
+            {
+                List<Library> child = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = item.OID });
 
+                item.Cdata = child;
+            });
+
+            ViewBag.reasonList = reasonList;
+            ViewBag.assessList = assessList;
             return View();
         }
 
         public ActionResult SearchChangeOrder()
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  //OEM 목록
-            ViewBag.oemList = oemList;
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            ViewBag.reasonList = reasonList;
             return View();
         }
 
         public ActionResult InfoChangeOrder(int OID)
         {
             ECO ECODetail = ECORepository.SelChangeOrderObject(new ECO { OID = OID });
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            List<EO> SelassessList = EORepository.SelEOContentsOID(new EO { RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST });  //설계변경의 체크리스트 마스터OID검색
+            List<Library> originList = new List<Library>();
+            SelassessList.ForEach(item =>
+            {
+                Library pdata = LibraryRepository.SelAssessLibraryObject(new Library { OID = item.ToOID }); //마스터 검색
+
+                pdata.Cdata = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = pdata.OID }); //마스터 자녀들검색
+                originList.Add(pdata);
+
+                List<EO> checkData = EORepository.SelEOContentsOID(new EO { ToOID = item.ToOID,RootOID =ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
+
+                item.CheckData = checkData;  //체크리스트 검색
+            });
+
+            ViewBag.reasonList = reasonList;
+            ViewBag.SelassessList = SelassessList;
+            ViewBag.originList = originList;
             ViewBag.ECODetail = ECODetail;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_ORDER });
+
             return View();
         }
 
         public ActionResult dlgSearchEPart(string Type)
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  //OEM 목록
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
             List<int> partOIDList = EORepository.partOIDList(new EO { Type = Type });
-            ViewBag.partOIDList = partOIDList;
             ViewBag.oemList = oemList;
+            ViewBag.ItemList = ItemList;
+            ViewBag.partOIDList = partOIDList;
             return PartialView("Dialog/dlgSearchEPart");
         }
 
+        public ActionResult dlgSearchECR(string Type)
+        {
+            return PartialView("Dialog/dlgSearchECR");
+        }
 
         #region -- Module : ChangeOder
 
         #region 설계변경 등록
-        public JsonResult InsertChangeOrder(ECO _param)
+        public JsonResult InsertChangeOrder(ECO _param,List<List<Library>> _assessList, List<EO> _eo)
         {
             int resultOid = 0;
             try
             {
                 DaoFactory.BeginTransaction();
-         //       DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
 
                 DObject dobj = new DObject();
+
+                var YYYY = DateTime.Now.ToString("yyyy");
+                var MM = DateTime.Now.ToString("MM");
+                var dd = DateTime.Now.ToString("dd");
+                var selName = "WRO" + YYYY + MM + dd + "-001";
+                var NewName = "WRO" + YYYY + MM + dd;
+
+                var LateName = ECORepository.SelChangeOrder(new ECO { Name = NewName });
+
+                if (LateName.Count == 0)
+                {
+                    dobj.Name = selName;
+                }
+                else
+                {
+                    int NUM = Convert.ToInt32(LateName.Last().Name.Substring(12, 3)) + 1;
+                    dobj.Name = NewName + "-" + string.Format("{0:D3}", NUM);
+                }
+
                 dobj.Type = EoConstant.TYPE_CHANGE_ORDER;
                 dobj.TableNm = EoConstant.TABLE_CHANGE_ORDER;
-                dobj.Name = _param.Name;
                 dobj.Description = _param.Description;
-                //dobj.TdmxOID = DObjectRepository.SelTdmxOID(new DObject { Type = DocumentContant.TYPE_DOCUMENT });
-                resultOid = DObjectRepository.InsDObject(dobj);
+                resultOid = DObjectRepository.InsDObject(Session, dobj); //오브젝트 등록
 
                 _param.OID = resultOid;
-                //_param.DocType = _param.DocType;
-                //_param.Title = _param.Title;
-                //_param.Eo_No = _param.Eo_No;
-                DaoFactory.SetInsert("ChangeOrder.InsChangeOrder", _param);
+                DaoFactory.SetInsert("ChangeOrder.InsChangeOrder", _param); //설계변경 등록
+
+                for (var i = 0; i < _assessList.Count; i++)
+                {
+                    for (var j = 0; j < _assessList[i].Count; j++)
+                    {
+                        if (j == 0) //평가표 마스터 등록
+                        {
+                            EO data = new EO();
+                            data.RootOID = resultOid;
+                            data.ToOID = _assessList[i][0].OID;
+                            data.Type = EoConstant.TYPE_ASSESSLIST;
+                            EORepository.InsEOContents(Session,data);
+
+                        }
+                        else //평가표 체크리스트 등록
+                        {
+                            EO data = new EO();
+                            data.RootOID = resultOid;
+                            data.ToOID = _assessList[i][0].OID;
+                            data.FromOID = _assessList[i][j].OID;
+                            data.Type = EoConstant.TYPE_ASSESSLIST_CHILD;
+                            EORepository.InsEOContents(Session,data);
+                        }
+                    }
+                }
+                if (_eo != null && _eo.Count > 0)
+                {
+                    _eo.ForEach(data =>
+                   {
+                       if (data != null)
+                       {
+                           data.RootOID = resultOid;
+                           EORepository.InsEOContents(Session,data);
+                       }
+
+                   });
+                }
 
                 DaoFactory.Commit();
             }
@@ -109,6 +198,56 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
+        #region 설계변경 평가표 수정
+        public JsonResult UpdateECOAssess(List<List<Library>> _assessList, EO delData)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+                if (delData != null && delData.Type != null && delData.RootOID != null)
+                {
+                    EORepository.delEOContents(delData);
+                }
+                if (_assessList != null && _assessList.Count > 0)
+                {
+                    for (var i = 0; i < _assessList.Count; i++)
+                    {
+                        for (var j = 0; j < _assessList[i].Count; j++)
+                        {
+                            if (j == 0) //평가표 마스터 등록
+                            {
+                                EO data = new EO();
+                                data.RootOID = delData.RootOID;
+                                data.ToOID = _assessList[i][0].OID;
+                                data.Type = EoConstant.TYPE_ASSESSLIST;
+                                EORepository.InsEOContents(Session,data);
+
+                            }
+                            else //평가표 체크리스트 등록
+                            {
+                                EO data = new EO();
+                                data.RootOID = delData.RootOID;
+                                data.ToOID = _assessList[i][0].OID;
+                                data.FromOID = _assessList[i][j].OID;
+                                data.Type = EoConstant.TYPE_ASSESSLIST_CHILD;
+                                EORepository.InsEOContents(Session,data);
+                            }
+                        }
+                    }
+                }
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(0);
+
+        }
+        #endregion
+
         #region 설계변경리스트 등록
         public JsonResult InsECOContents(List<EO> _param,EO delData)
          {
@@ -127,7 +266,7 @@ namespace SemsPLM.Controllers
                   {
                       if (obj != null)
                       {
-                          EORepository.InsEOContents(obj);
+                          EORepository.InsEOContents(Session,obj);
                       }
                   });
                 }
@@ -153,7 +292,7 @@ namespace SemsPLM.Controllers
         {
             List<EO> lEO = EORepository.SelEOContentsOID(_param);
             List<EPart> lEPart = new List<EPart>();
-            if (_param.Type == Common.Constant.EoConstant.TYPE_EBOM_LIST || _param.Type == Common.Constant.EoConstant.TYPE_MBOM_LIST)
+            if (_param.Type == Common.Constant.EoConstant.TYPE_EBOM_LIST)
             {
                 
                 lEO.ForEach(obj =>
@@ -204,6 +343,7 @@ namespace SemsPLM.Controllers
             return Json(resultOid);
         }
         #endregion
+
         #region 설계변경 수정
         public JsonResult UdtChangeOrder(ECO _param)
         {
@@ -212,7 +352,7 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
-                DObjectRepository.UdtDObject(_param);
+                DObjectRepository.UdtDObject(Session, _param);
                 ECORepository.UdtChangeOrderObject(_param);
 
                 DaoFactory.Commit();
@@ -224,6 +364,16 @@ namespace SemsPLM.Controllers
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
             return Json(result);
+        }
+        #endregion
+
+        #region 연관ECR 검색
+        public JsonResult SelECRRelation(EO _param)
+        {
+            List<EO> lEO = EORepository.SelEOContentsOID(_param);
+
+            List<ECR> lECR = EORepository.SelECRRelation(lEO);
+            return Json(lECR);
         }
         #endregion
 

@@ -41,7 +41,7 @@
         <tr>
             <th><i class="fa fa-caret-right"></i> 도면/부품번호</th>
             <td>
-                <input type="text" id="dlgCreateEPartName"  value="" readonly="readonly"/>
+                <input type="text" id="dlgCreateEPartName" value="" readonly="readonly" />
                 @*<button id="dlgCreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>*@
             </td>
             <th><i class="fa fa-caret-right"></i> 리비전</th>
@@ -74,7 +74,7 @@
             <td colspan="2"></td>
         </tr>
 
-    <!--조립도-->
+        <!--조립도-->
         <tr class="DivisionAssemblyDrawing">
             <th><i class="fa fa-caret-right"></i> ITEM_NO</th>
             <td>
@@ -100,6 +100,13 @@
             <td>
                 <div class="dlgCreateEPart_BlockNo" id="dlgCreateEPart_BlockNo1"></div>
             </td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="DivisionAssemblyDrawing">
+            <th><i class="fa fa-caret-right"></i> 고객사</th>
+            <td>
+                <div class="dlgCreateEPart_Oem" id="dlgCreateEPart_Oem1"></div>
+            </td>
             <th><i class="fa fa-caret-right"></i> 차종</th>
             <td>
                 <div class="dlgCreateEPart_Car" id="dlgCreateEPart_Car1"></div>
@@ -112,11 +119,11 @@
             </td>
             <th><i class="fa fa-caret-right"></i>고객리비젼</th>
             <td>
-                <input type="text" class="dlgCreateEPart_SelRev" value=""  maxlength="1" />
+                <input type="text" class="dlgCreateEPart_SelRev" value="" maxlength="1" />
             </td>
         </tr>
 
-    <!--단품도-->
+        <!--단품도-->
         <tr class="DivisionSingleDrawing">
             <th><i class="fa fa-caret-right"></i> 재질</th>
             <td>
@@ -124,13 +131,20 @@
             </td>
             <th><i class="fa fa-caret-right"></i> BLOCK NO</th>
             <td>
-                <div class="dlgCreateEPart_BlockNo"  id="dlgCreateEPart_BlockNo2"></div>
+                <div class="dlgCreateEPart_BlockNo" id="dlgCreateEPart_BlockNo2"></div>
             </td>
         </tr>
         <tr class="DivisionSingleDrawing">
             <th><i class="fa fa-caret-right"></i> ITEM_NO</th>
             <td>
                 <div class="dlgCreateEPart_ITEM_NO" id="dlgCreateEPart_ITEM_NO2"></div>
+            </td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="DivisionSingleDrawing">
+            <th><i class="fa fa-caret-right"></i> 고객사</th>
+            <td>
+                <div class="dlgCreateEPart_Oem" id="dlgCreateEPart_Oem2"></div>
             </td>
             <th><i class="fa fa-caret-right"></i> 차종</th>
             <td>
@@ -140,15 +154,15 @@
         <tr class="DivisionSingleDrawing">
             <th><i class="fa fa-caret-right"></i> 시리얼</th>
             <td>
-                <input type="text"  class="dlgCreateEPart_Serial" id="dlgCreateEPart_Serial2"   maxlength="2"/>
+                <input type="text" class="dlgCreateEPart_Serial" id="dlgCreateEPart_Serial2" maxlength="2" />
             </td>
             <th><i class="fa fa-caret-right"></i> 고객리비전</th>
             <td>
-                <input type="text"class="dlgCreateEPart_SelRev"  maxlength="1" />
+                <input type="text" class="dlgCreateEPart_SelRev" maxlength="1" />
             </td>
         </tr>
 
-    <!--스탠다드-->
+        <!--스탠다드-->
         <tr class="DivisionStandard">
             <th><i class="fa fa-caret-right"></i> 재질</th>
             <td>
@@ -156,13 +170,13 @@
             </td>
             <th><i class="fa fa-caret-right"></i> BLOCK NO</th>
             <td>
-                <div class="dlgCreateEPart_BlockNo"  id="dlgCreateEPart_BlockNo3"></div>
+                <div class="dlgCreateEPart_BlockNo" id="dlgCreateEPart_BlockNo3"></div>
             </td>
         </tr>
         <tr class="DivisionStandard">
             <th><i class="fa fa-caret-right"></i> 시리얼</th>
             <td>
-                <input type="text"  class="dlgCreateEPart_Serial" id="dlgCreateEPart_Serial3"   maxlength="8" />
+                <input type="text" class="dlgCreateEPart_Serial" id="dlgCreateEPart_Serial3" maxlength="8" />
             </td>
             <td colspan="2"></td>
         </tr>
@@ -194,6 +208,7 @@
     var psize$ = $('.dlgCreateEPart_psize');
     var Name$ = $('#dlgCreateEPartName');
     var Serial$ = $('.dlgCreateEPart_Serial');
+    var oem$ = $('.dlgCreateEPart_Oem');
     var Srev$ = $('.dlgCreateEPart_SelRev');
     var EPartDivision;
     var name;
@@ -209,7 +224,7 @@
         var itemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
         var placeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.placeList))');
         var epartList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.epartList))');
-        var carList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var sizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
         var dlgCreateEPartChk$ = true;
 
@@ -402,9 +417,9 @@
             }
         });
 
-        var carSource =
+         var oemSource =
         {
-            localdata: carList,
+            localdata: oemList,
             datatype: "json",
             datafields:
                 [
@@ -414,17 +429,39 @@
                     { name: 'Code2', type: 'string' },
                 ]
         };
-        var carAdapter = new $.jqx.dataAdapter(carSource);
-        CarType$.jqxComboBox({ source: carAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        oem$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        CarType$.jqxComboBox({ width: 250, height: 32 });
+        oem$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = oem$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
 
-        CarType$.on('change', function (evt) {
-            var idx = evt.args.index;
-            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
-                car = carList[idx].Code1;
-            } else {
-                car = carList[idx].Code2;
-            }
-            dlgCreateEPartName();
+                var carSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                            { name: 'Code2', type: 'string' },
+                        ]
+                };
+                var caradapter = new $.jqx.dataAdapter(carSource);
+                CarType$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID"});
+
+                CarType$.on('change', function (evt) {
+                    var idx = evt.args.index;
+                    if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                        car = res[idx].Code1;
+                    } else {
+                        car = res[idx].Code2;
+                    }
+                    CreateEPartName();
+                });
+            });
         });
 
         psize$.on('change', function (evt) {
@@ -490,7 +527,7 @@
                 srev = Srev$[0].value;
             } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
                 srev = Srev$[1].value;
-            } 
+            }
 
             dlgCreateEPartName();
         });
@@ -524,7 +561,7 @@
         });
 
 
-        
+
 
         $('#imageDrag').simpleUpload({
             url: '/Common/ImgUploadFile',

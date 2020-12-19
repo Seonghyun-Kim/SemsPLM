@@ -1,0 +1,231 @@
+﻿@{
+    Layout = null;
+}
+<input type="hidden" id="dlgDiv" value="" />
+<div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+    <div class="ModifiableCustomBox Prepare">
+        <button id="dlgEditIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 수정</button>
+        <button id="dlgProcessIssue" onclick="" class="custom-button processBtn"><i class="fas fa-window-close"></i> 처리진행</button>
+    </div>
+    <div class="ModifiableEditCustomBox">
+        <button id="dlgSaveIssue" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
+        <button id="dlgCancelIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 취소</button>
+    </div>
+    <div class="Process">
+        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
+        <button id="dlgFinishIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 처리완료</button>
+    </div>
+    <div class="Finish">
+        <button id="dlgEditFinish" onclick="" class="custom-button"><i class="fas fa-window-close"></i>수정</button>
+        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
+    </div>
+</div>
+
+<div>
+    <table class="createtable">
+        <colgroup>
+            <col style="width:18%" />
+            <col style="width:32%" />
+            <col style="width:18%" />
+            <col style="width:32%" />
+        </colgroup>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 이슈명</th>
+            <td colspan="3">
+                <input type="text" class="Modifiable" id="dlgIssueNm" value="@ViewBag.Detail.Name" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 프로젝트명</th>
+            <td colspan="3">
+                <input type="text" id="dlgProjNm" value="@ViewBag.Detail.ProjectNm" readonly />
+            </td>
+        </tr>
+        <tr class="TaskVal">
+            <th><i class="fa fa-caret-right"></i> 타스크명</th>
+            <td colspan="3">
+                <input type="text" class="Modifiable" id="dlgTaskNm" value="@ViewBag.Detail.TaskNm" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 중요도</th>
+            <td>
+                <div id="importance_Good" class="issueRadioBtn">상</div>
+                <div id="importance_Aver" class="issueRadioBtn">중</div>
+                <div id="importance_Poor" class="issueRadioBtn">하</div>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 상태</th>
+            <td>
+                <input type="text" value="@ViewBag.Detail.BPolicy.StatusNm" id="dlgStatus" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 등록일</th>
+            <td>
+                <input type="text" value="@ViewBag.Detail.CreateDt" readonly />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 예상처리일</th>
+            <td>
+                <input type="text" class="ModifiableCustomBox" value="@ViewBag.Detail.EstFinDt" readonly />
+                <div class="ModifiableEditCustomBox">
+                    <div id="issueEstimatedFinDate"></div>
+                </div>
+            </td>
+        </tr>
+        <tr class="TaskVal">
+            <th><i class="fa fa-caret-right"></i> 처리자</th>
+            <td colspan="3">
+                <input type="hidden" id="dlgMangerOID" value="@ViewBag.Detail.Manager_OID" />
+                <input type="text" id="dlgManager" value="@ViewBag.Detail.ManagerNm" style="width:150px;" readonly />
+                <button class="custom-button ModifiableEditCustomBox" id="dlgSelManager"><i class="fas fa-search"></i> 검색</button>
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 구분</th>
+            <td colspan="3">
+                <input type="text" class="ModifiableCustomBox" value="@ViewBag.Detail.IssueTypeNm" readonly />
+                <div class="ModifiableEditCustomBox">
+                    <div id="issueType_spec" name="IssueType" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_SPEC" class="issueCheckBox">사양</div>
+                    <div id="issueType_4m" name="IssueType" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_4M" class="issueCheckBox">4M</div>
+                    <div id="issueType_quality" name="IssueType" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_QUALITY" class="issueCheckBox">품질</div>
+                    <div id="issueType_etc" name="IssueType" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_ETC" class="issueCheckBox">기타</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 이슈내용</th>
+            <td colspan="3">
+                <textarea id="dlgDescription" class="Modifiable" style="height:160px;" readonly>@ViewBag.Detail.Description</textarea>
+            </td>
+        </tr>
+        <tr class="Process">
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 처리내용</th>
+            <td colspan="3">
+                <textarea id="dlgContents" class="Modifiable" style="height:160px;">@ViewBag.Detail.Contents</textarea>
+            </td>
+        </tr>
+        <tr class="Process">
+            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <td colspan="3">
+                <div id="dlgFile_FileList_@ViewBag.Detail.OID">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var divIdDetail
+    var fileUpload = $("#dlgFile_FileList_@ViewBag.Detail.OID").FileUpload({ OID : '@ViewBag.Detail.OID'});
+    $(function () {
+        fileUpload.ReadOnlyMode();
+        $('.issueRadioBtn').jqxRadioButton({ width: 100, height: 32 });
+       // $('#importance_Poor').jqxRadioButton({ checked: true});
+        $('.ModifiableEditCustomBox').attr('hidden',true);
+        $('.Process').attr('hidden', true);
+        $('.Finish').attr('hidden', true);
+        $('#issueEstimatedFinDate').jqxDateTimeInput({ width: 340, height: 32, formatString: 'yyyy-MM-dd', });
+        $('#issueEstimatedFinDate').jqxDateTimeInput('val','@String.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstFinDt)');
+        $('.issueCheckBox').jqxCheckBox({ width: 100, height: 32 });
+
+        if ('@ViewBag.Detail.Type' == '@Common.Constant.PmsConstant.TYPE_ISSUE_PROJECT') {
+            $('.TaskVal').attr('hidden', true);
+        } else if('@ViewBag.Detail.Type' == '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK'){
+            $('#dlgTaskNm').val('@ViewBag.Detail.TaskNm');
+        }
+        if ('@ViewBag.Detail.Importance' != null) {
+            switch (@ViewBag.Detail.Importance) {
+                case 1: $('#importance_Poor').jqxRadioButton('check'); break;
+                case 2: $('#importance_Aver').jqxRadioButton('check'); break;
+                case 3: $('#importance_Good').jqxRadioButton('check'); break;
+            }
+        }
+        if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED') {
+            $('.Process').attr('hidden', false);
+            $('.Prepare').attr('hidden', true);
+            fileUpload.EditMode();
+        } else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+            $('.Finish').attr('hidden', false);
+            $('tr.Process').attr('hidden', false);
+            $('.Prepare').attr('hidden', true);
+            $('#dlgContents').attr('readonly', 'readonly');
+        }
+        $('.issueRadioBtn').jqxRadioButton('disable');
+
+        $('#dlgEditIssue').on('click', function () {
+            $('.Modifiable').removeAttr('readonly');
+            $('.ModifiableCustomBox').attr('hidden', true);
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            $('.issueRadioBtn').jqxRadioButton('enable');
+
+            var IssueType = "@ViewBag.Detail.IssueType";
+        _.each($('div[name="IssueType"]'), function (item) {
+            if (IssueType.indexOf(',') > -1) {
+                _.each(IssueType.split(','), function (Changes) {
+                    if ($(item).data('value') == Changes) {
+                        $(item).jqxCheckBox('check');
+                    }
+                });
+            } else {
+                if ($(item).data('value') == IssueType) {
+                    $(item).jqxCheckBox('check');
+                }
+            }
+        });
+
+        });
+
+        $('#dlgCancelIssue').on('click', function () {
+            $('.Modifiable').attr('readonly','readonly');
+            $('.ModifiableCustomBox').attr('hidden', false);
+            $('.ModifiableEditCustomBox').attr('hidden', true);
+            $('.issueRadioBtn').jqxRadioButton('disable');
+
+            $('#dlgIssueNm').val('@ViewBag.Detail.Name');
+            var description = @Html.Raw(Json.Encode(@ViewBag.Detail.Description));
+            $('#dlgDescription').html(description);
+            $('#issueEstimatedFinDate').jqxDateTimeInput('val', '@String.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstFinDt)');
+
+            switch (@ViewBag.Detail.Importance) {
+                case 1: $('#importance_Poor').jqxRadioButton('check'); break;
+                case 2: $('#importance_Aver').jqxRadioButton('check'); break;
+                case 3: $('#importance_Good').jqxRadioButton('check'); break;
+            }
+            $('.issueCheckBox').jqxCheckBox('uncheck');
+            $('#dlgManager').val('@ViewBag.Detail.ManagerNm');
+            $('#dlgMangerOID').val('@ViewBag.Detail.Manager_OID');
+        });
+
+        $('#dlgSelManager').on('click', function () {
+            OpenIssueManagerDialog(function (res) {
+            }, null, {
+                ProjectOID: '@ViewBag.Detail.RootOID',
+            }, '/Pms/dlgSelectIssueManager', '처리자 등록');
+        });
+
+        $('.processBtn').on('click', function () {
+            var param = {};
+            param.Type = '@ViewBag.Detail.Type';
+            param.OID = '@ViewBag.Detail.OID';
+            param.BPolicyOID = '@ViewBag.Detail.BPolicyOID';
+            param.ApprovalType = '@Common.Constant.CommonConstant.ACTION_PROMOTE';
+            var orginData =@Html.Raw(Json.Encode(ViewBag.Detail));
+
+
+            if (confirm('처리 진행하시겠습니까?')) {
+                RequestData('/Pms/ProcessIssue', param, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("처리 되었습니다.");
+                    $(divId).jqxWindow('modalDestory');
+                    OpenIssueDialog(
+                        function (res) {
+                        }, null, orginData, '/Pms/InfoIssue', '이슈 상세');
+                });
+            }
+        });
+    });
+
+</script>

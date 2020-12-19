@@ -10,8 +10,10 @@ var renderWord = function (row, columnfield, value, defaulthtml, columnpropertie
 };
 
 function RequestData(_Url, _Args, _CallBackFunc) {
+    const loading = $('#loading');
     var retData = null;
     var param = _Args;
+    loading.css('display', 'block');
     $.ajax({
         contentType: "application/json; charset=utf-8",
         type: "post",
@@ -32,6 +34,8 @@ function RequestData(_Url, _Args, _CallBackFunc) {
         }, error: function (res) {
             alert(res.responseText);
             console.log(res);
+        }, complete: function(){
+            loading.css('display', 'none');
         }
     });
 }
@@ -149,7 +153,7 @@ function PrintJqxGrid(_Source, _GridObject, _JsonResult) {
     _Source.localdata = _JsonResult;
 
     var Adapter = new $.jqx.dataAdapter(_Source);
-    Adapter.dataBind();
+    //Adapter.dataBind();
 
     _GridObject.jqxGrid({ source: Adapter });
     Adapter = null;
@@ -159,7 +163,7 @@ function PrintJqxTreeGrid(_Source, _GridObject, _JsonResult) {
     _Source.localdata = _JsonResult;
 
     var Adapter = new $.jqx.dataAdapter(_Source);
-    Adapter.dataBind();
+    //Adapter.dataBind();
 
     _GridObject.jqxTreeGrid({ source: Adapter });
     Adapter = null;
@@ -169,7 +173,7 @@ function PrintJqxKanban(_Source, _GridObject, _JsonResult) {
     _Source.localdata = _JsonResult;
 
     var Adapter = new $.jqx.dataAdapter(_Source);
-    Adapter.dataBind();
+    //Adapter.dataBind();
 
     _GridObject.jqxKanban({ source: Adapter });
     Adapter = null;
@@ -179,7 +183,7 @@ function PrintJqxCombo(_Source, _GridObject, _JsonResult) {
     _Source.localdata = _JsonResult;
 
     var Adapter = new $.jqx.dataAdapter(_Source);
-    Adapter.dataBind();
+    //Adapter.dataBind();
 
     _GridObject.jqxComboBox({ source: Adapter });
     Adapter = null;

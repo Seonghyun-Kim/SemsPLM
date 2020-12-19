@@ -1813,7 +1813,7 @@ License: https://jqwidgets.com/license/
                     }
                 }
             }
-            this.dataview.databind( source );
+            this.dataview.databind(source);
         },
 
         _raiseEvent: function ( id, arg ) {
@@ -2050,8 +2050,8 @@ License: https://jqwidgets.com/license/
             this.databind( this.source, reason, done );
         },
 
-        refresh: function ( initialRefresh ) {
-            if ( initialRefresh != true ) {
+        refresh: function (initialRefresh) {
+            if (initialRefresh != true ) {
                 if ( $.jqx.isHidden( this.host ) )
                     return;
 
@@ -11754,7 +11754,7 @@ License: https://jqwidgets.com/license/
         this.pagenum = 0;
         this.source = null;
 
-        this.databind = function ( source, objectuniqueId ) {
+        this.databind = function (source, objectuniqueId) {
             var isdataadapter = source._source ? true : false;
             var dataadapter = null;
             this._sortData = null;

@@ -1,0 +1,168 @@
+﻿@{
+    Layout = null;
+}
+
+    <div class="dlgGateReportTab">
+        <input type="radio" name="gateReportRadio" value="gateReport" id="gateReportTab" checked />
+        <label for="gateReportTab">보고서</label>
+        <input type="radio" name="gateReportRadio" value="gateIssueList" id="gateIssueListTab" />
+        <label for="gateIssueListTab">이슈리스트</label>
+    </div>
+    <div class="dlgGateReportContent">
+        <div>
+            <h4>1. 개발개요</h4>
+            <table class="dlgGateReportTable">
+                <colgroup>
+                    <col style="width:15%;" />
+                    <col style="width:20%;" />
+                    <col style="width:15%;" />
+                    <col style="width:15%;" />
+                    <col style="width:15%;" />
+                    <col style="width:20%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <td>차종</td>
+                        <td>제품사양</td>
+                        <td>Forecast</td>
+                        <td>OEM</td>
+                        <td>고객사</td>
+                        <td>WR생산처</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>2. OEM 일정</h4>
+            <table class="dlgGateReportTable oemSchedule">
+                <thead>
+                    <tr>
+                        <td>OEM일정 1</td>
+                        <td>OEM일정 2</td>
+                        <td>OEM일정 3</td>
+                        <td>OEM일정 4</td>
+                        <td>OEM일정 5</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>3. Gate Review 일정</h4>
+            <table class="dlgGateReportTable">
+                <thead>
+                    <tr>
+                        <td>G/R #1</td>
+                        <td>G/R #2</td>
+                        <td>G/R #3</td>
+                        <td>G/R #4</td>
+                        <td>G/R #5</td>
+                        <td>G/R #6</td>
+                        <td class="remark">비고</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>4. 단계별 Gate Open Issue Summary</h4>
+            <table class="dlgGateReportTable" style="height:90px;">
+                <colgroup>
+                    <col style="width:16%;" />
+                    <col style="width:10%;" />
+                    <col style="width:10%;" />
+                    <col style="width:10%;" />
+                    <col style="width:28%;" />
+                    <col style="width:28%;" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <td rowspan="2">Open Issue 총 건수</td>
+                        <td colspan="3">실적</td>
+                        <td rowspan="2">미완료 주요 Issue</td>
+                        <td rowspan="2">비고</td>
+                    </tr>
+                    <tr>
+                        <td>완료</td>
+                        <td>미완료</td>
+                        <td>완료율</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>5. 단계별 Gate Open Issue Summary</h4>
+            <div id="issueSumGradeGrid"></div>
+        </div>
+
+        <div style="padding-top:10px;">
+            <div id="issueListGrid"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $('#issueSumGradeGrid').jqxTreeGrid({
+                width: 1188,
+                height: 250,
+                columnsHeight:30,
+                columns: [
+                    {text:'Issue No', width:'5%', align:'center',},
+                    {text:'구분', width:'8%', align:'center',},
+                    {text:'Task', width:'20%', align:'center',},
+                    {text:'Open Issue', width:'20%', align:'center',},
+                    {text:'추진계획', width:'20%', align:'center',},
+                    {text:'계획', width:'9%', align:'center',columnGroup: 'status',},
+                    {text:'지연', width:'9%', align:'center',columnGroup: 'status',},
+                    {text:'완료', width:'9%', align:'center',columnGroup: 'status',},
+                ],
+                columnGroups: [{ text: 'Status', name: 'status', align:'center' }],
+
+            });
+
+            $('#issueListGrid').jqxGrid({
+                width: 1188,
+                height: 700,
+                columns: [
+                    {text:'Issue NO', width:'5%',align:'center',},
+                    {text:'사양', width:'8%',align:'center',},
+                    {text:'4M', width:'8%',align:'center',},
+                    {text:'품질', width:'8%',align:'center',},
+                    {text:'기타', width:'8%',align:'left',},
+                    {text:'Open Issue', width:'13%',align:'left',},
+                    {text:'추진계획', width:'14%',align:'left',},
+                    {text:'Start Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
+                    {text:'Due Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
+                    {text:'Close Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
+                    {text:'Status', width:'6%',align:'center',},
+                    {text:'비고', width:'10%',align:'left',},
+                ],
+            });
+
+
+            //Tab Hide&Show
+            const gateReportContent$ = $(".dlgGateReportContent > div");
+            gateReportContent$.last().hide();
+            $("input[name=gateReportRadio]").click(function () {
+            gateReportContent$.hide();
+            gateReportContent$.eq($("input[name=gateReportRadio]").index(this)).show();
+            });
+
+            
+        });
+    </script>

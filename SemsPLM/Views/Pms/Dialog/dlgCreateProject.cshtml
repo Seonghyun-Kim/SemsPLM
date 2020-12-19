@@ -12,10 +12,24 @@
 </div>
 
 <div class="dlg_table dlgCreateProject_table">
+    <input type="hidden" id="dlgOem" />
+    <input type="hidden" id="dlgCar" />
     <table>
         <tr>
-            <td><label class="lbText"><i class="fa fa-caret-right"></i> 구분</label></td>
-            <td colspan="3"><div id="dlgProjType" style="width:50%;"></div></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>구분</label></td>
+            <td colspan="3"><div id="dlgProjType" style="width:50%;" class="dlgProjjqxComboBox"></div></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>OEM</label></td>
+            <td><input type="text" id="txtDlgOem" style="width:50%;" value="" readonly="readonly" /></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>차종</label></td>
+            <td><input type="text" id="txtDlgCar" style="width:50%;" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>ITEM</label></td>
+            <td><div id="dlgItem" style="width:50%;" class="dlgProjjqxComboBox"></div></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>제품구분</label></td>
+            <td><div id="dlgItemMiddle" style="width:50%;" class="dlgProjjqxComboBox"></div></td>
         </tr>
         <tr class="dlgPredecessorData" style="display:none;">
             <td>
@@ -28,8 +42,16 @@
             </td>
         </tr>
         <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 제품명</label></td>
+            <td><input type="text" id="txtDlgProductNm" class="txtBox large" style="width:99%;" /></td>
             <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트명</label></td>
-            <td colspan="3"><input type="text" id="txtDlgProjName" class="txtBox large" style="width:99%;" /></td>
+            <td><input type="text" id="txtDlgProjName" class="txtBox large" style="width:99%;" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트 등급</label></td>
+            <td><div id="dlgProjGrade" class="txtBox large" style="width:99%;"></div></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 고객사</label></td>
+            <td><div id="dlgCust" class="dlgProjjqxComboBox" style="width:99%;"></div></td>
         </tr>
         <tr>
             <td><label class="lbText"><i class="fa fa-caret-right"></i> 복사 프로젝트</label></td>
@@ -86,9 +108,96 @@
 </div>
 
 <script type="text/javascript">
+    var itemText = "";
+    var middleText = "";
+    var iuputText = "";
     $(function () {
         const dlgProjType$ = $('#dlgProjType');
         dlgProjType$.jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 185, height: 30, });
+
+        var itemList =  @Html.Raw(Json.Encode(ViewBag.ItemList));
+        var placeList = @Html.Raw(Json.Encode(ViewBag.placeList));
+        var epartList = @Html.Raw(Json.Encode(ViewBag.epartList));
+        var oemList =   @Html.Raw(Json.Encode(ViewBag.oemList));
+        var custList =   @Html.Raw(Json.Encode(ViewBag.custList));
+
+        $('.dlgProjjqxComboBox').jqxComboBox({ width: 185, height: 30, });
+
+
+        const txtDlgItemName$ = $('#txtDlgProductNm');
+        const dlgOem$ = $('#dlgOem');
+        const dlgCar$ = $('#dlgCar');
+        const dlgItem$ = $('#dlgItem');
+        const dlgItemMiddle$ = $('#dlgItemMiddle');
+        const dlgProjGrade$ = $('#dlgProjGrade');
+        const dlgCust$ = $('#dlgCust');
+
+
+        dlgOem$.val(parent.selOemOID);
+        dlgCar$.val(parent.selCarOID);
+        $('#txtDlgCar').val(parent.selCarText);
+        $('#txtDlgOem').val(parent.selOemText);
+
+
+        var dlgItemSource =
+        {
+                localdata: itemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' }
+                ]
+        };
+        var dlgItemAdapter = new $.jqx.dataAdapter(dlgItemSource);
+        dlgItem$.jqxComboBox({ source: dlgItemAdapter, displayMember: "KorNm", valueMember: "OID" });
+
+        dlgItem$.on('change', function (evt) {
+            var selected = evt.args.item;
+
+            itemText = selected.label;
+            CreateProjName();
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = dlgItem$.val();
+            param.Code1 = 'CLASS';
+                RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                    var middleSource =
+                    {
+                        localdata: res,
+                        datatype: "json",
+                        datafields:
+                            [
+                                { name: 'KorNm', type: 'string' },
+                                { name: 'OID', type: 'int' },
+                                { name: 'Code1', type: 'string' },
+                            ]
+                    };
+                    var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                    dlgItemMiddle$.jqxComboBox({ source: middleAdapter, displayMember: "KorNm", valueMember: "OID"});
+                });
+        });
+
+        var dlgCustSource =
+        {
+            localdata: custList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' }
+                ]
+        };
+        var dlgCustAdapter = new $.jqx.dataAdapter(dlgCustSource);
+        dlgCust$.jqxComboBox({ source: dlgCustAdapter, displayMember: "KorNm", valueMember: "OID" });
+
+
+        dlgProjGrade$.jqxComboBox({ source: ['', 'A', 'B', 'C', 'D', 'E'], selectedIndex: 0, width: 185, height: 30, });
 
         $('#isCopyTemplate').jqxCheckBox({ width: 88, height: 25, checked: true });
 
@@ -120,5 +229,83 @@
             $('#hidWorkingDay').val('');
             $('#txtWorkingDay').val('');
         });
+
+        dlgItemMiddle$.on('change', function (evt) {
+            var selected = evt.args.item;
+
+            middleText = selected.label;
+            var idx = evt.args.index;
+            CreateProjName();
+        });
+        txtDlgItemName$.bind('change paste keyup', function () {
+            iuputText = txtDlgItemName$.val();
+            CreateProjName();
+        });
+
     });
+
+    function CreateProjName(ProjName) {
+        var returnVal = "";
+        if (itemText != null) {
+            returnVal += itemText;
+        }
+        if (middleText != null) {
+            returnVal += " " + middleText;
+        }
+        if (iuputText != null) {
+            returnVal += " " + iuputText;
+        }
+        $('#txtDlgProjName').val(returnVal);
+    }
 </script>
+
+
+  @*//var dlgOemSource =
+        //{
+        //    localdata: oemList,
+        //    datatype: "json",
+        //    datafields:
+        //        [
+        //            { name: 'KorNm', type: 'string' },
+        //            { name: 'OID', type: 'int' },
+        //            { name: 'Code1', type: 'string' },
+        //            { name: 'Code2', type: 'string' }
+        //        ]
+        //};
+        //var dlgOemAdapter = new $.jqx.dataAdapter(dlgOemSource);
+        //dlgOem$.jqxComboBox({ source: dlgOemAdapter, displayMember: "KorNm", valueMember: "OID", width: 185, height: 30, });
+        //dlgOem$.val(parent.selOemOID);
+
+        //dlgOem$.on('change', function (evt) {
+        //    var param = {};
+        //    param.fromOID = dlgOem$.val();
+        //    RequestData('/Manage/SelCodeLibrary', param, function (res) {
+
+        //        var carSource =
+        //        {
+        //            localdata: res,
+        //            datatype: "json",
+        //            datafields:
+        //                [
+        //                    { name: 'KorNm', type: 'string' },
+        //                    { name: 'OID', type: 'int' },
+        //                    { name: 'Code1', type: 'string' },
+        //                    { name: 'Code2', type: 'string' },
+        //                ]
+        //        };
+        //        var caradapter = new $.jqx.dataAdapter(carSource);
+        //        dlgCar$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID", width: 185, height: 30 });
+        //        dlgCar$.val(parent.selCarOID);
+        //        dlgCar$.on('change', function (evt) {
+
+        //            CreateEPartName();
+        //        });
+        //    });
+        //});
+        //dlgOem$.jqxComboBox('val', parent.selOemOID);
+        // dlgCar$.jqxComboBox('val', parent.selCarOID);
+        //setTimeout(function () {
+        //    dlgCar$.val(parent.selCarOID);
+        //}, 300);
+        //dlgOem$.jqxComboBox({ disabled: true });
+        //dlgCar$.jqxComboBox({ disabled: true });*@

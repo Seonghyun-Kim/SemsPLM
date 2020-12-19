@@ -69,6 +69,8 @@ namespace EBom.Models
         public int? RootOID { get; set; }
         public int? LToOID { get; set; }
         public int? RToOID { get; set; }
+
+        public int? TimeOID { get; set; }
     }
 
     public static class EBomRepository

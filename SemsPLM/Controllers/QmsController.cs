@@ -55,7 +55,7 @@ namespace SemsPLM.Controllers
                     DObject dobj = new DObject();
                     dobj.Type = QmsConstant.TYPE_OPEN_ISSUE;
                     dobj.Name = QmsConstant.TYPE_OPEN_ISSUE;
-                    openIssue.OID = DObjectRepository.InsDObject(dobj);
+                    openIssue.OID = DObjectRepository.InsDObject(Session, dobj);
 
                     resultValue = OpenIssueRepository.InsOpenIssue(openIssue);
                 }
@@ -83,12 +83,12 @@ namespace SemsPLM.Controllers
                             DObject dobj = new DObject();
                             dobj.Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM;
                             dobj.Name = QmsConstant.TYPE_OPEN_ISSUE_ITEM + "_" + openIssue.OID;
-                            openIssueItem.OID = DObjectRepository.InsDObject(dobj);
+                            openIssueItem.OID = DObjectRepository.InsDObject(Session, dobj);
 
                             resultValue = OpenIssueItemRepository.InsOpenIssueItem(openIssueItem);
                         }
 
-                        if(openIssueRelationship != null)
+                        if (openIssueRelationship != null)
                         {
                             openIssueRelationship = null;
                         }
@@ -131,7 +131,8 @@ namespace SemsPLM.Controllers
 
                 DaoFactory.Commit();
                 return Json(1);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -288,7 +289,7 @@ namespace SemsPLM.Controllers
                               where m.QuickOID == v.OID
                               select m;
 
-                Modules.ToList().ForEach(m => 
+                Modules.ToList().ForEach(m =>
                 {
                     if (m.ModuleType == QmsConstant.TYPE_BLOCKADE)
                     {
@@ -367,7 +368,7 @@ namespace SemsPLM.Controllers
 
                 gridView.Add(quickResponseView);
             });
-            
+
             return Json(gridView);
         }
 
@@ -382,7 +383,7 @@ namespace SemsPLM.Controllers
                 dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
                 _param.Name = DateTime.Now.Ticks.ToString(); // 채번필요
                 dobj.Name = _param.Name;
-                result = DObjectRepository.InsDObject(dobj);
+                result = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = result;
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
@@ -393,7 +394,7 @@ namespace SemsPLM.Controllers
                     DObject dobjModule = new DObject();
                     dobjModule.Type = Type;
                     dobjModule.Name = Type;
-                    int ModuleOID = DObjectRepository.InsDObject(dobjModule);
+                    int ModuleOID = DObjectRepository.InsDObject(Session, dobjModule);
                     QuickResponseModuleRepository.InsQuickResponseModule(new QuickResponseModule() { QuickOID = result, OID = ModuleOID });
 
                     DRelationship dRelModule = new DRelationship();
@@ -410,10 +411,10 @@ namespace SemsPLM.Controllers
                     DObject dobjModule = new DObject();
                     dobjModule.Type = type;
                     dobjModule.Name = name;
-                    int ItemOID = DObjectRepository.InsDObject(dobjModule);
+                    int ItemOID = DObjectRepository.InsDObject(Session, dobjModule);
 
                     BlockadeItemRepository.InsBlockadeItem(new BlockadeItem() { ModuleOID = ModuleOID, OID = ItemOID });
-                    
+
                     DRelationship dRelModule = new DRelationship();
                     dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
                     dRelModule.FromOID = ModuleOID;
@@ -424,7 +425,7 @@ namespace SemsPLM.Controllers
                 // 봉쇄조치
                 int blockadeOID = SetQuickModule(QmsConstant.TYPE_BLOCKADE);
 
-                if(_param.BlockadeMaterialFl == true)
+                if (_param.BlockadeMaterialFl == true)
                 {
                     SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_MATERIAL, QmsConstant.NAME_BLOCKADE_ITEM_MATERIAL);
                 }
@@ -453,7 +454,7 @@ namespace SemsPLM.Controllers
                 {
                     SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_SHIP_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_SHIP_PRODUCT);
                 }
-                               
+
                 // 원인분석
                 SetQuickModule(QmsConstant.TYPE_OCCURRENCE_CAUSE);
 
@@ -503,8 +504,8 @@ namespace SemsPLM.Controllers
 
                 DObject dobj = new DObject();
                 dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
-                dobj.OID = _param.OID;            
-                DObjectRepository.UdtDObject(dobj);
+                dobj.OID = _param.OID;
+                DObjectRepository.UdtDObject(Session, dobj);
 
                 QuickResponseRepository.UdtQuickResponse(_param);
                 DaoFactory.Commit();
@@ -522,7 +523,7 @@ namespace SemsPLM.Controllers
         #region -- 신속대응 일정관리 
         public ActionResult EditQuickResponsePlan(QuickResponse quickResponse)
         {
-            if(quickResponse == null || quickResponse.OID == null)
+            if (quickResponse == null || quickResponse.OID == null)
             {
                 throw new Exception("잘못된 호출입니다.");
             }
@@ -530,7 +531,7 @@ namespace SemsPLM.Controllers
             List<QuickResponseModule> list = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = quickResponse.OID });
 
             list.ForEach(v =>
-            {               
+            {
                 if (v.ModuleType == QmsConstant.TYPE_BLOCKADE)
                 {
                     ViewBag.Blockade = v;
@@ -578,9 +579,9 @@ namespace SemsPLM.Controllers
                 {
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
-                    DObject dObject = DObjectRepository.SelDObject(v);
+                    DObject dObject = DObjectRepository.SelDObject(Session, v);
 
-                    if(dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
+                    if (dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
                     {
 
                     }
@@ -589,12 +590,12 @@ namespace SemsPLM.Controllers
                 DaoFactory.Commit();
                 return Json("1");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
-           
+
         }
         #endregion
 
@@ -624,20 +625,20 @@ namespace SemsPLM.Controllers
                 param.Type = QmsConstant.TYPE_BLOCKADE;
                 param.BlockadeItems.ForEach(v =>
                 {
-                    DObjectRepository.UdtDObject(v);
+                    DObjectRepository.UdtDObject(Session, v);
                     BlockadeItemRepository.UdtBlockadeItem(v);
                 });
 
-                if(param.Files != null)
+                if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -676,7 +677,7 @@ namespace SemsPLM.Controllers
             DetectCounterMeasure detectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = OID });
             ViewBag.DetectCounterMeasure = detectCounterMeasure == null ? new DetectCounterMeasure() { ModuleOID = OID } : detectCounterMeasure;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OCCURRENCE_CAUSE });
-            
+
             return View();
         }
 
@@ -695,7 +696,7 @@ namespace SemsPLM.Controllers
                 v.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = v.OID });
             });
             ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
-            
+
             DetectCounterMeasure detectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = _param.OID });
             ViewBag.DetectCounterMeasure = detectCounterMeasure == null ? new DetectCounterMeasure() { ModuleOID = _param.OID } : detectCounterMeasure;
 
@@ -716,7 +717,7 @@ namespace SemsPLM.Controllers
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_OCCURRENCE_CAUSE_ITEM;
                         dobj.Name = QmsConstant.TYPE_OCCURRENCE_CAUSE_ITEM;
-                        v.OID = DObjectRepository.InsDObject(dobj);
+                        v.OID = DObjectRepository.InsDObject(Session, dobj);
                         CauseOID = v.OID;
                         OccurrenceCauseItemRepository.InsOccurrenceCauseItem(v);
                     }
@@ -733,23 +734,23 @@ namespace SemsPLM.Controllers
                             DObject dobj = new DObject();
                             dobj.Type = QmsConstant.TYPE_WHY;
                             dobj.Name = "WHY";
-                            w.OID = DObjectRepository.InsDObject(dobj);
+                            w.OID = DObjectRepository.InsDObject(Session, dobj);
                             w.CauseOID = v.OID;
 
                             OccurrenceWhyRepository.InsOccurrenceWhy(w);
                         }
                         else
                         {
-                            if(w.IsRemove == "Y")
-                            {      
+                            if (w.IsRemove == "Y")
+                            {
                                 w.DeleteUs = 73;
-                                DObjectRepository.DelDObject(w);
+                                DObjectRepository.DelDObject(Session, w);
                             }
                             else
                             {
                                 w.ModifyUs = 73;
                                 OccurrenceWhyRepository.UdtOccurrenceWhy(w);
-                                DObjectRepository.UdtDObject(w);
+                                DObjectRepository.UdtDObject(Session, w);
                             }
                         }
                     });
@@ -759,14 +760,14 @@ namespace SemsPLM.Controllers
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -810,13 +811,13 @@ namespace SemsPLM.Controllers
                 param.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE;
                 param.ImproveCounterMeasureItems.ForEach(v =>
                 {
-                    if(v.OID == null)
+                    if (v.OID == null)
                     {
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
                         dobj.Name = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
-                        v.OID = DObjectRepository.InsDObject(dobj);
-                       
+                        v.OID = DObjectRepository.InsDObject(Session, dobj);
+
                         ImproveCounterMeasureItemRepository.InsImproveCounterMeasureItem(v);
                     }
                     else
@@ -824,27 +825,27 @@ namespace SemsPLM.Controllers
                         if (v.IsRemove == "Y")
                         {
                             v.DeleteUs = 73;
-                            DObjectRepository.DelDObject(v);
+                            DObjectRepository.DelDObject(Session, v);
                         }
                         else
                         {
                             v.ModifyUs = 73;
                             ImproveCounterMeasureItemRepository.UdtImproveCounterMeasureItem(v);
-                            DObjectRepository.UdtDObject(v);
+                            DObjectRepository.UdtDObject(Session, v);
                         }
                     }
                 });
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -866,7 +867,7 @@ namespace SemsPLM.Controllers
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
             ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
-            if(errorproof == null)
+            if (errorproof == null)
             {
                 errorproof = new ErrorProof();
                 errorproof.OID = OID;
@@ -899,7 +900,7 @@ namespace SemsPLM.Controllers
 
                 ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = param.OID });
 
-                DObjectRepository.UdtDObject(param);
+                DObjectRepository.UdtDObject(Session, param);
                 if (errorproof == null)
                 {
                     ErrorProofRepository.InsErrorProof(param);
@@ -911,21 +912,21 @@ namespace SemsPLM.Controllers
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
                 DaoFactory.Commit();
                 return Json("1");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -1017,7 +1018,7 @@ namespace SemsPLM.Controllers
 
                 LpaUnfit lpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = param.OID });
 
-                DObjectRepository.UdtDObject(param);
+                DObjectRepository.UdtDObject(Session, param);
                 int? OID = null;
                 if (lpaUnfit == null)
                 {
@@ -1028,7 +1029,7 @@ namespace SemsPLM.Controllers
                     OID = param.OID;
                     LpaUnfitRepository.UdtLpaUnfit(param);
                 }
-                
+
                 param.LpaUnfitChecks.ForEach(v =>
                 {
                     if (v.OID == null)
@@ -1036,7 +1037,7 @@ namespace SemsPLM.Controllers
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
                         dobj.Name = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
-                        v.OID = DObjectRepository.InsDObject(dobj);
+                        v.OID = DObjectRepository.InsDObject(Session, dobj);
 
                         LpaUnfitCheckRepository.InsLpaUnfitCheck(v);
                     }
@@ -1045,27 +1046,27 @@ namespace SemsPLM.Controllers
                         if (v.IsRemove == "Y")
                         {
                             v.DeleteUs = 73;
-                            DObjectRepository.DelDObject(v);
+                            DObjectRepository.DelDObject(Session, v);
                         }
                         else
                         {
                             v.ModifyUs = 73;
                             LpaUnfitCheckRepository.UdtLpaUnfitCheck(v);
-                            DObjectRepository.UdtDObject(v);
+                            DObjectRepository.UdtDObject(Session, v);
                         }
                     }
                 });
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -1147,8 +1148,8 @@ namespace SemsPLM.Controllers
                 {
                     DObject dobj = new DObject();
                     dobj.Type = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
-                    dobj.Name = "LPA_UNFIT_CHECK_ITEM_"+ lpaUnfit.ModuleOID;
-                    lpaUnfitCheck.OID = DObjectRepository.InsDObject(dobj);
+                    dobj.Name = "LPA_UNFIT_CHECK_ITEM_" + lpaUnfit.ModuleOID;
+                    lpaUnfitCheck.OID = DObjectRepository.InsDObject(Session, dobj);
 
                     resultValue = LpaUnfitCheckRepository.InsLpaUnfitCheck(lpaUnfitCheck);
                 }
@@ -1156,7 +1157,7 @@ namespace SemsPLM.Controllers
                 DaoFactory.Commit();
                 return Json(resultValue);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -1179,7 +1180,7 @@ namespace SemsPLM.Controllers
             List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, ToOID = OID });
 
             int? LpaUnfitOID = null;
-            relLpa.ForEach(v => { LpaUnfitOID = v.FromOID; });            
+            relLpa.ForEach(v => { LpaUnfitOID = v.FromOID; });
             List<LpaUnfitCheck> lpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = LpaUnfitOID });
 
             ViewBag.lpaMeasure = lpaMeasure;
@@ -1200,7 +1201,7 @@ namespace SemsPLM.Controllers
 
                 LpaMeasure lpaMeasure = LpaMeasureRepository.SelLpaMeasure(new LpaMeasure() { ModuleOID = param.OID });
 
-                DObjectRepository.UdtDObject(param);
+                DObjectRepository.UdtDObject(Session, param);
                 int? OID = null;
                 if (lpaMeasure == null)
                 {
@@ -1216,19 +1217,19 @@ namespace SemsPLM.Controllers
                 {
                     v.ModifyUs = 73;
                     LpaUnfitCheckRepository.UdtLpaUnfitCheck(v);
-                    DObjectRepository.UdtDObject(v);
+                    DObjectRepository.UdtDObject(Session, v);
                 });
 
                 if (param.Files != null)
                 {
-                    HttpFileRepository.InsertData(param);
+                    HttpFileRepository.InsertData(Session, param);
                 }
 
                 if (param.delFiles != null)
                 {
                     param.delFiles.ForEach(v =>
                     {
-                        HttpFileRepository.DeleteData(v);
+                        HttpFileRepository.DeleteData(Session, v);
                     });
                 }
 
@@ -1250,10 +1251,10 @@ namespace SemsPLM.Controllers
             List<QuickResponseModule> list = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = _param.QuickOID });
 
             QuickResponseModule lpaUnfitModule = (from x in list
-                                                 where x.Type == QmsConstant.TYPE_LPA_UNFIT
-                                                 select x
+                                                  where x.Type == QmsConstant.TYPE_LPA_UNFIT
+                                                  select x
                                                  ).FirstOrDefault();
-            if(lpaUnfitModule != null)
+            if (lpaUnfitModule != null)
             {
                 ViewBag.LpaUnfitDetail = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = lpaUnfitModule.OID });
             }
@@ -1322,7 +1323,7 @@ namespace SemsPLM.Controllers
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_ITEM;
                         dobj.Name = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_ITEM + "_" + qmsCheck.ModuleOID;
-                        qmsCheck.OID = DObjectRepository.InsDObject(dobj);
+                        qmsCheck.OID = DObjectRepository.InsDObject(Session, dobj);
 
                         QmsCheckRepository.InsQmsCheck(qmsCheck);
                     }
@@ -1405,10 +1406,11 @@ namespace SemsPLM.Controllers
             /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
             // TEST
             List<StandardDoc> StandardDocs = new List<StandardDoc>();
-            for (int i=0; i<5; i++)
+            for (int i = 0; i < 5; i++)
             {
-                StandardDocs.Add(new StandardDoc() { 
-                    OID = i, 
+                StandardDocs.Add(new StandardDoc()
+                {
+                    OID = i,
                     ModuleOID = 100,
                     DocOID = 100 + i,
                     DocNm = "TEST",
@@ -1439,7 +1441,7 @@ namespace SemsPLM.Controllers
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_STANDARD_DOC_ITEM;
                         dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + standardDoc.ModuleOID;
-                        standardDoc.OID = DObjectRepository.InsDObject(dobj);
+                        standardDoc.OID = DObjectRepository.InsDObject(Session, dobj);
 
                         returnValue = StandardDocRepository.InsStandardDoc(standardDoc);
                     }

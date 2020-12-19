@@ -12,66 +12,44 @@
     <insert id="InsChangeOrder" parameterClass="ECO">
       INSERT INTO T_DCHANGE_ORDER
       (OID
-      ,EoDt
+      ,ItemGroup
       ,Title
-      ,Count
-      ,EPart_No
-      ,Oem_Lib_OID
-      ,Car_Lib_OID
-      ,Pms_OID
-      ,EoType
-      ,EoProType
-      ,EoID
-      ,IsService
-      ,DrwDt
-      ,DesignCost
-      ,WtChange
+      ,DesignChangeDt
+      ,ReasonChange
+      ,Compatible
       ,IsMold
-      ,DieQt
-      ,DieCost
-      ,EoClass
-      ,Eo_InvClr
-      ,Eo_Fault
-      ,TeamNm
-      ,ApprovDt
-      ,Oem_Eo
-      ,OemDt
-      ,OemUs
-      ,Oem_RecDt
-      ,Effective
-      ,Statement
-      ,Eo_Reason)
+      ,ReasonRegistration
+      ,Security
+      ,Changes
+      ,Stock
+      ,Memo
+      ,IsAttached
+      ,SelRequestDt
+      ,SelPartNo
+      ,EBom
+      ,DevMP
+      ,CarType
+      )
       VALUES
       (#OID#
-      ,#EoDt#
+      ,#ItemGroup#
       ,#Title#
-      ,#Count#
-      ,#EPart_No#
-      ,#Oem_Lib_OID#
-      ,#Car_Lib_OID#
-      ,#Pms_OID#
-      ,#EoType#
-      ,#EoProType#
-      ,#EoID#
-      ,#IsService#
-      ,#DrwDt#
-      ,#DesignCost#
-      ,#WtChange#
+      ,#DesignChangeDt#
+      ,#ReasonChange#
+      ,#Compatible#
       ,#IsMold#
-      ,#DieQt#
-      ,#DieCost#
-      ,#EoClass#
-      ,#Eo_InvClr#
-      ,#Eo_Fault#
-      ,#TeamNm#
-      ,#ApprovDt#
-      ,#Oem_Eo#
-      ,#OemDt#
-      ,#OemUs#
-      ,#Oem_RecDt#
-      ,#Effective#
-      ,#Statement#
-      ,#Eo_Reason#)
+      ,#ReasonRegistration#
+      ,#Security#
+      ,#Changes#
+      ,#Stock#
+      ,#Memo#
+      ,#IsAttached#
+      ,#SelRequestDt#
+      ,#SelPartNo#
+      ,#EBom#
+      ,#DevMP#
+      ,#CarType#
+      )
     </insert>
     
     <select id="SelChangeOrder" parameterClass="ECO" resultClass="ECO">
@@ -90,23 +68,20 @@
         <isNotNull prepend="and" property="Name">
           A.Name LIKE CONCAT('%',#Name#,'%')
         </isNotNull>
+         <isNotNull prepend="and" property="DevMP">
+          B.DevMP = #DevMP#
+        </isNotNull>
         <isNotNull prepend="and" property="Description">
           A.Description LIKE CONCAT('%',#Description#,'%')
-        </isNotNull>
-        <isNotNull prepend="and" property="EPart_No">
-          B.EPart_No = #EPart_No#
         </isNotNull>
         <isNotNull prepend="and" property="Title">
           B.Title LIKE CONCAT('%',#Title#,'%')
         </isNotNull>
-        <isNotNull prepend="and" property="Oem_Eo">
-          B.Oem_Eo LIKE CONCAT('%',#Oem_Eo#,'%')
+        <isNotNull prepend="and" property="StartDesignChangeDt">
+          B.DesignChangeDt &gt;= #StartDesignChangeDt#
         </isNotNull>
-        <isNotNull prepend="and" property="Oem_Lib_OID">
-          B.Oem_Lib_OID  = #Oem_Lib_OID#
-        </isNotNull>
-        <isNotNull prepend="and" property="Car_Lib_OID">
-          B.Car_Lib_OID  = #Car_Lib_OID#
+        <isNotNull prepend="and" property="EndDesignChangeDt">
+          B.DesignChangeDt &lt;= #EndDesignChangeDt#
         </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
@@ -134,31 +109,23 @@
 
     <update id="UdtChangeOrder" parameterClass="ECO">
       UPDATE T_DCHANGE_ORDER SET
-      EoDt        =  #EoDt#
-      ,EPart_No    =  #EPart_No#
-      ,Title       =  #Title#
-      ,Count       =  #Count#
-      ,DrwDt       =  #DrwDt#
-      ,EoType      =  #EoType#
-      ,EoID        =  #EoID#
-      ,EoProType   =  #EoProType#
-      ,IsService   =  #IsService#
-      ,DesignCost  =  #DesignCost#
-      ,WtChange    =  #WtChange#
-      ,IsMold      =  #IsMold#
-      ,DieQt       =  #DieQt#
-      ,DieCost     =  #DieCost#
-      ,EoClass     =  #EoClass#
-      ,Eo_InvClr   =  #Eo_InvClr#
-      ,Eo_Fault    =  #Eo_Fault#
-      ,TeamNm      =  #TeamNm#
-      ,Oem_Eo      =  #Oem_Eo#
-      ,OemDt       =  #OemDt#
-      ,OemUs       =  #OemUs#
-      ,Oem_RecDt   =  #Oem_RecDt#
-      ,Eo_Reason   =  #Eo_Reason#
-      ,Effective   =  #Effective#
-      ,Statement   =  #Statement#
+      ItemGroup = #ItemGroup#
+      ,Title = #Title#
+      ,DesignChangeDt = #DesignChangeDt#
+      ,ReasonChange = #ReasonChange#
+      ,Compatible = #Compatible#
+      ,IsMold = #IsMold#
+      ,ReasonRegistration = #ReasonRegistration#
+      ,Security = #Security#
+      ,Changes = #Changes#
+      ,Stock = #Stock#
+      ,Memo = #Memo#
+      ,IsAttached = #IsAttached#
+      ,SelRequestDt = #SelRequestDt#
+      ,SelPartNo = #SelPartNo#
+      ,EBom = #EBom#
+      ,DevMP = #DevMP#
+      ,CarType = #CarType#
       WHERE OID   =  #OID#
     </update>
     

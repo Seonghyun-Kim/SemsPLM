@@ -2,6 +2,7 @@
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using DocumentClassification.Models;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -49,9 +50,9 @@ namespace SemsPLM.Controllers
                 dObj.Name = _param.Name;
                 dObj.Type = CommonConstant.TYPE_CALENDAR;
                 dObj.TableNm = CommonConstant.TABLE_CALENDAR;
-                dObj.TdmxOID = DObjectRepository.SelTdmxOID(new DObject { Type = dObj.Type });
+                dObj.TdmxOID = DObjectRepository.SelTdmxOID(Session, new DObject { Type = dObj.Type });
                 dObj.IsLatest = 1;
-                int dOid = DObjectRepository.InsDObject(dObj);
+                int dOid = DObjectRepository.InsDObject(Session, dObj);
 
                 _param.OID = dOid;
                 DaoFactory.SetInsert("Manage.InsCalendar", _param);
@@ -67,7 +68,7 @@ namespace SemsPLM.Controllers
             catch (Exception ex)
             {
                 DaoFactory.Rollback();
-                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
             return Json(result);
         }
@@ -79,7 +80,7 @@ namespace SemsPLM.Controllers
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
             });
-            return Json(lCalendar);    
+            return Json(lCalendar);
         }
 
         public JsonResult InsertCalenderDetail(Calendar _param)
@@ -93,13 +94,13 @@ namespace SemsPLM.Controllers
                 List<CalendarDetail> lCalendarDetails = DaoFactory.GetList<CalendarDetail>("Manage.SelCalenderDetail", new CalendarDetail { CalendarOID = calendar.OID });
                 if (lCalendarDetails != null && lCalendarDetails.Count > 0)
                 {
-                    DObjectRepository.UdtLatestDObject(new DObject { OID = calendar.OID });
+                    DObjectRepository.UdtLatestDObject(Session, new DObject { OID = calendar.OID });
                     DObject dObj = new DObject();
                     dObj.Name = calendar.Name;
                     dObj.Type = CommonConstant.TYPE_CALENDAR;
                     dObj.TableNm = CommonConstant.TABLE_CALENDAR;
                     dObj.TdmxOID = calendar.TdmxOID;
-                    result = DObjectRepository.InsDObject(dObj);
+                    result = DObjectRepository.InsDObject(Session, dObj);
 
                     Calendar tmpCalendar = new Calendar();
                     tmpCalendar.OID = result;
@@ -121,7 +122,7 @@ namespace SemsPLM.Controllers
                 }
                 DaoFactory.Commit();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -141,7 +142,7 @@ namespace SemsPLM.Controllers
 
         public ActionResult UserManage()
         {
-            ViewBag.Organization = CompanyRepository.SelOrganization();
+            ViewBag.Organization = CompanyRepository.SelOrganization(Session);
             return View();
         }
 
@@ -154,7 +155,7 @@ namespace SemsPLM.Controllers
             ViewBag.id = _param.id;
             if (_param.id != null)
             {
-                DObject dobj = DObjectRepository.SelDObjects(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = _param.id }).First();
+                DObject dobj = DObjectRepository.SelDObjects(Session, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = _param.id }).First();
                 ViewBag.label = dobj.Name;
                 ViewBag.value = dobj.Description;
             }
@@ -202,7 +203,7 @@ namespace SemsPLM.Controllers
                 dobj.OID = _param.id;
                 dobj.Name = _param.label;
                 dobj.Description = _param.value;
-                result = DObjectRepository.UdtDObject(dobj);
+                result = DObjectRepository.UdtDObject(Session, dobj);
 
                 DaoFactory.Commit();
             }
@@ -226,7 +227,7 @@ namespace SemsPLM.Controllers
                 dobj.Type = CommonConstant.TYPE_DEPARTMENT;
                 dobj.Name = _param.label;
                 dobj.Description = _param.value;
-                result = DObjectRepository.InsDObject(dobj);
+                result = DObjectRepository.InsDObject(Session, dobj);
 
                 DRelationship dRel = new DRelationship();
                 dRel.Type = CommonConstant.RELATIONSHIP_DEPARTMENT;
@@ -236,7 +237,7 @@ namespace SemsPLM.Controllers
 
                 DaoFactory.Commit();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -253,7 +254,7 @@ namespace SemsPLM.Controllers
         {
             if (_param.OID != null)
             {
-                Person person = PersonRepository.SelPerson(new Person { OID = _param.OID });
+                Person person = PersonRepository.SelPerson(Session, new Person { OID = _param.OID });
                 ViewBag.DepartmentOID = person.DepartmentOID;
                 ViewBag.DepartmentNm = person.DepartmentNm;
                 ViewBag.OID = person.OID;
@@ -277,10 +278,10 @@ namespace SemsPLM.Controllers
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_PERSON;
                 dobj.Name = _param.Name;
-                result = DObjectRepository.InsDObject(dobj);
+                result = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = result;
-                int returnValue = PersonRepository.InsPerson(_param);
+                int returnValue = PersonRepository.InsPerson(Session, _param);
                 if (returnValue < 0)
                 {
                     throw new Exception("ID가 중복입니다.");
@@ -308,8 +309,8 @@ namespace SemsPLM.Controllers
                 dobj.Name = _param.Name;
                 dobj.OID = _param.OID;
                 dobj.Thumbnail = _param.Thumbnail;
-                DObjectRepository.UdtDObject(dobj);
-                
+                DObjectRepository.UdtDObject(Session, dobj);
+
                 PersonRepository.UtpPerson(_param);
                 DaoFactory.Commit();
             }
@@ -343,18 +344,18 @@ namespace SemsPLM.Controllers
             List<Person> lPerson = null;
             if (_param.DepartmentOID == null || _param.DepartmentOID < 0)
             {
-                lPerson = PersonRepository.SelPersons(_param);
+                lPerson = PersonRepository.SelPersons(Session, _param);
             }
             else
             {
-                DObject dobj = DObjectRepository.SelDObject(new DObject { OID = _param.DepartmentOID });
+                DObject dobj = DObjectRepository.SelDObject(Session, new DObject { OID = _param.DepartmentOID });
                 if (dobj.Type.Equals(CommonConstant.TYPE_COMPANY))
                 {
-                    lPerson = PersonRepository.SelPersons(new Person { });
+                    lPerson = PersonRepository.SelPersons(Session, new Person { });
                 }
                 else
                 {
-                    lPerson = PersonRepository.SelPersons(_param);
+                    lPerson = PersonRepository.SelPersons(Session, _param);
                 }
             }
             return Json(lPerson);
@@ -370,7 +371,7 @@ namespace SemsPLM.Controllers
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_PERSON;
                 dobj.OID = _param.OID;
-                DObjectRepository.DelDObject(dobj);
+                DObjectRepository.DelDObject(Session, dobj);
 
                 DaoFactory.Commit();
             }
@@ -406,7 +407,7 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-                result= DObjectRepository.UdtDObject(_param);
+                result = DObjectRepository.UdtDObject(Session, _param);
                 LibraryRepository.updateLibrary(_param);
                 DaoFactory.Commit();
             }
@@ -428,14 +429,14 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-               // DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
+                // DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
 
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_LIBRARY;
                 dobj.TableNm = CommonConstant.TABLE_LIBRARY;
                 dobj.Name = _param.Name;
                 dobj.Description = _param.Description;
-                resultOid = DObjectRepository.InsDObject(dobj);
+                resultOid = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = resultOid;
                 //_param.DocType = _param.DocType;
@@ -458,7 +459,7 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-                DObjectRepository.DelDObject(_param);
+                DObjectRepository.DelDObject(Session, _param);
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -507,7 +508,7 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
                 // DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
-
+                _param.CreateUs = Convert.ToInt32(Session["UserOID"]);
                 DaoFactory.SetInsert("Library.InsCodeLibrary", _param);
 
                 DaoFactory.Commit();
@@ -525,6 +526,7 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                _param.DeleteUs = Convert.ToInt32(Session["UserOID"]);
                 LibraryRepository.deleteCodeLibrary(_param);
                 DaoFactory.Commit();
             }
@@ -564,6 +566,134 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult SelAssessLibrary(Library _param)
+        {
+            List<Library> lLibrary = LibraryRepository.SelAssessLibraryLatest(_param);
+            lLibrary.ForEach(item =>
+            {
+                List<Library> child = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = item.OID });
+
+                item.Cdata = child;
+            });
+
+
+            return Json(lLibrary);
+        }
+
+        public JsonResult updateAssessLibrary(List<Library> _param)
+        {
+            int resultOid = 0;
+            int defaultCOrd = 1; //자식 ord
+            string revision = "";
+            try
+            {
+                DaoFactory.BeginTransaction();
+                // DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
+                //  revision = SemsUtil.MakeMajorRevisonUp(_param[0].Cdata[0].Revision); //리비전업
+                for (var i = 0; i < _param.Count; i++)
+                {
+                    if (_param[0].isParentMove == "Y") //부모 순서변경했을경우
+                    {
+                        if (_param[i].isChange == "Y") //부모 리비전 상승했을경우
+                        {
+                            LibraryRepository.UpdateAssessIsLatest(_param[i]); //isLatest = 0으로 변경
+                            _param[i].Revision = SemsUtil.MakeMajorRevisonUp(_param[i].Revision);
+                            _param[i].Ord = i + 1;//부모순서 변경
+                            _param[i].CreateUs = Convert.ToInt32(Session["UserOID"]);
+                            resultOid = DaoFactory.SetInsert("Library.InsAssessParent", _param[i]);
+                            defaultCOrd = 1;
+                            if (_param[i].Cdata != null)
+                            {
+                                _param[i].Cdata.ForEach(child =>
+                            {
+                                child.FromOID = resultOid;
+                                child.Ord = defaultCOrd;
+                                DaoFactory.SetInsert("Library.InsAssessChild", child);
+                                defaultCOrd++;
+                            });
+                            }
+                        }
+                        else if (_param[i].isMove == "Y") //리비전 미변경, 자식 순서변경
+                        {
+                            _param[i].Ord = i + 1;
+                            DaoFactory.SetUpdate("Library.UpdateAssessParentOrd", _param[i]); //부모순서 변경
+
+                            defaultCOrd = 1;
+                            if (_param[i].Cdata != null)
+                            {
+                                _param[i].Cdata.ForEach(child =>
+                            {
+                                child.FromOID = resultOid;
+                                child.Ord = defaultCOrd;
+                                DaoFactory.SetUpdate("Library.UpdateAssessChildOrd", child);
+                                defaultCOrd++;
+                            });
+                            }
+                        }
+                        else if (_param[i].isDelete == "Y") //삭제여부 판단
+                        {
+                            _param[i].DeleteUs = Convert.ToInt32(Session["UserOID"]);
+                            DaoFactory.SetUpdate("Library.deleteAssessLibrary", _param[i]); //부모삭제
+                        }
+                        else //리비전 미변경 자식 미변경
+                        {
+                            _param[i].Ord = i + 1;
+                            DaoFactory.SetUpdate("Library.UpdateAssessParentOrd", _param[i]); //부모순서 변경
+                        }
+                    }
+                    else //부모순서 변경안했을경우
+                    {
+                        if (_param[i].isChange == "Y") //부모 리비전 상승했을경우
+                        {
+                            LibraryRepository.UpdateAssessIsLatest(_param[i]); //isLatest = 0으로 변경
+                            _param[i].Revision = SemsUtil.MakeMajorRevisonUp(_param[i].Revision);
+                            _param[i].Ord = i + 1;
+                            _param[i].CreateUs = Convert.ToInt32(Session["UserOID"]);
+                            resultOid = DaoFactory.SetInsert("Library.InsAssessParent", _param[i]);
+                            defaultCOrd = 1;
+                            if (_param[i].Cdata != null)
+                            {
+                                _param[i].Cdata.ForEach(child =>
+                            {
+                                child.FromOID = resultOid;
+                                child.Ord = defaultCOrd;
+                                DaoFactory.SetInsert("Library.InsAssessChild", child);
+                                defaultCOrd++;
+                            });
+                            }
+                        }
+                        else if (_param[i].isMove == "Y") //리비전 미변경, 자식 순서변경
+                        {
+                            defaultCOrd = 1;
+                            if (_param[i].Cdata != null)
+                            {
+                                _param[i].Cdata.ForEach(child =>
+                                {
+                                    child.FromOID = resultOid;
+                                    child.Ord = defaultCOrd;
+                                    DaoFactory.SetUpdate("Library.UpdateAssessChildOrd", child);
+                                    defaultCOrd++;
+                                });
+                            }
+                        }
+                        else if (_param[i].isDelete == "Y") //삭제여부 판단
+                        {
+                            _param[i].DeleteUs = Convert.ToInt32(Session["UserOID"]);
+                            DaoFactory.SetUpdate("Library.deleteAssessLibrary", _param[i]); //부모삭제
+                        }
+                    }
+
+                }
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOid);
+        }
+
         #endregion
 
         #region -- Module : Auth
@@ -577,7 +707,7 @@ namespace SemsPLM.Controllers
         {
             if (_param.OID != null)
             {
-                ViewBag.Role = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_ROLE, OID = _param.OID });
+                ViewBag.Role = DObjectRepository.SelDObject(Session, new DObject { Type = CommonConstant.TYPE_ROLE, OID = _param.OID });
             }
             else
             {
@@ -612,11 +742,11 @@ namespace SemsPLM.Controllers
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_ROLE;
                 dobj.Name = _param.Name;
-                if (DObjectRepository.SelDObject(dobj) != null)
+                if (DObjectRepository.SelDObject(Session, dobj) != null)
                 {
                     throw new Exception("Role 중복입니다.");
                 }
-                result = DObjectRepository.InsDObject(dobj);
+                result = DObjectRepository.InsDObject(Session, dobj);
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -626,6 +756,103 @@ namespace SemsPLM.Controllers
             }
             return Json(result);
         }
+
+        #endregion
+
+        #region -- Module : 문서분류체계
+        public ActionResult DocumentClassification()
+        {
+            return View();
+        }
+
+        #region -- 문서분류체계 수정 등록창
+        public ActionResult dlgDocumentClassIntegrate()
+        {
+            return PartialView("Dialog/dlgDocumentClassIntegrate");
+        }
+        #endregion
+
+        #region -- 문서분류체계 검색
+        public JsonResult SelDocumentClassification(DocClass _param)
+        {
+            return Json(DocClassRepository.SelDocClass(Session, _param));
+        }
+        #endregion
+
+        #region -- 문서분류체계 검색
+        public JsonResult SelProjectDocumentClassification(DocClass _param)
+        {
+            return Json(DocClassRepository.SelProjectDocClass(Session, _param));
+        }
+        #endregion
+
+        #region -- 문서분류체계 등록
+        public JsonResult InsDocumentClassification(DocClass _param)
+        {
+            int resultOID = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObject dobj = new DObject();
+                dobj.Type = DocClassConstant.TYPE_DOCCLASS;
+                dobj.TableNm = DocClassConstant.TABLE_DOCCLASS;
+                dobj.Name = _param.Name;
+                dobj.Description = _param.Description;
+                resultOID = DObjectRepository.InsDObject(Session, dobj);
+
+                _param.OID = resultOID;
+                DaoFactory.SetInsert("DocClass.InsDocClass", _param);
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOID);
+        }
+        #endregion
+
+        #region -- 문서분류체계 수정
+        public JsonResult UdtDocumentClassification(DocClass _param)
+        {
+            int resultOID = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+                DObjectRepository.UdtDObject(Session, _param);
+                DaoFactory.SetUpdate("DocClass.UdtDocClass", _param);
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOID);
+        }
+        #endregion
+
+        #region -- 문서분류체계 삭제
+        public JsonResult DelDocumentClassification(DocClass _param)
+        {
+            int resultOID = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+                DObjectRepository.DelDObject(Session, _param);
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOID);
+        }
+        #endregion
 
         #endregion
     }

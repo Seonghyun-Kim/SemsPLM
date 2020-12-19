@@ -9,7 +9,7 @@
             <li class="tab" info="wbs"><i class="fas fa-stream"></i> WBS</li>
             <li class="tab" info="resource"><i class="fas fa-users"></i> 멤버</li>
             <li class="tab" info="deliveries"><i class="fas fa-file-medical"></i> 산출물</li>
-            <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 리스크/이슈</li>
+            <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 이슈</li>
         </ul>
     </div>
 
@@ -153,6 +153,7 @@
 <script type="text/javascript">
     $(function () {
         const OID = '@ViewBag.OID';
+        const ProjectOID = '@ViewBag.ProjectOID';
         const screenWidth = $('.project_content').width();
         const screenHeight = $('.project_content').height() - 152;
         const procDiv$ = $('#process_' + OID);
@@ -275,6 +276,7 @@
                     ],
                     showToolbar: true,
                     renderToolbar: function (toolBar) {
+                        toolBar.empty();
                         var modifyFlag = false;
                         var container = $("<div class='lGridComponent' ></div>");
                         var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
@@ -296,9 +298,304 @@
             } else if (infoValue == 'resource') {
 
             } else if (infoValue == 'deliveries') {
+                //TODO: TASK 산출물
+
+                var deliveriesparam = {};
+                deliveriesparam.RootOID = ProjectOID;
+                deliveriesparam.FromOID = OID;
+
+                const deliveriesSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'RelOID', type: 'number' },
+                        { name: 'RelType', type: 'string' },
+                        { name: 'Children', type: 'array' },
+                        { name: 'expanded', type: 'bool' },
+                        { name: 'Files', type: 'number' },
+
+                        { name: 'DocToOID', type: 'number' },
+                        { name: 'DocClassOID', type: 'number' },
+
+                        { name: 'DocClassPID', type: 'number' },
+                        { name: 'DocClassPIDNm', type: 'string' },
+                        { name: 'DocName', type: 'string' },
+                        { name: 'DocOID', type: 'number' },
+                        { name: 'DocNo', type: 'string' },
+                        { name: 'DocNoNm', type: 'string' },
+                        { name: 'DocSt', type: 'number' },
+                        { name: 'DocStNm', type: 'string' },
+                        { name: 'DocRev', type: 'string' },
+                        { name: 'DatabaseFl', type: 'string' },
+                        { name: 'LinkOID', type: 'number' },
+                        { name: 'ViewUrl', type: 'string' },
+                        { name: 'EditUrl', type: 'string' },
+                        { name: 'PMSViewUrl', type: 'string' },
+                        { name: 'PMSEditUrl', type: 'string' },
+                        { name: 'UseFl', type: 'string' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'CreateUsNm', type: 'string' },
+                        { name: 'ModifyDt', type: 'date' },
+                        { name: 'ModifyUsNm', type: 'date' },
+                        { name: 'FromNm', type: 'string' },
+
+                        { name: 'OID', type: 'number' },
+                        { name: 'FromOID', type: 'number' },
+                        { name: 'ToOID', type: 'number' },
+                        { name: 'RootOID', type: 'number' },
+                        { name: 'ProjectNm', type: 'number' },
+                        { name: 'DocClassNm', type: 'string' },
+                    ],
+                    hierarchy:
+                    {
+                        root: 'Children',
+                    },
+                    id: 'OID',
+                };
+
+                var deliveriesAdapter = new $.jqx.dataAdapter(deliveriesSource);
+                const deliveriesGrd$ = $("#deliveriesInfo_" + OID);
+                deliveriesGrd$.jqxTreeGrid('render');
+                deliveriesGrd$.jqxTreeGrid({
+                    theme: 'kdnc',
+                    width: "100%",
+                    pagerButtonsCount: 8,
+                    toolbarHeight: 44,
+                    height: screenHeight,
+                    source: deliveriesAdapter,
+                    sortable: false,
+                    pageable: false,
+                    selectionMode: "custom",
+                    editable: false,
+                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                    columnsResize: true,
+                    checkboxes: true,
+                    columns: [
+                        { text: '분류체계', width: "18%", datafield: 'DocClassNm', align: 'center', },
+                        { text: '프로젝트', width: "10%", datafield: 'ProjectNm', align: 'center', cellsalign: 'center' },
+                        { text: 'Task명', width: "10%", datafield: 'FromNm', align: 'center', cellsalign: 'center' },
+                        { text: '문서명', width: "20%", datafield: 'DocNm', align: 'center', cellsalign: 'center' },
+                        {
+                            text: 'Action', width: "10%", align: 'center', cellsalign: 'center',
+                        },
+                        { text: '리비전', width: "8%", datafield: 'DocRev', align: 'center', cellsalign: 'center' },
+                        { text: '상태', width: "8%", datafield: 'DocStNm', align: 'center', cellsalign: 'center' },
+                        { text: '생성일', width: "8%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
+                        { text: '생성자', width: "8%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
+                    ],
+                    showtoolbar: true,
+                    rendertoolbar: function (statusbar) {
+                        if (statusbar[0].children.length > 0) {
+                            return;
+                        }
+                        var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
+                        var btnClassificationNewAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 분류체계 등록</button>").jqxButton();
+                        var btnDelete = $("<button class='custom-button'><i class='fas fa-plus'></i> 삭제</button>").jqxButton();
+                        btnDelete.jqxButton({ disabled: true });
+                        container.append(btnClassificationNewAdd);
+                        container.append(btnDelete);
+                        statusbar.append(container);
+
+                        btnClassificationNewAdd.click(function (event) {
+                            OpenNewAddDocClassification(function (res) {
+                                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                            }, null, deliveriesparam, '/Pms/dlgDocClassDeliveries', '문서 분류 검색 추가');
+                        });
+
+                        btnDelete.click(function (event) {
+                        });
+
+                        var actionContent = function (action) {
+                            switch (action.toUpperCase()) {
+                                case 'SELECT':
+                                    btnDelete.jqxButton({ disabled: false });
+                                    break;
+                                case 'UNSELECT':
+                                    btnDelete.jqxButton({ disabled: true });
+                                    break;
+                            }
+                        }
+
+                        var rowKey = null;
+                        deliveriesGrd$.on('rowCheck', function (event) {
+                            const previousRowKey = rowKey;
+                            var args = event.args;
+                            if (previousRowKey != null && rowKey == previousRowKey) {
+                                deliveriesGrd$.jqxTreeGrid('uncheckRow', previousRowKey);
+                            }
+                            rowKey = args.key;
+                            actionContent('SELECT');
+                        });
+
+                        deliveriesGrd$.on('rowUncheck', function (event) {
+                            actionContent('UNSELECT');
+                            rowKey = null;
+                        });
+                    },
+                    pagerRenderer: function () {
+                    }
+                });
+                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+
+                function getProjectDocumentClassificationList(_Source, _Grid$, _param) {
+                    RequestData("/Pms/SelPmsDocumentClassification", _param, function (res) {
+                        PrintJqxTreeGrid(_Source, _Grid$, res);
+                        _Grid$.jqxTreeGrid('expandAll');
+                    });
+                }
+
 
             } else if (infoValue == 'riskIssue') {
+                const issueRiskSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID',              type: 'number' },
+                        { name: 'Name',             type: 'string' },
+                        { name: 'ProjectNm',        type: 'string' },
+                        { name: 'Type',             type: 'string' },
+                        { name: 'Description',      type: 'string' },
+                        { name: 'CreateUs',         type: 'number' },
+                        { name: 'CreateUsNm',       type: 'string' },
+                        { name: 'TaskNm',           type: 'string' },
+                        { name: 'IssueType',        type: 'string' },
+                        { name: 'IssueTypeNm',      type: 'string' },
+                        { name: 'CreateDt',         type: 'date' },
+                        { name: 'EstFinDt',         type: 'date' },
+                        { name: 'Importance',       type: 'number' },
+                        { name: 'ImportanceNm',     type: 'string' },
+                        { name: 'BPolicy',          type: 'Array' },
+                    ],
+                    id: 'OID',
+                    addRow: function (rowID, rowData, position, parentID, commit) {
+                        commit(true);
+                    },
+                    deleteRow: function (rowID, commit) {
+                        commit(true);
+                    },
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+                    }
+                };
 
+                var issueRiskAdapter = new $.jqx.dataAdapter(issueRiskSource);
+                const issueRiskGrd$ = $("#riskIssueInfo_" + OID);
+                issueRiskGrd$.jqxTreeGrid('render');
+                issueRiskGrd$.jqxTreeGrid({
+                    theme: 'arctic',
+                    width: "100%",
+                    pagerButtonsCount: 8,
+                    toolbarHeight: 44,
+                    height: screenHeight,
+                    source: issueRiskAdapter,
+                    sortable: false,
+                    pageable: false,
+                    selectionMode: "custom",
+                    editable: false,
+                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                    showtoolbar: true,
+                    columnsResize: true,
+                    checkboxes: true,
+                    columns: [
+                        { text: '이슈', cellsalign: 'left', align: 'center', datafield: 'Name', width: '22%' },
+                        { text: '프로젝트', cellsalign: 'center', align: 'center', datafield: 'ProjectNm', width: '20%' },
+                        { text: 'Task', cellsalign: 'center', align: 'center', datafield: 'TaskNm', width: '18%' },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: '6%', cellsalign: 'center', align: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                        { text: '중요도', cellsalign: 'center', align: 'center', datafield: 'ImportanceNm', width: '5%' },
+                        { text: '작성일', cellsalign: 'center', align: 'center', datafield: 'CreateDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '작성자', cellsalign: 'center', align: 'center', datafield: 'CreateUsNm', width: '5%' },
+                        { text: '예상처리일', cellsalign: 'center', align: 'center', datafield: 'EstFinDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '처리완료일', cellsalign: 'center', align: 'center', datafield: 'ActProcessDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
+                    ],
+                    showtoolbar: true,
+                    rendertoolbar: function (statusbar) {
+                        if (statusbar[0].children.length > 0) {
+                            return;
+                        }
+                        var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
+                        var btnNewAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 생성</button>").jqxButton();
+                        var btnDelete = $("<button class='custom-button'><i class='fas fa-plus'></i> 삭제</button>").jqxButton();
+                        btnDelete.jqxButton({ disabled: true });
+                        container.append(btnNewAdd);
+                        container.append(btnDelete);
+                        statusbar.append(container);
+
+                        btnNewAdd.click(function (event) {
+                            var param = {};
+                            param.ProjectNm = '@ViewBag.ProjectDetail.Name';
+                            param.TaskNm = '@ViewBag.Detail.Name';
+                            param.Type = '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK';
+                            param.RootOID = ProjectOID;
+                            param.FromOID = OID;
+                            OpenIssueDialog(function (res) {
+                                RequestData('/Pms/SelIssue', param, function (res) {
+                                    PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                                });
+                            }, null, param , '/Pms/CreateIssue', '이슈 등록');
+                        });
+
+                        btnDelete.click(function (event) {
+                        });
+
+                        var actionContent = function (action) {
+                            switch (action.toUpperCase()) {
+                                case 'SELECT':
+                                    btnDelete.jqxButton({ disabled: false });
+                                    break;
+                                case 'UNSELECT':
+                                    btnDelete.jqxButton({ disabled: true });
+                                    break;
+                            }
+                        }
+                        var rowKey = null;
+                        issueRiskGrd$.on('rowCheck', function (event) {
+                            const previousRowKey = rowKey;
+                            var args = event.args;
+                            if (previousRowKey != null && rowKey == previousRowKey) {
+                                issueRiskGrd$.jqxTreeGrid('uncheckRow', previousRowKey);
+                            }
+                            rowKey = args.key;
+                            actionContent('SELECT');
+                        });
+                        issueRiskGrd$.on('rowUncheck', function (event) {
+                            actionContent('UNSELECT');
+                            rowKey = null;
+                        });
+                        issueRiskGrd$.on('rowDoubleClick', function (e) {
+                            var param = {};
+                            param.OID = e.args.key;
+                            param.Type = '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK';
+                            param.RootOID = ProjectOID;
+                            param.FromOID = OID;
+                            param.ProjectNm = '@ViewBag.ProjectDetail.Name';
+                            param.TaskNm = '@ViewBag.Detail.Name';
+                            if (param.OID == null) {
+                                return;
+                            }
+
+                            if (gClickDuplication) { return; }
+                            gClickDuplication = true;
+                            setTimeout(function () {
+                                OpenIssueDialog(
+                                    function (res) {
+                                        RequestData('/Pms/SelIssue', param, function (res) {
+                                            PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                                        });
+                                    }, null, param, '/Pms/InfoIssue', '이슈 상세');
+                                gClickDuplication = false;
+                            }, 100);
+                        });
+                    },
+                    pagerRenderer: function () {
+                        RequestData('/Pms/SelIssue', { 'RootOID': ProjectOID, 'FromOID': OID }, function (res) {
+                            PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                        });
+                    }
+                });
+                issueRiskGrd$.jqxTreeGrid('pagerRenderer');
             }
         });
 

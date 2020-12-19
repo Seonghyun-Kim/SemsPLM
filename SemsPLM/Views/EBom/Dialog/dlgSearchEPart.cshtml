@@ -88,6 +88,12 @@
                 <div> <div id="dlgSearchEPartItemNo" class="dlgSearchEPartComboBox"></div></div>
             </div>
             <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="dlgSearchEPartOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
                 <div>
                     <div id="dlgSearchEPartCar" class="dlgSearchEPartComboBox"></div>
@@ -109,23 +115,46 @@
 <script>
     var EPartDivision = null;
     $(function () {
+        var dlgSearchEPartOemLib$ = $('#dlgSearchEPartOem');
         var dlgSearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
-        var dlgSearchEPartCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var dlgSearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var dlgSearchEPartItemLib$ = $('#dlgSearchEPartItemNo');
         var dlgSearchEPartCarLib$ = $('#dlgSearchEPartCar');
-        var CarSource =
+
+        var oemSource =
         {
-            localdata: dlgSearchEPartCarList,
+            localdata: dlgSearchEPartOemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
-        dlgSearchEPartCarLib$.jqxComboBox({width: 250, height: 33, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSearchEPartOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = dlgSearchEPartOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
 
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                dlgSearchEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
         var ItemSource =
         {
             localdata: dlgSearchEPartItemList,

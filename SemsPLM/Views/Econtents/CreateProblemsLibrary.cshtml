@@ -29,12 +29,10 @@
         <col style="width: 12.5%" />
     </colgroup>
     <tr>
-        <th><i class="fa fa-caret-right"></i> 제목</th>
-        <td colspan="7"><input type="text" id="CreateProblemName"></td>
-    </tr>
-    <tr>
+        <th><i class="fa fa-caret-right"></i> 고객사</th>
+        <td><div id="CreateProblemsLibraryOEM"></div></td>
         <th><i class="fa fa-caret-right"></i> 차종</th>
-        <td colspan="3"><select></select></td>
+        <td><div id="CreateProblemsLibraryCAR"></div></td>
         <th><i class="fa fa-caret-right"></i> 제품</th>
         <td><select></select></td>
         <th><i class="fa fa-caret-right"></i> 부품</th>
@@ -59,7 +57,7 @@
         <th><i class="fa fa-caret-right"></i> 기타</th>
         <td colspan="5"><input type="text" id="CreateProblemDescription" /></td>
         <th><i class="fa fa-caret-right"></i> 리비전</th>
-        <td></td>
+        <td>00</td>
     </tr>
     <tr>
         <th><i class="fa fa-caret-right"></i> 첨부파일</th>
@@ -102,7 +100,33 @@
     var CreateProblemLibIssues = null;
     var CreateProblemLibCause = null;
     var CreateProblemLibCountermeasures = null;
+
+    var CreateProblemsOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var CreateProblemsLibraryOEM$ = $('#CreateProblemsLibraryOEM');
+    var CreateProblemsLibraryCAR$ = $('#CreateProblemsLibraryCAR');
+
     $(function () {
+        var CreateProblemsOemSource =
+        {
+            localdata: CreateProblemsOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var CreateProblemsDefaultOEM = new $.jqx.dataAdapter(CreateProblemsOemSource);
+        CreateProblemsLibraryOEM$.jqxComboBox({ source: CreateProblemsDefaultOEM, displayMember: "KorNm", valueMember: "OID", height: 32, });
+
+        var  CreateProblemsDefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
+        CreateProblemsLibraryCAR$.jqxComboBox({ source: CreateProblemsDefaultCar, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        CreateProblemsLibraryCAR$.jqxComboBox({ selectedIndex: 0 });
+
+        CreateProblemsLibraryOEM$.on('change', function (event) {
+            ChangeCreateProblemsLibraryComboBox(2, CreateProblemsLibraryOEM$.val());
+        });
+
         $('#IssuesImageDrag').simpleUpload({
             url: '/Common/ImgUploadFile',
             //params: { OID: null },
@@ -193,4 +217,34 @@
             });
         });
     });
+
+    function ChangeCreateProblemsLibraryComboBox(ID, OID) {
+        var CreateProblemsLibraryComboBox$ = CreateProblemsLibraryCAR$
+        var param = {};
+        param.fromOID = OID;
+        var CreateProblemsLibraryComboSource;
+        RequestData("/Manage/SelCodeLibrary", param, function (res) {
+            if (res.length > 0) {
+                CreateProblemsLibraryComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CreateProblemsLibraryComboAdapter = new $.jqx.dataAdapter(CreateProblemsLibraryComboSource);
+                CreateProblemsLibraryComboBox$.jqxComboBox({ source: CreateProblemsLibraryComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var CreateProblemsLibraryComboAdapter = new $.jqx.dataAdapter(CreateProblemsLibraryComboSource);
+                CreateProblemsLibraryComboBox$.jqxComboBox({ source: CreateProblemsLibraryComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+                CreateProblemsLibraryComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+
 </script>

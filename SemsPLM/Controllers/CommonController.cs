@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
+using Trigger;
 
 namespace SemsPLM.Controllers
 {
@@ -33,7 +34,7 @@ namespace SemsPLM.Controllers
 
         public ActionResult ApprovalPerson()
         {
-            ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(new List<string> { CommonConstant.TYPE_PERSON });
+            ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(Session, new List<string> { CommonConstant.TYPE_PERSON });
             //ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(null);
             return PartialView("Dialog/dlgApprovalPerson");
         }
@@ -51,7 +52,7 @@ namespace SemsPLM.Controllers
 
         public JsonResult SelMyApproval(ApprovalTask _param)
         {
-            List<Person> persons = PersonRepository.SelPersons(new Person { });
+            List<Person> persons = PersonRepository.SelPersons(Session, new Person { });
             List<BPolicy> policies = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL_TASK });
             List<ApprovalTask> myApproval = new List<ApprovalTask>();
             DaoFactory.GetList<ApprovalTask>("Comm.SelMyApprovalTask", _param).ForEach(approv =>
@@ -60,7 +61,7 @@ namespace SemsPLM.Controllers
                 approv.PersonNm = approv.PersonObj.Name;
                 approv.DepartmentNm = approv.PersonObj.DepartmentNm;
                 approv.BPolicy = policies.Find(policy => policy.OID == approv.BPolicyOID);
-                approv.ApprovalBPolicy = DObjectRepository.SelDObject(new DObject { OID = approv.ApprovalOID }).BPolicy;
+                approv.ApprovalBPolicy = DObjectRepository.SelDObject(Session, new DObject { OID = approv.ApprovalOID }).BPolicy;
                 if (approv.BPolicy.Name == approv.ApprovalBPolicy.Name)
                 {
                     myApproval.Add(approv);
@@ -74,22 +75,31 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-                DObjectRepository.StatusPromote(false, CommonConstant.TYPE_APPROVAL_TASK, Convert.ToString(_param.BPolicyOID), Convert.ToInt32(_param.OID), Convert.ToInt32(_param.OID), _param.ActionType, "");
+                TriggerUtil.StatusPromote(Session, false, CommonConstant.TYPE_APPROVAL_TASK, Convert.ToString(_param.BPolicyOID), Convert.ToInt32(_param.OID), Convert.ToInt32(_param.OID), _param.ActionType, "");
                 ApprovalTaskRepository.UdtInboxTask(new ApprovalTask { ActionType = _param.ActionType, Comment = _param.Comment, OID =  _param.OID});
 
                 if (_param.ActionType == CommonConstant.ACTION_REJECT)
                 {
-                    Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(new Approval { OID = _param.ApprovalOID });
-                    DObjectRepository.StatusPromote(false, CommonConstant.TYPE_APPROVAL, Convert.ToString(tmpApproval.BPolicyOID), Convert.ToInt32(tmpApproval.OID), Convert.ToInt32(tmpApproval.OID), _param.ActionType, "");
+                    Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(Session, new Approval { OID = _param.ApprovalOID });
+                    string returnVal = TriggerUtil.StatusPromote(Session, false, CommonConstant.TYPE_APPROVAL, Convert.ToString(tmpApproval.BPolicyOID), Convert.ToInt32(tmpApproval.OID), Convert.ToInt32(tmpApproval.OID), _param.ActionType, "");
+                    if (returnVal != null && returnVal.Length > 0)
+                    {
+                        throw new Exception(returnVal);
+                    }
 
-                    DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = tmpApproval.TargetOID });
-                    DObjectRepository.StatusPromote(false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), _param.ActionType, "");
+                    returnVal = "";
+                    DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = tmpApproval.TargetOID });
+                    returnVal = TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), _param.ActionType, "");
+                    if (returnVal != null && returnVal.Length > 0)
+                    {
+                        throw new Exception(returnVal);
+                    }
                     DaoFactory.Commit();
                     return Json(CommonConstant.RETURN_SUCCESS);
                 }
 
                 bool allSuccess = true;
-                ApprovalStep tmpApprovalStep = ApprovalStepRepository.SelApprovalStep(new ApprovalStep { OID = _param.StepOID });
+                ApprovalStep tmpApprovalStep = ApprovalStepRepository.SelApprovalStep(Session, new ApprovalStep { OID = _param.StepOID });
                 tmpApprovalStep.InboxTask.ForEach(task =>
                 {
                     if (task.BPolicy.Name != CommonConstant.POLICY_APPROVAL_COMPLETED)
@@ -100,24 +110,40 @@ namespace SemsPLM.Controllers
 
                 if (allSuccess)
                 {
-                   Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(new Approval { OID = _param.ApprovalOID });
+                   Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(Session, new Approval { OID = _param.ApprovalOID });
                    int cntCurrent = Convert.ToInt32(tmpApproval.CurrentNum);
                    cntCurrent += 1;
                    if (tmpApproval.ApprovalCount >= cntCurrent)
                    {
-                        ApprovalRepository.UdtApproval(new Approval { CurrentNum = cntCurrent, OID = tmpApproval.OID });
-                        ApprovalRepository.SelApproval(new Approval { OID = tmpApproval.OID }).InboxStep.Find(step => step.Ord == cntCurrent).InboxTask.ForEach(task =>
+                        string returnVal = "";
+                        ApprovalRepository.UdtApproval(Session, new Approval { CurrentNum = cntCurrent, OID = tmpApproval.OID });
+                        ApprovalRepository.SelApproval(Session, new Approval { OID = tmpApproval.OID }).InboxStep.Find(step => step.Ord == cntCurrent).InboxTask.ForEach(task =>
                         {
-                            DObjectRepository.StatusPromote(false, CommonConstant.TYPE_APPROVAL_TASK, Convert.ToString(task.BPolicyOID), Convert.ToInt32(task.OID), Convert.ToInt32(task.OID), _param.ActionType, "");
+                            returnVal = "";
+                            returnVal = TriggerUtil.StatusPromote(Session, false, CommonConstant.TYPE_APPROVAL_TASK, Convert.ToString(task.BPolicyOID), Convert.ToInt32(task.OID), Convert.ToInt32(task.OID), _param.ActionType, "");
+                            if (returnVal != null && returnVal.Length > 0)
+                            {
+                                throw new Exception(returnVal);
+                            }
                         });
                    }
                    else if (tmpApproval.ApprovalCount < cntCurrent)
                    {
-                        ApprovalRepository.UdtApproval(new Approval { CurrentNum = cntCurrent, OID = tmpApproval.OID });
-                        DObjectRepository.StatusPromote(false, CommonConstant.TYPE_APPROVAL, Convert.ToString(tmpApproval.BPolicyOID), Convert.ToInt32(tmpApproval.OID), Convert.ToInt32(tmpApproval.OID), _param.ActionType, "");
+                        string returnVal = "";
+                        ApprovalRepository.UdtApproval(Session, new Approval { CurrentNum = cntCurrent, OID = tmpApproval.OID });
+                        returnVal = TriggerUtil.StatusPromote(Session, false, CommonConstant.TYPE_APPROVAL, Convert.ToString(tmpApproval.BPolicyOID), Convert.ToInt32(tmpApproval.OID), Convert.ToInt32(tmpApproval.OID), _param.ActionType, "");
+                        if (returnVal != null && returnVal.Length > 0)
+                        {
+                            throw new Exception(returnVal);
+                        }
 
-                        DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = tmpApproval.TargetOID });
-                        DObjectRepository.StatusPromote(false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), _param.ActionType, "");
+                        returnVal = "";
+                        DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = tmpApproval.TargetOID });
+                        returnVal = TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), _param.ActionType, "");
+                        if (returnVal != null && returnVal.Length > 0)
+                        {
+                            throw new Exception(returnVal);
+                        }
                     }
                 }
                 DaoFactory.Commit();
@@ -136,11 +162,12 @@ namespace SemsPLM.Controllers
 
         public ActionResult Approval(Approval _param)
         {
-            ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(new List<string> { CommonConstant.TYPE_PERSON });
+            ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(Session, new List<string> { CommonConstant.TYPE_PERSON });
             if (_param.TargetOID != null)
             {
                 ViewBag.TargetOID = _param.TargetOID;
             }
+            ViewBag.SelApproval = ApprovalRepository.SelSaveApprovalsNonStep(Session, new Approval{Type = Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL });
             return PartialView("Dialog/dlgApproval");
         }
 
@@ -148,7 +175,7 @@ namespace SemsPLM.Controllers
         {
             if(_param.OID == null)
             {
-                return Json(ApprovalRepository.SelApprovals(_param));
+                return Json(ApprovalRepository.SelApprovals(Session, _param));
             }
             return Json(null);
         }
@@ -170,22 +197,22 @@ namespace SemsPLM.Controllers
                 {
                     dobj.Type = CommonConstant.TYPE_APPROVAL;
                     string strApprovalPrefix = dobj.Type + "-" + DateTime.Now.ToString("yyyyMMdd") + "-";
-                    dobj.Name = strApprovalPrefix + SemsUtil.MakeSeq(DObjectRepository.SelNameSeq(new DObject { Type = CommonConstant.TYPE_APPROVAL, Name = strApprovalPrefix + "%" }), "000");
+                    dobj.Name = strApprovalPrefix + SemsUtil.MakeSeq(DObjectRepository.SelNameSeq(Session, new DObject { Type = CommonConstant.TYPE_APPROVAL, Name = strApprovalPrefix + "%" }), "000");
                     dobj.Description = _param.Description;
                 }
                 dobj.TableNm = CommonConstant.TABLE_APPROVAL;
-                result = DObjectRepository.InsDObject(dobj);
+                result = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = result;
                 _param.ApprovalCount = _param.InboxStep.FindAll(step => step.ApprovalType.Equals(CommonConstant.TYPE_APPROVAL_APPROV) || step.ApprovalType.Equals(CommonConstant.TYPE_APPROVAL_AGREE)).Count;
-                ApprovalRepository.InsApproval(_param);
+                ApprovalRepository.InsApproval(Session, _param);
 
                 List<int> lPromoteOID = new List<int>();
                 int index = 0;
                 _param.InboxStep.ForEach(step =>
                 {
                     step.ApprovalOID = result;
-                    int stepResult = ApprovalStepRepository.InsApprovalStep(step);
+                    int stepResult = ApprovalStepRepository.InsApprovalStep(Session, step);
                     
                     step.InboxTask.ForEach(task =>
                     {
@@ -197,8 +224,8 @@ namespace SemsPLM.Controllers
                         dobj.Type = CommonConstant.TYPE_APPROVAL_TASK;
                         dobj.TableNm = CommonConstant.TABLE_APPROVAL_TASK;
                         string strApprovalPrefix = dobj.Type + "-" + DateTime.Now.ToString("yyyyMMdd") + "-";
-                        dobj.Name = strApprovalPrefix + SemsUtil.MakeSeq(DObjectRepository.SelNameSeq(new DObject { Type = CommonConstant.TYPE_APPROVAL_TASK, Name = strApprovalPrefix + "%" }), "000");
-                        int taskResult = DObjectRepository.InsDObject(dobj);
+                        dobj.Name = strApprovalPrefix + SemsUtil.MakeSeq(DObjectRepository.SelNameSeq(Session, new DObject { Type = CommonConstant.TYPE_APPROVAL_TASK, Name = strApprovalPrefix + "%" }), "000");
+                        int taskResult = DObjectRepository.InsDObject(Session, dobj);
 
                         task.ApprovalOID = result;
                         task.StepOID = stepResult;
@@ -215,8 +242,8 @@ namespace SemsPLM.Controllers
 
                 if (_param.TargetOID != null)
                 {
-                    DObject targetDobj = DObjectRepository.SelDObject(new DObject { OID = _param.TargetOID });
-                    DObjectRepository.StatusPromote(false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), CommonConstant.ACTION_PROMOTE, null);
+                    DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = _param.TargetOID });
+                    TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), CommonConstant.ACTION_PROMOTE, null);
                     if (lPromoteOID != null && lPromoteOID.Count > 0)
                     {
                         lPromoteOID.ForEach(promoteOID =>
@@ -225,14 +252,14 @@ namespace SemsPLM.Controllers
                             {
                                 dobj = null;
                             }
-                            dobj = DObjectRepository.SelDObject(new DObject { OID = promoteOID });
-                            DObjectRepository.StatusPromote(false, dobj.Type, Convert.ToString(dobj.BPolicyOID), Convert.ToInt32(dobj.OID), Convert.ToInt32(dobj.OID), CommonConstant.ACTION_PROMOTE, null);
+                            dobj = DObjectRepository.SelDObject(Session, new DObject { OID = promoteOID });
+                            TriggerUtil.StatusPromote(Session, false, dobj.Type, Convert.ToString(dobj.BPolicyOID), Convert.ToInt32(dobj.OID), Convert.ToInt32(dobj.OID), CommonConstant.ACTION_PROMOTE, null);
                         });
 
-                        DObject approvDobj = DObjectRepository.SelDObject(new DObject { OID = result });
-                        DObjectRepository.StatusPromote(false, approvDobj.Type, Convert.ToString(approvDobj.BPolicyOID), Convert.ToInt32(approvDobj.OID), Convert.ToInt32(approvDobj.OID), CommonConstant.ACTION_PROMOTE, null);
+                        DObject approvDobj = DObjectRepository.SelDObject(Session, new DObject { OID = result });
+                        TriggerUtil.StatusPromote(Session, false, approvDobj.Type, Convert.ToString(approvDobj.BPolicyOID), Convert.ToInt32(approvDobj.OID), Convert.ToInt32(approvDobj.OID), CommonConstant.ACTION_PROMOTE, null);
                     }
-                    ApprovalRepository.UdtApproval(new Approval { OID = result, CurrentNum = 1 });
+                    ApprovalRepository.UdtApproval(Session, new Approval { OID = result, CurrentNum = 1 });
                 }
                 
                 DaoFactory.Commit();
@@ -244,6 +271,26 @@ namespace SemsPLM.Controllers
             }
             return Json(result);
         }
+
+        #region -- 김창수 결재선 저장 인원 검색
+        public JsonResult SelApprovalPersonHistory(DObject _param)
+        {
+            List<ApprovalTask> displayTask = new List<ApprovalTask>();
+            displayTask = ApprovalTaskRepository.SelInboxTasks(Session, new ApprovalTask { ApprovalOID = _param.OID });
+            return Json(displayTask);
+        }
+        #endregion
+
+        #region -- 김창수 결재선 저장 후 불러오기
+        public JsonResult SelSaveApprovalsLoad(Approval _param)
+        {
+            if (_param.OID == null)
+            {
+                return Json(ApprovalRepository.SelSaveApprovalsNonStep(Session, new Approval { Type = Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL }));
+            }
+            return Json(null);
+        }
+        #endregion
 
         #endregion
 
@@ -258,7 +305,7 @@ namespace SemsPLM.Controllers
         public JsonResult SelApprovalHistory(DObject _param)
         {
             List<ApprovalTask> displayTask = new List<ApprovalTask>();
-            Approval approval = ApprovalRepository.SelApproval(new Approval { TargetOID = _param.OID });
+            Approval approval = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = _param.OID });
             if (approval != null)
             {
                 approval.InboxStep.ForEach(step =>
@@ -279,7 +326,7 @@ namespace SemsPLM.Controllers
         #region -- Approval Content
         public ActionResult ApprovalContent(ApprovalTask _param)
         {
-            ViewBag.ApprvalData = ApprovalRepository.SelApproval(new Approval { OID = _param.ApprovalOID });
+            ViewBag.ApprvalData = ApprovalRepository.SelApproval(Session, new Approval { OID = _param.ApprovalOID });
             return PartialView("Dialog/dlgApprovalContent");
         }
 
@@ -287,7 +334,7 @@ namespace SemsPLM.Controllers
         {
             _param.CreateUs = 75;
             ApprovalCommentRepository.InsApprovalComment(_param);
-            return Json(ApprovalCommentRepository.SelApprovalComment(new ApprovalComment { ApprovalOID = _param.ApprovalOID } ));
+            return Json(ApprovalCommentRepository.SelApprovalComment(Session, new ApprovalComment { ApprovalOID = _param.ApprovalOID } ));
         }
 
         #endregion
@@ -326,7 +373,7 @@ namespace SemsPLM.Controllers
                     File.InputStream.Close();
 
                     if (OID != null && OID.Length > 0) {
-                        DObjectRepository.UdtDObject(new DObject { OID = Convert.ToInt32(OID), Thumbnail = fileName });
+                        DObjectRepository.UdtDObject(Session, new DObject { OID = Convert.ToInt32(OID), Thumbnail = fileName });
                     }
                 }
                 catch (Exception ex)
@@ -385,7 +432,7 @@ namespace SemsPLM.Controllers
         {
             try
             {
-                return Json(HttpFileRepository.SelFiles(httpFile));
+                return Json(HttpFileRepository.SelFiles(Session, httpFile));
             }
             catch (Exception ex)
             {
@@ -399,7 +446,7 @@ namespace SemsPLM.Controllers
         {
             try
             {
-                HttpFile downFile = HttpFileRepository.SelFile(fileModel);
+                HttpFile downFile = HttpFileRepository.SelFile(Session, fileModel);
 
                 if (downFile == null || downFile.FileOID == null)
                 {

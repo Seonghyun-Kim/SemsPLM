@@ -12,63 +12,207 @@ namespace ChangeRequest.Models
 {
     public class ECR : DObject, IDObject
     {
-        public string Title { get; set; }
-        public int? Count { get; set; }
-        public string EPart_No { get; set; }
-        public int? Oem_Lib_OID { get; set; }
-        public int? Car_Lib_OID { get; set; }
-        public int? Pms_OID { get; set; }
-        public string EoType { get; set; }
-        public string EoProType { get; set; }
-        public string EoID { get; set; }
-        public string IsService { get; set; }
-        public string DesignCost { get; set; }
-        public string WtChange { get; set; }
-        public string IsMold { get; set; }
-        public string DieQt { get; set; }
-        public string DieCost { get; set; }
-        public string EoClass { get; set; }
-        public string Eo_InvClr { get; set; }
-        public string ApprovDt { get; set; }
-        public string Oem_Eo { get; set; }
-        public DateTime? OemDt { get; set; }
-        public string OemUs { get; set; }
-        public DateTime? Oem_RecDt { get; set; }
-        public string Effective { get; set; }
-        public string Statement { get; set; }
-        public string Eo_Reason { get; set; }
-        public string Oem_Lib_Nm { get; set; }
-        public string Car_Lib_Nm { get; set; }
-        public string Pms_Nm { get; set; }
+        public string ItemGroup { get; set; } //품목그룹
+        public string Title { get; set; } //제목
+        public DateTime? DesignChangeDt { get; set; }
 
-        public string Eo_Reason_Nm
+        public DateTime? StartDesignChangeDt { get; set; }
+        public DateTime? EndDesignChangeDt { get; set; }
+
+        public int? ReasonChangeRequest { get; set; }
+        public string Compatible { get; set; }
+        public string IsMold { get; set; }
+        public string ReasonRegistration { get; set; }
+        public string Security { get; set; }
+        public string Changes { get; set; }
+        public string Stock { get; set; }
+        public string Memo { get; set; }
+        public string IsAttached { get; set; }
+        public DateTime? SelRequestDt { get; set; }
+        public string SelPartNo { get; set; }
+        public DateTime? EBom { get; set; }
+        public string DevMP { get; set; }
+        public string CarType { get; set; }
+
+        public string DevMPNm
         {
             get
             {
-                if (this.Eo_Reason != null && this.Eo_Reason.Count() > 0)
+                if (this.DevMP == EoConstant.TYPE_DEV)
                 {
-                    string[] arrReason = this.Eo_Reason.IndexOf(',') > -1 ? this.Eo_Reason.Split(',') : new string[] { this.Eo_Reason };
+                    return EoConstant.TYPE_DEV_KorNm;
+                }
+                else if (this.DevMP == EoConstant.TYPE_MP)
+                {
+                    return EoConstant.TYPE_MP_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string IsMoldNm
+        {
+            get
+            {
+                if (this.IsMold == EoConstant.TYPE_IRRELEVANT)
+                {
+                    return EoConstant.TYPE_IRRELEVANT_KorNm;
+                }
+                else if (this.IsMold == EoConstant.TYPE_YES)
+                {
+                    return EoConstant.TYPE_YES_KorNm;
+                }
+                else if (this.IsMold == EoConstant.TYPE_NEW)
+                {
+                    return EoConstant.TYPE_NEWDEV_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string ReasonRegistrationNm
+        {
+            get
+            {
+                if (this.ReasonRegistration == EoConstant.TYPE_ECO)
+                {
+                    return EoConstant.TYPE_ECO_KorNm;
+                }
+                else if (this.ReasonRegistration == EoConstant.TYPE_NEW)
+                {
+                    return EoConstant.TYPE_NEW_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string SecurityNm
+        {
+            get
+            {
+                if (this.Security == EoConstant.TYPE_SECURITY)
+                {
+                    return EoConstant.TYPE_SECURITY_KorNm;
+                }
+                else if (this.Security == EoConstant.TYPE_IMPORTANT)
+                {
+                    return EoConstant.TYPE_IMPORTANT_KorNm;
+                }
+                else if (this.Security == EoConstant.TYPE_LAW)
+                {
+                    return EoConstant.TYPE_LAW_KorNm;
+                }
+                else if (this.Security == EoConstant.TYPE_COMMON)
+                {
+                    return EoConstant.TYPE_COMMON_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string StockNm
+        {
+            get
+            {
+                if (this.Stock == EoConstant.TYPE_IRRELEVANT)
+                {
+                    return EoConstant.TYPE_IRRELEVANT_KorNm;
+                }
+                else if (this.Stock == EoConstant.TYPE_EXHAUST)
+                {
+                    return EoConstant.TYPE_EXHAUST_KorNm;
+                }
+                else if (this.Stock == EoConstant.TYPE_REWORK)
+                {
+                    return EoConstant.TYPE_REWORK_KorNm;
+                }
+                else if (this.Stock == EoConstant.TYPE_DISPOSAL)
+                {
+                    return EoConstant.TYPE_DISPOSAL_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string CompatibleNm
+        {
+            get
+            {
+                if (this.Compatible == EoConstant.TYPE_YES)
+                {
+                    return EoConstant.TYPE_YES_KorNm;
+                }
+                else if (this.Compatible == EoConstant.TYPE_NO)
+                {
+                    return EoConstant.TYPE_NO_KorNm;
+                }
+                else if (this.Compatible == EoConstant.TYPE_SAME)
+                {
+                    return EoConstant.TYPE_SAME_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string IsAttachedNm
+        {
+            get
+            {
+                if (this.IsAttached == EoConstant.TYPE_YES)
+                {
+                    return EoConstant.TYPE_YES_KorNm;
+                }
+                else if (this.IsAttached == EoConstant.TYPE_NO)
+                {
+                    return EoConstant.TYPE_NO_KorNm;
+                }
+                else
+                {
+                    return "";
+                }
+
+            }
+        }
+        public string ChangesNm
+        {
+            get
+            {
+                if (this.Changes != null && this.Changes.Count() > 0)
+                {
+                    string[] arrReason = this.Changes.IndexOf(',') > -1 ? this.Changes.Split(',') : new string[] { this.Changes };
                     string retrunVal = "";
                     foreach (string arrVal in arrReason)
                     {
                         switch (arrVal)
                         {
-                            case "SR": retrunVal += Common.Constant.EoConstant.SR + ","; break;
-                            case "PI": retrunVal += Common.Constant.EoConstant.PI + ","; break;
-                            case "IC": retrunVal += Common.Constant.EoConstant.IC + ","; break;
-                            case "CS": retrunVal += Common.Constant.EoConstant.CS + ","; break;
-                            case "CR": retrunVal += Common.Constant.EoConstant.CR + ","; break;
-                            case "QI": retrunVal += Common.Constant.EoConstant.QI + ","; break;
-                            case "ST": retrunVal += Common.Constant.EoConstant.ST + ","; break;
-                            case "IR": retrunVal += Common.Constant.EoConstant.IR + ","; break;
-                            case "WD": retrunVal += Common.Constant.EoConstant.WD + ","; break;
-                            case "LO": retrunVal += Common.Constant.EoConstant.LO + ","; break;
-                            case "RA": retrunVal += Common.Constant.EoConstant.RA + ","; break;
-                            case "GR": retrunVal += Common.Constant.EoConstant.GR + ","; break;
+                            case "DRW": retrunVal += Common.Constant.EoConstant.TYPE_DRW_KorNm + ", "; break;
+                            case "BOM": retrunVal += Common.Constant.EoConstant.TYPE_BOM_KorNm + ", "; break;
+                            case "PRODUCE": retrunVal += Common.Constant.EoConstant.TYPE_PRODUCE_KorNm + ", "; break;
+                            case "NEW": retrunVal += Common.Constant.EoConstant.TYPE_NEWSPEC_KorNm + ", "; break;
+                            case "ADD": retrunVal += Common.Constant.EoConstant.TYPE_ADD_KorNm + ", "; break;
+
                             default: retrunVal += ""; break;
                         }
                     }
-                    return retrunVal;
+                    return retrunVal.Substring(0, retrunVal.LastIndexOf(", "));
                 }
                 else
                 {
@@ -76,6 +220,12 @@ namespace ChangeRequest.Models
                 }
             }
         }
+
+        public string ReasonChangeRequestNm { get; set; }
+
+
+        public int? RootOID { get; set; }
+        public int? ToOID { get; set; }
     }
     public static class ECRRepository
     {
@@ -85,11 +235,12 @@ namespace ChangeRequest.Models
             List<ECR> lECR = DaoFactory.GetList<ECR>("ChangeRequest.SelChangeRequest", _param);
             lECR.ForEach(obj =>
             {
-                obj.Oem_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Oem_Lib_OID }).KorNm;
-                obj.Car_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
-                obj.Pms_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Pms_OID }).KorNm;
-
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+
+                if (obj.ReasonChangeRequest != null)
+                {
+                    obj.ReasonChangeRequestNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ReasonChangeRequest }).KorNm;
+                }
             });
             return lECR;
         }
@@ -97,13 +248,10 @@ namespace ChangeRequest.Models
         {
             _param.Type = EoConstant.TYPE_CHANGE_REQUEST;
             ECR lECR = DaoFactory.GetData<ECR>("ChangeRequest.SelChangeRequest", _param);
-
-            lECR.Oem_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lECR.Oem_Lib_OID }).KorNm;
-            lECR.Car_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lECR.Car_Lib_OID }).KorNm;
-            lECR.Pms_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lECR.Pms_OID }).KorNm;
-
-            lECR.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lECR.Type, OID = lECR.BPolicyOID }).First();
-
+            if (lECR.ReasonChangeRequest != null)
+            {
+                lECR.ReasonChangeRequestNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lECR.ReasonChangeRequest }).KorNm;
+            }
             return lECR;
         }
         public static ECR UdtChangeRequest(ECR _param)
@@ -113,11 +261,5 @@ namespace ChangeRequest.Models
 
             return _param;
         }
-
-
-        
-    }
-
-
-        
+    } 
 }

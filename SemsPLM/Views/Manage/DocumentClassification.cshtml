@@ -1,0 +1,214 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div class="searchBox">
+    <div class="searchTitle">
+        <label><i class="fas fa-folder-open"></i> &nbsp;문서분류체계</label>
+    </div>
+    <div class="searchContent">
+        <div class="searchData">
+            <div>분류</div>
+            <div>
+                <input type="text" class="txtBox" id="DocClassName" />
+            </div>
+        </div>
+        <div class="searchData" hidden="hidden">
+            <div>채번코드</div>
+            <div>
+                <input type="text" class="txtBox" id="DocClassCode" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>ViewUrl</div>
+            <div>
+                <input type="text" class="txtBox" id="DocClassViewUrl" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>사용유무</div>
+            <div>
+                <input type="text" class="txtBox" id="DocClassIsUse" />
+            </div>
+        </div>
+        <div class="searchData">
+            <div>등록자</div>
+            <div>
+                <input type="text" class="txtBox" id="DocClassCreateUsNm" />
+            </div>
+        </div>
+        <div class="searchButton">
+            <button id="DocClassSearchBtn" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+        </div>
+    </div>
+</div>
+<div id="DocumentClassificationGrid"></div>
+
+<script>
+    $(function () {
+        var DocClassRowKey = null;
+
+        var DocumentClassificationSource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+
+                { name: 'FromOID', type: 'number' },
+
+                { name: 'Classification', type: 'string' },
+                { name: 'Code', type: 'string' },
+                { name: 'ViewUrl', type: 'string' },
+                { name: 'IsUse', type: 'string' },
+                { name: 'CreateUsNm', type: 'string' },
+                { name: 'CreateUs', type: 'string' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description', type: 'string' },
+                { name: 'IsRequired', type: 'string' },
+            ],
+            hierarchy:
+            {
+                keyDataField: { name: 'OID' },
+                parentDataField: { name: 'FromOID' }
+            },
+            id: 'OID',
+            addRow: function (rowID, rowData, IsUse, parentID, commit) {
+                commit(true);
+            },
+            updateRow: function (rowID, rowData, commit) {
+                commit(true);
+            },
+        };
+        const DocumentClassificationGrid$ = $('#DocumentClassificationGrid');
+        DocumentClassificationGrid$.jqxTreeGrid(
+            {
+                width: "100%",
+                height: 680,
+                theme: "kdnc",
+                sortable: true,
+                columns: [
+                    {
+                        text: '분류', datafield: 'Name', width: "25%", align: 'center', cellsalign: 'left',
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            if (rowData.IsRequired == "Y") {
+                                return cellValue + ' <i class="fas fa-lock"></i>';
+                            } else {
+                                return cellValue;
+                            }
+                        }
+                    },
+                    { text: '잠금', datafield: 'IsRequired', width: "5%", align: 'center', cellsalign: 'center', hidden: 'true' },
+                    { text: '채번코드', datafield: 'Code', width: "5%", align: 'center', cellsalign: 'center', hidden: 'true' },
+                    { text: 'ViewUrl', dataField: 'ViewUrl', width: "20%", align: 'center', cellsalign: 'left' },
+                    { text: '사용여부', datafield: 'IsUse', width: "5%", align: 'center', cellsalign: 'center' },
+                    { text: '등록자', datafield: 'CreateUsNm', width: "10%", align: 'center', cellsalign: 'center' },
+                    { text: '등록일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd' },
+                    { text: '비고', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'left' }
+                ],
+                editable: false,
+                showToolbar: true,
+                toolbarHeight: 45,
+                renderToolbar: function (toolbar) {
+                    toolbar.empty();
+                    var container = $("<div class='lGridComponent'></div>");
+                    var btnAdd = $("<button><i class='fas fa-plus'></i> 신규 등록</button>").jqxButton();
+                    var btnEdit = $("<button><i class='fas fa-edit'></i> 선택 수정</button>").jqxButton();
+                    var btnDele = $("<button><i class='fas fa-minus'></i> 선택 삭제</button>").jqxButton();
+
+                    container.append(btnAdd);
+                    container.append(btnEdit);
+                    container.append(btnDele);
+                    toolbar.append(container);
+
+                    $(btnAdd).on("click", function () {
+                        var selection = DocumentClassificationGrid$.jqxTreeGrid('getSelection');
+
+                        if (selection == null || selection.length < 1) {
+                            if (confirm("분류 혹은 항목을 추가하시겠습니까?")) {
+                                OpenAddDocClassification(function (res) {
+                                    getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, null)
+                                }, null, null, '/Manage/dlgDocumentClassIntegrate', '신규 등록', 'New', null);
+                            }
+                        } else {
+                            
+                            if (confirm("해당 분류의 하위항목을 추가하시겠습니까?")) {
+                                OpenAddDocClassification(function (res) {
+                                    getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, null)
+                                }, null, null, '/Manage/dlgDocumentClassIntegrate', '신규 하위 등록', 'ChildAdd', selection[0]);
+                            }
+                        }
+
+                    });
+
+                    $(btnEdit).on("click", function () {
+                        var selection = DocumentClassificationGrid$.jqxTreeGrid('getSelection');
+                        if (selection.length < 1) {
+                            alert("수정할 분류 혹은 항목이 선택되지않았습니다.");
+                            return;
+                        }
+                        if (confirm("분류 혹은 항목을 수정하시겠습니까?")) {
+                            OpenAddDocClassification(function (res) {
+                                getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, null)
+                            }, null, null, '/Manage/dlgDocumentClassIntegrate', '수정', 'Mod', selection[0]);
+                        }
+
+                    });
+
+                    $(btnDele).on("click", function () {
+                        var selection = DocumentClassificationGrid$.jqxTreeGrid('getSelection');
+                        if (selection.length < 1) {
+                            alert("삭제할 분류 혹은 항목이 선택되지않았습니다.");
+                            return;
+                        }
+                        if (selection[0].IsRequired == "Y") {
+                            alert("삭제할 분류 혹은 항목이 아닙니다.");
+                            return;
+                        }
+
+                        if (confirm("분류 혹은 항목을 삭제하시겠습니까?")) {
+                            var param = {};
+                            param.OID = selection[0].OID;
+
+                            RequestData("/Manage/DelDocumentClassification", param, function (res) {
+                                alert("삭제 되었습니다.");
+                                getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, null);
+                            });
+                        }
+                    });
+                }
+            });
+
+        DocumentClassificationGrid$.on('rowSelect', function (event) {
+            if (DocClassRowKey == event.args.key) {
+                DocumentClassificationGrid$.jqxTreeGrid('unselectRow', null);
+                DocClassRowKey = null;
+                return;
+            }
+            else {
+                DocClassRowKey = event.args.key;
+            }
+
+        });
+        getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, null);
+
+        $('#DocClassSearchBtn').on('click', function () {
+            var param = {};
+            param.Name = $('#DocClassName').val();
+            param.Code = $('#DocClassCode').val();
+            param.ViewUrl = $('#DocClassViewUrl').val();
+            param.IsUse = $('#DocClassIsUse').val();
+            param.CreateUsNm = $('#DocClassCreateUsNm').val();
+
+            getDocumentClassificationList(DocumentClassificationSource, DocumentClassificationGrid$, param);
+        });
+    });
+
+    function getDocumentClassificationList(_Source, _Grid$, _param) {
+        RequestData("/Manage/SelDocumentClassification", _param, function (res) {
+            PrintJqxTreeGrid(_Source, _Grid$, res);
+            _Grid$.jqxTreeGrid('expandAll');
+        });
+    }
+</script>

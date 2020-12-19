@@ -29,7 +29,8 @@
                 var Issues_Thumbnail = CreateProblemLibIssues;
                 var Cause_Thumbnail = CreateProblemLibCause;
                 var Countermeasures_Thumbnail = CreateProblemLibCountermeasures;
-                //param.Car_Lib_OID = $('#CreateProblemCar_Lib').val(); //차종
+                param.Oem_Lib_OID = $('#CreateProblemsLibraryOEM').val(); //차종
+                param.Car_Lib_OID = $('#CreateProblemsLibraryCAR').val(); //차종
                 //param.Product = $('#CreateProblemProduct').val(); //제품 
                 //param.Part = $('#CreateProblemPart').val(); //부품
                 //param.Occurrence = $('#CreateProblemOccurrence').val(); //발생처
@@ -43,7 +44,7 @@
                 param.Countermeasures = $('#CreateProblemCountermeasures').val();
                 param.Countermeasures_Thumbnail = Countermeasures_Thumbnail;
 
-                param.Name = $('#CreateProblemName').val(); //번호
+                //param.Name = $('#CreateProblemName').val(); //번호
                 param.Description = $('#CreateProblemDescription').val(); //기타
 
                 $.post('/Econtents/InsProblemsLibrary', param, function (response) {

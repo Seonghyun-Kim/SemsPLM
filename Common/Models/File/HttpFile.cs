@@ -76,7 +76,7 @@ namespace Common.Models.File
 
     public class HttpFileRepository
     {
-        public static bool InsertData(IObjectFile @object)
+        public static bool InsertData(HttpSessionStateBase Context, IObjectFile @object)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Common.Models.File
                     try
                     {
                         file = SemsValut.SaveFile(@object, item);
-                        file.CreateUs = 1; //HttpContext.Current.Session["UserOID"].ToString();
+                        file.CreateUs = Convert.ToInt32(Context["UserOID"]); //HttpContext.Current.Session["UserOID"].ToString();
                         DaoFactory.SetInsert("Comm.InsFile", file);
                     }
                     catch (Exception ex)
@@ -114,13 +114,13 @@ namespace Common.Models.File
             }
         }
 
-        public static int DeleteData(HttpFile httpFile)
+        public static int DeleteData(HttpSessionStateBase Context, HttpFile httpFile)
         {
             if (httpFile.FileOID == null) { throw new Exception("파일을 삭제할 수 없습니다."); }
             int retValue = 0;
-            httpFile.DeleteUs = 1;// HttpContext.Current.Session["UserOID"].ToString();
+            httpFile.DeleteUs = Convert.ToInt32(Context["UserOID"]);// HttpContext.Current.Session["UserOID"].ToString();
 
-            HttpFile _file = SelFile(httpFile);
+            HttpFile _file = SelFile(Context, httpFile);
             SemsValut.FileDelete(_file);
 
             DaoFactory.SetUpdate("Comm.DelFile", httpFile);
@@ -128,12 +128,12 @@ namespace Common.Models.File
             return retValue;
         }
 
-        public static HttpFile SelFile(HttpFile httpFile)
+        public static HttpFile SelFile(HttpSessionStateBase Context, HttpFile httpFile)
         {
             return DaoFactory.GetData<HttpFile>("Comm.SelFile", httpFile);
         }
 
-        public static List<HttpFile> SelFiles(HttpFile httpFile)
+        public static List<HttpFile> SelFiles(HttpSessionStateBase Context, HttpFile httpFile)
         {
             if (httpFile == null || httpFile.OID == null) return null;
             return DaoFactory.GetList<HttpFile>("Comm.SelFile", httpFile);

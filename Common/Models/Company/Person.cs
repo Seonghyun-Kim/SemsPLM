@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Helpers;
 
 namespace Common.Models
@@ -37,9 +38,9 @@ namespace Common.Models
 
     public static class PersonRepository
     {
-        public static int InsPerson(Person _param)
+        public static int InsPerson(HttpSessionStateBase Context, Person _param)
         {
-            List<Person> lPerson = PersonRepository.SelPersons(new Person { ID = _param.ID });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { ID = _param.ID });
             if (lPerson != null && lPerson.Count > 0)
             {
                 return -1;
@@ -59,23 +60,30 @@ namespace Common.Models
             return DaoFactory.SetUpdate("Users.UdtPwPerson", _param);
         }
 
-        public static Person SelPerson(Person _param)
+        public static Person LoginSelPerson(Person _param)
+        {
+            _param.Type = CommonConstant.TYPE_PERSON;
+            Person person = DaoFactory.GetData<Person>("Users.SelPerson", _param);
+            return person;
+        }
+
+        public static Person SelPerson(HttpSessionStateBase Context, Person _param)
         {
             _param.Type = CommonConstant.TYPE_PERSON;
             Person person = DaoFactory.GetData<Person>("Users.SelPerson", _param);
             person.Password = "**************";
-            person.DepartmentNm = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
+            person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
             return person;
         }
 
-        public static List<Person> SelPersons(Person _param)
+        public static List<Person> SelPersons(HttpSessionStateBase Context, Person _param)
         {
             _param.Type = CommonConstant.TYPE_PERSON;
             List<Person> lPerson = DaoFactory.GetList<Person>("Users.SelPerson", _param);
             lPerson.ForEach(person =>
             {
                 person.Password = "**************";
-                person.DepartmentNm = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name; 
+                person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name; 
             });
             return lPerson;
         }

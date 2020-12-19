@@ -8,12 +8,12 @@
     <typeAlias alias="BDefine" type="Common.Models.BDefine" />
     <typeAlias alias="DObject" type="Common.Models.DObject" />
     <typeAlias alias="BPolicy" type="Common.Models.BPolicy" />
+    <typeAlias alias="BPolicyAuth" type="Common.Models.BPolicyAuth" />
     <typeAlias alias="DRelationship" type="Common.Models.DRelationship" />
     <typeAlias alias="Approval" type="Common.Models.Approval" />
     <typeAlias alias="ApprovalStep" type="Common.Models.ApprovalStep" />
     <typeAlias alias="ApprovalTask" type="Common.Models.ApprovalTask" />
     <typeAlias alias="ApprovalComment" type="Common.Models.ApprovalComment" />
-
     <typeAlias alias="HttpFile" type="Common.Models.File.HttpFile" />
   </alias>
 
@@ -238,6 +238,7 @@
       <isNotNull prepend="and" property="Type">
         Type = #Type#
       </isNotNull>
+      ORDER BY ORD
     </select>
     
     <update id="DelDRelationship" parameterClass="DRelationship" >
@@ -289,6 +290,9 @@
       </isNotNull>
       <isNotNull prepend="and" property="TargetOID">
         B.TargetOID = #TargetOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateUs">
+        A.CreateUs = #CreateUs#
       </isNotNull>
       ORDER BY B.OID
     </select>
@@ -376,7 +380,7 @@
         <isNotNull prepend="and" property="Type">
           A.Type = #Type#
         </isNotNull>
-      <isNotNull prepend="and" property="ApprovalOID">
+        <isNotNull prepend="and" property="ApprovalOID">
           B.ApprovalOID = #ApprovalOID#
         </isNotNull>
         <isNotNull prepend="and" property="StepOID">
@@ -471,6 +475,24 @@
       WHERE OID = #OID#
     </update>
 
+    <select id="SelBPolicyAuth" parameterClass="BPolicyAuth" resultClass="BPolicyAuth">
+      SELECT B.*
+      FROM T_BPOLICY A
+      LEFT OUTER JOIN T_BPOLICY_AUTH B ON A.OID = PolicyOID
+      WHERE A.Type = #Type#
+      AND A.OID = #PolicyOID#
+      AND B.AuthDiv = #AuthDiv#
+      <isNotNull prepend="and" property="AuthTargetDiv">
+        B.AuthTargetDiv = #AuthTargetDiv#
+      </isNotNull>
+      <isNotNull prepend="and" property="AuthTargetOID">
+        B.AuthTargetOID = #AuthTargetOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="AuthObjectOID">
+        B.AuthObjectOID = #AuthObjectOID#
+      </isNotNull>
+    </select>
+
     <insert id="InsFile" parameterClass="HttpFile">
       <selectKey type="pre" resultClass="int" property="FileOID">
         SELECT ISNULL(MAX(FileOID),0) + 1 AS FileOID FROM T_DFILE
@@ -516,5 +538,6 @@
     <update id="DelFile" parameterClass="HttpFile">
       UPDATE T_DFILE  SET DeleteDt = GETDATE(), DeleteUs =  #DeleteUs# WHERE FileOID = #FileOID#
     </update>
+
   </statements>
 </sqlMap>

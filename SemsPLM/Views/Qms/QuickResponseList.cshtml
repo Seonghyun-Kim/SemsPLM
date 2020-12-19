@@ -400,6 +400,15 @@
         TabPageLoad(linkUrl, linkName);
     }
 
+        
+    function OpenLpaUnfit(uid) {
+        var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        var linkName = "[" + rowData.Title + "] LPA 감사";
+        var linkUrl = '/Qms/InfoLpaUnfit?OID=' + rowData.ModuleLpaOID;
+
+        TabPageLoad(linkUrl, linkName);
+    }
+
     /**
      * 유효성 상세화면
      */

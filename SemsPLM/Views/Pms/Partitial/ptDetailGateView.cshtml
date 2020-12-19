@@ -34,16 +34,19 @@
             var gateEFdate = document.createElement("p");
             var gateASdate = document.createElement("p");
             var gateAFdate = document.createElement("p");
-            var gateIcon = document.createElement("p");
+            var gateIcon = document.createElement("div");
 
             project.className = "gatebox";
             gateStatus.className = "gatestatus";
+            gateIcon.className = "gateicons";
 
             gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
             gateStatus.innerHTML = "<span onclick='fProcess(" + projOid + ", " + params.OID + ", " + params.BPolicyOID + ")' style='cursor:pointer;'>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
-            gateIcon.innerHTML = "<img src='/Images/group.png' alt='Metting' style='border:0px;' onclick='fMetting(" + projOid + ", " + params.OID + ")'>";
-            gateIcon.innerHTML += "<img src= '/Images/checklist.png' alt='Check List' style='border:0px;' onclick='fCheckList(" + projOid + ", " + params.OID + ")'>";
-            gateIcon.innerHTML += "<img src='/Images/inbox.png' alt='Resources' style='border:0px;' onclick='fDeliveres(" + projOid + ", " + params.OID + ")'>";
+            gateIcon.innerHTML = "<button onclick='fMetting(" + projOid + ", " + params.OID + ")'><img src='/Images/group.png' alt='Metting' style='border:0px;'>회의록</button>";
+            gateIcon.innerHTML += "<button onclick='fCheckList(" + projOid + ", " + params.OID + ")'><img src= '/Images/checklist.png' alt='Check List' style='border:0px;'>체크리스트</button>";
+            gateIcon.innerHTML += "<button onclick='fSignOffReport(" + projOid + ", " + params.OID + ")'><img src= '/Images/report.png' alt='Report' style='border:0px;'>Sign Off 보고서</button>";
+            gateIcon.innerHTML += "<button onclick='fDeliveres(" + projOid + ", " + params.OID + ")'><img src='/Images/inbox.png' alt='Resources' style='border:0px;'>산출물</button>";
+            gateIcon.innerHTML += "<button onclick='fOpenIssue(" + projOid + ", " + params.OID + ")'><img src='/Images/issue.png' alt='Open Issue' style='border:0px;'>오픈 이슈</button>";
             gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) +'..' : params.Name) ;
             gateESdate.innerHTML = params.EstStartDt != null ? moment(params.EstStartDt).format('YYYY-MM-DD') : '<br/>';
             gateEFdate.innerHTML = params.EstEndDt != null ? moment(params.EstEndDt).format('YYYY-MM-DD') : '<br/>';
@@ -79,4 +82,8 @@
             addGate(gateArr[index]);
         }
     });
+
+    function fSignOffReport(_projOID, _processOID) {
+        OpenGateSignOffDialog(null, null, {}, '/Pms/GateSignOffReport', 'Gate Review Sign Off 보고서');
+    }
 </script>

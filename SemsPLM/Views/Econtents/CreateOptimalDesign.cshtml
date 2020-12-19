@@ -11,13 +11,23 @@
                         <h2><i class="fas fa-edit"></i> 최적설계 작성</h2>
                     </td>
                     <td style="text-align: right;">
-                        <button id="" class="custom-button"><i class="fas fa-file"></i> 임시 저장</button>
+                        <button id="CreateOptimalDesignBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
     <table class="optimalDesignTable">
+        <colgroup>
+            <col width="16%" />
+            <col width="16%" />
+            <col width="16%" />
+            <col width="12%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+        </colgroup>
         <thead>
             <tr>
                 <td>고객사</td>
@@ -32,14 +42,14 @@
         </thead>
         <tbody>
             <tr>
-                <td><select></select><div id="CreateOptimalDesignOEM"></div></td>
-                <td><select></select><div id="CreateOptimalDesignCar"></div></td>
-                <td><select></select><div id="CreateOptimalDesignProduct"></div></td>
-                <td><select></select><div id="CreateOptimalDesignDivision"></div></td>
-                <td><input type="text" value="시작" readonly="readonly" /></td>
-                <td><input type="text" readonly="readonly" /></td>
-                <td><input type="text" readonly="readonly" /></td>
-                <td><input type="text" readonly="readonly" /></td>
+                <td><div id="CreateOptimalDesignOEM"></div></td>
+                <td><div id="CreateOptimalDesignCar"></div></td>
+                <td><div id="CreateOptimalDesignProduct"></div></td>
+                <td><div id="CreateOptimalDesignDivision"></div></td>
+                <td><input type="text" value="시작" readonly="readonly" style="text-align:center"/></td>
+                <td><input type="text" readonly="readonly" style="text-align:center;"/></td>
+                <td><input type="text" readonly="readonly" style="text-align:center"/></td>
+                <td><input type="text" readonly="readonly" style="text-align:center"/></td>
             </tr>
         </tbody>
     </table>
@@ -47,7 +57,39 @@
 <div id="CreateOptimalDesignGrid"></div>
 
 <script type="text/javascript">
+    var CreateOptimalDesignOEMList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    var CreateOptimalDesignOEM$ = $('#CreateOptimalDesignOEM');
+    var CreateOptimalDesignCar$ = $("#CreateOptimalDesignCar");
+
     $(function () {
+        CreateOptimalDesignOEM$.jqxComboBox({width:250, height:32});
+        CreateOptimalDesignCar$.jqxComboBox({width:250, height:32});
+        $("#CreateOptimalDesignProduct").jqxComboBox({width:250, height:32});
+        $("#CreateOptimalDesignDivision").jqxComboBox({ width: 180, height: 32 });
+
+        var CreateOptimalDesignSource =
+        {
+            localdata: CreateOptimalDesignOEMList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var CreateOptimalDesignAdapter = new $.jqx.dataAdapter(CreateOptimalDesignSource);
+        CreateOptimalDesignOEM$.jqxComboBox({ source: CreateOptimalDesignAdapter, displayMember: "KorNm", valueMember: "OID", height: 32, });
+
+        var SearchECO_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
+        CreateOptimalDesignCar$.jqxComboBox({ source: SearchECO_DefaultCar, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        CreateOptimalDesignCar$.jqxComboBox({ selectedIndex: 0 });
+
+        CreateOptimalDesignOEM$.on('change', function (event) {
+            ChangeCreateOptimalDesignComboBox(2, CreateOptimalDesignOEM$.val());
+        });
+
+
+
         var CreateOptimalDesignGridSource = {
             datatype: 'json',
             datafields: [
@@ -72,7 +114,7 @@
                 { name: 'Countermeasures' },
 
                 { name: 'Reflect'},
-                { name: 'NotReflect' },
+                { name: 'ReflectVal' },
 
                 { name: 'Revision' },
 
@@ -83,26 +125,63 @@
         CreateOptimalDesignGrid$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 695,
-            rowsheight: 200,
+            height: 680,
+            rowsheight: 50,
             columnsheight: 30,
             sortable: false,
+            editable: true,
             pageable: false,
             columns: [
                 {
-                    text: '순서', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    text: '순서', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
                     cellsrenderer: function (row, column, value) {
-                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        return "<div style='width:100%;height:100px;text-align:center;vertical-align:middle;line-height:50px;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: 'NO', datafield: 'Car_Lib_OID', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '과거차 문제', datafield: 'Issues', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '과거차 문제 개선 대책 ', datafield: 'Countermeasures', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '구분', datafield: 'Division', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '반영', datafield: 'Reflect', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '미반영', datafield: 'NotReflect', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '사유', datafield: 'Description', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '리비전', datafield: 'Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: 'NO', datafield: 'Name', width: "7%", align: 'center', cellsalign: 'center', editable: false,},
+                { text: '과거차 문제', datafield: 'Issues', width: "13%", align: 'center', cellsalign: 'center', editable: false,},
+                { text: '과거차 문제 개선 대책 ', datafield: 'Countermeasures', width: "13%", align: 'center', cellsalign: 'center', editable: false,},
+                { text: '구분', datafield: 'Division', width: "13%", align: 'center', cellsalign: 'center', editable: false,},
+                {
+                    text: '반영/미반영', width: "7%", align: 'center', cellsalign: 'center',
+                    columntype: 'custom',
+                    createeditor: function (row, column, editor) {
+                        var div = $('<div style="text-align:center;vertical-align:middle; height:100%;">');
+                        var element = $('<div style="text-align:center;vertical-align:middle; height:50%;" id=\'jqxRadioButtonTrue\'>반  영</div><div style="text-align:center;vertical-align:middle; height:50%;"  id=\'jqxRadioButtonFalse\'>미 반 영</div>');
+                        div.append(element);
+                        editor.append(div);
+                        element.jqxRadioButton({
+                            //boxSize: '20px',
+                            groupName: "Reflect"
+                        });
+                    },
+                    initeditor: function (row, cellvalue, editor, celltext, pressedChar) {
+                        if (cellvalue) {
+                            var radioButtons = editor.children();
+                            for (var i = 0; i < radioButtons.length; i++) {
+                                if ($(radioButtons[i]).text() === cellvalue) {
+                                    $(radioButtons[i]).val(true);
+                                    break;
+                                }
+                            }
+                        }
+                    },
+                    geteditorvalue: function (row, cellvalue, editor) {
+                        var radioButtons = editor.children().children(),
+                            firstRadioButton = $(radioButtons[0]),
+                            secondRadioButton = $(radioButtons[1]);
+                        if (firstRadioButton.val() === true) {
+                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflect", "true");
+                            return firstRadioButton.text();
+                        } else {
+                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflect", "false");
+                            return secondRadioButton.text();
+                        }
+                    }
+                },
+                { text: '반영/미반영', datafield: 'Reflect', width: "15%", align: 'center', cellsalign: 'center', hidden: true },
+                { text: '사유', datafield: 'Description', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "7%", align: 'center', cellsalign: 'center', editable: false, },
             ],
             showtoolbar: true,
             toolbarheight: 45,
@@ -111,7 +190,15 @@
             }
         });
 
-        getSearchCreateOptimalDesignGridList(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, null)
+        getSearchCreateOptimalDesignGridList(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, null);
+
+
+        $('#CreateOptimalDesignBtn').on('click', function () {
+            var data = CreateOptimalDesignGrid$.jqxGrid('getrows');
+            console.log($('#jqxRadioButtonTrue').jqxRadioButton('checked'));
+            console.log(data);
+        });
+
     });
 
     function getSearchCreateOptimalDesignGridList(_Source, _Grid$, param) {
@@ -119,4 +206,34 @@
             PrintJqxGrid(_Source, _Grid$, res);
         });
     }
+
+    function ChangeCreateOptimalDesignComboBox(ID, OID) {
+        var ChangeCreateOptimalDesignComboBox$ = CreateOptimalDesignCar$
+        var param = {};
+        param.fromOID = OID;
+        var ChangeCreateOptimalDesignComboSource;
+        RequestData("/Manage/SelCodeLibrary", param, function (res) {
+            if (res.length > 0) {
+                ChangeCreateOptimalDesignComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var ChangeCreateOptimalDesignComboAdapter = new $.jqx.dataAdapter(ChangeCreateOptimalDesignComboSource);
+                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ source: ChangeCreateOptimalDesignComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var ChangeCreateOptimalDesignComboAdapter = new $.jqx.dataAdapter(ChangeCreateOptimalDesignComboSource);
+                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ source: ChangeCreateOptimalDesignComboAdapter, displayMember: "KorNm", valueMember: "OID" });
+                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+
 </script>

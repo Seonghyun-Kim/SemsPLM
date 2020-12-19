@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,10 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interface\IPmsRelationship.cs" />
+    <Compile Include="Models\CustomerSchedule.cs" />
     <Compile Include="Models\PmsBaseLineProcess.cs" />
     <Compile Include="Models\PmsBaseLineProject.cs" />
     <Compile Include="Models\PmsBaseLineRelationship.cs" />
     <Compile Include="Models\PmsCompare.cs" />
+    <Compile Include="Models\PmsDocClass.cs" />
+    <Compile Include="Models\PmsIssue.cs" />
     <Compile Include="Models\PmsProcess.cs" />
     <Compile Include="Models\PmsProject.cs" />
     <Compile Include="Models\PmsRelationship.cs" />
@@ -58,8 +62,6 @@
       <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Trigger\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,39 +11,21 @@
             </div>
             <div class="searchContent">
                 <div class="searchData">
-                    <div>EO NO</div>
+                    <div>변경요청번호</div>
                     <div>
                         <input type="text" class="txtBox" id="SearchEcrName" />
                     </div>
                 </div>
                 <div class="searchData">
-                    <div>OEM EO No</div>
-                    <div>
-                        <input type="text" class="txtBox" id="SearchEcrOemEoNo" />
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>품명</div>
+                    <div>제목</div>
                     <div>
                         <input type="text" class="txtBox" id="SearchEcrTitle" />
                     </div>
                 </div>
                 <div class="searchData">
-                    <div class="comboBoxLabel">OEM</div>
+                    <div>설계변경일자</div>
                     <div>
-                        <div id="SearchECR_Oem_Lib"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">차종</div>
-                    <div>
-                        <div id="SearchECR_Car_Lib"></div>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div class="comboBoxLabel">프로젝트</div>
-                    <div>
-                        <div id="SearchECR_Pms_Lib"></div>
+                        <input type="text" class="txtBox" id="SearchEcrDesignChangeDt" />
                     </div>
                 </div>
                 <div class="searchData">
@@ -63,60 +45,23 @@
 </div>
 
 <script>
-    var SearchECR_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-    var SearchECR_OemLib$ = $('#SearchECR_Oem_Lib');
-    var SearchECR_CarLib$ = $('#SearchECR_Car_Lib');
-    var SearchECR_PmsLib$ = $('#SearchECR_Pms_Lib');
     $(function () {
-        var SearchECR_dataAdapterOemSource =
-        {
-            localdata: SearchECR_OemList,
-            datatype: "json",
-            datafields:
-                [
-                    { name: 'KorNm', type: 'string' },
-                    { name: 'OID', type: 'int' },
-                ]
-        };
-        var SearchECR_DataAdapter = new $.jqx.dataAdapter(SearchECR_dataAdapterOemSource);
-        SearchECR_OemLib$.jqxComboBox({ source: SearchECR_DataAdapter, displayMember: "KorNm", valueMember: "OID", height:33,});
-        
-        var SearchECR_DefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
-        SearchECR_CarLib$.jqxComboBox({ source: SearchECR_DefaultCar, displayMember: "KorNm", valueMember: "OID", height:33,});
-        SearchECR_CarLib$.jqxComboBox({ selectedIndex: 0 });
-        
-        var SearchECR_DefaultPms = [{ KorNm: '등록 프로젝트 없음', OID: null }];
-        SearchECR_PmsLib$.jqxComboBox({ source: SearchECR_DefaultPms, displayMember: "KorNm", valueMember: "OID", height:33,});
-        SearchECR_PmsLib$.jqxComboBox({ selectedIndex: 0 });
-        
-        SearchECR_OemLib$.on('change', function (event) {
-            ChangeECRLib(2, SearchECR_OemLib$.jqxComboBox('getSelectedItem').value);
-        });
+        $('#SearchEcrDesignChangeDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchECRGrdSource = {
             datatype: 'json',
             datafields: [
                 { name: 'OID' },
                 { name: 'Name' },
-                { name: 'Oem_Eo' },
-                { name: 'EPart_No'},
                 { name: 'Title' },
-                { name: 'Count' },
-                { name: 'Oem_Lib_OID' },
-                { name: 'Oem_Lib_Nm' },
-                { name: 'Car_Lib_OID' },
-                { name: 'Car_Lib_Nm' },
-                { name: 'Pms_Lib_OID' },
-                { name: 'Pms_Lib_Nm' },
-                { name: 'CreateDt', type: 'date' },
+                { name: 'ItemGroup' },
                 { name: 'CreateUs' },
-                { name: 'Description' },
-                { name: 'BPolicy' },
-                { name: 'BPolicyOID' },
-                { name: 'ApprovDt' },
+                { name: 'CreateUsNm'},
+                { name: 'CreateDt', type: 'date'},
+
+                { name: 'DesignChangeDt', type: 'date'},
             ],
         }
-
         const SearchECRGrd$ = $('#SearchECRGrid');
         SearchECRGrd$.jqxGrid({
             theme: "kdnc",
@@ -133,26 +78,12 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '차종', datafield: 'Car_Lib_Nm', width: "9%", align: 'center', cellsalign: 'center', },
-                { text: 'EO NO', datafield: 'Name', width: "9%", align: 'center', cellsalign: 'center', },
-
-                {
-                    text: '품번', width: "30%", align: 'center', cellsalign: 'center',
-                    cellsrenderer: function (row, column, value) {
-                        var SearchECR_rowdata = SearchECRGrd$.jqxGrid('getrowdata', row);
-                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + SearchECR_rowdata.EPart_No + " 외 " + SearchECR_rowdata.Count + "종</div>";
-                    }
-                },
-                { text: 'OEM EO NO', datafield: 'Oem_Eo', width: "10%", align: 'center', cellsalign: 'center', },
-                {
-                    text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
-                    cellsrenderer: function (row, column, value) {
-                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
-                    },
-                },
-                { text: '작성자', datafield: 'CreatUsNm', width: "10%", align: 'center', cellsalign: 'center' },
-                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '승인일', datafield: 'ApprovDt', width: "9%", align: 'center', cellsalign: 'center', },
+                { text: '변경요청번호', datafield: 'Name', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '제목', datafield: 'Title', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '설계변경일자', datafield: 'DesignChangeDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                { text: '품목그룹', datafield: 'ItemGroup', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성자', datafield: 'CreateUs', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
             ],
             showtoolbar: true,
             toolbarheight: 45,
@@ -198,13 +129,15 @@
 
         $('#SearchEcrBtn').on('click', function () {
             var SecarchEcrParam = {};
+            var SecarchEcrDesignChangeDt = $('#SearchEcrDesignChangeDt').val();
+            var SecarchEcrDesignChangeDtArray = SecarchEcrDesignChangeDt.split('-');
+
             SecarchEcrParam.Name = $('#SearchEcrName').val();
-            SecarchEcrParam.Oem_Eo = $('#SearchEcrOemEoNo').val();
             SecarchEcrParam.Title = $('#SearchEcrTitle').val();
-            //SecarchEcrParam.Oem_Lib_OID = 
-            //SecarchEcrParam.Car_Lib_OID = 
-            //SecarchEcrParam.Pms_OID =
-            SecarchEcrParam.CUSER = $('#SearchEcrCuser').val();
+            //SecarchEcrParam.DesignChangeDt = $('#SearchEcrDesignChangeDt').val();
+            
+            SecarchEcrParam.StartDesignChangeDt = SecarchEcrDesignChangeDtArray[0];
+            SecarchEcrParam.EndDesignChangeDt = SecarchEcrDesignChangeDtArray[1] + " 23:59:59";
 
             getSearchECRList(SearchECRGrdSource, SearchECRGrd$, SecarchEcrParam);
         });
@@ -213,34 +146,6 @@
     function getSearchECRList(_Source, _Grid$, _param) {
         RequestData("/ChangeRequest/SelChangeRequest", _param, function (res) {
             PrintJqxGrid(_Source, _Grid$, res);
-        });
-    }
-
-    function ChangeECRLib(ID, OID) {
-        var ChangeECRComboBox$ = SearchECR_CarLib$
-        var param = {};
-        param.fromOID = OID;
-        var ChangeECRComboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                ChangeECRComboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var ChangeECRComboAdapter = new $.jqx.dataAdapter(ChangeECRComboSource);
-                ChangeECRComboBox$.jqxComboBox({ source: ChangeECRComboAdapter, displayMember: "KorNm", valueMember: "OID"});
-            } else {
-                CreateECRComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
-                var ChangeECRComboAdapter = new $.jqx.dataAdapter(ChangeECRComboSource);
-                ChangeECRComboBox$.jqxComboBox({ source: ChangeECRComboAdapter, displayMember: "KorNm", valueMember: "OID"});
-                ChangeECRComboBox$.jqxComboBox({ selectedIndex: 0 });
-            }
         });
     }
 

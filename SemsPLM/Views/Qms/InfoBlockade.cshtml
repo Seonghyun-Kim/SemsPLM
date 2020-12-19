@@ -41,79 +41,81 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div id="properties" class="basic_grid">
-            <table class="tableTopButtonBox">
-                <tbody>
+        <div style="overflow-y:scroll;height:668px;padding-top:45px;box-sizing:border-box;">
+            <div id="properties" class="basic_grid">
+                <table class="tableTopButtonBox infoTopFix" style="width:1673px;">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoBlockade_defaultBtn_@ViewBag.Blockade.OID">
+                                <button id="InfoBlockade_EditBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                @*<button id="InfoBlockade_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                                <button id="InfoBlockade_EditCancleBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoBlockade_SaveBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoBlockade_ApprovalBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*@{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.Blockade.QuickOID });}*@
+
+
+                <label style="margin:20px 0 10px;"><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+                <table id="tbBlockadeList" class="infoTable">
+                    <colgroup>
+                        <col style="width:9%" />
+                        <col style="width:22%" />
+                        <col style="width:22%" />
+                        <col style="width:8%" />
+                        <col style="width:9%" />
+                        <col style="width:11%" />
+                        <col style="width:19%" />
+                    </colgroup>
                     <tr>
-                        <td style="text-align: right;" id="InfoBlockade_defaultBtn_@ViewBag.Blockade.OID">
-                            <button id="InfoBlockade_EditBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            @*<button id="InfoBlockade_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                            <button id="InfoBlockade_EditCancleBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoBlockade_SaveBtn_@ViewBag.Blockade.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                            <button id="InfoBlockade_ApprovalBtn_@ViewBag.Blockade.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                        </td>
+                        <th>범위</th>
+                        <th>대상범위</th>
+                        <th>조치방법</th>
+                        <th>대상수량</th>
+                        <th>조치부서</th>
+                        <th>담당자</th>
+                        <th>기한</th>
                     </tr>
-                </tbody>
-            </table>
-            @*@{Html.RenderAction("QuickResponseSummary", "Qms", new { OID = ViewBag.Blockade.QuickOID });}*@
+                </table>
 
+                <label style="margin:20px 0 10px;"><i class="fas fa-caret-square-down"></i> 시정결과</label>
+                <table id="tbCorrectiveAction" class="infoTable">
+                    <colgroup>
+                        <col style="width:9%" />
+                        <col style="width:11%" />
+                        <col style="width:11%" />
+                        <col style="width:11%" />
+                        <col style="width:11%" />
+                        <col style="width:11%" />
+                        <col style="width:11%" />
+                        <col style="width:25%" />
+                    </colgroup>
+                    <tr>
+                        <th rowspan="2">범위</th>
+                        <th colspan="2">선별</th>
+                        <th rowspan="2">재작업</th>
+                        <th rowspan="2">폐기</th>
+                        <th rowspan="2">특채</th>
+                        <th rowspan="2">기타</th>
+                        <th rowspan="2">비고</th>
+                    </tr>
+                    <tr>
+                        <th>적합</th>
+                        <th>부적합</th>
+                    </tr>
+                </table>
 
-            <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
-            <table id="tbBlockadeList" class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:9%" />
-                    <col style="width:22%" />
-                    <col style="width:22%" />
-                    <col style="width:8%" />
-                    <col style="width:9%" />
-                    <col style="width:11%" />
-                    <col style="width:19%" />
-                </colgroup>
-                <tr>
-                    <th>범위</th>
-                    <th>대상범위</th>
-                    <th>조치방법</th>
-                    <th>대상수량</th>
-                    <th>조치부서</th>
-                    <th>담당자</th>
-                    <th>기한</th>
-                </tr>
-            </table>
+                <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+                <div id="InfoBlockade_FileList_@ViewBag.Blockade.OID">
 
-            <label><i class="fas fa-caret-square-down"></i> 시정결과</label>
-            <table id="tbCorrectiveAction" class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:9%" />
-                    <col style="width:11%" />
-                    <col style="width:11%" />
-                    <col style="width:11%" />
-                    <col style="width:11%" />
-                    <col style="width:11%" />
-                    <col style="width:11%" />
-                    <col style="width:25%" />
-                </colgroup>
-                <tr>
-                    <th rowspan="2">범위</th>
-                    <th colspan="2">선별</th>
-                    <th rowspan="2">재작업</th>
-                    <th rowspan="2">폐기</th>
-                    <th rowspan="2">특채</th>
-                    <th rowspan="2">기타</th>
-                    <th rowspan="2">비고</th>
-                </tr>
-                <tr>
-                    <th>적합</th>
-                    <th>부적합</th>
-                </tr>
-            </table>
-
-            <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
-            <div id="InfoBlockade_FileList_@ViewBag.Blockade.OID" >
-
+                </div>
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <script type="text/javascript">
     var fileUpload = $("#InfoBlockade_FileList_@ViewBag.Blockade.OID").FileUpload({ OID : '@ViewBag.Blockade.OID'});

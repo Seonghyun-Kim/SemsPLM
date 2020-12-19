@@ -15,19 +15,19 @@ namespace SemsPLM.Controllers
     public class EcontentsController : Controller
     {
         // GET: Econtents
-        public ActionResult Index()
-        {
-            return View();
-        }
+        #region ProblemsLibrary View
         public ActionResult CreateProblemsLibrary()
         {
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+            ViewBag.oemList = oemList;
             return View();
         }
         public ActionResult SearchProblemsLibrary()
         {
-            Library carKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "CARTYPE" });
-            List<Library> carList = LibraryRepository.SelCodeLibrary(new Library { FromOID = carKey.OID });  //차종 목록
-            ViewBag.carList = carList;
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+            ViewBag.oemList = oemList;
             return View();
         }
         public ActionResult InfoProblemsLibrary(int OID)
@@ -35,17 +35,27 @@ namespace SemsPLM.Controllers
             ProblemsLibrary ProblemsLibraryDetail = ProblemsLibraryRepository.SelProblemsLibraryObject(new ProblemsLibrary { OID = OID });
             ViewBag.OID = ProblemsLibraryDetail.OID;
             ViewBag.ProblemsLibraryDetail = ProblemsLibraryDetail;
-            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EcontentsConstant.TYPE_ECONTENTS });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EcontentsConstant.TYPE_PROBLEMS_LIBRARY });
             return View(ProblemsLibraryDetail);
         }
+        #endregion
+
+        #region OptimalDesign View
         public ActionResult CreateOptimalDesign()
         {
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+            ViewBag.oemList = oemList;
             return View();
         }
         public ActionResult SearchOptimalDesign()
         {
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+            ViewBag.oemList = oemList;
             return View();
         }
+        #endregion
 
         #region ProblemsLibrary 검색
         public JsonResult SelProblemsLibrary(ProblemsLibrary _param)
@@ -55,7 +65,7 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-
+        #region ProblemsLibrary 등록
         public JsonResult InsProblemsLibrary(ProblemsLibrary _param)
         {
             int resultOid = 0;
@@ -64,13 +74,15 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
+                List<ProblemsLibrary> ProblemsLibrary = ProblemsLibraryRepository.SelProblemsLibrary(_param);
+
                 DObject dobj = new DObject();
-                dobj.Type = EcontentsConstant.TYPE_ECONTENTS;
+                dobj.Type = EcontentsConstant.TYPE_PROBLEMS_LIBRARY;
                 dobj.TableNm = EcontentsConstant.TABLE_PROBLEMS_LIBRARY;
-                dobj.Name = _param.Name;
+                dobj.Name = (ProblemsLibrary.Count + 1).ToString();
                 dobj.Description = _param.Description;
                 
-                resultOid = DObjectRepository.InsDObject(dobj);
+                resultOid = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = resultOid;
                 DaoFactory.SetInsert("Econtents.InsProblemsLibrary", _param);
@@ -84,6 +96,7 @@ namespace SemsPLM.Controllers
             }
             return Json(resultOid);
         }
-        
+        #endregion
+
     }
 }

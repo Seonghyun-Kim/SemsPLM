@@ -25,7 +25,7 @@
     <typeAlias alias="QmsCheck" type="Qms.Models.QmsCheck" />
     <typeAlias alias="StandardDoc" type="Qms.Models.StandardDoc" />
   </alias>
-  
+
   <statements>
     <insert id="InsQuickResponse" parameterClass="QuickResponse">
       INSERT INTO T_DQMS_QUICK
@@ -108,7 +108,7 @@
       <isNotNull prepend="," property="Title">
         Title = #Title#
       </isNotNull>
-      
+
       <isNotNull prepend="," property="OccurrenceLibOID">
         OccurrenceLibOID = #OccurrenceLibOID#
       </isNotNull>
@@ -160,7 +160,7 @@
       <isNotNull prepend="," property="ImputeSupplierOID">
         ImputeSupplierOID = #ImputeSupplierOID#
       </isNotNull>
-       
+
       <isNotNull prepend="," property="Summary">
         Summary = #Summary#
       </isNotNull>
@@ -294,7 +294,7 @@
       #QuickOID#,
       1)
     </insert>
-    
+
     <update id="UdtQuickResponseModule" parameterClass="QuickResponseModule">
       UPDATE T_DQMS_QUICK_MODULE
       SET
@@ -349,7 +349,7 @@
       EtcCnt = #EtcCnt#
       WHERE OID = #OID#
     </update>
-    
+
     <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
       SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
       , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
@@ -386,7 +386,7 @@
 
     <update id="UdtOccurrenceCauseItem" parameterClass="OccurrenceCauseItem">
       UPDATE T_DQMS_OCCURRENCE_CAUSE
-      SET     
+      SET
       OccurrenceCauseLibOID = #OccurrenceCauseLibOID#
       WHERE OID = #OID#
     </update>
@@ -407,8 +407,8 @@
 
         <isNotNull prepend="and" property="ModuleOID">
           A.ModuleOID = #ModuleOID#
-        </isNotNull>        
-    </dynamic>
+        </isNotNull>
+      </dynamic>
     </select>
     <!-- OccurrenceWhy -->
     <insert id="InsOccurrenceWhy" parameterClass="OccurrenceWhy">
@@ -442,14 +442,14 @@
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
-          A.OID = #OID#
-        </isNotNull>
+        A.OID = #OID#
+      </isNotNull>
 
       <isNotNull prepend="and" property="CauseOID">
         A.CauseOID = #CauseOID#
-      </isNotNull>  
+      </isNotNull>
     </select>
-    <!-- DetectCounterMeasure -->   
+    <!-- DetectCounterMeasure -->
     <update id="UdtDetectCounterMeasure" parameterClass="DetectCounterMeasure">
       MERGE INTO T_DQMS_DETECT_COUNTERMEASURE AS T
       USING (
@@ -520,13 +520,13 @@
     <select id="SelDetectCounterMeasure" parameterClass="DetectCounterMeasure" resultClass="DetectCounterMeasure">
       SELECT A.ModuleOID, A.DetectM, B.BPolicyOID, A.DetectMDetail, A.DetectS, A.DetectSDetail, A.DetectQ, A.DetectQDetail, A.DetectE, A.DetectEDetail, A.LeakCause1, A.LeakCause2, A.LeakCause3, A.DetectDt, A.Measure
       FROM T_DQMS_DETECT_COUNTERMEASURE A
-      <dynamic prepend="where">      
+      <dynamic prepend="where">
         <isNotNull prepend="and" property="ModuleOID">
           A.ModuleOID = #ModuleOID#
         </isNotNull>
       </dynamic>
     </select>
-    
+
     <!--ImproveCounterMeasure-->
     <insert id="InsImproveCounterMeasureItem" parameterClass="ImproveCounterMeasureItem">
       INSERT INTO T_DQMS_IMPROVE_COUNTERMEASURE
@@ -565,7 +565,7 @@
         A.ModuleOID = #ModuleOID#
       </isNotNull>
     </select>
-    
+
     <!-- WorkerEdu SQL-->
     <select id="SelWorkerEdu" parameterClass="WorkerEdu" resultClass="WorkerEdu">
       SELECT
@@ -682,7 +682,7 @@
       FinishDetail = #FinishDetail#
       WHERE ModuleOID = #ModuleOID# AND OID = #OID#
     </update>
-    
+
     <!-- StdDoc SQL -->
     <select id="SelStandardDoc" parameterClass="StandardDoc" resultClass="StandardDoc">
       SELECT A.*
@@ -717,7 +717,7 @@
       DocCompleteDt = #DocCompleteDt#
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
-    
+
     <!-- Error Proof SQL ModuleOID == OID-->
     <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
       SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm
@@ -877,7 +877,7 @@
       #CauseAnalysis#,
       #ImproveCountermeasure#)
     </insert>
-    
+
     <update id="UdtLpaMeasure" parameterClass="LpaMeasure">
       UPDATE T_DQMS_LPA_MEASURE
       SET
@@ -991,7 +991,7 @@
 
     <!-- OpenIssue Relationship SQL -->
     <select id="SelOpenIssueRelationship" parameterClass="OpenIssueRelationship" resultClass="OpenIssueRelationship">
-      SELECT 
+      SELECT
       A.*
       FROM T_DQMS_OPENISSUE_RELATIONSHIP A
       <dynamic prepend="where">
@@ -1027,5 +1027,5 @@
       WHERE FromOID = #FromOID# AND ToOID = #ToOID# AND type = #type#
     </delete>
   </statements>
-  
+
 </sqlMap>

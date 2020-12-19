@@ -41,6 +41,8 @@ namespace SemsPLM
             arrDllList.Add(Path.Combine(assemblyPath + @"\ChangeRequest.dll"));
             arrDllList.Add(Path.Combine(assemblyPath + @"\Qms.dll"));
             arrDllList.Add(Path.Combine(assemblyPath + @"\Econtents.dll"));
+            arrDllList.Add(Path.Combine(assemblyPath + @"\Trigger.dll"));
+            arrDllList.Add(Path.Combine(assemblyPath + @"\DocumentClassification.dll"));
 
             foreach (var data in arrDllList)
             {

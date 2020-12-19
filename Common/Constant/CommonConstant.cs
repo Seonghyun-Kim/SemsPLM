@@ -66,5 +66,21 @@ namespace Common.Constant
 
         public static string TEXT_ENCRYPT_KEY = "SemsText";
         public static string FILE_ENCRYPT_KEY = "SemsFile";
+
+        //Auth Division
+        public static string AUTH_SYSTEM = "SYSTEM";
+        public static string AUTH_CUSTOM = "CUSTOM";
+        public static string AUTH_DIV_OWNER = "OWNER";
+        public static string AUTH_DIV_ROLE = "ROLE";
+        public static string AUTH_DIV_USER = "USER";
+        public static string AUTH_DIV_PUBLIC = "PUBLIC";
+
+        //Auth
+        public static string AUTH_VIEW = "View";
+        public static string AUTH_MODIFY = "Modify";
+        public static string AUTH_DELETE = "Delete";
+        public static string AUTH_DOWNLOAD = "Download";
+        public static string AUTH_PROMOTE = "Promote";
+        public static string AUTH_RELATION = "Relation";
     }
 }

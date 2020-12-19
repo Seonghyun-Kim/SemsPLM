@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Common.Models
 {
@@ -17,9 +18,9 @@ namespace Common.Models
     public static class CompanyRepository
     {
         
-        public static JqTreeModel SelOrganization()
+        public static JqTreeModel SelOrganization(HttpSessionStateBase Context)
         {
-            DObject dCompany = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_COMPANY });
+            DObject dCompany = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_COMPANY });
             JqTreeModel jqTreeModel = new JqTreeModel();
             jqTreeModel.id = dCompany.OID;
             jqTreeModel.label = dCompany.Name;
@@ -36,14 +37,14 @@ namespace Common.Models
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
                 innerJqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
-                SelDepartment(innerJqTreeModel, tmpDepartment);
+                SelDepartment(Context, innerJqTreeModel, tmpDepartment);
                 items.Add(innerJqTreeModel);
             });
             jqTreeModel.items = items;
@@ -51,7 +52,7 @@ namespace Common.Models
             return jqTreeModel;
         }
 
-        public static void SelDepartment(JqTreeModel _jqxTree, DObject _param)
+        public static void SelDepartment(HttpSessionStateBase Context, JqTreeModel _jqxTree, DObject _param)
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
@@ -62,22 +63,22 @@ namespace Common.Models
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
                 innerJqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
-                SelDepartment(innerJqTreeModel, tmpDepartment);
+                SelDepartment(Context, innerJqTreeModel, tmpDepartment);
                 items.Add(innerJqTreeModel);
             });
             _jqxTree.items = items;
         }
 
-        public static JqTreeModel SelOrganizationWithPerson(List<string> checkitemtypes)
+        public static JqTreeModel SelOrganizationWithPerson(HttpSessionStateBase Context, List<string> checkitemtypes)
         {
-            DObject dCompany = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_COMPANY });
+            DObject dCompany = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_COMPANY });
             JqTreeModel jqTreeModel = new JqTreeModel();
             jqTreeModel.id = dCompany.OID;
             jqTreeModel.label = dCompany.Name;
@@ -95,7 +96,7 @@ namespace Common.Models
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -103,7 +104,7 @@ namespace Common.Models
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
                 innerJqTreeModel.checkitemtypes = checkitemtypes;
-                SelDepartmentWithPerson(innerJqTreeModel, tmpDepartment, checkitemtypes);
+                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, checkitemtypes);
                 items.Add(innerJqTreeModel);
             });
             jqTreeModel.items = items;
@@ -111,7 +112,7 @@ namespace Common.Models
             return jqTreeModel;
         }
 
-        public static void SelDepartmentWithPerson(JqTreeModel _jqxTree, DObject _param, List<string> _checkitemtypes)
+        public static void SelDepartmentWithPerson(HttpSessionStateBase Context, JqTreeModel _jqxTree, DObject _param, List<string> _checkitemtypes)
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
@@ -122,7 +123,7 @@ namespace Common.Models
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -130,7 +131,7 @@ namespace Common.Models
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
                 innerJqTreeModel.checkitemtypes = _checkitemtypes;
-                List<Person> personItems = PersonRepository.SelPersons(new Person { DepartmentOID = tmpDepartment.OID });
+                List<Person> personItems = PersonRepository.SelPersons(Context, new Person { DepartmentOID = tmpDepartment.OID });
                 personItems.ForEach(personItem =>
                 {
                     JqTreeModel personJqTreeModel = new JqTreeModel();
@@ -147,7 +148,7 @@ namespace Common.Models
                     }
                     innerJqTreeModel.items.Add(personJqTreeModel);
                 });
-                SelDepartmentWithPerson(innerJqTreeModel, tmpDepartment, _checkitemtypes);
+                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, _checkitemtypes);
                 items.Add(innerJqTreeModel);
             });
             if (_jqxTree.items == null)

@@ -1,10 +1,12 @@
-﻿using Common.Factory;
+﻿using ChangeRequest.Models;
+using Common.Factory;
 using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ChangeOrder.Models
 {
@@ -18,14 +20,15 @@ namespace ChangeOrder.Models
         public string Statement { get; set; }
         public string Description { get; set; }
         public string ProType { get; set; }
+        public List<EO> CheckData { get; set; }
     }
 
     public static class EORepository
     {
         //EO 관련 내용 삽입
-        public static int InsEOContents(EO _param)
+        public static int InsEOContents(HttpSessionStateBase Context, EO _param)
         {
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             return DaoFactory.SetInsert("EO.InsEOContents", _param);
         }
 
@@ -45,6 +48,20 @@ namespace ChangeOrder.Models
         {
             List<int> OIDList = DaoFactory.GetList<int>("EO.partOIDList", _param);
             return OIDList;
+        }
+        public static List<ECR> SelECRRelation(List<EO> _param)
+        {
+            List<ECR> IECR = new List<ECR>();
+            _param.ForEach(item =>
+            {
+                ECR data = DaoFactory.GetData<ECR>("ChangeRequest.SelChangeRequest",new ECR { OID = item.ToOID });
+
+                data.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = data.Type, OID = data.BPolicyOID }).First();
+
+                IECR.Add(data);
+            });
+           
+            return IECR;
         }
     }
 }

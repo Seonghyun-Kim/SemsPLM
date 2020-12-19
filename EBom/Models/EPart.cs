@@ -37,7 +37,7 @@ namespace EBom.Models
         public string Etc_Delivery { get; set; }
 
 
-        public string Oem_Lib_NM { get; set; }
+        public string Oem_Lib_Nm { get; set; }
         public string Car_Lib_Nm { get; set; }
         public string Pms_NM { get; set; }
         public string Prod_Lib_Lev1_NM { get; set; }
@@ -67,6 +67,9 @@ namespace EBom.Models
 
         public string StartCreateDt { get; set; }
         public string EndCreateDt { get; set; }
+
+
+
     }
 
     public static class EPartRepository
@@ -94,6 +97,10 @@ namespace EBom.Models
                     {
                         obj.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Block_No }).KorNm;
                     }
+                }
+                if (obj.Oem_Lib_OID != null)
+                {
+                    obj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Oem_Lib_OID }).KorNm;
                 }
                 if (obj.Material_OID != null)
                 {
@@ -141,6 +148,10 @@ namespace EBom.Models
                     lEPart.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
                 }
             }
+            if (lEPart.Oem_Lib_OID != null)
+            {
+                lEPart.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Oem_Lib_OID }).KorNm;
+            }
             if (lEPart.Car_Lib_OID != null)
             {
                 lEPart.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Car_Lib_OID }).KorNm;
@@ -177,6 +188,7 @@ namespace EBom.Models
             EBOM getStructure = new EBOM();
             getStructure.Level = _level;
             getStructure.ToOID = _rootOID;
+            getStructure.TimeOID = 0;
 
             EPart PataData = SelEPartObject(new EPart { OID = _rootOID });
             getStructure.ToData = PataData;
@@ -207,27 +219,32 @@ namespace EBom.Models
 
             getStructure.diseditable = EBomConstant.DISEDITABLE;
 
-            getEbomStructure(getStructure, _rootOID);
+            getEbomStructure(getStructure, _rootOID, getStructure.TimeOID);
             return getStructure;
         }
 
-        public static void getEbomStructure(EBOM _relData, int _rootOID) 
+        public static void getEbomStructure(EBOM _relData, int _rootOID, int? TimeOID) 
         {
-            _relData.Children = getEbom(new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _relData.ToOID }, _rootOID);
+            
+            _relData.Children = getEbom(new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _relData.ToOID }, _rootOID, TimeOID);
+            
             _relData.Children.ForEach(item =>
             {
                 item.Level = _relData.Level + 1;
-                getEbomStructure(item, _rootOID);
+                item.TimeOID = item.Level + item.TimeOID;
+                getEbomStructure(item, _rootOID, item.TimeOID);
             });
         }
 
-        public static List<EBOM> getEbom(EBOM _param, int _rootOID)
+        public static List<EBOM> getEbom(EBOM _param, int _rootOID, int? TimeOID)
         {
             List<EBOM> EBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", _param);
 
             foreach (EBOM Obj in EBom)
             {
+                TimeOID = TimeOID + 1;
                 EPart PataData = SelEPartObject(new EPart { OID = Obj.ToOID });
+                Obj.TimeOID = TimeOID;
                 Obj.ToData = PataData;
                 Obj.Description = PataData.Description;
                 Obj.ObjName = PataData.Name;
@@ -377,13 +394,28 @@ namespace EBom.Models
             lSelRootChildList.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
-                if (obj.Oem_Lib_OID != null)
-                {
-                    obj.Oem_Lib_NM = LibraryRepository.SelLibraryObject(new Library { OID = obj.Oem_Lib_OID }).KorNm;
-                }
                 if (obj.Car_Lib_OID != null)
                 {
-                    obj.Car_Lib_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                    obj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                }
+                if (obj.Block_No != null)
+                {
+                    if (obj.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
+                    {
+                        obj.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                    else
+                    {
+                        obj.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                }
+                if (obj.Material_OID != null)
+                {
+                    obj.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Material_OID }).KorNm;
+                }
+                if (obj.ITEM_No != null)
+                {
+                    obj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ITEM_No }).KorNm;
                 }
             });
 
@@ -406,14 +438,15 @@ namespace EBom.Models
 
             List<EBOM> getStructureList = new List<EBOM>();
 
-            int? TimeOID = Convert.ToInt32(DateTimeOffset.Now.ToUnixTimeSeconds());
+            //int? TimeOID = Convert.ToInt32(DateTimeOffset.Now.ToUnixTimeSeconds());
+            int? TimeOID = 0;
 
             foreach (var obj in EPartList)
             {
-                TimeOID = TimeOID + 1;
+                //TimeOID = TimeOID + 1;
                 EBOM getStructure = new EBOM();
                 getStructure.Level = _level;
-                getStructure.OID = TimeOID;
+                //getStructure.OID = TimeOID;
                 getStructure.ToOID = obj.OID;
                 getStructure.ToData = obj;
                 getStructure.Description = obj.Description;
@@ -442,7 +475,7 @@ namespace EBom.Models
                 getStructure.BPolicy = obj.BPolicy;
 
 
-                getEbomStructure(getStructure, Convert.ToInt32(obj.OID));
+                getEbomStructure(getStructure, Convert.ToInt32(obj.OID), TimeOID);
 
                 getStructureList.Add(getStructure);
             }
@@ -459,7 +492,6 @@ namespace EBom.Models
             return _param;
         }
         #endregion
-
 
         #region 루트 기준 하위 BOM 전체 검색
         public static List<EBOM> SelRootChildEBomList(EBOM _param)

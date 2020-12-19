@@ -13,6 +13,7 @@ namespace Econtents.Models
 {
     public class ProblemsLibrary : DObject, IDObject
     {
+        public int? Oem_Lib_OID { get; set; }
         public int? Car_Lib_OID { get; set; }
         public int? Product { get; set; }
         public int? Part { get; set; }
@@ -33,13 +34,13 @@ namespace Econtents.Models
         #region ProblemsLibrary 리스트 검색
         public static List<ProblemsLibrary> SelProblemsLibrary(ProblemsLibrary _param)
         {
-            _param.Type = EcontentsConstant.TYPE_ECONTENTS;
+            _param.Type = EcontentsConstant.TYPE_PROBLEMS_LIBRARY;
             //_param.StartCreateDt = 
             List<ProblemsLibrary> lProblemsLibrary = DaoFactory.GetList<ProblemsLibrary>("Econtents.SelProblemsLibrary", _param);
             lProblemsLibrary.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
-            });
+            }); 
             return lProblemsLibrary;
         }
         #endregion
@@ -47,7 +48,7 @@ namespace Econtents.Models
 
         public static ProblemsLibrary SelProblemsLibraryObject(ProblemsLibrary _param)
         {
-            _param.Type = EcontentsConstant.TYPE_ECONTENTS;
+            _param.Type = EcontentsConstant.TYPE_PROBLEMS_LIBRARY;
             ProblemsLibrary lProblemsLibrary = DaoFactory.GetData<ProblemsLibrary>("Econtents.SelProblemsLibrary", _param);
 
             lProblemsLibrary.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lProblemsLibrary.Type, OID = lProblemsLibrary.BPolicyOID }).First();

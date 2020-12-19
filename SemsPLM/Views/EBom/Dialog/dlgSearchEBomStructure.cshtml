@@ -89,6 +89,12 @@
                 <div> <div id="SearchEBomStructureItemNo" class="SearchEBomStructureComboBox"></div></div>
             </div>
             <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchEBomStructureOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
                 <div class="comboBoxLabel">차종</div>
                 <div>
                     <div id="SearchEBomStructureCar" class="SearchEBomStructureComboBox"></div>
@@ -112,23 +118,46 @@
     var EPartDivision;
     var checked;
     $(function () {
-
+        var SearchEBomStructureOemLib$ = $('#SearchEBomStructureOem');
         var SearchEBomStructureItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
-        var SearchEBomStructureCarList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.carList))');
+        var SearchEBomStructureOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var SearchEBomStructureItemLib$ = $('#SearchEBomStructureItemNo');
         var SearchEBomStructureCarLib$ = $('#SearchEBomStructureCar');
-        var CarSource =
+         var oemSource =
         {
-            localdata: SearchEBomStructureCarList,
+             localdata: SearchEBomStructureOemList,
             datatype: "json",
             datafields:
                 [
                     { name: 'KorNm', type: 'string' },
                     { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
                 ]
         };
-        var CardataAdapter = new $.jqx.dataAdapter(CarSource);
-        SearchEBomStructureCarLib$.jqxComboBox({width: 250, height: 33, source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchEBomStructureOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:250, height: 32 });
+        SearchEBomStructureCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchEBomStructureOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchEBomStructureOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchEBomStructureCarLib$.jqxComboBox({source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
 
         var ItemSource =
         {

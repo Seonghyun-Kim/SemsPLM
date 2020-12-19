@@ -1,0 +1,304 @@
+﻿@{
+    Layout = null;
+}
+<style>
+    .jqx-kanban-item-color-status {
+        width: 100%;
+        height: 30px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        position: relative;
+        margin-top: 0px;
+        top: 0px;
+        overflow: hidden;
+        box-shadow: 1px 1px 3px #ccc;
+    }
+
+    .triangle-bottomright {
+        width: 0;
+        height: 0;
+        border-bottom: 30px solid white;
+        border-left: 30px solid transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .jqx-kanban-item-color-status > .item-status-text {
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        color: #555;
+        font-weight: bold;
+        position: absolute;
+        top: 0px;
+        left: 30px;
+        background-color: white;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .jqx-kanban-item {
+        padding-top: 0px;
+    }
+
+    .jqx-kanban-item-avatar {
+        top: 9px;
+    }
+
+    .jqx-kanban-template-icon {
+        position: absolute;
+        right: 3px;
+        top: 12px;
+    }
+
+    .jqx-window-collapse-button-background {
+        display: none;
+    }
+
+    .jqx-kanban-item-text {
+        padding: 10px;
+    }
+
+    .kanban-legend {
+        clear: both;
+        float: right;
+        padding: 5px;
+    }
+
+    .kanban-legend > ul > li {
+        float: left;
+        margin-right: 20px;
+        font-size: 0.8em;
+    }
+
+    .kanban-legend .legend-color {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+    }
+
+    .jqx-kanban-item {
+        position: relative;
+    }
+
+    .jqx-kanban-item:after {
+        content: "";
+        width: 100%;
+        height: 0px;
+        position: absolute;
+        bottom: 0;
+        left: -30px;
+        border-top: 30px solid transparent;
+        border-right: 30px solid #ddd; /*칸반 배경색*/
+    }
+
+    ul, ol, li {
+        list-style: none;
+    }
+
+    li.show_date {
+        width: 50%;
+        float: left;
+    }
+
+    button.button {
+        display: inline-block;
+        margin-right: 9%;
+        text-align: left;
+        border: 1px solid #888;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-top: 10px;
+        z-index: 99999;
+    }
+</style>
+
+<div>
+    <div style="display:flex; width:100%;">
+        <div style="width:20%;">
+            <div id="treeProjectClass"></div>
+        </div>
+        <div id="emptyDiv" style="width:17px;"></div>
+        <div style="display: block; width: 83%;">
+            <div style="margin-bottom:5px;">
+                <label class="lbText" style="margin-left: 5px; font-weight:bold;"> My Task</label>
+                <div class='kanban-legend'>
+                    <ul>
+                        <li>
+                            <div style="background:#5dc3f0;" class="legend-color"></div>
+                            <span>시작</span>
+                        </li>
+                        <li>
+                            <div style="background:@Common.Constant.PmsConstant.WARNING_COLOR;" class="legend-color"></div>
+                            <span>지연</span>
+                        </li>
+                        <li>
+                            <div style="background:@Common.Constant.PmsConstant.DELAY_COLOR;" class="legend-color"></div>
+                            <span>초과</span>
+                        </li>
+                        <li>
+                            <div style="background:#6bbd49;" class="legend-color"></div>
+                            <span>완료</span>
+                        </li>
+                        <li>
+                            <div style="background:#ddd;" class="legend-color"></div>
+                            <span>중지</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div style="clear:both;" id="treeProjectKanban"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var selProjectOID = "";
+    var sample = [
+        { id: "1161", state: "new", label: "Combine Orders", content: "TEST", hex: "#5dc3f0", resourceId: 3 },
+    ];
+    $(function () {
+        const taskStatus = @Html.Raw(Json.Encode(ViewBag.BPolicies));
+        const kanbanColumn = taskStatus.map(function (item) {
+            item.text = item.StatusNm;
+            item.iconClassName = 'jqx-icon-plus-alt';
+            item.dataField = item.StatusOID;
+            return item
+        });
+
+        var projClassSource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'ProjectOID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'Children', type: 'array' },
+                { name: 'expanded', type: 'bool' },
+            ],
+            hierarchy:
+            {
+                root: 'Children',
+            },
+            id: 'ProjectOID',
+        };
+        var projClassdataAdapter = new $.jqx.dataAdapter(projClassSource);
+        // create Tree Grid
+        const projClassInfo$ = $("#treeProjectClass");
+        projClassInfo$.jqxTreeGrid('render');
+        projClassInfo$.jqxTreeGrid({
+            theme: 'kdnc',
+            width: "100%",
+            height: 770,
+            source: projClassdataAdapter,
+            sortable: true,
+            filterable: true,
+            columns: [
+                { text: '분류', datafield: 'Name', width: "100%", align: 'center', cellsalign: 'left' }
+            ],
+            pagerRenderer: function () {
+
+            }
+        });
+
+        var kanbanSource =
+        {
+            localData: sample,
+            dataType: "array",
+            dataFields: [
+                { name: "id", type: "number" },
+                { name: "ProcessOID", type: "number" },
+                { name: "text", map: "label", type: "string" },
+                { name: "ProcessNm", type: "string" },
+                { name: "status", map: "state", type: "string" },
+                { name: "ProcessSt", type: "number" },
+                { name: "ProcessStNm", type: "string" },
+                { name: "EstStartDt", type: "string" },
+                { name: "EstEndDt", type: "string" },
+                { name: "ActStartDt", type: "string" },
+                { name: "ActEndDt", type: "string" },
+                { name: "color", map: "hex", type: "string" },
+                { name: "content", type: "string" },
+                { name: "resourceId", type: "number" },
+            ]
+        };
+        var kanbanDataAdapter = new $.jqx.dataAdapter(kanbanSource);
+        const projKanban$ = $('#treeProjectKanban');
+        projKanban$.jqxKanban({
+            template: "<div class='jqx-kanban-item' id=''>"
+                + "<div class='jqx-kanban-item-color-status'></div>"
+                + "<div style='display: none;' class='jqx-kanban-item-avatar'></div>"
+                + "<div class='jqx-kanban-item-text'></div>"
+                + "<div style='display: none;' class='jqx-kanban-item-footer'></div>"
+                + "</div>",
+            width: "100%",
+            height: 717,
+            source: kanbanDataAdapter,
+            // render column headers.
+            columnRenderer: function (element, collapsedElement, column) {
+
+            },
+            itemRenderer: function (element, item, resource) {
+                var contentSplit = item.content.split('|');
+                $(element).find(".jqx-kanban-item-color-status").html("<span class='triangle-bottomright'></span><span class='item-status-text'>[" + contentSplit[0] + "] " + item.text + "</span>");
+                var contentTag = "<div>";
+                contentTag = contentTag + "<ul><li><li class='show_date'>" + "예상시작일: " + contentSplit[1] + "</li>";
+                contentTag = contentTag + "<li><li class='show_date'>" + "예상완료일: " + contentSplit[2] + "</li>";
+                contentTag = contentTag + "<li><li class='show_date'>" + "실제시작일: " + contentSplit[3] + "</li>";
+                contentTag = contentTag + "<li><li class='show_date'>" + "실제완료일: " + contentSplit[4] + "</li></ul>";
+                contentTag = contentTag + "<li style='margin-left:40px;'><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='' data-type='PROJECT' data-proj-oid='" + item.resourceId + "' data-oid='' ><i class='fa fa-list-alt'></i>프로젝트</button><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='" + item.text + "' data-type='PROCESS' data-proj-oid='" + item.resourceId + "' data-oid='" + item.id +"'><i class='fa fa-file-o'></i>타스크</button></li></ul>";
+                contentTag = contentTag + "</div>";
+                $(element).find(".jqx-kanban-item-text").html(contentTag);
+            },
+            columns: kanbanColumn
+        });
+
+        $(document).on('click', 'button.button', function () {
+            var vType = $(this).attr('data-type');
+            var vProjOid = $(this).attr('data-proj-oid');
+            var vOid = $(this).attr('data-oid');
+            var vProjTxt = $(this).attr('data-proj-txt');
+            var vTxt = $(this).attr('data-txt');
+
+            if (clickDuplicationChk) { return; }
+            clickDuplicationChk = true;
+            isloading.start();
+            setTimeout(function () {
+                var procLink = '';
+                var procName = '';
+                if (vType == 'PROJECT') {
+                    procLink = '/Pms/InfoProject?ProjectOID=' + vProjOid;
+                    procName = vProjTxt;
+                } else {
+                    procLink = '/Pms/InfoProcess?ProjectOID=' + vProjOid + "&ProcessOID=" + vOid;
+                    procName = "[" + vProjTxt + "] " + vTxt;
+                }
+                if ($("div[tabUrl='" + procLink + "']").length > 0) {
+                    var tabDiv = $("div[tabUrl='" + procLink + "']")[0].parentNode;
+                    $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                    clickDuplicationChk = false;
+                    isloading.stop();
+                    return;
+                }
+
+                $('#tabContent').jqxTabs('addLast', procName, "");
+                var tabLength = $('#tabContent').jqxTabs('length');
+
+                $.ajax({
+                    url: procLink,
+                    type: 'get',
+                    dataType: 'html',
+                    async: true,
+                    success: function (resHtml) {
+                        var content = $('#tabContent').jqxTabs('getContentAt', tabLength - 1);
+                        $(content).html("<div class='wrapPage' tabUrl='" + procLink + "'>" + resHtml + "</div>");
+                    }
+                });
+                clickDuplicationChk = false;
+            }, 500);
+            isloading.stop();
+        });
+
+    });
+</script>
