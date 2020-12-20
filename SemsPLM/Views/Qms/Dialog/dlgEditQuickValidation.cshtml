@@ -218,7 +218,7 @@
 
             console.log(param.QmsCheckList);
 
-            $.post('/Qms/InsQuickValidation', param, function (response) {
+            $.post('/Qms/SaveQuickValidation', param, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;

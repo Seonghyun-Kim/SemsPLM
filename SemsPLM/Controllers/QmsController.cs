@@ -1364,13 +1364,14 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
+        
         /// <summary>
-        /// 2020.11.21
-        /// 유효성 검증 등록
+        /// 2020.12.13
+        /// 유효성 검증 등록, 수정
         /// </summary>
         /// <param name="_param"></param>
         /// <returns></returns>
-        public JsonResult InsQuickValidation(QmsCheck _param)
+        public JsonResult SaveQuickValidation(QmsCheck _param)
         {
             try
             {
@@ -1387,39 +1388,10 @@ namespace SemsPLM.Controllers
 
                         QmsCheckRepository.InsQmsCheck(qmsCheck);
                     }
-                }
-
-                DaoFactory.Commit();
-
-                return Json(1);
-            }
-            catch (Exception ex)
-            {
-                DaoFactory.Rollback();
-                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
-            }
-        }
-
-        /// <summary>
-        /// 2020.12.13
-        /// 유효성 검증 수정
-        /// </summary>
-        /// <param name="_param"></param>
-        /// <returns></returns>
-        public JsonResult UdtQuickValidation(QmsCheck _param)
-        {
-            try
-            {
-                DaoFactory.BeginTransaction();
-
-                foreach (QmsCheck qmsCheck in _param.QmsCheckList)
-                {
-                    if (qmsCheck.OID == null)
+                    else
                     {
-                        throw new Exception("잘못된 호출");
+                        QmsCheckRepository.UdtQmsCheck(qmsCheck);
                     }
-
-                    QmsCheckRepository.UdtQmsCheck(qmsCheck);
                 }
 
                 DaoFactory.Commit();
