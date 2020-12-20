@@ -1233,6 +1233,7 @@ namespace SemsPLM.Controllers
 
             int? LpaUnfitOID = null;
             relLpa.ForEach(v => { LpaUnfitOID = v.FromOID; });
+            LpaUnfit lpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = LpaUnfitOID });
             List<LpaUnfitCheck> lpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = LpaUnfitOID });
 
             ViewBag.lpaMeasure = lpaMeasure;
@@ -1241,6 +1242,7 @@ namespace SemsPLM.Controllers
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_MEASURE });
             ViewBag.CurrentSt = Module.BPolicyNm;
             ViewBag.LpaUnfitOID = LpaUnfitOID;
+            ViewBag.MeasureUserOID = lpaUnfit.MeasureUserOID;
 
             return View();
         }

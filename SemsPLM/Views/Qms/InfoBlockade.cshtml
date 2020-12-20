@@ -43,7 +43,7 @@
         </div>
         <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
             <div id="properties" class="basic_grid">
-                @if (ViewBag.Blockade.BPolicyOID == 58 && ViewBag.Blockade.ChargeUserOID == Session["UserOID"])
+                @if ((ViewBag.Blockade.BPolicyOID == 58 || ViewBag.Blockade.BPolicyOID == 60) && ViewBag.Blockade.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
                 <table class="tableTopButtonBox infoTopFix" style="width:1673px;padding-top:45px;">
                     <tbody>
@@ -223,6 +223,12 @@
             OpenApprovalDialog(function () {
                 PageReload();
             }, null, { TargetOID: BlockadeOID }, '/Common/Approval', '결재');
+        });
+
+        var ModifyAttr = $('.Modifiable_' + BlockadeOID);
+
+        ModifyAttr.each(function (i, v) {
+            ContentReadMode(v);
         });
     });
 

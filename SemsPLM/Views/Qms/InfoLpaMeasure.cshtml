@@ -42,15 +42,15 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
-                @if (ViewBag.LpaMeasure.BPolicyOID == 83)
+                @if ((ViewBag.LpaMeasure.BPolicyOID == 83 || ViewBag.LpaMeasure.BPolicyOID == 85) && ViewBag.MeasureUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoLpaMeasure_defaultBtn_@ViewBag.LpaMeasure.OID">
                                 <button id="InfoLpaMeasure_EditBtn_@ViewBag.LpaMeasure.OID" class="custom-button" ><i class="fas fa-edit"></i> 수정</button>
-                                <button id="InfoLpaMeasure_EditCancleBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoLpaMeasure_SaveBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoLpaMeasure_EditCancleBtn_@ViewBag.LpaMeasure.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoLpaMeasure_SaveBtn_@ViewBag.LpaMeasure.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
                                 <button id="InfoLpaMeasure_ApprovalBtn_@ViewBag.LpaMeasure.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
                             </td>
                         </tr>

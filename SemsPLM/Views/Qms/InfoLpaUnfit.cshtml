@@ -42,15 +42,15 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
-                @if (ViewBag.LpaUnfit.BPolicyOID == 78)
-                {
+                @if ((ViewBag.LpaUnfit.BPolicyOID == 78 || ViewBag.LpaUnfit.BPolicyOID == 80) && ViewBag.LpaUnfit.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+                { 
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
                             <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
                                 <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
                                 <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 확정</button>
                             </td>
                         </tr>
@@ -235,11 +235,11 @@
 
             param.OID = "@ViewBag.LpaUnfit.OID";
             param.ModuleOID = "@ViewBag.LpaUnfit.OID";
-            param.LayerLibOID = comboLayerLib$.jqxComboBox("getSelectedItem").value;
-            param.AuditLibOID = comboAuditLib$.jqxComboBox("getSelectedItem").value;
-            param.LpaGrpLibOID = comboLpaGrpLib$.jqxComboBox("getSelectedItem").value;
-            param.LpaUseLibOID = comboLpaUseLib$.jqxComboBox("getSelectedItem").value;
-            param.LpaCheckProcessLibOID = comboLpaCheckProcessLib$.jqxComboBox("getSelectedItem").value;
+            param.LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
+            param.AuditLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID);
+            param.LpaGrpLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID);
+            param.LpaUseLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID);
+            param.LpaCheckProcessLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID);
             param.LpaCheckUserOID = $("#txtDlgEditLPAIncongruityLpaCheckUser_" + LpaUnfitOID).attr("LpaCheckUserOID");
             param.LpaCheckDt = dtDlgEditLPAIncongruityLpaCheckDt$.val();
             param.EquipmentNm = $("#txtDlgEditLPAIncongruityEquipmentNm_" + LpaUnfitOID).val();
@@ -270,6 +270,11 @@
 
             if (param.LpaCheckProcessLibOID == undefined || param.LpaCheckProcessLibOID == null) {
                 alert("확인공정을 선택 해주세요.");
+                return;
+            }
+
+            if(param.MeasureUserOID  == undefined || param.MeasureUserOID == null) {
+                alert("대책서 담당자를 선택 해주세요.");
                 return;
             }
 
@@ -318,11 +323,12 @@
         });
 
         $("#InfoLpaUnfit_ConfirmBtn_" + LpaUnfitOID).on("click", function () {
-            var LayerLibOID = comboLayerLib$.jqxComboBox("getSelectedItem").value;
-            var AuditLibOID = comboAuditLib$.jqxComboBox("getSelectedItem").value;
-            var LpaGrpLibOID = comboLpaGrpLib$.jqxComboBox("getSelectedItem").value;
-            var LpaUseLibOID = comboLpaUseLib$.jqxComboBox("getSelectedItem").value;
-            var LpaCheckProcessLibOID = comboLpaCheckProcessLib$.jqxComboBox("getSelectedItem").value;
+            var LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
+            var AuditLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID);
+            var LpaGrpLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID);
+            var LpaUseLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID);
+            var LpaCheckProcessLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID);
+            var MeasureUserOID = $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID");
 
             if (LayerLibOID == undefined || LayerLibOID == null) {
                 alert("레이어를 선택 해주세요.");
@@ -346,6 +352,11 @@
 
             if (LpaCheckProcessLibOID == undefined || LpaCheckProcessLibOID == null) {
                 alert("확인공정을 선택 해주세요.");
+                return;
+            }
+
+            if(MeasureUserOID  == undefined || MeasureUserOID == null) {
+                alert("대책서 담당자를 선택 해주세요.");
                 return;
             }
 

@@ -212,18 +212,22 @@ WebUtils.ConvComboData = function (data, valField, txtField, isAll) {
 };
 
 WebUtils.GetComboValue = function (ComponentID) {
-    if (!($("#" + ComponentID).jqxComboBox('getSelectedItem') === undefined || $("#" + ComponentID).jqxComboBox('getSelectedItem').value === null || $("#" + ComponentID).jqxComboBox('getSelectedItem').value === "")) {
-        return $("#" + ComponentID).jqxComboBox('getSelectedItem').value;
-    } else {
+    if ($("#" + ComponentID).jqxComboBox('getSelectedItem') === undefined || $("#" + ComponentID).jqxComboBox('getSelectedItem') === null) {
         return null;
+    } else if ($("#" + ComponentID).jqxComboBox('getSelectedItem').value === "" || $("#" + ComponentID).jqxComboBox('getSelectedItem').value === null) {
+        return null;
+    } else {
+        return $("#" + ComponentID).jqxComboBox('getSelectedItem').value;
     }
 };
 
 WebUtils.GetComboObjectValue = function (Component) {
-    if (!($(Component).jqxComboBox('getSelectedItem') === undefined || $(Component).jqxComboBox('getSelectedItem').value === null || $(Component).jqxComboBox('getSelectedItem').value === "")) {
-        return $(Component).jqxComboBox('getSelectedItem').value;
-    } else {
+    if ($(Component).jqxComboBox('getSelectedItem') === undefined || $(Component).jqxComboBox('getSelectedItem') === null) {
         return null;
+    } else if ($(Component).jqxComboBox('getSelectedItem').value === "" || $(Component).jqxComboBox('getSelectedItem').value === null) {
+        return null;
+    } else {
+        return $(Component).jqxComboBox('getSelectedItem').value;
     }
 };
 

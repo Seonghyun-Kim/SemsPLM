@@ -731,10 +731,11 @@
 
     <!-- Error Proof SQL ModuleOID == OID-->
     <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
-      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm
+      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm, D.ChargeUserOID
       FROM T_DQMS_ERROR_PRROF A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = F.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -782,12 +783,14 @@
       , D.Name AS PartNm
       , E.Name AS LpaUserNm
       , F.Name AS MeasureUserNm
+      , G.ChargeUserOID
       FROM T_DQMS_LPA_UNFIT A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.LpaCheckUserOID = C.OID
       LEFT JOIN T_DOBJECT D ON A.PartOID = D.OID
       LEFT JOIN T_DOBJECT E ON A.LpaUserOID = E.OID
       LEFT JOIN T_DOBJECT F ON A.MeasureUserOID = F.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE G ON A.ModuleOID = G.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
