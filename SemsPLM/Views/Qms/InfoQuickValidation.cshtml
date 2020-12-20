@@ -286,9 +286,8 @@
             }
 
             var btnSearchUser$ = document.createElement("button");
-            btnSearchUser$.className = "custom-button";
             btnSearchUser$.setAttribute("AttrType", "BUTTON");
-            btnSearchUser$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            btnSearchUser$.className = "Modifiable_@ViewBag.QmsCheck.OID custom-button";
             $(btnSearchUser$).css("display", "none");
             btnSearchUser$.setAttribute("onclick", "InfoQmsCheckSelectUser(" + i +")");
 
@@ -360,7 +359,7 @@
             txtConfirmDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
 
             if (!WebUtils.isEmpty(item)) {
-                txtConfirmDesc$.value = item.CheckDetail;
+                txtConfirmDesc$.value = WebUtils.isEmpty(item.CheckDetail) === true ? "" : item.CheckDetail;
             }
 
             tdConfirmDesc$.appendChild(txtConfirmDesc$);
@@ -395,7 +394,7 @@
             txtEndDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
 
             if (!WebUtils.isEmpty(item)) {
-                txtEndDesc$.value = item.FinishDetail;
+                txtEndDesc$.value = WebUtils.isEmpty(item.FinishDetail) === true ? "" : item.FinishDetail;
             }
 
             tdEndDesc$.appendChild(txtEndDesc$);

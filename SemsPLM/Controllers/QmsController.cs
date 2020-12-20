@@ -1454,35 +1454,19 @@ namespace SemsPLM.Controllers
 
             /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
             // TEST
-            List<StandardDoc> StandardDocs = new List<StandardDoc>();
-            for (int i = 0; i < 5; i++)
-            {
-                StandardDocs.Add(new StandardDoc()
-                {
-                    OID = i,
-                    ModuleOID = 100,
-                    DocOID = 100 + i,
-                    DocNm = "TEST",
-                    DocSummary = "TEST",
-                    DocCompleteDt = DateTime.Now,
-                });
-            }
 
             ViewBag.StandardDoc = standardDoc;
-            ViewBag.StandardDocDetail = StandardDocs.ToList();
+            ViewBag.StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });
-            ViewBag.CurrentSt = Module.BPolicyNm;
 
             return View();
         }
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
-        public JsonResult InsStandardFollowUp(StandardDoc _param)
+        public JsonResult SaveStandardFollowUp(StandardDoc _param)
         {
-            int ModuleOID = 0;
-            int returnValue = 0;
             try
             {
                 DaoFactory.BeginTransaction();
@@ -1496,35 +1480,12 @@ namespace SemsPLM.Controllers
                         dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + standardDoc.ModuleOID;
                         standardDoc.OID = DObjectRepository.InsDObject(Session, dobj);
 
-                        returnValue = StandardDocRepository.InsStandardDoc(standardDoc);
+                        StandardDocRepository.InsStandardDoc(standardDoc);
                     }
-                }
-
-                DaoFactory.Commit();
-
-                return Json(ModuleOID);
-            }
-            catch (Exception ex)
-            {
-                DaoFactory.Rollback();
-                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
-            }
-        }
-
-        public JsonResult UdtStandardFollowUp(StandardDoc _param)
-        {
-            try
-            {
-                DaoFactory.BeginTransaction();
-
-                foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
-                {
-                    if (standardDoc.OID == null)
+                    else
                     {
-                        throw new Exception("잘못된 호출");
+                        StandardDocRepository.UdtStandardDoc(standardDoc);
                     }
-
-                    StandardDocRepository.UdtStandardDoc(standardDoc);
                 }
 
                 DaoFactory.Commit();

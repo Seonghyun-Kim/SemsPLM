@@ -90,7 +90,7 @@
 
             console.log(param.StandardFollowUpList);
 
-            $.post('/Qms/InsStandardFollowUp', param, function (response) {
+            $.post('/Qms/SaveStandardFollowUp', param, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
