@@ -42,7 +42,7 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            @if (ViewBag.StandardDoc.BPolicyOID == 93)
+            @if ((ViewBag.StandardDoc.BPolicyOID == 93 || ViewBag.StandardDoc.BPolicyOID == 95) && ViewBag.StandardDoc.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
             {
                 <table class="tableTopButtonBox">
                     <tbody>
@@ -111,78 +111,71 @@
         PrintStandardFollowUp({ DocTypeNm: "관리계획서" });
         PrintStandardFollowUp({ DocTypeNm: "작업표준서" });
         PrintStandardFollowUp({ DocTypeNm: "검사기준서" });
+     
+        // 수정
+        $('#InfoStandardFollowUp_EditBtn_' + StandardDocOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + StandardDocOID);
 
-        @if (ViewBag.StandardDoc.BPolicyOID == 93)
-        {
-            <text>
-            // 수정
-            $('#InfoStandardFollowUp_EditBtn_' + StandardDocOID).on('click', function () {
-                var ModifyAttr = $('.Modifiable_' + StandardDocOID);
-
-                ModifyAttr.each(function (i, v) {
-                    ContentEditMode(v);
-                });
-
-                //수정 가능한 항목을 표시
-                var modifyTag = document.createElement('div');
-                modifyTag.className = "modifyTag";
-
-                $('.Modifiable_' + StandardDocOID).parent().css('position', 'relative');
-
-                $('.Modifiable_' + StandardDocOID).parent().append(modifyTag);
-
-                $("#InfoStandardFollowUp_EditBtn_" + StandardDocOID).css("display", "none");
-                $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).css("display", "inline-block");
-                $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).css("display", "inline-block");
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);
             });
 
-            // 취소
-            $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).jqxButton();
-            $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).on("click", function () {
-                var ModifyAttr = $('.Modifiable_' + StandardDocOID);
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
 
-                ModifyAttr.each(function (i, v) {
-                    ContentReadMode(v);
-                });
+            $('.Modifiable_' + StandardDocOID).parent().css('position', 'relative');
 
-                $(".modifyTag").remove();
-                $("#InfoStandardFollowUp_EditBtn_" + StandardDocOID).css("display", "inline-block");
-                $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).css("display", "none");
-                $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).css("display", "none");
+            $('.Modifiable_' + StandardDocOID).parent().append(modifyTag);
 
-                fileUpload.ReadOnlyMode();
+            $("#InfoStandardFollowUp_EditBtn_" + StandardDocOID).css("display", "none");
+            $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).css("display", "inline-block");
+            $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).css("display", "inline-block");
+        });
+
+        // 취소
+        $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + StandardDocOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);
             });
 
+            $(".modifyTag").remove();
+            $("#InfoStandardFollowUp_EditBtn_" + StandardDocOID).css("display", "inline-block");
+            $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).css("display", "none");
+            $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).css("display", "none");
 
-            // 저장
-            $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).jqxButton();
-            $('#InfoStandardFollowUp_SaveBtn_' + StandardDocOID).on("click", function () {
-                var param = {};
+            fileUpload.ReadOnlyMode();
+        });
 
-                // 문서별 데이터 저장 로직 필요
 
-                return;
-                $.post('/Qms/SaveStandardFollowUp', param, function (response) {
-                    if (response.isError) {
-                        alert(response.resultMessage);
-                        return;
-                    }
-                    alert("저장되었습니다.");
+        // 저장
+        $('#InfoStandardFollowUp_SaveBtn_' + StandardDocOID).on("click", function () {
+            var param = {};
 
-                    PageReload();
-                }).fail(function (err) {
-                    alert(err.responseText);
-                });
+            // 문서별 데이터 저장 로직 필요
+
+            return;
+            $.post('/Qms/SaveStandardFollowUp', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
+
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
             });
+        });
 
-            // 결재
-            $('#InfoStandardFollowUp_ApprovalBtn_' + StandardDocOID).on('click', function () {
-                OpenApprovalDialog(function () {
-                    PageReload();
-                }, null, { TargetOID: StandardDocOID }, '/Common/Approval', '결재');
-            });
-            </text>
-        }
+        // 결재
+        $('#InfoStandardFollowUp_ApprovalBtn_' + StandardDocOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: StandardDocOID }, '/Common/Approval', '결재');
+        });
     });
     function PrintStandardFollowUp(v) {
         var OID = "";

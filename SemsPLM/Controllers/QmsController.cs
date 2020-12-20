@@ -289,6 +289,8 @@ namespace SemsPLM.Controllers
                               where m.QuickOID == v.OID
                               select m;
 
+                string QuickResponseStatus = string.Empty;
+
                 Modules.ToList().ForEach(m =>
                 {
                     if (m.ModuleType == QmsConstant.TYPE_BLOCKADE)
@@ -299,6 +301,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleBlockadeEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleBlockadeChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleBlockadeChargeUserNm = m.ChargeUserNm;
+
+                        if(m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_BLOCKADE_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
                     {
@@ -308,6 +315,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleOccurrenceCauseEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleOccurrenceCauseChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleOccurrenceCauseChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_OCCURRENCE_CAUSE_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
                     {
@@ -317,6 +329,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleImproveCountermeasureEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleImproveCountermeasureChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleImproveCountermeasureChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
                     {
@@ -326,6 +343,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleErrorProofEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleErrorProofChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleErrorProofChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_ERROR_PRROF_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
                     {
@@ -335,6 +357,18 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleLpaEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleLpaChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleLpaChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_LPA_UNFIT_NAME;
+                        }
+                    }
+                    else if (m.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                    {
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_LPA_MEASURE_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
                     {
@@ -344,6 +378,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleCheckEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleCheckChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleCheckChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_STANDARD)
                     {
@@ -353,6 +392,11 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleStandardEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleStandardChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleStandardChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_STANDARD_NAME;
+                        }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_WORKER_EDU)
                     {
@@ -362,9 +406,24 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleWorkerEduEstEndDt = m.EstEndDt;
                         quickResponseView.ModuleWorkerEduChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleWorkerEduChargeUserNm = m.ChargeUserNm;
+
+                        if (m.BPolicyNm == "Started")
+                        {
+                            QuickResponseStatus = QmsConstant.TYPE_WORKER_EDU_NAME;
+                        }
                     }
                 });
 
+                if (v.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_PREPARE)
+                {
+                    QuickResponseStatus = "일정관리";
+                }
+                else if (v.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_COMPLETED)
+                {
+                    QuickResponseStatus = "완료";
+                }
+
+                quickResponseView.StatusNm = QuickResponseStatus;
 
                 gridView.Add(quickResponseView);
             });
@@ -487,8 +546,8 @@ namespace SemsPLM.Controllers
                 SetQuickModule(QmsConstant.TYPE_STANDARD);
 
                 // 사용자 교육
-                SetQuickModule(QmsConstant.TYPE_WORKER_EDU);    
-
+                int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU);
+                WorkerEduRepository.InsWorkerEdu(new WorkerEdu() {ModuleOID = WorkerEduOID });
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -606,6 +665,16 @@ namespace SemsPLM.Controllers
                     {
                         dObject.BPolicyOID = 58; // 작성중으로 변경
                         DObjectRepository.UdtDObject(Session, dObject);
+
+                        DRelationship dRelModule = new DRelationship();
+                        dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
+                        dRelModule.ToOID = dObject.OID;
+                        DRelationship dRelQuickResponse = DaoFactory.GetData<DRelationship>("Comm.SelDRelationship", dRelModule);
+
+                        QuickResponse quick = QuickResponseRepository.SelQuickResponse(new Qms.Models.QuickResponse() { OID = dRelQuickResponse.FromOID });
+
+                        quick.BPolicyOID = 54; //검토중으로 변경
+                        DObjectRepository.UdtDObject(Session, quick);
                     }
                 });
 
@@ -1454,8 +1523,10 @@ namespace SemsPLM.Controllers
 
             /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
             // TEST
-
-            ViewBag.StandardDoc = standardDoc;
+            // Module은 모듈로 
+            // ITEM 은 따로 뺴야함
+            // 김성현.
+            ViewBag.StandardDoc = Module;
             ViewBag.StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });

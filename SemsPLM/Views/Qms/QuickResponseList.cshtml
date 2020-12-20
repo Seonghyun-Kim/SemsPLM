@@ -67,6 +67,7 @@
             { name: 'Summary', type: 'string' },
             { name: 'CreateUsNm', type: 'string' },
             { name: 'PlanUserNm', type: 'string' },
+            { name: 'StatusNm', type: 'string' },
             { name: 'FinishDt', type: 'date' },
             
             { name: 'ModuleBlockadeOID', type: 'number' },
@@ -342,7 +343,7 @@
 
         if (!ModuleFl) {
             BackgroundColor = "lightgreen";
-        } else if (BPolicyNm === "Compleated") {
+        } else if (BPolicyNm === "Completed") {
             BackgroundColor = "lightgreen";
             ChargeUserText = "(완료) " + ChargeUserText;
         } else if (BPolicyNm === "Started" && CompareEstDate >= nowDate) {
@@ -352,6 +353,9 @@
             BackgroundColor = "white";
         } else if (BPolicyNm === "Confirm" && CompareEstDate >= nowDate) {
             BackgroundColor = "Yellow";
+        }  else if (BPolicyNm === "Review" && CompareEstDate >= nowDate) {
+            BackgroundColor = "Yellow";
+            ChargeUserText = "(결재중) " + ChargeUserText;
         } else {
             BackgroundColor = "red";
             ChargeUserText = "(실행전) " + ChargeUserText;

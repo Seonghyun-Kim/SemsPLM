@@ -42,20 +42,20 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            @if (ViewBag.QmsCheck.BPolicyOID == 88)
+            @if ((ViewBag.QmsCheck.BPolicyOID == 88 || ViewBag.QmsCheck.BPolicyOID == 90) && ViewBag.QmsCheck.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
             { 
-                <table class="tableTopButtonBox">
-                    <tbody>
-                        <tr>
-                            <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
-                                <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <table class="tableTopButtonBox">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
+                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                            <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             }
             
             <label><i class="fas fa-caret-square-down"></i> 유효성검증</label>
@@ -105,98 +105,91 @@
     $(document).ready(function () {
         const QmsCheckOID = '@ViewBag.QmsCheck.OID';
         PrintQmsCheck();
+   
+        // 수정
+        $('#InfoQuickValidation_EditBtn_' + QmsCheckOID).on('click', function () {
+            var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
 
-        @if (ViewBag.QmsCheck.BPolicyOID == 88)
-        {
-            <text>
-            // 수정
-            $('#InfoQuickValidation_EditBtn_' + QmsCheckOID).on('click', function () {
-                var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
-
-                ModifyAttr.each(function (i, v) {
-                    ContentEditMode(v);
-                });
-
-                //수정 가능한 항목을 표시
-                var modifyTag = document.createElement('div');
-                modifyTag.className = "modifyTag";
-
-                $('.Modifiable_' + QmsCheckOID).parent().css('position', 'relative');
-
-                $('.Modifiable_' + QmsCheckOID).parent().append(modifyTag);
-
-                $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "none");
-                $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "inline-block");
-                $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "inline-block");
+            ModifyAttr.each(function (i, v) {
+                ContentEditMode(v);
             });
 
-            // 취소
-            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).jqxButton();
-            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).on("click", function () {
-                var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
+            //수정 가능한 항목을 표시
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
 
-                ModifyAttr.each(function (i, v) {
-                    ContentReadMode(v);
-                });
+            $('.Modifiable_' + QmsCheckOID).parent().css('position', 'relative');
 
-                $(".modifyTag").remove();
-                $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "inline-block");
-                $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "none");
-                $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "none");
+            $('.Modifiable_' + QmsCheckOID).parent().append(modifyTag);
+
+            $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "none");
+            $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "inline-block");
+            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "inline-block");
+        });
+
+        // 취소
+        $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).on("click", function () {
+            var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
+
+            ModifyAttr.each(function (i, v) {
+                ContentReadMode(v);
             });
 
+            $(".modifyTag").remove();
+            $("#InfoQuickValidation_EditBtn_" + QmsCheckOID).css("display", "inline-block");
+            $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).css("display", "none");
+            $("#InfoQuickValidation_EditCancleBtn_" + QmsCheckOID).css("display", "none");
+        });
 
-            // 저장
-            $("#InfoQuickValidation_SaveBtn_" + QmsCheckOID).jqxButton();
-            $('#InfoQuickValidation_SaveBtn_' + QmsCheckOID).on("click", function () {
-                var param = {};
-                param.QmsCheckList = [];
 
-                for (var i = 0; i < 3; i++) {
-                    var item = $("[Data-Cnt=" + @ViewBag.QmsCheck.OID + "_" + i + "]");
-                    var data = {};
+        // 저장
+        $('#InfoQuickValidation_SaveBtn_' + QmsCheckOID).on("click", function () {
+            var param = {};
+            param.QmsCheckList = [];
 
-                    data.ModuleOID = "@ViewBag.QmsCheck.OID" // ModuleOID
-                    data.OID = $(item[0]).attr("OID"); // OID
-                    data.Cnt = $(item[0]).attr("Cnt"); // OID
-                    @*data.CheckSt = $(item[0]).jqxDateTimeInput("val"); // 검증시작일*@
-                    data.CheckEt = $(item[0]).jqxDateTimeInput("val"); // 검증종료일
-                    data.CheckUserOID = $(item[1]).attr("CheckUserOID"); // 담당자 OID
-                    data.CheckDt = $(item[2]).jqxDateTimeInput("val"); // 검증일
-                    data.CheckFl = $(item[3]).val() === true ? 1 : 0; // CheckFl
-                    data.CheckDetail = $(item[4]).val(); // 검증내용요약
-                    data.FinishFl = $(item[5]).val() === true ? 1 : 0; // FinishFl
-                    data.FinishDetail = $(item[6]).val(); // 종료사유
+            for (var i = 0; i < 3; i++) {
+                var item = $("[Data-Cnt=" + @ViewBag.QmsCheck.OID + "_" + i + "]");
+                var data = {};
 
-                    if (WebUtils.isEmpty(data.CheckUserOID)) {
-                        alert((i+1) + "차 유효성검증" + " 담당자를 지정 해주세요.");
-                        return;
-                    }
+                data.ModuleOID = "@ViewBag.QmsCheck.OID" // ModuleOID
+                data.OID = $(item[0]).attr("OID"); // OID
+                data.Cnt = $(item[0]).attr("Cnt"); // OID
+                @*data.CheckSt = $(item[0]).jqxDateTimeInput("val"); // 검증시작일*@
+                data.CheckEt = $(item[0]).jqxDateTimeInput("val"); // 검증종료일
+                data.CheckUserOID = $(item[1]).attr("CheckUserOID"); // 담당자 OID
+                data.CheckDt = $(item[2]).jqxDateTimeInput("val"); // 검증일
+                data.CheckFl = $(item[3]).val() === true ? 1 : 0; // CheckFl
+                data.CheckDetail = $(item[4]).val(); // 검증내용요약
+                data.FinishFl = $(item[5]).val() === true ? 1 : 0; // FinishFl
+                data.FinishDetail = $(item[6]).val(); // 종료사유
 
-                    param.QmsCheckList.push(data);
+                if (WebUtils.isEmpty(data.CheckUserOID)) {
+                    alert((i+1) + "차 유효성검증" + " 담당자를 지정 해주세요.");
+                    return;
                 }
 
-                $.post('/Qms/SaveQuickValidation', param, function (response) {
-                    if (response.isError) {
-                        alert(response.resultMessage);
-                        return;
-                    }
-                    alert("저장되었습니다.");
+                param.QmsCheckList.push(data);
+            }
 
-                    PageReload();
-                }).fail(function (err) {
-                    alert(err.responseText);
-                });
-            });
+            $.post('/Qms/SaveQuickValidation', param, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+                alert("저장되었습니다.");
 
-            // 결재
-            $('#InfoQuickValidation_ApprovalBtn_' + QmsCheckOID).on('click', function () {
-                OpenApprovalDialog(function () {
-                    PageReload();
-                }, null, { TargetOID: QmsCheckOID }, '/Common/Approval', '결재');
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
             });
-            </text>
-        }
+        });
+
+        // 결재
+        $('#InfoQuickValidation_ApprovalBtn_' + QmsCheckOID).on('click', function () {
+            OpenApprovalDialog(function () {
+                PageReload();
+            }, null, { TargetOID: QmsCheckOID }, '/Common/Approval', '결재');
+        });
     });
 
     function PrintQmsCheck() {

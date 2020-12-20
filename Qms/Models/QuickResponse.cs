@@ -136,6 +136,8 @@ namespace Qms.Models
 
         // 고품사진 
         public string PoorPicture { get; set; }
+
+        public DateTime? FinishDt { get; set; }
     }
 
     public class QuickResponseView
@@ -266,6 +268,10 @@ namespace Qms.Models
 
         public DateTime? ModuleWorkerEduEstEndDt { get; set; }
 
+        public string StatusNm { get; set; }
+
+        public DateTime? FinishDt { get; set; }
+
         public QuickResponseView(QuickResponse response)
         {
             this.OID = response.OID;
@@ -279,6 +285,7 @@ namespace Qms.Models
             this.CreateUsNm = response.CreateUsNm;
             this.PlanUserOID = response.PlanUserOID;
             this.PlanUserNm = response.PlanUserNm;
+            this.FinishDt = response.FinishDt;
         }
     }
 

@@ -15,32 +15,51 @@ namespace Common.Constant
         // 봉쇄조치
         public static string TYPE_BLOCKADE { get { return "BLOCKADE"; } }
 
+        public static string TYPE_BLOCKADE_NAME { get { return "봉쇄조치"; } }
+
         // 원인분석
         public static string TYPE_OCCURRENCE_CAUSE { get { return "OCCURRENCE_CAUSE"; } }
+
+        public static string TYPE_OCCURRENCE_CAUSE_NAME { get { return "원인분석"; } }
 
         // 개선대책등록
         public static string TYPE_IMPROVE_COUNTERMEASURE { get { return "IMPROVE_COUNTERMEASURE"; } }
 
+        public static string TYPE_IMPROVE_COUNTERMEASURE_NAME { get { return "개선대책"; } }
+
         // ERROR PROOF
         public static string TYPE_ERROR_PRROF { get { return "ERROR_PRROF"; } }
+
+        public static string TYPE_ERROR_PRROF_NAME { get { return "ERROR_PRROF"; } }
 
         // LPA 부적합 등록
         public static string TYPE_LPA_UNFIT { get { return "LPA_UNFIT"; } }
 
+        public static string TYPE_LPA_UNFIT_NAME { get { return "LPA 감사"; } }
+
         // LPA 부적합 대책서 
         public static string TYPE_LPA_MEASURE { get { return "LPA_MEASURE"; } }
+
+        public static string TYPE_LPA_MEASURE_NAME { get { return "LPA 대책서작성"; } }
 
         // 유효성 체크
         public static string TYPE_QUICK_RESPONSE_CHECK { get { return "QUICK_RESPONSE_CHECK"; } }
 
+        public static string TYPE_QUICK_RESPONSE_CHECK_NAME { get { return "유효성 검증"; } }
+
         // 표준화&Follow-Up 조치 등록
         public static string TYPE_STANDARD { get { return "STANDARD_FOLLOW"; } }
+
+        public static string TYPE_STANDARD_NAME { get { return "표준 F/U"; } }
 
 
         //public static string TYPE_STANDARD_DOC { get { return "STANDARD_DOC"; } }
 
         // 교육
         public static string TYPE_WORKER_EDU { get { return "WORKER_EDU"; } }
+
+        public static string TYPE_WORKER_EDU_NAME { get { return "작업자 교육"; } }
+
 
         public static string TYPE_BLOCKADE_ITEM { get { return "BLOCKADE_ITEM"; } }
 

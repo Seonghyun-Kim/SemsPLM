@@ -1,4 +1,5 @@
 ﻿using Common.Constant;
+using Common.Factory;
 using Common.Models;
 using Qms.Models;
 using System;
@@ -26,29 +27,44 @@ namespace Qms.Trigger
 
                 List<QuickResponseModule> quickResponseModules = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = quickResponse.QuickOID, ModuleFl = 1 });
 
-                QuickResponseModule nextModule = quickResponseModules.SkipWhile(v => v.OID != quickResponse.OID).Skip(1).First();
+                var NextModules = quickResponseModules.SkipWhile(v => v.OID != quickResponse.OID).Skip(1);
 
-                if(nextModule == null)
+                if(NextModules.Count() == 0)
                 {
+                    DRelationship dRelModule = new DRelationship();
+                    dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
+                    dRelModule.ToOID = Convert.ToInt32(oid);
 
+                    // 모든 항목이 끝났을 경우
+                    DRelationship dRelQuickResponse = DaoFactory.GetData<DRelationship>("Comm.SelDRelationship", dRelModule);
+
+                    QuickResponse quick = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = dRelQuickResponse.FromOID });
+
+                    quick.BPolicyOID = 55; //완료로 변경
+                    DObjectRepository.UdtDObject(Context, quick);
+
+                    QuickResponseRepository.UdtQuickResponse(new QuickResponse() { OID = quick.OID, FinishDt = DateTime.Now });
                 }
                 else
                 {
+                    // 다음 항목이 있을 경우
+                    QuickResponseModule nextModule = NextModules.First();
+
                     List<BPolicy> nextModluePolicies = BPolicyRepository.SelBPolicy(new BPolicy() { Type = nextModule.ModuleType, Name = "Started" });
 
                     nextModluePolicies.ForEach(v =>
                     {
                         DObjectRepository.UdtDObject(Context, new DObject() { OID = nextModule.OID, BPolicyOID = v.OID });
                     });
-                }
 
-                if(quickResponse.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
-                {
-                    QuickResponseModule LpaUnfitModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = quickResponse.QuickOID, ModuleFl = 1, ModuleType = QmsConstant.TYPE_LPA_UNFIT });
+                    if (quickResponse.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                    {
+                        QuickResponseModule LpaUnfitModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = quickResponse.QuickOID, ModuleFl = 1, ModuleType = QmsConstant.TYPE_LPA_UNFIT });
 
-                    List<BPolicy> LpaUnfitePolicies = BPolicyRepository.SelBPolicy(new BPolicy() { Type = QmsConstant.TYPE_LPA_UNFIT, Name = "Compleated" });
+                        List<BPolicy> LpaUnfitePolicies = BPolicyRepository.SelBPolicy(new BPolicy() { Type = QmsConstant.TYPE_LPA_UNFIT, Name = "Completed" });
 
-                    DObjectRepository.UdtDObject(Context, new DObject() { OID = LpaUnfitModule.OID, BPolicyOID = LpaUnfitePolicies[0].OID });
+                        DObjectRepository.UdtDObject(Context, new DObject() { OID = LpaUnfitModule.OID, BPolicyOID = LpaUnfitePolicies[0].OID });
+                    }
                 }
             }
             catch (Exception ex)
