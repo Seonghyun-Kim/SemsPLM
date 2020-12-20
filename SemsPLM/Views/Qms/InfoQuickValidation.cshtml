@@ -42,19 +42,22 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            <table class="tableTopButtonBox">
-                <tbody>
-                    <tr>
-                        <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
-                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
-                            <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
+            @if (ViewBag.QmsCheck.BPolicyOID == 88)
+            { 
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
+                                <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            
             <label><i class="fas fa-caret-square-down"></i> 유효성검증</label>
             <table id="tbQmsCheckList_@ViewBag.QmsCheck.OID" class="infoTable" style="table-layout:fixed;">
                 <colgroup>
@@ -69,9 +72,9 @@
                     <th>2차 유효성검증</th>
                     <th>3차 유효성검증</th>
                 </tr>
-                <tr id="tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID">
+                @*<tr id="tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID">
                     <th>검증시작일</th>
-                </tr>
+                </tr>*@
                 <tr id="tbQmsCheckListConfirmEt_@ViewBag.QmsCheck.OID">
                     <th>검증완료일</th>
                 </tr>
@@ -145,32 +148,32 @@
         $('#InfoQuickValidation_SaveBtn_' + QmsCheckOID).on("click", function () {
             var param = {};
             param.QmsCheckList = [];
-            QmsCheckList.forEach(function (v, i) {
-                var item = $("[QmsCheckCnt=" + v.OID + "_" + v.Cnt + "]");
+
+            for (var i = 0; i < 3; i++) {
+                var item = $("[Data-Cnt=" + @ViewBag.QmsCheck.OID + "_" + i + "]");
                 var data = {};
 
-                data.ModuleOID = v.ModuleOID // OID
-                data.OID = v.OID // OID
-                data.CheckSt = $(item[0]).jqxDateTimeInput("val"); // 검증시작일
-                data.CheckEt = $(item[1]).jqxDateTimeInput("val"); // 검증종료일
-                data.CheckUserOID = $(item[2]).attr("CheckUserOID"); // 담당자 OID
-                data.CheckDt = $(item[3]).jqxDateTimeInput("val"); // 검증일
-                data.CheckFl = $(item[4]).val() === true ? 1 : 0; // CheckFl
-                data.CheckDetail = $(item[5]).val(); // 검증내용요약
-                data.FinishFl = $(item[6]).val() === true ? 1 : 0; // FinishFl
-                data.FinishDetail = $(item[7]).val(); // 종료사유
+                data.ModuleOID = "@ViewBag.QmsCheck.OID" // ModuleOID
+                data.OID = $(item[0]).attr("OID"); // OID
+                data.Cnt = $(item[0]).attr("Cnt"); // OID
+                @*data.CheckSt = $(item[0]).jqxDateTimeInput("val"); // 검증시작일*@
+                data.CheckEt = $(item[0]).jqxDateTimeInput("val"); // 검증종료일
+                data.CheckUserOID = $(item[1]).attr("CheckUserOID"); // 담당자 OID
+                data.CheckDt = $(item[2]).jqxDateTimeInput("val"); // 검증일
+                data.CheckFl = $(item[3]).val() === true ? 1 : 0; // CheckFl
+                data.CheckDetail = $(item[4]).val(); // 검증내용요약
+                data.FinishFl = $(item[5]).val() === true ? 1 : 0; // FinishFl
+                data.FinishDetail = $(item[6]).val(); // 종료사유
 
-                if (data.CheckUserOID === undefined || data.CheckUserOID === null) {
-                    alert("담당자를 지정 해주세요.");
+                if (WebUtils.isEmpty(data.CheckUserOID)) {
+                    alert((i+1) + "차 유효성검증" + " 담당자를 지정 해주세요.");
                     return;
                 }
 
-                console.log(data);
-
                 param.QmsCheckList.push(data);
-            });
+            }
 
-            $.post('/Qms/UdtQuickValidation', param, function (response) {
+            $.post('/Qms/SaveQuickValidation', param, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
@@ -191,142 +194,226 @@
     });
 
     function PrintQmsCheck() {
-        for (var i = 0; i < QmsCheckList.length; i++) {
-            var innerHtml = "";
+        var CheckCnt = 3;
+        if (!WebUtils.isEmpty(QmsCheckList)) {
+            CheckCnt = QmsCheckList.length;
+        }
+
+        for (var i = 0; i < CheckCnt; i++) {
             var item = QmsCheckList[i];
+            var OID = WebUtils.isEmpty(item) === true ? "" : item.OID;
+            var Cnt = WebUtils.isEmpty(item) === true ? (i+1) : item.Cnt;
+            @*// 검증시작일
+            var tdConfirmSt$ = document.createElement("td");
 
-            // 검증 시작일
-            innerHtml += "<td>";
-            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmSt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt +"'></div>";
-            innerHtml += "</td>";
-            $("#tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID").append(innerHtml);
+            var dtConfirmSt$ = document.createElement("div");
+            dtConfirmSt$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            dtConfirmSt$.setAttribute("OID", OID);
+            dtConfirmSt$.setAttribute("AttrType", "DATE");
+            dtConfirmSt$.setAttribute("name", "ConfirmSt");
+            dtConfirmSt$.className = "Modifiable_@ViewBag.QmsCheck.OID";
 
-            $("#dtQmsCheckListConfirmSt_" + item.OID).jqxDateTimeInput(DateFormat);
-            $("#dtQmsCheckListConfirmSt_" + item.OID).jqxDateTimeInput({
+            $(dtConfirmSt$).jqxDateTimeInput(DateFormat);
+            $(dtConfirmSt$).jqxDateTimeInput({
                 width: 140,
                 height: 30,
                 theme: "Light",
                 disabled: true
             });
 
-            if (item.CheckSt === null) {
-                $("#dtQmsCheckListConfirmSt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            if (WebUtils.isEmpty(item) || item.CheckSt === null) {
+                $(dtConfirmSt$).val(WebUtils.GetDate(0, "d", "-"));
             } else {
                 var milli = item.CheckSt.replace(/\/Date\((-?\d+)\)\//, '$1');
                 var d = new Date(parseInt(milli));
-                $("#dtQmsCheckListConfirmSt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+                $(dtConfirmSt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
             }
 
-            // 검증 완료일
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmEt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt+"'></div>";
-            innerHtml += "</td>";
-            $("#tbQmsCheckListConfirmEt_@ViewBag.QmsCheck.OID").append(innerHtml);
+            tdConfirmSt$.appendChild(dtConfirmSt$);*@
 
-            $("#dtQmsCheckListConfirmEt_" + item.OID).jqxDateTimeInput(DateFormat);
-            $("#dtQmsCheckListConfirmEt_" + item.OID).jqxDateTimeInput({
+            // 검증 완료일
+            var tdConfirmEt$ = document.createElement("td");
+
+            var dtConfirmEt$ = document.createElement("div");
+            dtConfirmEt$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            dtConfirmEt$.setAttribute("OID", OID);
+            dtConfirmEt$.setAttribute("Cnt", Cnt);
+            dtConfirmEt$.setAttribute("AttrType", "DATE");
+            dtConfirmEt$.setAttribute("name", "ConfirmSt");
+            dtConfirmEt$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+
+            $(dtConfirmEt$).jqxDateTimeInput(DateFormat);
+            $(dtConfirmEt$).jqxDateTimeInput({
                 width: 140,
                 height: 30,
                 theme: "Light",
                 disabled: true
             });
 
-            if (item.CheckEt === null) {
-                $("#dtQmsCheckListConfirmEt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            if (WebUtils.isEmpty(item) || item.CheckEt === null) {
+                $(dtConfirmEt$).val(WebUtils.GetDate(0, "d", "-"));
             } else {
                 var milli = item.CheckEt.replace(/\/Date\((-?\d+)\)\//, '$1');
                 var d = new Date(parseInt(milli));
-                $("#dtQmsCheckListConfirmEt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+                $(dtConfirmEt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
             }
+
+            tdConfirmEt$.appendChild(dtConfirmEt$);
 
             // 담당자
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<input type='text' id='txtQmsCheckListUser_" + item.OID + "' readonly='readonly' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "'></input>";
-            innerHtml += "<button id='btnQmsCheckListUserSearch_" + item.OID + "' class='custom-button' style='display:none;'><i class='fas fa-search'></i>검색</button>"
-            innerHtml += "</td>";
-            $("#tbQmsCheckListUser_@ViewBag.QmsCheck.OID").append(innerHtml);
+            var tdUser$ = document.createElement("td");
 
-            if (WebUtils.isEmpty(item.CheckUserOID)) {
-                $("#txtQmsCheckListUser_" + item.OID).val(null);
-            } else {
-                $("#txtQmsCheckListUser_" + item.OID).attr("CheckUserOID", item.CheckUserOID);
-                $("#txtQmsCheckListUser_" + item.OID).val(item.CheckUserNm);
+            var divUser$ = document.createElement("div");
+            $(divUser$).css("display", "flex");
+
+            var txtUser$ = document.createElement("input");
+            txtUser$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            txtUser$.setAttribute("OID", OID);
+            txtUser$.setAttribute("Cnt", Cnt);
+            txtUser$.setAttribute("type", "text");
+            txtUser$.setAttribute("readonly", "readonly");
+            txtUser$.style.width = "120px";
+            txtUser$.id = "InfoQuickValidation_txtUser_@(ViewBag.QmsCheck.OID)_"+i
+            if (!WebUtils.isEmpty(item)) {
+                txtUser$.value = item.CheckUserNm;
+                txtUser$.setAttribute("CheckUserOID", item.CheckUserOID);
             }
 
-            $("#btnQmsCheckListUserSearch_" + item.OID).attr("onclick", "QmsCheckListSearchUser(" + item.OID + ")");
+            var btnSearchUser$ = document.createElement("button");
+            btnSearchUser$.className = "custom-button";
+            btnSearchUser$.setAttribute("AttrType", "BUTTON");
+            btnSearchUser$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            $(btnSearchUser$).css("display", "none");
+            btnSearchUser$.setAttribute("onclick", "InfoQmsCheckSelectUser(" + i +")");
+            
+            var isearch$ = document.createElement("i");
+            isearch$.innerText = "검색";
+            isearch$.className = "fas fa-search";
+
+            divUser$.appendChild(txtUser$);
+            divUser$.appendChild(btnSearchUser$);
+            btnSearchUser$.appendChild(isearch$);
+            tdUser$.appendChild(divUser$);
 
             // 검증일
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='DATE' id='dtQmsCheckListConfirmBaseDt_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt+"'></div>";
-            innerHtml += "</td>";
-            $("#tbQmsCheckListConfirmBaseDt_@ViewBag.QmsCheck.OID").append(innerHtml);
+            var tdConfirmBaseDt$ = document.createElement("td");
 
-            $("#dtQmsCheckListConfirmBaseDt_" + item.OID).jqxDateTimeInput(DateFormat);
-            $("#dtQmsCheckListConfirmBaseDt_" + item.OID).jqxDateTimeInput({
+            var dtConfirmBaseDt$ = document.createElement("div");
+            dtConfirmBaseDt$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            dtConfirmBaseDt$.setAttribute("OID", OID);
+            dtConfirmBaseDt$.setAttribute("Cnt", Cnt);
+            dtConfirmBaseDt$.setAttribute("AttrType", "DATE");
+            dtConfirmBaseDt$.setAttribute("name", "ConfirmSt");
+            dtConfirmBaseDt$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+
+            $(dtConfirmBaseDt$).jqxDateTimeInput(DateFormat);
+            $(dtConfirmBaseDt$).jqxDateTimeInput({
                 width: 140,
                 height: 30,
                 theme: "Light",
                 disabled: true
             });
 
-            if (item.CheckDt === null) {
-                $("#dtQmsCheckListConfirmBaseDt_" + item.OID).val(WebUtils.GetDate(0, "d", "-"));
+            if (WebUtils.isEmpty(item) || item.CheckDt === null) {
+                $(dtConfirmBaseDt$).val(WebUtils.GetDate(0, "d", "-"));
             } else {
                 var milli = item.CheckDt.replace(/\/Date\((-?\d+)\)\//, '$1');
                 var d = new Date(parseInt(milli));
-                $("#dtQmsCheckListConfirmBaseDt_" + item.OID).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+                $(dtConfirmBaseDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
             }
 
-            // 판정
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='SWITCH' id='btnQmsCheckListJudgment_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt +"'></div>";
-            innerHtml += "</td>";
+            tdConfirmBaseDt$.appendChild(dtConfirmBaseDt$);
 
-            $("#tbQmsCheckListConfirmJudgment_@ViewBag.QmsCheck.OID").append(innerHtml);
-            $('#btnQmsCheckListJudgment_' + item.OID).jqxSwitchButton({ height: 30, width: 80, checked: (item.CheckFl === 1 ? true : false), onLabel: "OK", offLabel: "NG", disabled: true });
+            // 판정
+            var tdJudgment$ = document.createElement("td");
+
+            var btnJudgment$ = document.createElement("div");
+            btnJudgment$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            btnJudgment$.setAttribute("OID", OID);
+            btnJudgment$.setAttribute("Cnt", Cnt);
+            btnJudgment$.setAttribute("AttrType", "SWITCH");
+            btnJudgment$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            $(btnJudgment$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
+            if (!WebUtils.isEmpty(item)) {
+                $(btnJudgment$).jqxSwitchButton({ checked: (item.CheckFl === 1 ? true : false) });
+            }
+
+            tdJudgment$.appendChild(btnJudgment$);
 
             // 검증내용요약
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<input class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='TEXT' type='text' id='txtQmsCheckListConfirmDesc_" + item.OID + "' style='100%' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "' value='" + item.CheckDetail +"'></input>";
-            innerHtml += "</div>"
-            innerHtml += "</td>";
+            var tdConfirmDesc$ = document.createElement("td");
 
-            $("#tbQmsCheckListConfirmDesc_@ViewBag.QmsCheck.OID").append(innerHtml);
+            var txtConfirmDesc$ = document.createElement("input");
+            txtConfirmDesc$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            txtConfirmDesc$.setAttribute("OID", OID);
+            txtConfirmDesc$.setAttribute("Cnt", Cnt);
+            txtConfirmDesc$.setAttribute("type", "text");
+            txtConfirmDesc$.setAttribute("AttrType", "TEXT");
+            txtConfirmDesc$.setAttribute("readonly", "readonly");
+            txtConfirmDesc$.style.width = "100%";
+            txtConfirmDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+
+            if (!WebUtils.isEmpty(item)) {
+                txtConfirmDesc$.value = item.CheckDetail;
+            }
+
+            tdConfirmDesc$.appendChild(txtConfirmDesc$);
 
             // 종료여부
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<div class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='SWITCH' id='btnQmsCheckListQmsCheckListConti_" + item.OID + "' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "'></div>";
-            innerHtml += "</td>";
+            var tdContFl$ = document.createElement("td");
 
-            $("#tbQmsCheckListConfirmEnd_@ViewBag.QmsCheck.OID").append(innerHtml);
-            $('#btnQmsCheckListQmsCheckListConti_' + item.OID).jqxSwitchButton({ height: 30, width: 80, checked: (item.FinishFl === 1 ? true : false), onLabel: "OK", offLabel: "NG", disabled:true });
+            var btnContFl$ = document.createElement("div");
+            btnContFl$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            btnContFl$.setAttribute("OID", OID);
+            btnContFl$.setAttribute("Cnt", Cnt);
+            btnContFl$.setAttribute("AttrType", "SWITCH");
+            btnContFl$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            $(btnContFl$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
+            if (!WebUtils.isEmpty(item)) {
+                $(btnContFl$).jqxSwitchButton({ checked: (item.FinishFl === 1 ? true : false) });
+            }
+
+            tdContFl$.appendChild(btnContFl$);
 
             // 종료사유
-            innerHtml = "";
-            innerHtml += "<td>";
-            innerHtml += "<input class='Modifiable_@ViewBag.QmsCheck.OID' AttrType='TEXT' type='text' id='txtQmsCheckListEndDesc_" + item.OID + "' style='100%' QmsCheckCnt='" + item.OID + "_" + item.Cnt + "' value='" + item.FinishDetail+"'></input>";
-            innerHtml += "</div>"
-            innerHtml += "</td>";
+            var tdEndDesc$ = document.createElement("td");
 
-            $("#tbQmsCheckListEndDesc_@ViewBag.QmsCheck.OID").append(innerHtml);
+            var txtEndDesc$ = document.createElement("input");
+            txtEndDesc$.setAttribute("Data-Cnt", @ViewBag.QmsCheck.OID + "_" + i);
+            txtEndDesc$.setAttribute("OID", OID);
+            txtEndDesc$.setAttribute("Cnt", Cnt);
+            txtEndDesc$.setAttribute("type", "text");
+            txtEndDesc$.setAttribute("AttrType", "TEXT");
+            txtEndDesc$.setAttribute("readonly", "readonly");
+            txtEndDesc$.style.width = "100%";
+            txtEndDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+
+            if (!WebUtils.isEmpty(item)) {
+                txtEndDesc$.value = item.FinishDetail;
+            }
+
+            tdEndDesc$.appendChild(txtEndDesc$);
+
+            @*$("#tbQmsCheckListConfirmSt_@ViewBag.QmsCheck.OID").append(tdConfirmSt$);*@
+            $("#tbQmsCheckListConfirmEt_@ViewBag.QmsCheck.OID").append(tdConfirmEt$);
+            $("#tbQmsCheckListUser_@ViewBag.QmsCheck.OID").append(tdUser$);
+            $("#tbQmsCheckListConfirmBaseDt_@ViewBag.QmsCheck.OID").append(tdConfirmBaseDt$);
+            $("#tbQmsCheckListConfirmJudgment_@ViewBag.QmsCheck.OID").append(tdJudgment$);
+            $("#tbQmsCheckListConfirmDesc_@ViewBag.QmsCheck.OID").append(tdConfirmDesc$);
+            $("#tbQmsCheckListConfirmEnd_@ViewBag.QmsCheck.OID").append(tdContFl$);
+            $("#tbQmsCheckListEndDesc_@ViewBag.QmsCheck.OID").append(tdEndDesc$);
         }
 
     }
 
-    function QmsCheckListSearchUser(OID) {
+    function InfoQmsCheckSelectUser(cnt) {
         OpenApprovalPersonDialog(function (res) {
             if (res.length > 1) {
                 alert("담당자는 한명만 지정 할 수 있습니다.");
                 return;
             }
-            $("#txtQmsCheckListUser_" + OID).val(res[0].Name);
-            $("#txtQmsCheckListUser_" + OID).attr("CheckUserOID", res[0].OID);
+            $("#InfoQuickValidation_txtUser_@(ViewBag.QmsCheck.OID)_" + cnt).val(res[0].Name);
+            $("#InfoQuickValidation_txtUser_@(ViewBag.QmsCheck.OID)_" + cnt).attr("CheckUserOID", res[0].OID);
 
         }, null, null, '/Common/ApprovalPerson', '사용자 검색');
     }
