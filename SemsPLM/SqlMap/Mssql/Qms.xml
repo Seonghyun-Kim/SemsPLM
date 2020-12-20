@@ -633,7 +633,7 @@
       EduPlan = #EduPlan#,
       EduDt = #EduDt#,
       EduUserOID = #EduUserOID#
-      WHERE ModuleOID = #OID#
+      WHERE ModuleOID = #ModuleOID#
     </update>
 
     <!-- QuickValidation SQL-->

@@ -42,18 +42,21 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            <table class="tableTopButtonBox">
-                <tbody>
-                    <tr>
-                        <td style="text-align: right;" id="InfoWorkerEducation_defaultBtn_@ViewBag.WorkerEdu.OID">
-                            <button id="InfoWorkerEducation_EditBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoWorkerEducation_EditCancleBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoWorkerEducation_SaveBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                            <button id="InfoWorkerEducation_ApprovalBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-pen-alt"></i> 결재</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (ViewBag.WorkerEdu.BPolicyOID == 98)
+            {
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoWorkerEducation_defaultBtn_@ViewBag.WorkerEdu.OID">
+                                <button id="InfoWorkerEducation_EditBtn_@ViewBag.WorkerEdu.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoWorkerEducation_EditCancleBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoWorkerEducation_SaveBtn_@ViewBag.WorkerEdu.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoWorkerEducation_ApprovalBtn_@ViewBag.WorkerEdu.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
 
             <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
             <table class="infoTable" style="table-layout:fixed;">
@@ -72,7 +75,7 @@
                         <th><label class="lbText">담당자</label></th>
                         <td>
                             <div style="display:flex">
-                                <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEdu.OID" EduUserOID="@ViewBag.WorkerEdu.EduUserOID" value="@ViewBag.WorkerEdu.EduUserNm"/>
+                                <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEdu.OID" EduUserOID="@ViewBag.WorkerEdu.EduUserOID" value="@ViewBag.WorkerEdu.EduUserNm" />
                                 <button id="InfoWorkerEducation_btnEduUser_@ViewBag.WorkerEdu.OID" class="searchBtn custom-button" style="display:none;"><i class="fas fa-search"></i></button>
                             </div>
                         </td>
@@ -99,11 +102,6 @@
     var fileUpload = $("#InfoWorkerEducation_FileList_@ViewBag.WorkerEdu.OID").FileUpload({ OID: '@ViewBag.WorkerEdu.OID' });
 
     $(document).ready(function () {
-        if ("@ViewBag.CurrentSt" === "Started") {
-            $("InfoWorkerEducation_EditBtn_@ViewBag.WorkerEdu.OID").css("display", "inline-block");
-            $("InfoWorkerEducation_ApprovalBtn_@ViewBag.WorkerEdu.OID").css("display", "inline-block");
-        }
-
         const WorkerEduOID = '@ViewBag.WorkerEdu.OID';
         const WorkerEduDetailDiv$ = $('#InfoWorkerEducation_' + WorkerEduOID);
 
@@ -129,82 +127,88 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
-        // 수정
-        $('#InfoWorkerEducation_EditBtn_' + WorkerEduOID).on('click', function () {
-            var ModifyAttr = $('.Modifiable_' + WorkerEduOID);
+        @if (ViewBag.WorkerEdu.BPolicyOID == 98)
+        {
+            <text>
+            // 수정
+            $('#InfoWorkerEducation_EditBtn_' + WorkerEduOID).on('click', function () {
+                var ModifyAttr = $('.Modifiable_' + WorkerEduOID);
 
-            ModifyAttr.each(function (i, v) {
-                ContentEditMode(v);
+                ModifyAttr.each(function (i, v) {
+                    ContentEditMode(v);
+                });
+
+                //수정 가능한 항목을 표시
+                var modifyTag = document.createElement('div');
+                modifyTag.className = "modifyTag";
+
+                $('.Modifiable_' + WorkerEduOID).parent().css('position', 'relative');
+
+                $('.Modifiable_' + WorkerEduOID).parent().append(modifyTag);
+
+                $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "none");
+                $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "inline-block");
+                $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "inline-block");
+                $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "inline-block");
+
+                fileUpload.EditMode();
             });
 
-            //수정 가능한 항목을 표시
-            var modifyTag = document.createElement('div');
-            modifyTag.className = "modifyTag";
+            // 취소
+            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).jqxButton();
+            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).on("click", function () {
+                var ModifyAttr = $('.Modifiable_' + WorkerEduOID);
 
-            $('.Modifiable_' + WorkerEduOID).parent().css('position', 'relative');
+                ModifyAttr.each(function (i, v) {
+                    ContentReadMode(v);
+                });
 
-            $('.Modifiable_' + WorkerEduOID).parent().append(modifyTag);
+                $(".modifyTag").remove();
+                $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "inline-block");
+                $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "none");
+                $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "none");
+                $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "none");
 
-            $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "none");
-            $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "inline-block");
-            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "inline-block");
-            $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "inline-block");
-
-            fileUpload.EditMode();
-        });
-
-        // 취소
-        $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).jqxButton();
-        $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).on("click", function () {
-            var ModifyAttr = $('.Modifiable_' + WorkerEduOID);
-
-            ModifyAttr.each(function (i, v) {
-                ContentReadMode(v);
+                fileUpload.ReadOnlyMode();
             });
 
-            $(".modifyTag").remove();
-            $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "inline-block");
-            $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "none");
-            $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "none");
-            $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "none");
+            // 저장
+            $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).jqxButton();
+            $('#InfoWorkerEducation_SaveBtn_' + WorkerEduOID).on("click", function () {
+                var param = {};
 
-            fileUpload.ReadOnlyMode();
-        });
+                param.OID = WorkerEduOID;
+                param.ModuleOID = "@ViewBag.WorkerEdu.ModuleOID";
+                param.EduDetail = $("#InfoWorkerEducation_txtEduDetail_" + WorkerEduOID).val();
+                param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduOID).val();
+                param.EduDt = $("#InfoWorkerEducation_txtEduDt_" + WorkerEduOID).jqxDateTimeInput("val");
+                param.EduUserOID = $("#InfoWorkerEducation_txtEduUser_" + WorkerEduOID).attr("EduUserOID");
 
+                var Files = fileUpload.Files();
 
-        // 저장
-        $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).jqxButton();
-        $('#InfoWorkerEducation_SaveBtn_' + WorkerEduOID).on("click", function () {
-            var param = {};
-
-            param.OID = WorkerEduOID;
-            param.EduDetail = $("#InfoWorkerEducation_txtEduDetail_" + WorkerEduOID).val();
-            param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduOID).val();
-            param.EduDt = $("#InfoWorkerEducation_txtEduDt_" + WorkerEduOID).jqxDateTimeInput("val");
-            param.EduUserOID = $("#InfoWorkerEducation_txtEduUser_" + WorkerEduOID).attr("EduUserOID");
-
-            var Files = fileUpload.Files();
-
-            var removeFiles = fileUpload.RemoveFiles();
-            if (!WebUtils.isEmpty(removeFiles)) {
-                param.delFiles = [];
-                param.delFiles = removeFiles;
-            }
-
-            SendDataWithFile("/Qms/UdtWorkerEducation", param, Files, function (response) {
-                if (response.isError) {
-                    alert(response.resultMessage);
-                    return;
+                var removeFiles = fileUpload.RemoveFiles();
+                if (!WebUtils.isEmpty(removeFiles)) {
+                    param.delFiles = [];
+                    param.delFiles = removeFiles;
                 }
-                alert("저장되었습니다.");
-                PageReload();
-            });
-        });
 
-        $('#InfoWorkerEducation_ApprovalBtn_' + WorkerEduOID).on('click', function () {
-            OpenApprovalDialog(function () {
-                PageReload();
-            }, null, { TargetOID: WorkerEduOID }, '/Common/Approval', '결재');
-        });
+                SendDataWithFile("/Qms/SaveWorkerEducation", param, Files, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    PageReload();
+                });
+            });
+
+            // 결재
+            $('#InfoWorkerEducation_ApprovalBtn_' + WorkerEduOID).on('click', function () {
+                OpenApprovalDialog(function () {
+                    PageReload();
+                }, null, { TargetOID: WorkerEduOID }, '/Common/Approval', '결재');
+            });
+            </text>
+        }
     })
 </script>
