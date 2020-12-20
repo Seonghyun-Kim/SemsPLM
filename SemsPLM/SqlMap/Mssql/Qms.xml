@@ -233,7 +233,7 @@
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'

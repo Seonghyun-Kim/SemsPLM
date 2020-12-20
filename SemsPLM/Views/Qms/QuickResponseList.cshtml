@@ -316,7 +316,10 @@
                 container.append(deleteButton);
 
                 addButton.on('click', function () {
-                    OpenDlgQuickResponse(null);
+                    var linkName = "신속대응 등록";
+                    var linkUrl = '/Qms/CreateQuickResponse';
+
+                    TabPageLoad(linkUrl, linkName);
                 });
 
                 deleteButton.on('click', function () {
@@ -330,26 +333,32 @@
 
     var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
         var retJson = {};
-
         var BackgroundColor = "white";
         var ChargeUserText = ModuleFl ? ChargeUserNm : "N/A";
         var milli = EstEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
         var EstDate = new Date(parseInt(milli));
+        var CompareEstDate = addDays(EstDate, 1);
+        var nowDate = new Date();
 
         if (!ModuleFl) {
             BackgroundColor = "lightgreen";
         } else if (BPolicyNm === "Compleated") {
             BackgroundColor = "lightgreen";
             ChargeUserText = "(완료) " + ChargeUserText;
-        } else if (BPolicyNm === "Started" && EstDate <= nowDate) {
-            BackgroundColor = "yellow";
+        } else if (BPolicyNm === "Started" && CompareEstDate >= nowDate) {
+            BackgroundColor = "Yellow";
             ChargeUserText = "(실행전) " + ChargeUserText;
-        } else if (BPolicyNm === "Prepare" && EstDate >= nowDate) {
+        } else if (BPolicyNm === "Prepare" && CompareEstDate >= nowDate) {
             BackgroundColor = "white";
         } else {
             BackgroundColor = "red";
             ChargeUserText = "(실행전) " + ChargeUserText;
         }
+
+        //else if (BPolicyNm === "Started" && EstDate <= nowDate) {
+        //    BackgroundColor = "yellow";
+        //    ChargeUserText = "(실행전) " + ChargeUserText;
+        //} 
         
         retJson.BackgroundColor = BackgroundColor;
         retJson.ChargeUserText = ChargeUserText;

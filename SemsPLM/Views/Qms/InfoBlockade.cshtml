@@ -43,7 +43,7 @@
         </div>
         <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
             <div id="properties" class="basic_grid">
-                @if (ViewBag.Blockade.BPolicyOID == 58)
+                @if (ViewBag.Blockade.BPolicyOID == 58 && ViewBag.Blockade.ChargeUserOID == Session["UserOID"])
                 {
                 <table class="tableTopButtonBox infoTopFix" style="width:1673px;padding-top:45px;">
                     <tbody>

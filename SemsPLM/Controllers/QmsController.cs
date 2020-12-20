@@ -487,7 +487,7 @@ namespace SemsPLM.Controllers
                 SetQuickModule(QmsConstant.TYPE_STANDARD);
 
                 // 사용자 교육
-                SetQuickModule(QmsConstant.TYPE_WORKER_EDU);
+                SetQuickModule(QmsConstant.TYPE_WORKER_EDU);    
 
                 DaoFactory.Commit();
             }
@@ -587,12 +587,13 @@ namespace SemsPLM.Controllers
                 }
 
                 _params.ForEach(v =>
-                {                    
+                {                  
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
                     DObject dObject = DObjectRepository.SelDObject(Session, v);
+                    
 
-                    if(dObject.Type == QmsConstant.TYPE_LPA_UNFIT)
+                    if (dObject.Type == QmsConstant.TYPE_LPA_UNFIT)
                     {
                         QuickResponseModule LpaMeasureModule = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = v.QuickOID, ModuleType = QmsConstant.TYPE_LPA_MEASURE });
 

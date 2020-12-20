@@ -17,10 +17,10 @@ namespace Qms.Models
         public int? ModuleOID { get; set; }
 
         // 예정일자 
-        public DateTime EstDt { get; set; }
+        public DateTime? EstDt { get; set; }
 
         // 처리일자 
-        public DateTime ActDt { get; set; }
+        public DateTime? ActDt { get; set; }
 
         // 점검내용 
         public string CheckDetail { get; set; }
