@@ -31,6 +31,8 @@ namespace Qms.Models
         #region -- Search & View
         public string DocTypeNm { get; set; }
         public string DocNm { get; set; }
+
+        public string DocFileNm { get; set; }
         #endregion
     }
 
