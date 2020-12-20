@@ -102,7 +102,7 @@
                 param.delFiles = removeFiles;
             }
 
-            SendDataWithFile("/Qms/InsWorkerEducation", param, Files, function (response) {
+            SendDataWithFile("/Qms/SaveWorkerEducation", param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;

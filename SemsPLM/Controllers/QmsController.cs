@@ -1584,8 +1584,8 @@ namespace SemsPLM.Controllers
             if (workerEdu == null)
             {
                 workerEdu = new WorkerEdu();
-                workerEdu.OID = OID;
-                workerEdu.ModuleOID = OID;
+                workerEdu.OID = Module.OID;
+                workerEdu.ModuleOID = Module.OID;
             }
 
             ViewBag.WorkerEdu = workerEdu;
@@ -1597,45 +1597,37 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
-        public JsonResult InsWorkerEducation(WorkerEdu param)
+
+        /// <summary>
+        /// 작업자 교육 등록, 수정
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public JsonResult SaveWorkerEducation(WorkerEdu param)
         {
+            int returnValue = 0;
             try
             {
                 DaoFactory.BeginTransaction();
                 param.Type = QmsConstant.TYPE_WORKER_EDU;
-                int returnValue = WorkerEduRepository.InsWorkerEdu(param);
 
-                if (param.Files != null)
+                WorkerEdu workerEdu = new WorkerEdu()
                 {
-                    HttpFileRepository.InsertData(Session, param);
-                }
+                    ModuleOID = param.ModuleOID,
+                    EduDetail = param.EduDetail,
+                    EduPlan = param.EduPlan,
+                    EduDt = param.EduDt,
+                    EduUserOID = param.EduUserOID
+                };
 
-                if (param.delFiles != null)
+                if(WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = workerEdu.ModuleOID }) == null)
                 {
-                    param.delFiles.ForEach(v =>
-                    {
-                        HttpFileRepository.DeleteData(Session, v);
-                    });
+                    returnValue = WorkerEduRepository.InsWorkerEdu(workerEdu);
                 }
-
-                DaoFactory.Commit();
-
-                return Json(returnValue);
-            }
-            catch (Exception ex)
-            {
-                DaoFactory.Rollback();
-                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
-            }
-        }
-
-        public JsonResult UdtWorkerEducation(WorkerEdu param)
-        {
-            try
-            {
-                DaoFactory.BeginTransaction();
-                param.Type = QmsConstant.TYPE_WORKER_EDU;
-                int returnValue = WorkerEduRepository.UdtWorkerEdu(param);
+                else
+                {
+                    returnValue = WorkerEduRepository.UdtWorkerEdu(workerEdu);
+                }
 
                 if (param.Files != null)
                 {
