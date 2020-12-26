@@ -66,7 +66,7 @@
                     <tbody>
                         <tr>
                             <th>설계변경요청번호</th>
-                            <td class="required"><input type="text" value="@ViewBag.ECRDetail.Name" readonly="readonly"/></td>
+                            <td class="required"><input type="text" value="@ViewBag.ECRDetail.Name" readonly="readonly" /></td>
                             <th>품목그룹</th>
                             <td>
                                 <input type="text" value="@ViewBag.ECRDetail.ItemGroup" readonly="readonly" id="InfoEcrItemGroup_@ViewBag.ECRDetail.OID" class="Modifiable_@ViewBag.ECRDetail.OID" />
@@ -74,7 +74,7 @@
                         </tr>
                         <tr>
                             <th>제목</th>
-                            <td class="required"><input type="text" value="@ViewBag.ECRDetail.Title" readonly="readonly" id="InfoEcrTitle_@ViewBag.ECRDetail.OID" class="Modifiable_@ViewBag.ECRDetail.OID"/></td>
+                            <td class="required"><input type="text" value="@ViewBag.ECRDetail.Title" readonly="readonly" id="InfoEcrTitle_@ViewBag.ECRDetail.OID" class="Modifiable_@ViewBag.ECRDetail.OID" /></td>
                             <th>설계변경일자</th>
                             <td class="required">
                                 <input type="text" class="ModifiableCustomBox_@ViewBag.ECRDetail.OID" value="@ViewBag.ECRDetail.DesignChangeDt" />
@@ -152,7 +152,7 @@
                             </td>
                             <th>메모사양</th>
                             <td>
-                                <input type="text" value="@ViewBag.ECRDetail.Memo" id="InfoEcrMemo_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID"/>
+                                <input type="text" value="@ViewBag.ECRDetail.Memo" id="InfoEcrMemo_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID" />
                             </td>
                         </tr>
                         <tr>
@@ -172,7 +172,7 @@
                         </tr>
                         <tr>
                             <th>고객품번</th>
-                            <td><input type="text" value="@ViewBag.ECRDetail.SelPartNo" id="InfoEcrSelPartNo_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID"/></td>
+                            <td><input type="text" value="@ViewBag.ECRDetail.SelPartNo" id="InfoEcrSelPartNo_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID" /></td>
                             <th>E-BOM</th>
                             <td>
                                 <input type="text" class="ModifiableCustomBox_@ViewBag.ECRDetail.OID" value="@ViewBag.ECRDetail.EBom" />
@@ -186,12 +186,19 @@
                                 <div id="InfoEcrDevMP_@ViewBag.ECRDetail.OID" class="ECRComboBox ModifiableEditCustomBox_@ViewBag.ECRDetail.OID"></div>
                             </td>
                             <th>차종</th>
-                            <td><input type="text" value="@ViewBag.ECRDetail.CarType" id="CarType_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID"/></td>
+                            <td><input type="text" value="@ViewBag.ECRDetail.CarType" id="CarType_@ViewBag.ECRDetail.OID" readonly="readonly" class="Modifiable_@ViewBag.ECRDetail.OID" /></td>
                         </tr>
                         <tr>
                             <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
                             <td colspan="3">
                                 <textarea id="InfoEcrDescription_@ViewBag.ECRDetail.OID" class="Modifiable_@ViewBag.ECRDetail.OID" style="width:100%; height: 100px;" readonly="readonly">@ViewBag.ECRDetail.Description</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+                            <td colspan="3">
+                                <div id="InfoEcrFile_@ViewBag.ECRDetail.OID" style="width:100%">
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -223,7 +230,10 @@
 
 <script>
     var EcoRelationData = null;
+    var InfoFiles = $('#InfoEcrFile_@ViewBag.ECRDetail.OID').FileUpload({ OID : '@ViewBag.ECRDetail.OID'});
     $(function () {
+        InfoFiles.ReadOnlyMode();
+
         $('.ECRComboBox').jqxComboBox({ width: '50%', height: 32 });
         $('.ECRCheckBox').jqxCheckBox({ width: 120, height: 32 });
         $('.ECRDatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
@@ -435,6 +445,8 @@
 
                     $('.Modifiable_@ViewBag.ECRDetail.OID').parent().append(modifyTag);
                     $('.ModifiableEditCustomBox_@ViewBag.ECRDetail.OID').parent().append(modifyTag);
+
+                    InfoFiles.EditMode();
                 });
 
                 $('#EditSaveBtn_@ViewBag.ECRDetail.OID').on('click', function () {
@@ -470,7 +482,14 @@
                     InfoEcrEditParam.DevMP                  =           InfoEcrDevMP$.val();
                     InfoEcrEditParam.CarType                =           $('#CarType_@ViewBag.ECRDetail.OID').val();
 
-                    RequestData('/ChangeRequest/UdtEcrObj', InfoEcrEditParam, function (response) {
+                    var Files = InfoFiles.Files();
+                    var removeFiles = InfoFiles.RemoveFiles();
+                    if (!WebUtils.isEmpty(removeFiles)) {
+                        InfoEcrEditParam.delFiles = [];
+                        InfoEcrEditParam.delFiles = removeFiles;
+                    }
+
+                    SendDataWithFile('/ChangeRequest/UdtEcrObj', InfoEcrEditParam, Files, function (response) {
                         if (response.isError) {
                             alert(response.resultMessage);
                             return;

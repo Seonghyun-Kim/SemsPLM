@@ -126,59 +126,7 @@ namespace Common.Models
         }
 
         #region -- Project
-        public static List<JqTreeModel> SelTotalProjMngt()
-        {
-            List<Library> CodeLibrary = LibraryRepository.SelCodeLibrary(new Library { FromOID = 932 });
-            List<JqTreeModel> jqTreeModelList = new List<JqTreeModel>();
-            foreach (Library obj in CodeLibrary)
-            {
-                JqTreeModel jqTreeModel = new JqTreeModel();
-                jqTreeModel.id = obj.OID;
-                jqTreeModel.label = obj.KorNm;
-                jqTreeModel.icon = CommonConstant.ICON_COMPANY;
-                jqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
-                jqTreeModel.expanded = true;
-                jqTreeModel.type = PmsConstant.ATTRIBUTE_OEM;
-                jqTreeModel.items = new List<JqTreeModel>();
-                jqTreeModelList.Add(jqTreeModel);
-            }
-            
-            for (var i = 0; i < jqTreeModelList.Count; i++)
-            {
-                LibraryRepository.SelCodeLibraryChild(new Library { OID = jqTreeModelList[i].id }).ForEach(item =>
-                {
-                    JqTreeModel innerJqTreeModel = new JqTreeModel();
-                    innerJqTreeModel.id = item.OID;
-                    innerJqTreeModel.label = item.KorNm;
-                    innerJqTreeModel.icon = PmsConstant.ICON_CARTYPE;
-                    innerJqTreeModel.iconsize = PmsConstant.DEFAULT_ICONSIZE;
-                    innerJqTreeModel.expanded = true;
-                    innerJqTreeModel.type = PmsConstant.ATTRIBUTE_CAR;
-                    innerJqTreeModel.items = new List<JqTreeModel>();
-                    SelCarLibrary(innerJqTreeModel, item);
-                    jqTreeModelList[i].items.Add(innerJqTreeModel);
-                });
-            }
-
-            return jqTreeModelList;
-        }
-
-        public static void SelCarLibrary(JqTreeModel _jqxTree, DObject _param)
-        {
-            LibraryRepository.SelCodeLibraryChild(new Library { OID = _param.OID }).ForEach(item =>
-            {
-                JqTreeModel innerJqTreeModel = new JqTreeModel();
-                innerJqTreeModel.id = item.OID;
-                innerJqTreeModel.label = item.KorNm;
-                innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
-                innerJqTreeModel.iconsize = CommonConstant.DEFAULT_ICONSIZE;
-                innerJqTreeModel.expanded = true;
-                innerJqTreeModel.type = "Project";
-                innerJqTreeModel.items = new List<JqTreeModel>();
-                SelCarLibrary(innerJqTreeModel, item);
-                _jqxTree.items.Add(innerJqTreeModel);
-            });
-        }
+        
         #endregion
 
     }

@@ -10,6 +10,13 @@
     </div>
     <div class="dlgGateReportContent">
         <div>
+            <div class="dlgTopInfo">
+                <label><i class="fas fa-stamp"></i> 프로젝트 등급</label>
+                <span id=""><!--system-->@ViewBag.InfoProj.ProjectGrade</span>
+                <label><i class="fas fa-hourglass-half"></i> Gate 단계</label>
+                <span id=""><!--system-->@ViewBag.InfoProc.Name</span>
+                <button class="custom-button" id=""><i class="fas fa-save"></i> 저장</button>
+            </div>
             <h4>1. 개발개요</h4>
             <table class="dlgGateReportTable">
                 <colgroup>
@@ -32,31 +39,45 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>@ViewBag.InfoProj.Car_Lib_Nm</td>
+                        <td>@ViewBag.InfoProj.ITEM_NoNm @ViewBag.InfoProj.ITEM_MiddleNm</td>
+                        <td><input type="text" id="txtForecast_@ViewBag.InfoProc.OID" value="" /></td>
                         <td></td>
+                        <td></td>
+                        <td><input type="text" id="txtWrCreateStore_@ViewBag.InfoProc.OID" value="" /></td>
                     </tr>
                 </tbody>
             </table>
 
             <h4>2. OEM 일정</h4>
-            <table class="dlgGateReportTable oemSchedule">
-                <thead>
-                    <tr>
-                        <td>OEM일정 1</td>
-                        <td>OEM일정 2</td>
-                        <td>OEM일정 3</td>
-                        <td>OEM일정 4</td>
-                        <td>OEM일정 5</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (ViewBag.OemSchedule.Count < 1)
+            {
+                <h4 style="margin-bottom:20px;font-size:16px;color:#888;text-align:center;">OEM 일정이 없습니다.</h4>
+            }
+            else
+            {
+                <table class="dlgGateReportTable oemSchedule">
+                    <thead>
+                        <tr>
+                            @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
+                            {
+                                <td>@Html.Raw(ViewBag.OemSchedule[index].Name)</td>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
+                            {
+                                <td>@Html.Raw((ViewBag.OemSchedule[index].StartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.OemSchedule[index].StartDt) : ""))</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            }
 
             <h4>3. Gate Review 일정</h4>
-            <table class="dlgGateReportTable">
+            <table class="dlgGateReportTable grSchedule">
                 <thead>
                     <tr>
                         <td>G/R #1</td>
@@ -70,7 +91,22 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
+                        @{
+                            int iGw = ViewBag.InfoGate.Count;
+                            int iGwTotal = 6;
+                        }
+                        @for (int index = 0; index < iGwTotal; index++)
+                        {
+                            if (index < iGw)
+                            {
+                                <td>@Html.Raw((ViewBag.InfoGate[index].ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.InfoGate[index].ActEndDt) : ""))</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                        <td><input type="text" id="txtCalendarEtc_@ViewBag.InfoProc.OID" value="" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -101,6 +137,11 @@
                 <tbody>
                     <tr>
                         <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><input type="text" id="txtNonCompleteIssue_@ViewBag.InfoProc.OID" value="" /></td>
+                        <td><input type="text" id="txtSummaryEtc_@ViewBag.InfoProc.OID" value="" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -118,7 +159,7 @@
         $(function () {
 
             $('#issueSumGradeGrid').jqxTreeGrid({
-                width: 1188,
+                width: 1238,
                 height: 250,
                 columnsHeight:30,
                 columns: [
@@ -132,12 +173,11 @@
                     {text:'완료', width:'9%', align:'center',columnGroup: 'status',},
                 ],
                 columnGroups: [{ text: 'Status', name: 'status', align:'center' }],
-
             });
 
             $('#issueListGrid').jqxGrid({
-                width: 1188,
-                height: 700,
+                width: 1238,
+                height: 750,
                 columns: [
                     {text:'Issue NO', width:'5%',align:'center',},
                     {text:'사양', width:'8%',align:'center',},
@@ -154,15 +194,13 @@
                 ],
             });
 
-
             //Tab Hide&Show
             const gateReportContent$ = $(".dlgGateReportContent > div");
             gateReportContent$.last().hide();
             $("input[name=gateReportRadio]").click(function () {
-            gateReportContent$.hide();
-            gateReportContent$.eq($("input[name=gateReportRadio]").index(this)).show();
+                gateReportContent$.hide();
+                gateReportContent$.eq($("input[name=gateReportRadio]").index(this)).show();
             });
 
-            
         });
     </script>

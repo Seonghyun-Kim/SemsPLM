@@ -202,7 +202,14 @@
                         <tr>
                             <th style="vertical-align:text-top;line-height:32px;">세부설명</th>
                             <td colspan="3">
-                                <textarea class="Modifiable_@ViewBag.ECODetail.OID" id="InfoChangeOrder_Description_@ViewBag.ECODetail.OID" readonly="readonly">@ViewBag.ECODetail.Description</textarea>
+                                <textarea class="Modifiable_@ViewBag.ECODetail.OID" id="InfoChangeOrder_Description_@ViewBag.ECODetail.OID" style="height:100px;" readonly="readonly">@ViewBag.ECODetail.Description</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+                            <td colspan="3">
+                                <div id="InfoChangeOrder_File_@ViewBag.ECODetail.OID" style="width:100%;">
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -272,7 +279,9 @@
     var ECOListData = [];
     var loadAssessData;
     var ECRRelationData = [];
+    var InFoFiles = $('#InfoChangeOrder_File_@ViewBag.ECODetail.OID').FileUpload({ OID : '@ViewBag.ECODetail.OID'});
     $(function () {
+        InFoFiles.ReadOnlyMode();
         $('.ModifiableEditCustomBox_@ViewBag.ECODetail.OID').attr('hidden', true);
         $('.ECOCheckBox').jqxCheckBox({ width: 120, height: 32 });
         $('.ECODatetimeInput_@ViewBag.ECODetail.OID').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
@@ -521,6 +530,7 @@
             $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
 
             $('.required').parent().append(modifyTag);
+            InFoFiles.EditMode();
 
 
 
@@ -545,6 +555,7 @@
             param.IsMold = IsMold;
             param.ReasonRegistration = ReasonRegistration;
             param.Security = Security;
+            param.Type = '@ViewBag.ECODetail.Type';
             param.Stock = Stock;
             param.Memo = $('#InfoChangeOrder_Memo_@ViewBag.ECODetail.OID').val();
             param.IsAttached = IsAttached;
@@ -561,7 +572,12 @@
                 }
             }
             param.Changes = chkReason.join(',');;
-
+            var Files = InFoFiles.Files();
+            var removeFiles = InFoFiles.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
 
             if (param.Title == "" || param.Title == null) {
                 alert('제목을 입력하여 주세요.');
@@ -579,7 +595,7 @@
                 alert('개발/양산 구분을 선택하여 주세요.');
                 return;
             }
-            RequestData('/ChangeOrder/UdtChangeOrder',param, function (response) {
+            SendDataWithFile('/ChangeOrder/UdtChangeOrder', param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
@@ -743,6 +759,7 @@
                     datafields: [
                         { name: 'OID' },
                         { name: 'Name' },
+                        { name: 'Title' },
                         { name: 'DesignChangeDt',type:'date' },
                         { name: 'CreateUs' },
                         { name: 'BPolicy' },
@@ -767,6 +784,7 @@
                             }
                         },
                         { text: 'ECR_NO', datafield: 'Name', width: '30%', },
+                        { text: '제목', datafield: 'Title', width: '23%', },
                         { text: 'ECR_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd' },
                         { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
                         {

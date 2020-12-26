@@ -2,65 +2,61 @@
 using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Document.Models
 {
-    public class Doc : DObject,IDObject
+    public class Doc : DObject,IDObject, IObjectFile
     {
-        public string DocType { get; set; }
+        public int? FromOID { get; set; }
+        public int? RootOID { get; set; }
+        public int? ToOID { get; set; }
+        public int? TaskOID { get; set; }
+        public int? DocType { get; set; }
         public string Title { get; set; }
         public string Eo_No { get; set; }
+        public string DocGroup { get; set; }
         public int? Doc_Lib_Lev1_OID { get; set; }
         public string Doc_Lib_Lev1_KorNm { get; set; }
         public int? Doc_Lib_Lev2_OID { get; set; }
         public string Doc_Lib_Lev2_KorNm { get; set; }
         public int? Doc_Lib_Lev3_OID { get; set; }
         public string Doc_Lib_Lev3_KorNm { get; set; }
-        public string DocType_KorNm
-        {
-            get
-            {
-               if(this.DocType == DocumentContant.TYPE_PROJECT_DOCUMENT)
-                {
-                    return DocumentContant.TYPE_PROJECT_DOCUMENT_KOR;
-                }else if(this.DocType == DocumentContant.TYPE_TECHNICAL_DOCUMENT)
-                {
-                    return DocumentContant.TYPE_TECHNICAL_DOCUMENT_KOR;
-                }
-                else
-                {
-                    return "";
-                }
-            }
-        }
+        public string DocType_KorNm { get; set; }
 
-
+        public List<HttpPostedFileBase> Files { get; set; }
+        public List<HttpFile> delFiles { get; set; }
     }
 
     public static class DocRepository
     {
-        public static List<Doc> SelDoc(Doc _param)
+        public static List<Doc> SelDoc(HttpSessionStateBase Context, Doc _param)
         {
-            _param.Type = DocumentContant.TYPE_DOCUMENT;
+            _param.Type = DocumentConstant.TYPE_DOCUMENT;
             List<Doc> lDoc = DaoFactory.GetList<Doc>("Doc.SelDoc", _param);
             lDoc.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.DocType_KorNm = DObjectRepository.SelDObject(Context, new DObject { OID = obj.DocType }).Name;
+                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
             });
             return lDoc;
         }
 
-        public static Doc SelDocObject(Doc _param)
+        public static Doc SelDocObject(HttpSessionStateBase Context, Doc _param)
         {
-            _param.Type = DocumentContant.TYPE_DOCUMENT;
+            _param.Type = DocumentConstant.TYPE_DOCUMENT;
             Doc lDoc = DaoFactory.GetData<Doc>("Doc.SelDoc", _param);
-
+            lDoc.CreateUsNm  = PersonRepository.SelPerson(Context, new Person { OID = lDoc.CreateUs }).Name;
+            lDoc.DocType_KorNm = DObjectRepository.SelDObject(Context, new DObject { OID = lDoc.DocType }).Name;
             lDoc.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lDoc.Type, OID = lDoc.BPolicyOID }).First();
+            lDoc.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lDoc, null);
             return lDoc;
         }
 

@@ -18,206 +18,87 @@
     </table>
 </div>
 <div>
-    <table class="createtable doc_create">    
+    <table class="createtable doc_create">
         <tr>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서 구분</th>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서 분류</th>
             <td>
-                <div id='CreateDocument_DocType'></div>
+                <input type="hidden" id="CreateDocument_DocClassOID" autocomplete="off" />
+                <input type="text" id="CreateDocument_DocClassName" autocomplete="off" />
+            </td>
+            <td colspan="2">
+            <button id="CreateDocument_selDocClass" class="custom-button"><i class="fas fa-plus-square"></i> 문서분류체계 선택</button></td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 제목</th>
+            <td>
+                <input type="text" id="CreateDocument_Title" autocomplete="off" />
             </td>
             <th><i class="fa fa-caret-right"></i> 작성자</th>
             <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off"></td>
-            <th></th>
-            <td></td>
-        </tr>
-        <tr id="dynamicTr" hidden="hidden">
+
         </tr>
         <tr>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 품번</th>
-            <td><input type="text" id="CreateDocument_Name" autocomplete="off" /></td>
-            <th><i class="fa fa-caret-right"></i> EO NO</th>
-            <td><input type="text" id="CreateDocument_Eo_No" autocomplete="off" /></td>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서번호</th>
+            <td>
+                <input type="text" id="CreateDocument_Name" autocomplete="off" class="readonly _r" readonly="readonly" value="자동 발번" />
+            </td>
             <th><i class="fa fa-caret-right"></i> 작성일</th>
             <td><input type="text" id="CreateDocument_CreateDt" class="readonly" readonly="readonly" autocomplete="off" /></td>
         </tr>
         <tr>
-            <th class="reqVal"><i class="fa fa-caret-right"></i> 제목</th>
-            <td colspan="5">
-                <input type="text" id="CreateDocument_Title" autocomplete="off" />
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 리비전</th>
+            <td>
+                <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="00" />
             </td>
         </tr>
         <tr>
-            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 설명</th>
-            <td colspan="5">
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 내용</th>
+            <td colspan="3">
                 <textarea id="CreateDocument_Description" autocomplete="off"></textarea>
             </td>
         </tr>
-
+        <tr>
+            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+            <td colspan="3">
+                <div id="CreateDocument_Files" style="width:100%;">
+                </div>
+            </td>
+        </tr>
     </table>
 </div>
 <script>
+    var documentFile = $('#CreateDocument_Files').FileUpload({});
+    var docClassName = $('#CreateDocument_DocClassName');
+    var docClassOID = $('#CreateDocument_DocClassOID');
     $(function () {
-        var doc_lib_lev1$;
-        var doc_lib_lev2$;
-        var doc_lib_lev3$;
-        var pdocList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.pdocList))');
-        var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
-        var tdocList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.tdocList))');
-        const docType$ = $('#CreateDocument_DocType');
-
-        var docTypeList = [{ doctype: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT' },
-        { doctype: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT_KOR', value: '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT' }];
-        var docSource =
-        {
-            localdata: docTypeList,
-            datatype: "json",
-            datafields:
-                [
-                    { name: 'doctype', type: 'string' },
-                    { name: 'value', type: 'string' },
-                ]
-        };
-        var dataAdapter = new $.jqx.dataAdapter(docSource);
-        docType$.jqxComboBox({ source: dataAdapter, displayMember: "doctype", valueMember: "value", width: "100%", height:32 });
-
-        docType$.on('change', function (event) {
-
-            var args = event.args;
-            var selValue = args.item.value;
-            var dyTr$ = $('#dynamicTr');
-            var tag = '';
-            if (selValue === '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') { //차종문서
-                tag = '';
-                tag += '<th class="reqVal"><i class="fa fa-caret-right"></i> OEM</th><td><div id ="CreateDocument_Doc_Lib_Lev1"></div></td>'
-                tag += '<th class="reqVal"><i class="fa fa-caret-right"></i> 차종</th><td><div id ="CreateDocument_Doc_Lib_Lev2"></div></td>';
-                tag += '<th class="reqVal"><i class="fa fa-caret-right"></i> 분류</th><td><div id ="CreateDocument_Doc_Lib_Lev3"></div></td>';
-                dyTr$.empty();
-                dyTr$.removeAttr('hidden');
-                dyTr$.append(tag);
-                doc_lib_lev1$ = $('#CreateDocument_Doc_Lib_Lev1');
-                var lev1Source =
-                {
-                    localdata: oemList,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var dataAdapter = new $.jqx.dataAdapter(lev1Source);
-                doc_lib_lev1$.jqxComboBox({ source: dataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-
-                var defaultlev2 = [{ KorNm: '등록 차종 없음', OID: null }];
-                var defaultlev3 = [{ KorNm: '등록 분류 없음', OID: null }];
-                $('#CreateDocument_Doc_Lib_Lev2').jqxComboBox({ source: defaultlev2, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, });
-                $('#CreateDocument_Doc_Lib_Lev2').jqxComboBox({ selectedIndex: 0 });
-
-                $('#CreateDocument_Doc_Lib_Lev3').jqxComboBox({ source: defaultlev3, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-                $('#CreateDocument_Doc_Lib_Lev3').jqxComboBox({ selectedIndex: 0 });
-
-            } else if (selValue === '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT') { //기술문서
-                tag = '';
-                tag += '<th class="reqVal"><i class="fa fa-caret-right"></i> 1Lv</th><td><div id ="CreateDocument_Doc_Lib_Lev1"></div></td>'
-                tag += '<th><i class="fa fa-caret-right"></i> 2Lv</th><td><div id ="CreateDocument_Doc_Lib_Lev2"></div></td>';
-                tag += '<th></th><td></td>';
-                dyTr$.empty();
-                dyTr$.removeAttr('hidden');
-                dyTr$.append(tag);
-                doc_lib_lev1$ = $('#CreateDocument_Doc_Lib_Lev1');
-                var lev1Source =
-                {
-                    localdata: tdocList,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var dataAdapter = new $.jqx.dataAdapter(lev1Source);
-                doc_lib_lev1$.jqxComboBox({ source: dataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-
-                var defaultlev2 = [{ KorNm: '등록 2Lv 없음', OID: null }]
-                $('#CreateDocument_Doc_Lib_Lev2').jqxComboBox({ source: defaultlev2, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, });
-                $('#CreateDocument_Doc_Lib_Lev2').jqxComboBox({ selectedIndex: 0 });
-
-            } else {
-                dyTr$.attr('hidden', 'hidden');
-                dyTr$.empty();
-            }
+        $('#CreateDocument_selDocClass').on('click', function () {
+            var param = {};
+            param.Type = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+            OpenNewAddDocClassification(function (res) {
+            }, null, param, '/Pms/dlgDocClassDeliveries', '문서 분류 검색 추가', null);
         });
-
-        $(document).on('change', '#CreateDocument_Doc_Lib_Lev1', function () {
-
-            changeDocLibComboBox(2, docType$.val(),$('#CreateDocument_Doc_Lib_Lev1').val());
-
-        });
-
-        $(document).on('change', '#CreateDocument_Doc_Lib_Lev2', function () {
-            if (docType$.jqxComboBox('getSelectedItem').value == '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') {
-                var comboBox$ = $('#CreateDocument_Doc_Lib_Lev3');
-                var lev3Source =
-                {
-                    localdata: pdocList,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var dataAdapter = new $.jqx.dataAdapter(lev3Source);
-                comboBox$.jqxComboBox({ source: dataAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-            }
-
-        });
-
+        documentFile.EditMode();
         $('#CreateDocument_createbtn').on('click', function () {
             const param = {};
             param.Title = $('#CreateDocument_Title').val();                 //제목
-            param.DocType = docType$.val();  //문서종류
-            param.Name = $('#CreateDocument_Name').val();                   //품번
-            param.Eo_No = $('#CreateDocument_Eo_No').val();                 //eono
+            param.DocType = $('#CreateDocument_DocClassOID').val();  //문서분류
             param.Description = $('#CreateDocument_Description').val();     //설명
-            param.Doc_Lib_Lev1_OID = $('#CreateDocument_Doc_Lib_Lev1').val();
-            param.Doc_Lib_Lev2_OID = $('#CreateDocument_Doc_Lib_Lev2').val();
-            if (param.DocType == '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') {
+            param.Files = documentFile.Files();
 
-                if (param.Doc_Lib_Lev1_OID == null || param.Doc_Lib_Lev1_OID.length < 1) {
-                    alert('OEM을 선택해주세요.');
-                    return;
-                }
-                if (param.Doc_Lib_Lev2_OID == null || param.Doc_Lib_Lev2_OID.length < 1) {
-                    alert('차종을 입력해주세요.');
-                    return;
-                }
-
-                param.Doc_Lib_Lev3_OID = $('#CreateDocument_Doc_Lib_Lev3').val();
-
-                if (param.Doc_Lib_Lev3_OID == null || param.Doc_Lib_Lev3_OID.length < 1) {
-                    alert('분류를 선택해주세요.');
-                    return;
-                }
-
+            var removeFiles = documentFile.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
             }
             if (param.DocType == null || param.DocType.length < 1) {
-                alert('구분을 입력해주세요.');
-                return;
-            }
-            if (param.Doc_Lib_Lev1_OID == null || param.Doc_Lib_Lev1_OID.length < 1) {
-                alert('1Lv을 선택해주세요.');
-                return;
-            }
-
-            if (param.Name == null || param.Name.length < 1) {
-                alert('품번을 입력해주세요.');
+                alert('분류체계를 선택해주세요.');
                 return;
             }
             if (param.Title == null || param.Title.length < 1) {
                 alert('제목을 입력해주세요.');
                 return;
             }
-            RequestData('/Document/InsertDocument', param, function (response) {
+            SendDataWithFile('/Document/InsertDocument', param,null, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
@@ -229,37 +110,4 @@
             });
         });
     });
-
-    function changeDocLibComboBox(Lev, Type, OID) {
-        var comboBox$ = $('#CreateDocument_Doc_Lib_Lev' + Lev);
-        var param = {};
-        param.fromOID = OID;
-        var comboSource;
-        RequestData("/Manage/SelLibrary", param, function (res) {
-            if (res.length > 0) {
-                comboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var comboAdapter = new $.jqx.dataAdapter(comboSource);
-                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-            } else {
-                if (Type == '@Common.Constant.DocumentContant.TYPE_TECHNICAL_DOCUMENT') {
-                    comboSource = [{ KorNm: '등록 2Lv 없음', OID: null }];
-
-                } else if (Type == '@Common.Constant.DocumentContant.TYPE_PROJECT_DOCUMENT') {
-                    comboSource = [{ KorNm: '등록 차종 없음', OID: null }];
-                }
-                var comboAdapter = new $.jqx.dataAdapter(comboSource);
-                comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
-                comboBox$.jqxComboBox({ selectedIndex: 0 });
-            }
-        });
-    }
 </script>

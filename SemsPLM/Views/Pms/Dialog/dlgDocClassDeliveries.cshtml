@@ -21,5 +21,100 @@
 <div id="dlgDocClassSearchGrid"></div>
 
 <script>
-    //TODO: 문서 분류 검색
+    var param = {};
+
+    var TypeDocument = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+    var TypeTask = '@Common.Constant.PmsConstant.TYPE_TASK';
+    var dlgDocClassSearchSource =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'OID', type: 'number' },
+            { name: 'Name', type: 'string' },
+
+            { name: 'FromOID', type: 'number' },
+
+            { name: 'Classification', type: 'string' },
+            { name: 'Code', type: 'string' },
+            { name: 'ViewUrl', type: 'string' },
+            { name: 'IsUse', type: 'string' },
+            { name: 'CreateUsNm', type: 'string' },
+            { name: 'CreateUs', type: 'string' },
+            { name: 'CreateDt', type: 'date' },
+            { name: 'Description', type: 'string' },
+            { name: 'IsRequired', type: 'string' },
+        ],
+        hierarchy:
+        {
+            keyDataField: { name: 'OID' },
+            parentDataField: { name: 'FromOID' }
+        },
+        id: 'OID',
+        addRow: function (rowID, rowData, IsUse, parentID, commit) {
+            commit(true);
+        },
+    };
+
+    var dlgDocClassSearchGrid$ = $('#dlgDocClassSearchGrid');
+    dlgDocClassSearchGrid$.jqxTreeGrid({
+        width: "100%",
+        height: 590,
+        theme: "kdnc",
+        sortable: true,
+        columns: [
+            {
+                text: '분류', datafield: 'Name', width: "100%", align: 'center', cellsalign: 'left',
+                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                    if (rowData.IsRequired == "Y") {
+                        return cellValue + ' <i class="fas fa-lock"></i>';
+                    } else {
+                        return cellValue;
+                    }
+                }
+            }
+        ],
+        editable: false,
+        showToolbar: true,
+        toolbarHeight: 45,
+        renderToolbar: function (toolbar) {
+            toolbar.empty();
+            var container = $("<div class='lGridComponent'></div>");
+            if ('@ViewBag.Detail.Type' == '@Common.Constant.DocumentConstant.TYPE_DOCUMENT') {
+                var btnAdd = $("<button id='dlgDocClassSelectBtn'><i class='fas fa-plus'></i> 선택</button>").jqxButton();
+            } else {
+                var btnAdd = $("<button id='dlgDocClassInsertBtn'><i class='fas fa-plus'></i> 선택</button>").jqxButton();
+            }
+            container.append(btnAdd);
+            toolbar.append(container);
+
+
+        }
+            
+    });
+
+
+    GetDocClassList();
+
+    $('#dlgDocClassSearchBtn').on('click', function () {
+        param = {};
+        param.Name = $('#dlgDocClassName').val();
+        param.Type = '@ViewBag.Detail.Type';
+
+        RequestData("/Manage/SelProjectDocumentClassification", param, function (res) {
+            PrintJqxTreeGrid(dlgDocClassSearchSource, dlgDocClassSearchGrid$, res);
+            dlgDocClassSearchGrid$.jqxTreeGrid('expandAll');
+        });
+    });
+
+
+
+    function GetDocClassList() {
+        param.Name = $('#dlgDocClassName').val();
+        param.Type = '@ViewBag.Detail.Type';
+        RequestData("/Manage/SelProjectDocumentClassification", param, function (res) {
+            PrintJqxTreeGrid(dlgDocClassSearchSource, dlgDocClassSearchGrid$, res);
+            dlgDocClassSearchGrid$.jqxTreeGrid('expandAll');
+        });
+    }
+
 </script>

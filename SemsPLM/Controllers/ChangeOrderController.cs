@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using EBom.Models;
 using System.Linq;
 using ChangeRequest.Models;
+using Common.Models.File;
 
 namespace SemsPLM.Controllers
 {
@@ -16,7 +17,7 @@ namespace SemsPLM.Controllers
         // GET: ChangeOrder
         public ActionResult CreateChangeOrder()
         {
-            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
             List<Library> assessList = LibraryRepository.SelAssessLibrary(null);
             assessList.ForEach(item =>
@@ -33,7 +34,7 @@ namespace SemsPLM.Controllers
 
         public ActionResult SearchChangeOrder()
         {
-            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
             ViewBag.reasonList = reasonList;
             return View();
@@ -42,7 +43,7 @@ namespace SemsPLM.Controllers
         public ActionResult InfoChangeOrder(int OID)
         {
             ECO ECODetail = ECORepository.SelChangeOrderObject(new ECO { OID = OID });
-            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
             List<EO> SelassessList = EORepository.SelEOContentsOID(new EO { RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST });  //설계변경의 체크리스트 마스터OID검색
             List<Library> originList = new List<Library>();
@@ -69,8 +70,8 @@ namespace SemsPLM.Controllers
 
         public ActionResult dlgSearchEPart(string Type)
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
@@ -121,10 +122,22 @@ namespace SemsPLM.Controllers
                 dobj.TableNm = EoConstant.TABLE_CHANGE_ORDER;
                 dobj.Description = _param.Description;
                 resultOid = DObjectRepository.InsDObject(Session, dobj); //오브젝트 등록
-
+                _param.Type = dobj.Type;
                 _param.OID = resultOid;
                 DaoFactory.SetInsert("ChangeOrder.InsChangeOrder", _param); //설계변경 등록
 
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
                 for (var i = 0; i < _assessList.Count; i++)
                 {
                     for (var j = 0; j < _assessList[i].Count; j++)
@@ -355,6 +368,19 @@ namespace SemsPLM.Controllers
                 DObjectRepository.UdtDObject(Session, _param);
                 ECORepository.UdtChangeOrderObject(_param);
 
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+                
                 DaoFactory.Commit();
                
             }

@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 문서 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="dlgCreateDocument_createbtn" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="dlgCreateDocument_canclebtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <table class="createtable doc_create">
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서 분류</th>
+            <td>
+                <input type="hidden" id="dlgCreateDocument_DocClassOID" autocomplete="off" value="@ViewBag.Detail.DocType" />
+                <input type="text" id="dlgCreateDocument_DocClassName" autocomplete="off" readonly  value="@ViewBag.Detail.DocType_KorNm" />
+            </td>
+
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 제목</th>
+            <td>
+                <input type="text" id="dlgCreateDocument_Title" autocomplete="off" />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성자</th>
+            <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off"></td>
+
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서번호</th>
+            <td>
+                <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="자동 발번" />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성일</th>
+            <td><input type="text" id="" class="readonly" readonly="readonly" autocomplete="off" /></td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 리비전</th>
+            <td>
+                <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="00" />
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 내용</th>
+            <td colspan="3">
+                <textarea id="dlgCreateDocument_Description" autocomplete="off"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+            <td colspan="3">
+                <div id="dlgCreateDocument_Files" style="width:100%;">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    var documentFile = $('#dlgCreateDocument_Files').FileUpload({});
+    var docClassName = $('#dlgCreateDocument_DocClassName');
+    var docClassOID = $('#dlgCreateDocument_DocClassOID');
+    $(function () {
+        documentFile.EditMode();
+       
+    });
+</script>

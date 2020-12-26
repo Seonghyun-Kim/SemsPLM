@@ -324,12 +324,12 @@
         <isNotNull prepend="and" property="ModuleType">
           B.Type = #ModuleType#
         </isNotNull>
-        
+
         <isNotNull prepend="and" property="ModuleFl">
           A.ModuleFl = #ModuleFl#
         </isNotNull>
       </dynamic>
-      
+
       ORDER BY OID
     </select>
 

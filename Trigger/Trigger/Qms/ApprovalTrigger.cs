@@ -29,7 +29,7 @@ namespace Qms.Trigger
 
                 var NextModules = quickResponseModules.SkipWhile(v => v.OID != quickResponse.OID).Skip(1);
 
-                if(NextModules.Count() == 0)
+                if (NextModules.Count() == 0)
                 {
                     DRelationship dRelModule = new DRelationship();
                     dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
@@ -73,6 +73,5 @@ namespace Qms.Trigger
             }
             return "";
         }
-
     }
 }

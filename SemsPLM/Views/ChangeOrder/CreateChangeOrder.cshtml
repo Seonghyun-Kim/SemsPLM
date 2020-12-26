@@ -1,236 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
-@*<div style="padding:20px;">
-        <table width="100%">
-            <tbody>
-                <tr>
-                    <td>
-                        <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
-                    </td>
-                    <td style="text-align: right;">
-                        <button id="CreateChangeOrder_createbtn" class="custom-button"><i class="fas fa-plus-square"></i> 저장</button>
-                        <button id="CreateChangeOrder_canclebtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="createChangeOrder_table">
-        <input type="hidden" id="CreateChangeOrder_checkFlag" value ="F" style="width:82%;" />
-        <h3><i class="fas fa-caret-square-down"></i> 기본정보</h3>
-        <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-            <tr>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> EO No.</th>
-                <td>
-                    <input type="text" id="CreateChangeOrder_Name" style="width:82%;" />
-                    <button class="custom-button" id="CreateChangeOrder_checkbtn"><i class="fas fa-check"></i> 중복 확인</button>
-                </td>
-                <th><i class="fa fa-caret-right"></i> EO 일자</th>
-                <td>
-                    <input type="text" class="" id="CreateChangeOrder_EoDt" value="" maxlength="10" />
-                </td>
-            </tr>
-            <tr>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 품번</th>
-                <td>
-                    <input type="text" id="CreateChangeOrder_EPart_No" style="width:75%;" />
-                    &nbsp;외&nbsp;
-                    <input type="text" id="CreateChangeOrder_Count" style="width:15%;" />&nbsp; 종
-                </td>
-                <th><i class="fa fa-caret-right"></i> 품명</th>
-                <td><input type="text" id="CreateChangeOrder_Title" /></td>
-            </tr>
-            <tr>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> OEM</th>
-                <td>
-                    <div id="CreateChangeOrder_Oem_Lib"></div>
-                </td>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 차종</th>
-                <td>
-                    <div id="CreateChangeOrder_Car_Lib"></div>
-                </td>
-            </tr>
-            <tr>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 프로젝트</th>
-                <td>
-                    <div id="CreateChangeOrder_Pms_Lib"></div>
-                </td>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 유형</th>
-                <td>
-                    <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_CUSTOMER" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_CUSTOMER_KorNm </label>
-                    <label><input type="radio" name="selEoType" value="@Common.Constant.EoConstant.TYPE_HOUSE" style="width:20px; height:15px;" />@Common.Constant.EoConstant.TYPE_HOUSE_KorNm </label>
-                </td>
-            </tr>
-            <tr>
-                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 처리유형</th>
-                <td>
-                    <label><input type="radio" name="selEoProType" value="N" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_N</label>
-                    <label><input type="radio" name="selEoProType" value="R" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_R</label>
-                    <label><input type="radio" name="selEoProType" value="M" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PRO_M</label>
-
-                </td>
-                <th><i class="fa fa-caret-right"></i> 도면접수일</th>
-                <td>
-                    <input type="text" class="inputdate" id="CreateChangeOrder_DrwDt" value="" maxlength="10" />
-                </td>
-
-            </tr>
-            <tr class="Rental">
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 서비스 지침</th>
-                <td>
-                    <label><input type="radio" name="selServiceInfo" value="Y" style="width:20px; height:15px;" /> YES</label>
-                    <label><input type="radio" name="selServiceInfo" checked="checked" value="N" style="width:20px; height:15px;" /> NO</label>
-                </td>
-                <th class="reqVal Rental"><i class="fa fa-caret-right"></i> EO ID</th>
-                <td class="">
-                    <label><input type="radio" name="selEoId" value="N" style="width:20px; height:15px;" /> N(@Common.Constant.EoConstant.ID_N)</label>
-                    <label><input type="radio" name="selEoId" value="D" style="width:20px; height:15px;" /> D(@Common.Constant.EoConstant.ID_D)</label>
-                    <label><input type="radio" name="selEoId" value="R" style="width:20px; height:15px;" /> R(@Common.Constant.EoConstant.ID_R)</label>
-                </td>
-
-            </tr>
-            <tr class="Rental">
-                <th><i class="fa fa-caret-right"></i> 설계원가</th>
-                <td><input type="text" id="CreateChangeOrder_desingCost" class="readonly" readonly="readonly" /></td>
-                <th><i class="fa fa-caret-right"></i> 중량변경</th>
-                <td><input type="text" id="CreateChangeOrder_WtChange" class="readonly" readonly="readonly" /></td>
-            </tr>
-            <tr class="Rental">
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 금형 변경</th>
-                <td colspan="3">
-                    <label><input type="radio" name="selMoldChange" value="Y" style="width:20px; height:15px;" /> YES</label>
-                    <label><input type="radio" name="selMoldChange"checked="checked" value="N" style="width:20px; height:15px;" /> NO</label>
-                </td>
-            </tr>
-            <tr class="Rental">
-                <th><i class="fa fa-caret-right"></i> 금형 벌수</th>
-                <td><input type="text" id="CreateChangeOrder_DieQt" class="readonly" readonly="readonly" /></td>
-                <th><i class="fa fa-caret-right"></i> 금형비</th>
-                <td><input type="text" id="CreateChangeOrder_DieCost" class="readonly" readonly="readonly" /></td>
-            </tr>
-            <tr class="Rental">
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 변경사유부분<br />(E/C CLASS)</th>
-                <td colspan="3">
-                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_EMERGENCY" style="width:20px; height:15px;" /> EMERGENCY(@Common.Constant.EoConstant.CLASS_EMERGENCY_KorNm)</label>
-                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MPR" style="width:20px; height:15px;" /> M.P.R(@Common.Constant.EoConstant.CLASS_MPR_KorNm)</label>
-                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MAJOR" style="width:20px; height:15px;" /> MAJOR(@Common.Constant.EoConstant.CLASS_MAJOR_KorNm)</label>
-                    <label><input type="radio" name="selEoClass" value="@Common.Constant.EoConstant.CLASS_MINOR" style="width:20px; height:15px;" /> MINOR(@Common.Constant.EoConstant.CLASS_MINOR_KorNm)</label>
-                </td>
-            </tr>
-            <tr class="Rental">
-                <th class="reqVal"><i class="fa fa-caret-right"></i> 재고처리</th>
-                <td colspan="3">
-                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_NONE" style="width:20px; height:15px;" /> NONE(@Common.Constant.EoConstant.INV_NONE_KorNm)</label>
-                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_USE" style="width:20px; height:15px;" /> USE(@Common.Constant.EoConstant.INV_USE_KorNm)</label>
-                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_SCRAP" style="width:20px; height:15px;" /> SCRAP(@Common.Constant.EoConstant.INV_SCRAP_KorNm)</label>
-                    <label><input type="radio" name="selEoInvClr" value="@Common.Constant.EoConstant.INV_REWORK" style="width:20px; height:15px;" /> REWORK(@Common.Constant.EoConstant.INV_REWORK_KorNm)</label>
-                </td>
-            </tr>
-            <tr class="Rental">
-                <th class="reqVal"><i class="fa fa-caret-right"></i> EO 귀책</th>
-                <td>
-                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_CUST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_CUST_KorNm</label>
-                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_COMP" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_COMP_KorNm</label>
-                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_SELF" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_SELF_KorNm</label>
-                    <label><input type="radio" name="selEoFault" value="@Common.Constant.EoConstant.FAULT_EMPTY" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.FAULT_EMPTY_KorNm</label>
-                </td>
-                <th><i class="fa fa-caret-right"></i> 팀명</th>
-                <td><input type="text" id="CreateChangeOrder_TeamNm" class="readonly" readonly="readonly" /></td>
-            </tr>
-            <tr>
-                <th><i class="fa fa-caret-right"></i> 작성자</th>
-                <td><input type="text" id="CreateChangeOrder_CreateUs" value="" class="readonly" readonly="readonly" /></td>
-                <th><i class="fa fa-caret-right"></i> 작성일</th>
-                <td><input type="text" id="CreateChangeOrder_CreateDt" class="readonly" readonly="readonly" /></td>
-            </tr>
-            <tr>
-                <th><i class="fa fa-caret-right"></i> 승인일</th>
-                <td><input type="text" class="readonly" readonly="readonly" /></td>
-                <th><i class="fa fa-caret-right"></i> 상태</th>
-                <td><input type="text" id="CreateChangeOrder_State" value="작성중" class="readonly" readonly="readonly" /></td>
-            </tr>
-            <tr>
-                <th><i class="fa fa-caret-right"></i> C/N</th>
-                <td colspan="3"><input type="text" id="CreateChangeOrder_Revision" class="readonly" readonly="readonly" value="@Common.Constant.EoConstant.INIT_REIVISION" /></td>
-            </tr>
-        </table>
-    </div>
-
-        <input type="hidden" id="hidEcrIdx" />
-        <div class="Rental createChangeOrder_table">
-            <h3><i class="fas fa-caret-square-down"></i> 연관 ECR</h3>
-            <table width="100%" id="EcrRelation" class="createtable">
-                    <tr>
-                        <th><i class="fa fa-caret-right"></i> ECRNO</th>
-                        <td>
-                            <button id="ECRNO_Select" class="custom-button"><i class="fas fa-search"></i> 검색</button>
-                        </td>
-                        <td colspan="2">
-                            <button id="ECRNO_Reset" class="custom-button"><i class="fas fa-undo"></i> 초기화</button>
-                        </td>
-                    </tr>
-            </table>
-        </div>
-
-
-        <div class="createChangeOrder_table Rental">
-            <h3><i class="fas fa-caret-square-down"></i> OEM 정보</h3>
-            <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-                <tr>
-                    <th><i class="fa fa-caret-right"></i> OEM EO 번호</th>
-                    <td><input type="text" id="CreateChangeOrder_Oem_Eo" /><input type="hidden" id="txtselEo" /></td>
-                    <th><i class="fa fa-caret-right"></i> OEM EO 발생일</th>
-                    <td><input type="text" class="" id="CreateChangeOrder_OemDt" value="" maxlength="10" /></td>
-                </tr>
-                <tr>
-                    <th><i class="fa fa-caret-right"></i> OEM 담당자</th>
-                    <td><input type="text" id="CreateChangeOrder_OemUs" /></td>
-                    <th><i class="fa fa-caret-right"></i> 접수일자</th>
-                    <td><input type="text" class="" id="CreateChangeOrder_Oem_RecDt" value="" maxlength="10" /></td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="createChangeOrder_table">
-            <h3><i class="fas fa-caret-square-down"></i> 변경내역 정보</h3>
-            <table width="100%" cellpadding="0" cellspacing="0" class="createtable">
-                <tr class="Rental">
-                    <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 기술사양 변경사유</th>
-                    <td style="width:88%;">
-                        <label><input type="checkbox" name="selEoReason" value="SR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.SR</label>
-                        <label><input type="checkbox" name="selEoReason" value="PI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.PI</label>
-                        <label><input type="checkbox" name="selEoReason" value="IC" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IC</label>
-                        <label><input type="checkbox" name="selEoReason" value="CS" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CS</label>
-                        <label><input type="checkbox" name="selEoReason" value="CR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.CR</label>
-                        <label><input type="checkbox" name="selEoReason" value="QI" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.QI</label>
-                        <label><input type="checkbox" name="selEoReason" value="ST" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.ST</label>
-                        <label><input type="checkbox" name="selEoReason" value="IR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.IR</label>
-                        <label><input type="checkbox" name="selEoReason" value="WD" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.WD</label>
-                        <label><input type="checkbox" name="selEoReason" value="LO" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.LO</label>
-                        <label><input type="checkbox" name="selEoReason" value="RA" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.RA</label>
-                        <label><input type="checkbox" name="selEoReason" value="GR" style="width:20px; height:15px;" /> @Common.Constant.EoConstant.GR</label>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="reqVal" style="vertical-align:top;"><i class="fa fa-caret-right"></i> 변경사유</th>
-                    <td style="width:88%;">
-                        <textarea id="CreateChangeOrder_Description" style="border:1px solid #59a3d5;height:120px;"></textarea>
-                    </td>
-                </tr>
-                <tr class="Rental">
-                    <th><i class="fa fa-caret-right"></i> 적용요구시점</th>
-                    <td style="width:88%;"><input type="text" id="CreateChangeOrder_Effective" /></td>
-                </tr>
-                <tr class="Rental">
-                    <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 기술사양변경내역서</th>
-                    <td style="width:88%;">
-                        <textarea id="CreateChangeOrder_Statement" style="border:1px solid #59a3d5;height:120px;"></textarea>
-                    </td>
-                </tr>
-            </table>
-        </div>*@
     <div class="info_project clearfix">
         <div class="info_menubar clearfix" style="width:250px;">
             <ul id="ECOMenu">
@@ -247,7 +17,7 @@
                 <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
                 <button id="ECOSaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
             </div>
-            <div id="ECOprofile" class="ecoContents">
+            <div id="ECOprofile" class="ecoContents" style="height:770px;overflow-x:hidden;overflow-y:scroll;">
                 <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
                 <table class="infoTable">
                     <colgroup>
@@ -347,36 +117,14 @@
                                 <textarea id="CreateChangeOrder_Description"></textarea>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-
-                @*<h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECR 정보</h3>
-                <table class="infoTable">
-                    <colgroup>
-                        <col width="10%" />
-                        <col width="40%" />
-                        <col width="10%" />
-                        <col width="40%" />
-                    </colgroup>
-                    <tbody>
                         <tr>
-                            <th>ECR_NO</th>
-                            <td></td>
-                            <th>상태</th>
-                            <td></td>
+                            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+                            <td colspan="3">
+                                <div id="CreateChangeOrder_Files" style="width:100%;">
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
-                </table>*@
-
-                <table class="infoTable">
-                    <colgroup>
-                        <col width="10%" />
-                        <col width="90%" />
-                    </colgroup>
-                    <tr>
-                        <th>첨부파일</th>
-                        <td></td>
-                    </tr>
                 </table>
             </div>
 
@@ -416,6 +164,8 @@
         var checkList = [];
         var ECOListData = [];
         var ECRRelationData = [];
+        var fileUpload = $("#CreateChangeOrder_Files").FileUpload({});
+        fileUpload.EditMode();
     $('.ECOComboBox').jqxComboBox({width:'50%', height:32});
     $('.ECOCheckBox').jqxCheckBox({width:120, height:32});
     $('.ECODatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
@@ -947,7 +697,7 @@
                 param.EBom = $('#CreateChangeOrder_EBom').val();
                 param.DevMP = devType$.val();
                 param.CarType = $('#CreateChangeOrder_CarType').val();
-                param.Description = $('#CreateChangeOrder_Description').val();
+                param.Description = $('#CreateChangeOrder_Description').val();               
                 var chkReason = [];
                 for (var i = 0; i < $('input[name="Changes"]').length; i++) {
                     if ($('input[name="Changes"]')[i].value == "true") {
@@ -955,8 +705,12 @@
                     }
                 }
                 param.Changes = chkReason.join(',');;
-
-
+                var removeFiles = fileUpload.RemoveFiles();
+                if (!WebUtils.isEmpty(removeFiles)) {
+                    param.delFiles = [];
+                    param.delFiles = removeFiles;
+                }
+                param.Files = fileUpload.Files();
                 if (param.Title == "" || param.Title == null) {
                     alert('제목을 입력하여 주세요.');
                     return;
@@ -1004,7 +758,7 @@
 
                 ECOListData = ECOListData.concat(statementList);;
 
-                RequestData('/ChangeOrder/InsertChangeOrder', { _param: param, _assessList: checkList, _eo: EoData }, function (response) {
+                SendDataWithFile('/ChangeOrder/InsertChangeOrder', { _param: param, _assessList: checkList, _eo: EoData }, null, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;

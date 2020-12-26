@@ -2,22 +2,23 @@
     Layout = null;
 }
 <input type="hidden" id="dlgDiv" value="" />
-<div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+<div style="width:100%;text-align:right;padding:0 10px 5px 0;position:relative; border-bottom:1px solid #c5c5c5;">
+    <div id="issueStatusPointer" class="issueStatusPointer"></div>
     <div class="ModifiableCustomBox Prepare">
-        <button id="dlgEditIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 수정</button>
-        <button id="dlgProcessIssue" onclick="" class="custom-button processBtn"><i class="fas fa-window-close"></i> 처리진행</button>
+        <button id="dlgEditIssue" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+        <button id="dlgProcessIssue" onclick="" class="custom-button processBtn"><i class="fas fa-caret-square-right"></i> 처리진행</button>
     </div>
     <div class="ModifiableEditCustomBox">
-        <button id="dlgSaveIssue" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
-        <button id="dlgCancelIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 취소</button>
+        <button id="dlgSaveIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        <button id="dlgCancelIssue" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
     </div>
     <div class="Process">
-        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
-        <button id="dlgFinishIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 처리완료</button>
+        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        <button id="dlgFinishIssue" onclick="" class="custom-button processBtn"><i class="fas fa-check-square"></i> 처리완료</button>
     </div>
     <div class="Finish">
-        <button id="dlgEditFinish" onclick="" class="custom-button"><i class="fas fa-window-close"></i>수정</button>
-        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-window-close"></i>저장</button>
+        <button id="dlgEditFinish" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
     </div>
 </div>
 
@@ -56,7 +57,8 @@
             </td>
             <th><i class="fa fa-caret-right"></i> 상태</th>
             <td>
-                <input type="text" value="@ViewBag.Detail.BPolicy.StatusNm" id="dlgStatus" readonly />
+                <input type="hidden" id="dlgStatus" value="@ViewBag.Detail.BPolicy.Name" />
+                <input type="text" value="@ViewBag.Detail.BPolicy.StatusNm" id="" readonly />
             </td>
         </tr>
         <tr>
@@ -132,6 +134,9 @@
             $('.TaskVal').attr('hidden', true);
         } else if('@ViewBag.Detail.Type' == '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK'){
             $('#dlgTaskNm').val('@ViewBag.Detail.TaskNm');
+            if ('@ViewBag.Detail.Manager_OID' == null || '@ViewBag.Detail.Manager_OID' == "") {
+                $('#dlgProcessIssue').attr('hidden', true);
+            }
         }
         if ('@ViewBag.Detail.Importance' != null) {
             switch (@ViewBag.Detail.Importance) {
@@ -211,7 +216,6 @@
             param.ApprovalType = '@Common.Constant.CommonConstant.ACTION_PROMOTE';
             var orginData =@Html.Raw(Json.Encode(ViewBag.Detail));
 
-
             if (confirm('처리 진행하시겠습니까?')) {
                 RequestData('/Pms/ProcessIssue', param, function (response) {
                     if (response.isError) {
@@ -226,6 +230,27 @@
                 });
             }
         });
+
+        function showIssueStatus() {
+            const box = $('#issueStatusPointer');
+            var status = @Html.Raw(Json.Encode(ViewBag.BPolicy));
+            var current = '@ViewBag.Detail.BPolicy.StatusNm';
+            for (i = 0; i < status.length; i++) {
+                if (status[i].StatusNm == current) {
+                    var div = '<div class="crtStatus" style="z-index:' + (status.length-i) + ';">';
+                    div += status[i].StatusNm + '</div>';
+                } else {
+                    var div = '<div style="z-index:'+ (status.length-i) +';">';
+                    div += status[i].StatusNm + '</div>';
+                }
+                box.append(div);
+            }
+            var margin = -(status.length * 100) / 2;
+            box.css("margin-left",margin);
+        }
+
+        showIssueStatus();
+
     });
 
 </script>

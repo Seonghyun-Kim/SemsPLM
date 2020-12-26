@@ -1,4 +1,6 @@
 ﻿function OpenAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Mod, _Data) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -132,6 +134,7 @@
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });
@@ -143,7 +146,9 @@
     });
 }
 
-function OpenNewAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+function OpenNewAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Parent) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -167,85 +172,33 @@ function OpenNewAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Ti
     $(popLayer).jqxWindow({
         width: 750, maxWidth: 750, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
-            var param = {};
             var DocClassRowKey = null;
-            var dlgDocClassSearchSource =
-            {
-                dataType: "json",
-                dataFields: [
-                    { name: 'OID', type: 'number' },
-                    { name: 'Name', type: 'string' },
+            var DocClassRowData = null;
+            $(document).on('click', '#dlgDocClassInsertBtn', function () {
+                var Insparam = {};
+                Insparam.RootOID = _Param.RootOID;
+                Insparam.FromOID = _Param.FromOID;
+                Insparam.ToOID = DocClassRowKey;
 
-                    { name: 'FromOID', type: 'number' },
+                if (Insparam.ToOID == null || Insparam.ToOID == "") {
+                    alert("문서가 선택이 되지 않았습니다");
+                    return;
+                }
 
-                    { name: 'Classification', type: 'string' },
-                    { name: 'Code', type: 'string' },
-                    { name: 'ViewUrl', type: 'string' },
-                    { name: 'IsUse', type: 'string' },
-                    { name: 'CreateUsNm', type: 'string' },
-                    { name: 'CreateUs', type: 'string' },
-                    { name: 'CreateDt', type: 'date' },
-                    { name: 'Description', type: 'string' },
-                    { name: 'IsRequired', type: 'string' },
-                ],
-                hierarchy:
-                {
-                    keyDataField: { name: 'OID' },
-                    parentDataField: { name: 'FromOID' }
-                },
-                id: 'OID',
-                addRow: function (rowID, rowData, IsUse, parentID, commit) {
-                    commit(true);
-                },
-            };
-
-            const dlgDocClassSearchGrid$ = $('#dlgDocClassSearchGrid');
-            dlgDocClassSearchGrid$.jqxTreeGrid(
-                {
-                    width: "100%",
-                    height: 590,
-                    theme: "kdnc",
-                    sortable: true,
-                    columns: [
-                        {
-                            text: '분류', datafield: 'Name', width: "100%", align: 'center', cellsalign: 'left',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (rowData.IsRequired == "Y") {
-                                    return cellValue + ' <i class="fas fa-lock"></i>';
-                                } else {
-                                    return cellValue;
-                                }
-                            }
-                        }
-                    ],
-                    editable: false,
-                    showToolbar: true,
-                    toolbarHeight: 45,
-                    renderToolbar: function (toolbar) {
-                        toolbar.empty();
-                        var container = $("<div class='lGridComponent'></div>");
-                        var btnAdd = $("<button><i class='fas fa-plus'></i> 선택</button>").jqxButton();
-                        container.append(btnAdd);
-                        toolbar.append(container);
-
-                        btnAdd.on('click', function () {
-                            var Insparam = {};
-                            Insparam.RootOID = _Param.RootOID;
-                            Insparam.FromOID = _Param.FromOID;
-                            Insparam.ToOID = DocClassRowKey;
-
-                            if (Insparam.ToOID == null || Insparam.ToOID == "") {
-                                alert("문서가 선택이 되지 않았습니다");
-                                return;
-                            }
-
-                            RequestData("/Pms/InsProjectDocumentClassification", Insparam, function (res) {
-                                _CallBackFunction();
-                                $(popLayer).jqxWindow('modalDestory');
-                            });
-                        });
-                    }
+                RequestData("/Pms/InsProjectDocumentClassification", Insparam, function (res) {
+                    _CallBackFunction();
+                    $(popLayer).jqxWindow('modalDestory');
                 });
+            });
+            $(document).on('click', '#dlgDocClassSelectBtn', function () {
+                if (DocClassRowKey == null || DocClassRowKey == "") {
+                    alert("문서가 선택이 되지 않았습니다");
+                    return;
+                }
+                parent.docClassOID.val(DocClassRowKey);
+                parent.docClassName.val(DocClassRowData[0].Name);
+                $(popLayer).jqxWindow('modalDestory');
+            });
 
             dlgDocClassSearchGrid$.on('rowSelect', function (event) {
                 if (DocClassRowKey == event.args.key) {
@@ -254,35 +207,43 @@ function OpenNewAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Ti
                     return;
                 }
                 else {
-                    if (event.args.boundIndex == 0 && event.args.key == 1034) {
+
+                    if (event.args.boundIndex == 0 && event.args.row.FromOID ==null) {
                         dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
+                        DocClassRowKey = null;
+                        return;
                     }
                     DocClassRowKey = event.args.key;
+                    if (_Param.Type != TypeDocument) {
+                        var ParentData = _Parent.jqxTreeGrid('getRows');
+                        for (var i = 0; i < ParentData.length; i++) {
+                            if (ParentData[i].RootOID == ParentData[i].FromOID) {
+                                if (DocClassRowKey == ParentData[i].ToOID) {
+                                    dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
+                                    DocClassRowKey = null;
+                                    return;
+                                }
+                            } else {
+                                if (_Param.Type == TypeTask) {
+                                    if (DocClassRowKey == ParentData[i].ToOID) {
+                                        dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
+                                        DocClassRowKey = null;
+                                        return;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                    DocClassRowKey = event.args.key;
+                    DocClassRowData = dlgDocClassSearchGrid$.jqxTreeGrid('getSelection');
                 }
-            });
-
-            $('#dlgDocClassSearchBtn').on('click', function () {
-                param = {};
-                param.Name = $('#dlgDocClassName').val();
-                param.OID = 1034;
-                param.FromOID = 1034;
-
-                RequestData("/Manage/SelProjectDocumentClassification", param, function (res) {
-                    PrintJqxTreeGrid(dlgDocClassSearchSource, dlgDocClassSearchGrid$, res);
-                    dlgDocClassSearchGrid$.jqxTreeGrid('expandAll');
-                });
-            });
-
-            param.OID = 1034;
-            param.FromOID = 1034;
-            RequestData("/Manage/SelProjectDocumentClassification", param, function (res) {
-                PrintJqxTreeGrid(dlgDocClassSearchSource, dlgDocClassSearchGrid$, res);
-                dlgDocClassSearchGrid$.jqxTreeGrid('expandAll');
             });
         }
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });

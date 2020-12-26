@@ -3,6 +3,7 @@ var gDeaultWorkDay = 1;
 var gClickDuplication = false;
 var gPmsModifyHistoryMaster = {};
 var gPmsModifyHistoryHoliday = {};
+var gPmsModifyDeliveryMaster = {};
 
 $(document).on('focus', '.datePicker', function () {
     const projId = $(this).attr('data-proj-id');

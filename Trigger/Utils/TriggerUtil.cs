@@ -44,10 +44,26 @@ namespace Trigger
                 {
                     DaoFactory.BeginTransaction();
                 }
+
                 string checkProgram = StatusCheckPromote(Context, RelType, CurrentStatus, OID, RootOID, Action, Comment);
                 if (checkProgram != null && checkProgram.Length > 0)
                 {
                     throw new Exception(checkProgram);
+                }
+
+                string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) }).First().NextActionOID;
+                string strActionOID = "";
+                if (strNextAction != null)
+                {
+                    strNextAction.Split(',').ToList().ForEach(action =>
+                    {
+                        if (action.IndexOf(Action) > -1)
+                        {
+                            strActionOID = action.Substring(action.IndexOf(":") + 1);
+                            return;
+                        }
+                    });
+                    DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
                 }
 
                 List<Dictionary<string, string>> actionProgram = BPolicyRepository.SelActionProgram(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) });
@@ -63,20 +79,73 @@ namespace Trigger
                     });
                 }
 
-                string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) }).First().NextActionOID;
-                string strActionOID = "";
-                if (strNextAction != null)
+                if (Transaction)
                 {
-                    strNextAction.Split(',').ToList().ForEach(action =>
+                    DaoFactory.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Transaction)
+                {
+                    DaoFactory.Rollback();
+                }
+                result = ex.Message;
+            }
+            return result;
+        }
+
+        public static string StatusObjectPromote(HttpSessionStateBase Context, bool Transaction, string RelType, string CurrentStatus, string GoStatusOID, int OID, int RootOID, string Action, string Comment)
+        {
+            string result = "";
+            try
+            {
+                if (Transaction)
+                {
+                    DaoFactory.BeginTransaction();
+                }
+
+                string checkProgram = StatusCheckPromote(Context, RelType, CurrentStatus, OID, RootOID, Action, Comment);
+                if (checkProgram != null && checkProgram.Length > 0)
+                {
+                    throw new Exception(checkProgram);
+                }
+
+                if (GoStatusOID != null)
+                {
+                    DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(GoStatusOID) });
+                }
+                else
+                {
+                    string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) }).First().NextActionOID;
+                    string strActionOID = "";
+                    if (strNextAction != null && strNextAction.Length > 0)
                     {
-                        if (action.IndexOf(Action) > -1)
+                        strNextAction.Split(',').ToList().ForEach(action =>
                         {
-                            strActionOID = action.Substring(action.IndexOf(":") + 1);
-                            return;
+                            if (action.IndexOf(CommonConstant.ACTION_PROMOTE) > -1)
+                            {
+                                strActionOID = action.Substring(action.IndexOf(":") + 1);
+                                return;
+                            }
+                        });
+                        DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+                    }
+                }
+
+                List<Dictionary<string, string>> actionProgram = BPolicyRepository.SelActionProgram(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) });
+                if (actionProgram != null && actionProgram.Count > 0)
+                {
+                    actionProgram.ForEach(item =>
+                    {
+                        string returnMessage = TriggerUtil.Invoke(item[CommonConstant.POLICY_TRIGGER_CLASS], item[CommonConstant.POLICY_TRIGGER_FUNCTION], new object[] { Context, RelType, CurrentStatus, Convert.ToString(OID), Convert.ToString(RootOID), Action, Comment, GoStatusOID });
+                        if (returnMessage != null && returnMessage.Length > 0)
+                        {
+                            throw new Exception(returnMessage);
                         }
                     });
                 }
-                DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+
                 if (Transaction)
                 {
                     DaoFactory.Commit();

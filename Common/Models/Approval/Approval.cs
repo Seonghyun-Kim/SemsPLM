@@ -22,6 +22,9 @@ namespace Common.Models
         public List<ApprovalStep> InboxStep { get; set; }
 
         public List<ApprovalComment> InboxCommnet { get; set; }
+
+        //Option
+        public bool? AutoStatus { get; set; }
     }
 
     public static class ApprovalRepository

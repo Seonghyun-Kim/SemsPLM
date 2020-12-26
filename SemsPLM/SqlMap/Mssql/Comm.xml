@@ -39,7 +39,7 @@
     </select>
 
     <select id="SelMaxTDMXOID" parameterClass="DObject" resultClass="string">
-      SELECT CONCAT(#Type#, '_', ISNULL(MAX(REPLACE(TdmxOID, CONCAT(#Type#, '_') ,'')),0) + 1 ) AS TdmxOID FROM T_DOBJECT WHERE Type = #Type#
+      SELECT CONCAT(#Type#, '_', ISNULL(MAX(CONVERT(INT, (REPLACE(TdmxOID, CONCAT(#Type#, '_') ,'')))),0)+1) AS TdmxOID FROM T_DOBJECT WHERE Type = #Type#
     </select>
 
     <select id="SelNameSeq" parameterClass="DObject" resultClass="int">

@@ -2,16 +2,18 @@
 using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ChangeOrder.Models
 {
-    public class ECO : DObject, IDObject
+    public class ECO : DObject, IDObject, IObjectFile
     {
         public string ItemGroup { get; set; }
         public string Title { get; set; }
@@ -222,8 +224,9 @@ namespace ChangeOrder.Models
             }
         }
 
+        public List<HttpPostedFileBase> Files { get; set; }
 
-
+        public List<HttpFile> delFiles { get; set; }
 
 
     }

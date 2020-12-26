@@ -1,4 +1,6 @@
 ﻿function OpenSearchEBomTreeDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Name, _Id, key, _Action, _SelectRow) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -234,6 +236,7 @@
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });
@@ -281,6 +284,8 @@ function EPartNewTabClick(url, Oid, Name) {
 }
 
 function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Action) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -444,6 +449,7 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });
@@ -456,6 +462,8 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
 }
 
 function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -546,6 +554,7 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });
@@ -561,6 +570,8 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
 
 function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Name, _Id, key, _Action, _SelectRow) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -751,6 +762,7 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });

@@ -44,11 +44,15 @@ namespace Common.Models
         }
 
 
-        public static List<BPolicyAuth> MainAuth(HttpSessionStateBase Context, DObject dobj)
+        public static List<BPolicyAuth> MainAuth(HttpSessionStateBase Context, DObject dobj, List<BPolicyAuth> roles)
         {
             List<BPolicyAuth> mainAuth = new List<BPolicyAuth>();
             mainAuth.AddRange(OwnerAuth(Context, dobj));
             mainAuth.AddRange(PublicAuth(Context, dobj));
+            if (roles != null && roles.Count > 0)
+            {
+                mainAuth.AddRange(roles);
+            }
             return mainAuth;
         }
 
@@ -56,7 +60,7 @@ namespace Common.Models
         {   
             return dobj.CreateUs == Convert.ToInt32(Context["UserOID"]) ? BPolicyAuthRepository.SelBPolicyAuths(new BPolicyAuth { Type = dobj.Type, PolicyOID = dobj.BPolicyOID, AuthTargetDiv = CommonConstant.AUTH_DIV_OWNER, AuthDiv = CommonConstant.AUTH_SYSTEM }) : new List<BPolicyAuth>();
         }
-
+       
         public static List<BPolicyAuth> PublicAuth(HttpSessionStateBase Context, DObject dobj)
         {
             return BPolicyAuthRepository.SelBPolicyAuths(new BPolicyAuth { Type = dobj.Type, PolicyOID = dobj.BPolicyOID, AuthTargetDiv = CommonConstant.AUTH_DIV_PUBLIC, AuthDiv = CommonConstant.AUTH_SYSTEM });

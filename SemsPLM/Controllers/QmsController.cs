@@ -302,7 +302,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleBlockadeChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleBlockadeChargeUserNm = m.ChargeUserNm;
 
-                        if(m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == "Started")
                         {
                             QuickResponseStatus = QmsConstant.TYPE_BLOCKADE_NAME;
                         }
@@ -547,7 +547,7 @@ namespace SemsPLM.Controllers
 
                 // 사용자 교육
                 int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU);
-                WorkerEduRepository.InsWorkerEdu(new WorkerEdu() {ModuleOID = WorkerEduOID });
+                WorkerEduRepository.InsWorkerEdu(new WorkerEdu() { ModuleOID = WorkerEduOID });
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -639,18 +639,18 @@ namespace SemsPLM.Controllers
                 DaoFactory.BeginTransaction();
 
                 QuickResponseModule blockade = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = _params[0].QuickOID, ModuleType = QmsConstant.TYPE_BLOCKADE });
-              
-                if(!(blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_PREPARE || blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED))
+
+                if (!(blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_PREPARE || blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED))
                 {
                     throw new Exception("봉쇄조치가 진행중인관계로 일정을 수정 할 수 없습니다.");
                 }
 
                 _params.ForEach(v =>
-                {                  
+                {
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
                     DObject dObject = DObjectRepository.SelDObject(Session, v);
-                    
+
 
                     if (dObject.Type == QmsConstant.TYPE_LPA_UNFIT)
                     {
@@ -1178,7 +1178,7 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
-                if(param.ModuleOID == null) { throw new Exception("잘못된 호출입니다."); }
+                if (param.ModuleOID == null) { throw new Exception("잘못된 호출입니다."); }
 
                 DObjectRepository.UdtDObject(Session, new DObject() { OID = param.ModuleOID, BPolicyOID = 79 });
 
@@ -1194,7 +1194,7 @@ namespace SemsPLM.Controllers
 
                 return Json(param.ModuleOID);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
@@ -1436,7 +1436,7 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
-        
+
         /// <summary>
         /// 2020.12.13
         /// 유효성 검증 등록, 수정
@@ -1654,7 +1654,7 @@ namespace SemsPLM.Controllers
                     EduUserOID = param.EduUserOID
                 };
 
-                if(WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = workerEdu.ModuleOID }) == null)
+                if (WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = workerEdu.ModuleOID }) == null)
                 {
                     returnValue = WorkerEduRepository.InsWorkerEdu(workerEdu);
                 }

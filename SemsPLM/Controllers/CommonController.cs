@@ -52,15 +52,9 @@ namespace SemsPLM.Controllers
 
         public JsonResult SelMyApproval(ApprovalTask _param)
         {
-            List<Person> persons = PersonRepository.SelPersons(Session, new Person { });
-            List<BPolicy> policies = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL_TASK });
             List<ApprovalTask> myApproval = new List<ApprovalTask>();
-            DaoFactory.GetList<ApprovalTask>("Comm.SelMyApprovalTask", _param).ForEach(approv =>
+            ApprovalTaskRepository.SelInboxMyTasks(Session, _param).ForEach(approv =>
             {
-                approv.PersonObj = persons.Find(person => person.OID == approv.PersonOID);
-                approv.PersonNm = approv.PersonObj.Name;
-                approv.DepartmentNm = approv.PersonObj.DepartmentNm;
-                approv.BPolicy = policies.Find(policy => policy.OID == approv.BPolicyOID);
                 approv.ApprovalBPolicy = DObjectRepository.SelDObject(Session, new DObject { OID = approv.ApprovalOID }).BPolicy;
                 if (approv.BPolicy.Name == approv.ApprovalBPolicy.Name)
                 {
@@ -156,6 +150,29 @@ namespace SemsPLM.Controllers
             return Json(CommonConstant.RETURN_SUCCESS);
         }
 
+        public JsonResult PromoteObjectTask(string Type, string OID, string RootOID, string Status, string GoStatusOID, string Action, string Comment)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                string returnVal = "";
+                DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = Convert.ToInt32(OID) });
+                returnVal = TriggerUtil.StatusObjectPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), GoStatusOID, Convert.ToInt32(targetDobj.OID), (RootOID == null ? Convert.ToInt32(targetDobj.OID) : Convert.ToInt32(RootOID)), Action, "");
+                if (returnVal != null && returnVal.Length > 0)
+                {
+                    throw new Exception(returnVal);
+                }
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(CommonConstant.RETURN_SUCCESS);
+        }
+
         #endregion
 
         #region -- Approval
@@ -242,8 +259,11 @@ namespace SemsPLM.Controllers
 
                 if (_param.TargetOID != null)
                 {
-                    DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = _param.TargetOID });
-                    TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), CommonConstant.ACTION_PROMOTE, null);
+                    if((_param.AutoStatus != null && Convert.ToBoolean(_param.AutoStatus))){
+                        DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = _param.TargetOID });
+                        TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), CommonConstant.ACTION_PROMOTE, null);
+                    }
+
                     if (lPromoteOID != null && lPromoteOID.Count > 0)
                     {
                         lPromoteOID.ForEach(promoteOID =>
@@ -327,6 +347,7 @@ namespace SemsPLM.Controllers
         public ActionResult ApprovalContent(ApprovalTask _param)
         {
             ViewBag.ApprvalData = ApprovalRepository.SelApproval(Session, new Approval { OID = _param.ApprovalOID });
+            ViewBag.ApprovalTaskData = _param;
             return PartialView("Dialog/dlgApprovalContent");
         }
 

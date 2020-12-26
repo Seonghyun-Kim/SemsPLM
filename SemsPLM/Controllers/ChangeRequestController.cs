@@ -3,6 +3,7 @@ using ChangeRequest.Models;
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace SemsPLM.Controllers
 
         public ActionResult CreateChangeRequest()
         {
-            Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> ECRreasonList = LibraryRepository.SelLibrary(new Library { FromOID = ECRreasonKey.OID });
             ViewBag.ECRreasonList = ECRreasonList;
             return View();
@@ -41,7 +42,7 @@ namespace SemsPLM.Controllers
             ViewBag.ECRDetail = ECRDetail;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_REQUEST });
 
-            Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = "ReasonChange" });
+            Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> ECRreasonList = LibraryRepository.SelLibrary(new Library { FromOID = ECRreasonKey.OID });
             ViewBag.ECRreasonList = ECRreasonList;
 
@@ -50,7 +51,7 @@ namespace SemsPLM.Controllers
         }
         public ActionResult dlgSearchECO()
         {
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //OEM 목록
             ViewBag.oemList = oemList;
             return PartialView("Dialog/dlgSearchECO");
@@ -90,10 +91,23 @@ namespace SemsPLM.Controllers
 
                 dobj.Description = _param.Description;
                 resultOid = DObjectRepository.InsDObject(Session, dobj);
-
-
+                _param.Type = EoConstant.TYPE_CHANGE_REQUEST;
                 _param.OID = resultOid;
                 DaoFactory.SetInsert("ChangeRequest.InsChangeRequest", _param);
+
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
 
                 if (ECR_STATEMENT != null && ECR_STATEMENT.Count > 0)
                 {
@@ -142,10 +156,39 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region 변경요청 수정
-        public JsonResult UdtEcrObj (ECR _param)
+        public JsonResult UdtEcrObj(ECR _param)
         {
-            DObjectRepository.UdtDObject(Session, _param);
-            ECRRepository.UdtChangeRequest(_param);
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObjectRepository.UdtDObject(Session, _param);
+                ECRRepository.UdtChangeRequest(_param);
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel
+                {
+                    isError = true,
+                    resultMessage = ex.Message,
+                    resultDescription = ex.ToString()
+                });
+            }
             return Json(0);
         }
         #endregion

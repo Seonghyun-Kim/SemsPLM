@@ -1,4 +1,6 @@
 ﻿function OpenSearchEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Type, _Mod) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -190,6 +192,7 @@
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });
@@ -202,6 +205,8 @@
 }
 
 function OpenSearchECRDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Grid, _Source, _Mod) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -396,6 +401,7 @@ function OpenSearchECRDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Gr
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });

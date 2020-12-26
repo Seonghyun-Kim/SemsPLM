@@ -2,6 +2,7 @@
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Models.File;
 using EBom.Models;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,11 @@ namespace SemsPLM.Controllers
         }
         public ActionResult CreateEPart()
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
-            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
-            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PRODUCED_PLACE });
+            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_EPARTTYPE });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
+            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PSIZE });
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
@@ -43,8 +44,8 @@ namespace SemsPLM.Controllers
         }
         public ActionResult SearchEPart()
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
@@ -60,11 +61,11 @@ namespace SemsPLM.Controllers
             EPart InfoEPart = EPartRepository.SelEPartObject(new EPart { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EBomConstant.TYPE_PART });
 
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
-            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
-            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PRODUCED_PLACE });
+            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_EPARTTYPE});
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
+            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PSIZE });
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
@@ -82,8 +83,8 @@ namespace SemsPLM.Controllers
         }
         public ActionResult dlgSearchEBomStructure(int? OID)
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
@@ -98,8 +99,8 @@ namespace SemsPLM.Controllers
         #region EPart Tree추가 창 검색
         public ActionResult dlgSetSearchEBomStructure(int? OID)
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
@@ -119,8 +120,8 @@ namespace SemsPLM.Controllers
 
         public ActionResult dlgSearchEPart()
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
 
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
@@ -132,11 +133,11 @@ namespace SemsPLM.Controllers
         }
         public ActionResult dlgCreateEPart()
         {
-            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "ITEM" });
-            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PRODUCED_PLACE" });
-            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = "EPARTTYPE" });
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
-            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = "PSIZE" });
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM});
+            Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PRODUCED_PLACE });
+            Library epartKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_EPARTTYPE });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
+            Library psizeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PSIZE });
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> placeList = LibraryRepository.SelLibrary(new Library { FromOID = placeKey.OID });  //생산지 목록
@@ -183,9 +184,23 @@ namespace SemsPLM.Controllers
                 dobj.Thumbnail = _param.Thumbnail;
                 resultOid = DObjectRepository.InsDObject(Session, dobj);
 
+                _param.Type = EBomConstant.TYPE_PART;
                 _param.OID = resultOid;
 
                 DaoFactory.SetInsert("EBom.InsEPart", _param);
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
 
                 DaoFactory.Commit();
             }
@@ -232,7 +247,21 @@ namespace SemsPLM.Controllers
         {
             int result = 0;
             DObjectRepository.UdtDObject(Session, _param);
+
             EPartRepository.UdtEPartObject(_param);
+
+            if (_param.Files != null)
+            {
+                HttpFileRepository.InsertData(Session, _param);
+            }
+
+            if (_param.delFiles != null)
+            {
+                _param.delFiles.ForEach(v =>
+                {
+                    HttpFileRepository.DeleteData(Session, v);
+                });
+            }
 
             return Json(result);
         }
@@ -302,11 +331,6 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region EPart Compare
-        //public JsonResult EPartCompare(int? LOID, int? ROID)
-        //{
-        //    List<EPart> CompareEBom = getListCompareEbom(0, LOID, ROID);
-        //    return Json(CompareEBom);
-        //}
         public JsonResult EPartCompare(int? LOID, int? ROID)
         {
             int level = 0;
@@ -314,9 +338,6 @@ namespace SemsPLM.Controllers
         
             EPart LPataData = EPartRepository.SelEPartObject(new EPart { OID = LOID });
             EPart RPataData = EPartRepository.SelEPartObject(new EPart { OID = ROID });
-
-            //EBOM LEom = EPartRepository.getListEbom(0, Convert.ToInt32(LOID));
-            //EBOM REom = EPartRepository.getListEbom(0, Convert.ToInt32(ROID));
 
             List<EBOM> LList = new List<EBOM>();
             List<EBOM> RList = new List<EBOM>();
@@ -337,12 +358,6 @@ namespace SemsPLM.Controllers
             REPartObj.ToOID = LOID;
             REPartList.Insert(0, REPartObj);
 
-            //EBomStructureToList(LEom, LList, level);
-            //EBomStructureToList(REom, RList, level);
-
-            //List<EBOM> LEPartList = EPartRepository.SelRootChildEBomList(new EBOM { FromOID = Convert.ToInt32(LOID) });
-            //List<EBOM> REPartList = EPartRepository.SelRootChildEBomList(new EBOM { FromOID = Convert.ToInt32(ROID) });
-            //
             //리스트 만들기
             LEPartList.ForEach(item =>
             {
@@ -400,10 +415,7 @@ namespace SemsPLM.Controllers
             //getCompareStructure.RId = null;
 
             getCompareEPartStructure(getCompareStructure, LOID, ROID, CompareList, CheckCompareList);
-           //if(CheckCompareList.Count > 1)
-           //{
-           //    getCheckCompareEPartStructure(getCompareStructure, LOID, ROID, CompareList, CheckCompareList);
-           //}
+
             return getCompareStructure;
         }
 

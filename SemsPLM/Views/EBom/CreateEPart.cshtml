@@ -188,6 +188,13 @@
             </td>
         </tr>
 
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <td colspan="3">
+                <div id="CreateEPartFile" style="width:100%">
+                </div>
+            </td>
+        </tr>
     </table>
 
   
@@ -221,7 +228,10 @@
     var srev = '';    //고객리비전
     var psize = '';  //재질
 
+    var InfoFiles = $('#CreateEPartFile').FileUpload();
+
     $(function () {
+        InfoFiles.EditMode();
         var itemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
         var placeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.placeList))');
         var epartList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.epartList))');
@@ -435,7 +445,8 @@
         oem$.on('change', function (evt) {
             var param = {};
             param.fromOID = oem$.val();
-            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
 
                 var carSource =
                 {
@@ -582,7 +593,7 @@
                 param.Block_No = $('#CreateEPart_BlockNo1').val();
                 param.Oem_Lib_OID = $('#CreateEPart_Oem1').val();
                 param.Car_Lib_OID = $('#CreateEPart_Car1').val();
-                
+
                 param.Serial = serial;
                 param.Sel_Revision = srev;
 
@@ -616,7 +627,14 @@
                 return;
             }
 
-            RequestData('/EBom/InsEPart', param, function (response) {
+            var Files = InfoFiles.Files();
+            var removeFiles = InfoFiles.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+            param.Files = Files;
+            SendDataWithFile('/EBom/InsEPart', param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;

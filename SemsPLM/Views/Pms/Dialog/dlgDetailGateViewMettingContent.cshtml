@@ -1,0 +1,88 @@
+﻿
+@{
+    Layout = null;
+}
+
+<input type="hidden" id="hidMettingOID" value="@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.OID : "")" />
+
+<div id="detailContent" style="width:100%;height:auto;">
+    <table class="infoTable" style="table-layout: fixed; width: 100%;">
+        <colgroup>
+            <col style="width:15%;" />
+            <col style="width:auto;" />
+            <col style="width:15%;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th colspan="4" style="text-align:right;font-weight:normal;">
+                    <button id='dlgSaveBtnMeeting' class='custom-button'><i class='fas fa-check-circle'></i> 등록</button>
+                </th>
+            </tr>
+
+            <tr>
+                <th>작성일</th>
+                <td>
+                    @(ViewBag.MettingDetail != null ? string.Format("{0:yyyy-MM-dd HH:mm:ss}", ViewBag.MettingDetail.CreateDt) : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
+                </td>
+                <th>작성자</th>
+                <td>
+                    @(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.CreateUsNm : Session["UserNm"])
+                </td>
+            </tr>
+            <tr>
+                <th>처리내용</th>
+                <td colspan="3">
+                    <textarea style="width:99%; height: 300px; resize: none;" class="editCompleteTextArea" id="dlgtxtMettingDescription">@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.Description : "" )</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>첨부파일</th>
+                <td colspan="3">
+                    <div id="MettingFile" style="width:100%">
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var dlgtxtMettingDescription$ = $('#dlgtxtMettingDescription');
+        var InfoFiles = $('#MettingFile').FileUpload({ OID: $('#hidMettingOID').val() });
+        InfoFiles.EditMode();
+
+        $('#dlgSaveBtnMeeting').on('click', function () {
+            var param = {};
+            param.RootOID = @ViewBag.ProjectOID;
+            param.FromOID = @ViewBag.ProcessOID;
+            param.Description = dlgtxtMettingDescription$.val();
+            param.MettingOID = "@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.OID : null)";
+
+            var Files = InfoFiles.Files();
+
+            var removeFiles = InfoFiles.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+            param.Files = Files;
+
+            SendDataWithFile('/Pms/InsPmsGateMetting', param, Files, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+
+                dlgtxtMettingDescription$.val("");
+
+
+                getPmsGateViewMettingList(mettingSource, grdMetting$);
+                alert("저장되었습니다.");
+
+            });
+        });
+    });
+
+</script>

@@ -14,8 +14,11 @@
     <typeAlias alias="PmsBaseLineProcess" type="Pms.Models.PmsBaseLineProcess" />
     <typeAlias alias="PmsBaseLineRelationship" type="Pms.Models.PmsBaseLineRelationship" />
 
-    <typeAlias alias="CustomerSchedule" type="Pms.Models.CustomerSchedule" />
+    <typeAlias alias="PmsGateMetting" type="Pms.Models.PmsGateMetting" />
+    <typeAlias alias="PmsReliability" type="Pms.Models.PmsReliability" />
     
+    <typeAlias alias="CustomerSchedule" type="Pms.Models.CustomerSchedule" />
+    <typeAlias alias="PmsGateSignOff" type="Pms.Models.PmsGateSignOff" />
   </alias>
 
   <statements>
@@ -99,29 +102,35 @@
     </select>
 
     <update id="UdtPmsProject" parameterClass="PmsProject">
-      UPDATE T_DPMS_PROJECT SET
-      <dynamic prepend=" " close=" ">
+      UPDATE T_DPMS_PROJECT 
+      <dynamic prepend="SET" close=" ">
+        <isNotNull prepend="," property="ProjectGrade">
+          ProjectGrade = #ProjectGrade#
+        </isNotNull>
+        <isNotNull prepend="," property="Customer_OID">
+          Customer_OID = #Customer_OID#
+        </isNotNull>
         <isNotNull prepend="," property="EstDuration">
-        EstDuration = #EstDuration#
-      </isNotNull>
-      <isNotNull prepend="," property="EstStartDt">
-        EstStartDt = #EstStartDt#
-      </isNotNull>
-      <isNotNull prepend="," property="EstEndDt">
-        EstEndDt = #EstEndDt#
-      </isNotNull>
-      <isNotNull prepend="," property="ActStartDt">
-        ActStartDt = #ActStartDt#
-      </isNotNull>
-      <isNotNull prepend="," property="ActEndDt">
-        ActEndDt = #ActEndDt#
-      </isNotNull>
-      <isNotNull prepend="," property="ActDuration">
-        ActDuration = #ActDuration#
-      </isNotNull>
-      <isNotNull prepend="," property="Complete">
-        Complete = #Complete#
-      </isNotNull>
+          EstDuration = #EstDuration#
+        </isNotNull>
+        <isNotNull prepend="," property="EstStartDt">
+          EstStartDt = #EstStartDt#
+        </isNotNull>
+        <isNotNull prepend="," property="EstEndDt">
+          EstEndDt = #EstEndDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActStartDt">
+          ActStartDt = #ActStartDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActEndDt">
+          ActEndDt = #ActEndDt#
+        </isNotNull>
+        <isNotNull prepend="," property="ActDuration">
+          ActDuration = #ActDuration#
+        </isNotNull>
+        <isNotNull prepend="," property="Complete">
+          Complete = #Complete#
+        </isNotNull>
         WHERE OID = #OID#
       </dynamic>
     </update>
@@ -139,7 +148,8 @@
       , ActStartDt
       , ActEndDt
       , ActDuration
-      , Complete)
+      , Complete
+      , No )
       VALUES
       ( #OID#
       , #ProcessType#
@@ -152,7 +162,8 @@
       , #ActStartDt#
       , #ActEndDt#
       , #ActDuration#
-      , #Complete# )
+      , #Complete#
+      , #No# )
     </insert>
 
     <select id="SelPmsProcess" parameterClass="PmsProcess" resultClass="PmsProcess">
@@ -220,6 +231,9 @@
         <isNotNull prepend="," property="Complete">
           Complete = #Complete#
         </isNotNull>
+        <isNotNull prepend="," property="No">
+          No = #No#
+        </isNotNull>
         WHERE OID = #OID#
       </dynamic>
     </update>
@@ -237,6 +251,8 @@
       , Type
       , Ord
       , RoleOID
+      , TaskOID
+      , CheckListEtc
       , CreateDt
       , CreateUs )
       VALUES
@@ -248,6 +264,8 @@
       , #Type#
       , #Ord#
       , #RoleOID#
+      , #TaskOID#
+      , #CheckListEtc#
       , GETDATE()
       , #CreateUs# )
     </insert>
@@ -265,6 +283,8 @@
       , Type
       , Ord
       , RoleOID
+      , TaskOID
+      , CheckListEtc
       , CreateDt
       , CreateUs )
       VALUES
@@ -276,6 +296,8 @@
       , #Type#
       , (SELECT ISNULL(MAX(Ord),0) + 1 AS OID FROM T_DPMS_RELATIONSHIP WHERE FromOID = #FromOID# AND Type = #Type#)
       , #RoleOID#
+      , #TaskOID#
+      , #CheckListEtc#
       , GETDATE()
       , #CreateUs# )
     </insert>
@@ -298,6 +320,9 @@
         </isNotNull>
         <isNotNull prepend="and" property="RoleOID">
           RoleOID = #RoleOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="TaskOID">
+          TaskOID = #TaskOID#
         </isNotNull>
         AND DeleteDt IS NULL
       </dynamic>
@@ -355,6 +380,12 @@
         </isNotNull>
         <isNotNull prepend="," property="Type">
           Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="," property="TaskOID">
+          TaskOID = #TaskOID#
+        </isNotNull>
+        <isNotNull prepend="," property="CheckListEtc">
+          CheckListEtc = #CheckListEtc#
         </isNotNull>
         WHERE OID = #OID#
       </dynamic>
@@ -619,8 +650,170 @@
         </isNotNull>
         WHERE OID = #OID#
       </dynamic>
-     
     </update>
+
+
+    <select id="SelPmsGateMetting" parameterClass="PmsGateMetting" resultClass="PmsGateMetting">
+      SELECT
+      A.*
+      FROM T_DOBJECT A
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <select id="SelPmsDocRelationship" parameterClass="PmsRelationship" resultClass="PmsRelationship">
+      SELECT *
+      FROM T_DPMS_RELATIONSHIP
+      WHERE 1 = 1
+      AND (Type = 'DOC_CLASS' OR Type = 'DOC_MASTER')
+      <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RoleOID">
+          RoleOID = #RoleOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="TaskOID">
+          TaskOID = #TaskOID#
+        </isNotNull>
+      AND DeleteDt IS NULL
+      ORDER BY Ord
+    </select>
+
+    <insert id="InsPmsReliability" parameterClass="PmsReliability">
+      INSERT INTO T_DPMS_RELIABILITY_FROM
+      (OID
+      , RequiredSchedule
+      , DevStep
+      , TestStandard
+      , RegNum
+      , PartNo
+      , CarType
+      , TestMethodDt
+      , NewVer
+      , HWVer
+      , SWVer
+      , CANVer
+      , TestApplyVer
+      , TestCarType
+      , TestPurpose
+      , TestContents
+      , SampleQuantity
+      , TestStandardContents
+      , Requirements
+      )
+      VALUES
+      (#OID#
+      , #RequiredSchedule#
+      , #DevStep#
+      , #TestStandard#
+      , #RegNum#
+      , #PartNo#
+      , #CarType#
+      , #TestMethodDt#
+      , #NewVer#
+      , #HWVer#
+      , #SWVer#
+      , #CANVer#
+      , #TestApplyVer#
+      , #TestCarType#
+      , #TestPurpose#
+      , #TestContents#
+      , #SampleQuantity#
+      , #TestStandardContents#
+      , #Requirements#);
+    </insert>
+
+
+    <select id="SelPmsReliability" parameterClass="PmsReliability" resultClass="PmsReliability">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_RELIABILITY_FROM B ON A.OID = B.OID
+      WHERE A.Type = #Type#
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <select id="SelPmsGateSignOff" parameterClass="PmsGateSignOff" resultClass="PmsGateSignOff">
+      SELECT
+      OID
+      , Forecast
+      , WrCreateStore
+      , CalendarEtc
+      , NonCompleteIssue
+      , SummaryEtc
+      , CreateDt
+      , CreateUs
+      , ModifyDt
+      , ModifyUs
+      FROM T_DPMS_GATE_SIGN_OFF
+      WHERE OID = #OID#
+    </select>
+
+    <insert id="InsPmsGateSignOff" parameterClass="PmsGateSignOff">
+      INSERT INTO T_DPMS_GATE_SIGN_OFF
+      ( OID
+      , Forecast
+      , WrCreateStore
+      , CalendarEtc
+      , NonCompleteIssue
+      , SummaryEtc
+      , CreateDt
+      , CreateUs )
+      VALUES
+      ( #OID#
+      , #Forecast#
+      , #WrCreateStore#
+      , #CalendarEtc#
+      , #NonCompleteIssue#
+      , #SummaryEtc#
+      , GETDATE()
+      , #CreateUs# )
+    </insert>
+
+    <update id="UdtPmsGateSignOff" parameterClass="PmsGateSignOff">
+      UPDATE T_DPMS_GATE_SIGN_OFF
+      SET ModifyDt = GETDATE()
+      , ModifyUs = #DeleteUs#
+      <isNotNull prepend="," property="Forecast">
+        Forecast = #Forecast#
+      </isNotNull>
+      <isNotNull prepend="," property="WrCreateStore">
+        WrCreateStore = #WrCreateStore#
+      </isNotNull>
+      <isNotNull prepend="," property="CalendarEtc">
+        CalendarEtc = #CalendarEtc#
+      </isNotNull>
+      <isNotNull prepend="," property="NonCompleteIssue">
+        NonCompleteIssue = #NonCompleteIssue#
+      </isNotNull>
+      <isNotNull prepend="," property="SummaryEtc">
+        SummaryEtc = #SummaryEtc#
+      </isNotNull>
+      WHERE OID = #OID#
+    </update>
+
   </statements>
-  
 </sqlMap>

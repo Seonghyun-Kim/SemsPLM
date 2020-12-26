@@ -97,7 +97,7 @@
   <ItemGroup>
     <Compile Include="Constant\CommonConstant.cs" />
     <Compile Include="Constant\DocClassConstant.cs" />
-    <Compile Include="Constant\DocumentContant.cs" />
+    <Compile Include="Constant\DocumentConstant.cs" />
     <Compile Include="Constant\EBomConstant.cs" />
     <Compile Include="Constant\EcontentsConstant.cs" />
     <Compile Include="Constant\EoConstant.cs" />

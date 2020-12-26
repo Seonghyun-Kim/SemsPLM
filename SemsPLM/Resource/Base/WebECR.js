@@ -1,4 +1,6 @@
 ﻿function OpenSearchECODialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Grid, _Source, _Mod, _RootOID) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -117,11 +119,6 @@
                                 }
                             });
                         } else {
-                            //var SelectData = dlgSearchECOgrid$.jqxGrid('selectedrowindexes');
-                            //for (var i = 0; i < SelectData.length; i++) {
-                            //    var row = dlgSearchECOgrid$.jqxGrid('getrowdata', SelectData[i]);
-                            //    _Param.push(row);
-                            //}
                             PrintJqxGrid(_Source, _Grid, _Param);
                         }
 
@@ -164,36 +161,7 @@
                         dlgSearchECOgrid$.jqxGrid('unselectrow', disChk[index]);
                     }
                 }
-                    
-
-                    
             });
-
-            
-
-            //dlgSearchECOgrid$.on('rowselect', function (event) {
-            //    const previousRowKey = rowKey;
-            //    var args = event.args;
-            //    rowKey = args.rowindex;
-            //});
-
-            //$('#dlgSearchEPartbtn').on('click', function () {
-            //    var SearchEPartCreateDt = $('#dlgSearchEPartCreateDt').val();
-            //    var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
-            //    var EBomStructureParam = {};
-            //    EBomStructureParam.Car_Lib_OID = $("#dlgSearchEPartCar").val();
-            //    EBomStructureParam.Name = $('#dlgSearchEPartName').val();
-            //    EBomStructureParam.ITEM_No = $('#dlgSearchEPartItemNo').val();
-            //    EBomStructureParam.Division = EPartDivision;
-            //    EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
-            //    EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
-            //
-            //    RequestData('/ChangeOrder/SelChangeOrder', EBomStructureParam, function (res) {
-            //        PrintJqxGrid(dlgSearchECOSource, dlgSearchECOgrid$, res);
-            //    });
-            //});
-
-
             RequestData('/ChangeOrder/SelChangeOrder', null, function (res) {
                 PrintJqxGrid(dlgSearchECOSource, dlgSearchECOgrid$, res);
             });
@@ -202,6 +170,7 @@
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });

@@ -126,8 +126,13 @@ namespace Pms
                     }
 
                     TimeSpan betWeen = toDate - tmp;
-                    if (betWeen.Days <= 0)
+                    if (betWeen.Days == 0)
                     {
+                        break;
+                    }
+                    else if (betWeen.Days < 0)
+                    {
+                        iBetWeenDayCnt = betWeen.Days;
                         break;
                     }
                     i++;
@@ -142,9 +147,13 @@ namespace Pms
                     }
 
                     TimeSpan betWeen = toDate - tmp;
-                    if (betWeen.Days <= 0)
+                    if (betWeen.Days == 0)
                     {
                         break;
+                    }
+                    else if (betWeen.Days < 0)
+                    {
+                        iBetWeenDayCnt = betWeen.Days;
                     }
                     i++;
                 }

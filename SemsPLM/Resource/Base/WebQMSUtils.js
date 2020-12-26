@@ -13,7 +13,7 @@
         $(v).css("display", "block");
     } else if (AttrType === "SWITCH") {
         $(v).jqxSwitchButton({ disabled: false });
-    }           
+    }
 }
 
 function ContentReadMode(v) {
@@ -31,7 +31,7 @@ function ContentReadMode(v) {
         $(v).jqxButton({ disabled: true });
     } else if (AttrType === "SWITCH") {
         $(v).jqxSwitchButton({ disabled: true });
-    }     
+    }
 }
 
 function addDays(date, days) {

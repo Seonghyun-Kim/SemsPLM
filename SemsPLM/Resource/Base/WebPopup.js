@@ -1,4 +1,6 @@
 ﻿function OpenPageDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -31,6 +33,7 @@
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -41,6 +44,8 @@
 }
 
 function OpenApprovalPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -87,6 +92,7 @@ function OpenApprovalPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -97,6 +103,8 @@ function OpenApprovalPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
 }
 
 function OpenRoleDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -145,6 +153,7 @@ function OpenRoleDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -155,7 +164,9 @@ function OpenRoleDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
 }
 
 //Library Logic Dialog _Type = Create, Edit 에대한 액션을 받아온다
-function OpenLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,_Type) {
+function OpenLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Type) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -311,6 +322,7 @@ function OpenLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,_
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -322,6 +334,8 @@ function OpenLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,_
 
 //Library Logic Dialog _Type = Create, Edit 에대한 액션을 받아온다
 function OpenCodeLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Type) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -480,6 +494,7 @@ function OpenCodeLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Tit
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -491,6 +506,8 @@ function OpenCodeLibraryManipDialog(_CallBackFunction, _Wrap, _Param, _Url, _Tit
 
 
 function OpenDepartmentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -562,6 +579,7 @@ function OpenDepartmentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -572,6 +590,8 @@ function OpenDepartmentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
 }
 
 function OpenPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -667,6 +687,7 @@ function OpenPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -677,6 +698,8 @@ function OpenPersonDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
 }
 
 function OpenApprovalDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -702,7 +725,7 @@ function OpenApprovalDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
         initContent: function () {
 
             $('#btnApprov').on('click', function () {
-                RequestData('/Common/InsApproval', foDataApprov(), function () {
+                RequestData('/Common/InsApproval', foDataApprov(_Param), function () {
                     alert('상신되었습니다.');
                     if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
                         _CallBackFunction();
@@ -717,6 +740,7 @@ function OpenApprovalDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {
@@ -728,6 +752,8 @@ function OpenApprovalDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
 
 
 function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -751,12 +777,36 @@ function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
     $(popLayer).jqxWindow({
         width: 960, maxWidth: 960, height: 795, minHeight: 795, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
+
+            $('#btnApprov').on('click', function () {
+                _Param.ActionType = 'P';
+                RequestData("/Common/PromoteApprovalTask", _Param, function (res) {
+                    alert('결재 되었습니다.');
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+
+            $('#btnReject').on('click', function () {
+                _Param.ActionType = 'R';
+                RequestData("/Common/PromoteApprovalTask", _Param, function (res) {
+                    alert('반려 되었습니다.');
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+
         }
     });
 
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
     });
 
     $(popLayer).on('close', function (event) {

@@ -27,7 +27,7 @@ function fPmsArrayDataRecusive(_rows, _dataFields, _removeDataFields) {
 function fPmsArrayTasks(_rows) {
     var returnList = [];
     if (_rows != null && _rows.length > 0) {
-        fArrayRecusive(_rows, returnList, ['PROJECT']);
+        fArrayRecusive(_rows, returnList, ['PROJECT', 'PROJECT_TEMP']);
     }
     return returnList;
 }
@@ -456,4 +456,11 @@ function fAddModMemberChildrenRecusive(_rows, _target, _members) {
             fAddModMemberChildrenRecusive(_rows[i].Children, _target, _members);
         }
     }
+}
+
+function fTaskStart(_this, proj, idx) {
+    RequestData('Common/PromoteObjectTask',
+    { Type: _this.getAttribute('data-Type'), Status: _this.getAttribute('data-Status'), OID: idx, RootOID: proj }, function () {
+        gPmsModifyHistoryMaster[proj].obj.jqxTreeGrid('pagerRenderer');
+    });
 }

@@ -118,36 +118,14 @@
                                 <textarea id="CreateEcrDescription"></textarea>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-
-                <h3 style="margin-top:20px;"><i class="fas fa-clipboard"></i> 연관ECO 정보</h3>
-                <table class="infoTable">
-                    <colgroup>
-                        <col width="10%" />
-                        <col width="40%" />
-                        <col width="10%" />
-                        <col width="40%" />
-                    </colgroup>
-                    <tbody>
                         <tr>
-                            <th>ECO_NO</th>
-                            <td></td>
-                            <th>상태</th>
-                            <td></td>
+                            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+                            <td colspan="3">
+                                <div id="CreateEcrFile" style="width:100%">
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
-                </table>
-
-                <table class="infoTable">
-                    <colgroup>
-                        <col width="10%" />
-                        <col width="90%" />
-                    </colgroup>
-                    <tr>
-                        <th>첨부파일</th>
-                        <td></td>
-                    </tr>
                 </table>
             </div>
 
@@ -162,7 +140,9 @@
     </div>
 
     <script type="text/javascript">
-    $(function () {
+        var InfoFiles = $('#CreateEcrFile').FileUpload();
+        $(function () {
+            InfoFiles.EditMode();
         $('.ECRComboBox').jqxComboBox({ width: '50%', height: 32 });
         $('.ECRCheckBox').jqxCheckBox({ width: 120, height: 32 });
         $('.ECRDatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
@@ -288,7 +268,16 @@
 
                     var CreateECRStatementGridData = $('#CreateECRStatementGrid').jqxGrid('getrows');
 
-                    RequestData('/ChangeRequest/InsertChangeRequest', { _param: param, ECR_STATEMENT: CreateECRStatementGridData, ECRRelatedData: CreateECRRelatedData }, function (response) {
+
+                    var Files = InfoFiles.Files();
+                    var removeFiles = InfoFiles.RemoveFiles();
+                    if (!WebUtils.isEmpty(removeFiles)) {
+                        param.delFiles = [];
+                        param.delFiles = removeFiles;
+                    }
+                    param.Files = Files;
+
+                    SendDataWithFile('/ChangeRequest/InsertChangeRequest', { _param: param, ECR_STATEMENT: CreateECRStatementGridData, ECRRelatedData: CreateECRRelatedData }, Files, function (response) {
                         if (response.isError) {
                             alert(response.resultMessage);
                             return;
@@ -345,10 +334,10 @@
                             }
                         },
                         {
-                            text: 'P/NAME', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
+                            text: 'P/NAME', datafield: 'PName', width: "19%", align: 'center', cellsalign: 'center',
                         },
                         {
-                            text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                            text: '변경 전', datafield: 'BfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
                                 var div = '<div class="basic_image ChangeRequestImg">';
@@ -366,7 +355,7 @@
                             }
                         },
                         {
-                            text: '변경 후', datafield: 'AfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                            text: '변경 후', datafield: 'AfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
                             createwidget: function (row, column, value, htmlElement) {
                                 var uid = row.bounddata.uid;
                                 var div = '<div class="basic_image ChangeRequestImg">';

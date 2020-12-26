@@ -22,7 +22,7 @@ WebUtils.isBlank = function (_str) {
     return true;
 }
 
-WebUtils.isEmpty = function(value) {
+WebUtils.isEmpty = function (value) {
     if (value === "" || value === null || value === undefined || (value !== null && typeof value === "object" && !Object.keys(value).length)) {
         return true;
     } else {
@@ -31,7 +31,7 @@ WebUtils.isEmpty = function(value) {
 }
 
 /** * 이메일 형식 체크 * * @param 데이터 */
-WebUtils.emailCheck = function(email) {
+WebUtils.emailCheck = function (email) {
     var exptext = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
     if (exptext.test(email) == false) {
         // 이메일 형식이 알파벳+숫자@알파벳+숫자.알파벳+숫자 형식이 아닐경우
@@ -42,7 +42,7 @@ WebUtils.emailCheck = function(email) {
 }
 
 /** * 특수문자 여부 체크 * * @param 데이터 */
-WebUtils.checkSpecial = function(str) {
+WebUtils.checkSpecial = function (str) {
     var special_pattern = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
     if (special_pattern.test(str) == true) {
         return 0;
@@ -52,7 +52,7 @@ WebUtils.checkSpecial = function(str) {
 }
 
 /** * 전화번호 포맷으로 변환 * * @param 데이터 */
-WebUtils.formatPhone = function(phoneNum) {
+WebUtils.formatPhone = function (phoneNum) {
     if (isPhone(phoneNum)) {
         var rtnNum;
         var regExp = /(02)([0-9]{3,4})([0-9]{4})$/;
@@ -76,7 +76,7 @@ WebUtils.formatPhone = function(phoneNum) {
 }
 
 /** * 전화번호 형식 체크 * * @param 데이터 */
-WebUtils.isPhone = function(phoneNum) { 
+WebUtils.isPhone = function (phoneNum) {
     var regExp = /(02)([0-9]{3,4})([0-9]{4})$/;
     var myArray;
     if (regExp.test(phoneNum)) {
@@ -94,7 +94,7 @@ WebUtils.isPhone = function(phoneNum) {
 }
 
 /** * 핸드폰번호 포맷으로 변환 * * @param 데이터 */
-WebUtils.formatMobile = function(phoneNum) {
+WebUtils.formatMobile = function (phoneNum) {
     if (isMobile(phoneNum)) {
         var rtnNum;
         var regExp = /(01[016789])([1-9]{1}[0-9]{2,3})([0-9]{4})$/;
@@ -112,7 +112,7 @@ WebUtils.formatMobile = function(phoneNum) {
 }
 
 /** * 핸드폰번호 형식 체크 * * @param 데이터 */
-WebUtils.isMobile = function(phoneNum) {
+WebUtils.isMobile = function (phoneNum) {
     var regExp = /(01[016789])([1-9]{1}[0-9]{2,3})([0-9]{4})$/;
     var myArray;
     if (regExp.test(phoneNum)) {
@@ -236,7 +236,7 @@ WebUtils.GetCheckBoxValue = function (ComponentID) {
     return $("#" + ComponentID).jqxCheckBox('checked') === true ? true : false;
 };
 
-WebUtils.CommonFileDownload = function(FileOID) {
+WebUtils.CommonFileDownload = function (FileOID) {
     // popup 중앙에 띄우기
     var mtWidth = window.outerWidth;
     var mtHeight = window.outerHeight;
