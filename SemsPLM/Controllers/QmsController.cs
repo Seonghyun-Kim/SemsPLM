@@ -5,6 +5,7 @@ using Common.Models.File;
 using Qms.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -580,6 +581,65 @@ namespace SemsPLM.Controllers
             }
             return Json(result);
         }
+
+        #region -- 고품사진
+        public JsonResult ImgUploadFile(int? OID)
+        {
+            string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+            string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+
+            string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID.ToString();
+
+            var fileName = "";
+            if (Request.Files.Count > 0)
+            {
+                HttpFileCollectionBase files = Request.Files;
+                HttpPostedFileBase File = files[0];
+                try
+                {
+                    DirectoryInfo di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
+
+                    if (!di.Exists)
+                    {
+                        di.Create();
+                    }
+
+                    System.TimeSpan tspan = System.TimeSpan.FromTicks(DateTime.Now.Ticks);
+                    long curTime = (long)tspan.TotalSeconds;
+                    string file_nm = Path.GetFileName(File.FileName);
+                    string file_format = file_nm.Substring(file_nm.LastIndexOf(".") + 1);
+                    string cfile_nm = curTime.ToString() + "." + file_format;
+
+                    FileStream fs = System.IO.File.Create(StoragePath + "/" + imgVaulePath + "/" + SavePath + "\\" + cfile_nm);
+                    File.InputStream.CopyTo(fs);
+
+                    fileName = cfile_nm;
+
+                    fs.Close();
+                    File.InputStream.Close();
+
+                    if (OID == null)
+                    {
+                        throw new Exception("잘못된 호출");
+                    }
+                    else
+                    {
+                        QuickResponse quickResponse = new QuickResponse()
+                        {
+                            OID = OID,
+                            PoorPicture = fileName,
+                        };
+                        QuickResponseRepository.UdtQuickResponse(quickResponse);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+                }
+            }
+            return Json(fileName);
+        }
+        #endregion
 
         #endregion
 
