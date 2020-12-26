@@ -1,7 +1,9 @@
 ﻿using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Models.File;
 using Document.Models;
+using DocumentClassification.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,49 +22,31 @@ namespace SemsPLM.Controllers
 
         public ActionResult SearchDocument()
         {
+            DocClass Document = DocClassRepository.SelDocClassObject(Session, new DocClass { Name = CommonConstant.ATTRIBUTE_DOCUMENT });
+            List<DocClass> docTypeList = DocClassRepository.SelDocClass(Session,new DocClass { FromOID = Document.OID});
+            ViewBag.docTypeList = docTypeList;
+            
             return View();
         }
-
+        public JsonResult SelDocClassTree()
+        {
+            return Json(DocClassRepository.SelDocClassTree(Session, CommonConstant.ATTRIBUTE_DOCUMENT));
+        }
         public ActionResult InfoDocument(int OID)
         {
-            Doc docDetail = DocRepository.SelDocObject(new Doc { OID = OID });
-            if (docDetail.Doc_Lib_Lev1_OID != null)
-            {
-                docDetail.Doc_Lib_Lev1_KorNm = LibraryRepository.SelLibraryObject(new Library { OID = docDetail.Doc_Lib_Lev1_OID }).KorNm;
-
-            }
-            if (docDetail.Doc_Lib_Lev2_OID != null)
-            {
-                docDetail.Doc_Lib_Lev2_KorNm = LibraryRepository.SelLibraryObject(new Library { OID = docDetail.Doc_Lib_Lev2_OID }).KorNm;
-
-            }
-            if (docDetail.Doc_Lib_Lev3_OID != null)
-            {
-                docDetail.Doc_Lib_Lev3_KorNm = LibraryRepository.SelLibraryObject(new Library { OID = docDetail.Doc_Lib_Lev3_OID }).KorNm;
-
-            }
+            Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });
             ViewBag.docDetail = docDetail;
-            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentContant.TYPE_DOCUMENT });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
             return View();
         }
 
         public ActionResult CreateDocument()
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" }); 
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID= oemKey.OID});  //OEM 목록
-            ViewBag.oemList = oemList;
-
-            Library tdocKey = LibraryRepository.SelLibraryObject(new Library { Name = "TDOC" });
-            List<Library> tdocList = LibraryRepository.SelLibrary(new Library { FromOID = tdocKey.OID }); //TDOC 목록
-            ViewBag.tdocList = tdocList;
-
-            Library pdocKey = LibraryRepository.SelLibraryObject(new Library { Name = "PDOC" });
-            List<Library> pdocList = LibraryRepository.SelLibrary(new Library { FromOID = pdocKey.OID }); //PDOC 목록
-            ViewBag.pdocList = pdocList;
 
             return View();
         }
         #region -- Module : Document
+
         #region 문서 등록
         public JsonResult InsertDocument(Doc _param)
         {
@@ -73,14 +57,45 @@ namespace SemsPLM.Controllers
             //    DObjectRepository.UdtLatestDObject(new DObject { OID = _param.OID });
 
                 DObject dobj = new DObject();
-                dobj.Type = DocumentContant.TYPE_DOCUMENT;
-                dobj.TableNm = DocumentContant.TABLE_DOCUMENT;
-                dobj.Name = _param.Name;
+                dobj.Type = DocumentConstant.TYPE_DOCUMENT;
+                dobj.TableNm = DocumentConstant.TABLE_DOCUMENT;
                 dobj.Description = _param.Description;
                 //dobj.TdmxOID = DObjectRepository.SelTdmxOID(new DObject { Type = DocumentContant.TYPE_DOCUMENT });
-                resultOid = DObjectRepository.InsDObject(Session, dobj);
+                var YYYY = DateTime.Now.ToString("yyyy");
+                var MM = DateTime.Now.ToString("MM");
+                var dd = DateTime.Now.ToString("dd");
+                var selName = "DOC" + YYYY + MM + dd + "-001";
+                var NewName = "DOC" + YYYY + MM + dd;
 
+                var LateName = DocRepository.SelDoc(Session,new Doc { Name = NewName });
+
+                if (LateName.Count == 0)
+                {
+                    dobj.Name = selName;
+                }
+                else
+                {
+                    int NUM = Convert.ToInt32(LateName.Last().Name.Substring(12, 3)) + 1;
+                    dobj.Name = NewName + "-" + string.Format("{0:D3}", NUM);
+                }
+
+                resultOid = DObjectRepository.InsDObject(Session, dobj);
                 _param.OID = resultOid;
+                _param.Type = dobj.Type;
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+                _param.OID = resultOid;
+                _param.DocGroup = DocumentConstant.TYPE_DOCUMENT;
                 //_param.DocType = _param.DocType;
                 //_param.Title = _param.Title;
                 //_param.Eo_No = _param.Eo_No;
@@ -100,7 +115,7 @@ namespace SemsPLM.Controllers
         #region 문서검색
         public JsonResult SelDoc(Doc _param)
         {
-            List<Doc> lDoc = DocRepository.SelDoc(_param);
+            List<Doc> lDoc = DocRepository.SelDoc(Session,_param);
             return Json(lDoc);
         }
         #endregion
@@ -116,6 +131,19 @@ namespace SemsPLM.Controllers
                 DObjectRepository.UdtDObject(Session, _param);
                 DocRepository.UdtDocObject(_param);
 
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+
                 DaoFactory.Commit();
 
             }
@@ -127,6 +155,8 @@ namespace SemsPLM.Controllers
             return Json(result);
         }
         #endregion
+
+        
 
         #endregion
 

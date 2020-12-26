@@ -19,8 +19,11 @@
         <tbody>
             <tr>
                 <td style="text-align: right;">
-                    <button class="custom-button"><i class="fas fa-check"></i> 승인</button>
-                    <button class="custom-button"><i class="fas fa-reply"></i> 반려</button>
+                    @if (ViewBag.ApprovalTaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_STARTED)
+                    {
+                        <button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 승인</button>
+                        <button class="custom-button" id="btnReject"><i class="fas fa-reply"></i> 반려</button>
+                    }
                 </td>
             </tr>
         </tbody>
@@ -72,7 +75,6 @@
         var ApprovDatas = @Html.Raw(Json.Encode(ViewBag.ApprvalData));
         var ApprovOID = ApprovDatas.OID;
         var sampleArray = ApprovDatas.InboxStep;
-
         const sampleApprovalLine$ = $("#sampleApprovalLine");
 
         function loadSample() {

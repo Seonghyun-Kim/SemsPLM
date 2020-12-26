@@ -1,0 +1,242 @@
+﻿
+@{
+    Layout = null;
+}
+<div id="detailContent" style="width:100%;height:auto;">
+    <table class="infoTable" style="table-layout: fixed; width: 100%;">
+        <colgroup>
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th colspan="10" style="text-align:right;font-weight:normal;">
+                    <button id='dlgSaveBtn' class='custom-button'><i class='fas fa-check-circle'></i> 등록</button>
+                </th>
+            </tr>
+
+            <tr>
+                <th>문서번호</th>
+                <td>
+                    <input type="text" readonly="readonly" value="자동발번" />
+                </td>
+                <th>Rev</th>
+                <td>
+                    <input type="text" readonly="readonly" value="00" />
+                </td>
+                <th>상태</th>
+                <td>
+                    <input type="text" readonly="readonly" value="작성중" />
+                </td>
+                <th></th>
+                <td>
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>등록자</th>
+                <td>
+                    @Session["UserNm"]
+                </td>
+                <th>등록일</th>
+                <td>
+                    @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                </td>
+                <th>요구일정</th>
+                <td>
+                    <input type="text" id="RequiredSchedule" />
+                </td>
+                <th>개발단계</th>
+                <td>
+                    <div id="DevStep"></div>
+                </td>
+                <th>시험규격</th>
+                <td>
+                    <input type="text" id="TestStandard" />
+                </td>
+            </tr>
+            <tr>
+                <th>접수번호</th>
+                <td>
+                    <input type="text" id="접수번호" />
+                </td>
+                <th>품명</th>
+                <td>
+                    <input type="text" readonly="readonly" value="SYSTEM"/>
+                </td>
+                <th>차종</th>
+                <td>
+                    <input type="text" readonly="readonly" value="SYSTEM"/>
+                </td>
+                <th>사험방법 Review일</th>
+                <td>
+                    <div id="TestMethodDt"></div>
+                </td>
+                <th>최신 VER</th>
+                <td>
+                    <input type="text" id="NewVer" />
+                </td>
+            </tr>
+            <tr>
+                <th>H/W VER</th>
+                <td>
+                    <input type="text" id="HWVer" />
+                </td>
+                <th>S/W VER</th>
+                <td>
+                    <input type="text" id="SWVer" />
+                </td>
+                <th>CAN VER</th>
+                <td>
+                    <input type="text" id="CANVer" />
+                </td>
+                <th>시험적용 VER</th>
+                <td>
+                    <input type="text" id="TestApplyVer" />
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>시험 목적 및 내용</th>
+                <td colspan="9">
+                    <input type="text" id="Description" />
+                </td>
+            </tr>
+            <tr>
+                <th>1) 시험차종</th>
+                <td colspan="9">
+                    <input type="text" id="TestCarType" />
+                </td>
+            </tr>
+            <tr>
+                <th>2) 시험목적</th>
+                <td colspan="9">
+                    <input type="text" id="TestPurpose" />
+                </td>
+            </tr>
+            <tr>
+                <th>3) 시혐내용</th>
+                <td colspan="9">
+                    <input type="text" id="TestContents" />
+                </td>
+            </tr>
+            <tr>
+                <th>4) 시료수량</th>
+                <td colspan="9">
+                    <input type="text" id="SampleQuantity"/>
+                </td>
+            </tr>
+            <tr>
+                <th>5) 시험규격</th>
+                <td colspan="9">
+                    <input type="text" id="TestStandardContents"/>
+                </td>
+            </tr>
+            <tr>
+                <th>6) 요구사항</th>
+                <td colspan="9">
+                    <input type="text" id="Requirements"/>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <div id="TestItemListGrid"></div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    var DevStep$ = $('#DevStep');
+    var DevStepList = @Html.Raw(Json.Encode(ViewBag.DevStepList));
+
+    var TestMethodDt$ = $('#TestMethodDt');
+    TestMethodDt$.jqxDateTimeInput({ width: 180, height: 32, formatString: 'yyyy/MM/dd' });
+
+    var TestItemListGrid$ = $('#TestItemListGrid');
+
+    $(function () {
+        var DevStepSource =
+        {
+            localdata: DevStepList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var DevStepAdapter = new $.jqx.dataAdapter(DevStepSource);
+        DevStep$.jqxComboBox({ source: DevStepAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+        var TestItemListSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+                { name: 'Title' },
+
+                { name: 'FromOID' },
+                { name: 'ToOID' },
+
+                { name: 'KorNm' },
+                { name: 'ETC'}
+            ],
+        }
+
+        TestItemListGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 300,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            editable: true,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '라이브러리 OID', datafield: 'OID', width: "15%", align: 'center', cellsalign: 'center', editable: false, hidden: true, },
+                { text: '시험항목', datafield: 'KorNm', width: "15%", align: 'center', cellsalign: 'center', editable: false, },
+                { text: '시험표준 NO', datafield: 'TestStandardNo', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '시험조건', datafield: 'TestCondition', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '시료수', datafield: 'Sample', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '비고', datafield: 'ETC', width: "20%", align: 'center', cellsalign: 'center', }
+            ],
+            //showtoolbar: true,
+            toolbarheight: 45,
+            //rendertoolbar: function (toolBar) {
+            //}
+        });
+
+        getSearchTestItemList(TestItemListSource, TestItemListGrid$, null);
+    });
+
+    function getSearchTestItemList(_Source, _Grid$, param) {
+        RequestData("/Pms/SelTestItemList", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

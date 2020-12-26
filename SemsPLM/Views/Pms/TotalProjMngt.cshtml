@@ -11,46 +11,335 @@
     </div>
     <div class="user_list">
         <div id="TempChart"></div>
-        <div id="CustomerSchedule"></div>
+
+        <div id="DivCustomerSchedule" hidden="hidden">
+                <h3 class="cleanTitle"><i class="fas fa-calendar-alt"></i> &nbsp;고객대일정</h3>
+            <div id="CustomerSchedule"></div>
+        </div>
+        <div id="ProjectProperties" hidden="hidden">
+                <h3 class="cleanTitle"><i class="fas fa-info-circle"></i> &nbsp;프로젝트 기본정보</h3>
+            <table class="infoTable">
+                <colgroup>
+                    <col style="width:8%;" />
+                    <col style="width:25%;" />
+                    <col style="width:8%;" />
+                    <col style="width:25%;" />
+                    <col style="width:8%;" />
+                    <col style="width:25%;" />
+                </colgroup>
+
+                <tr>
+                    <th>구분</th>
+                    <td>
+                        <input type="text" id="Total_ProjectType" value="" disabled />
+                    </td>
+                    <th>OEM</th>
+                    <td>
+                        <input type="text" id="Total_Oem_Lib_Nm" value="" disabled />
+                    </td>
+                    <th>차종</th>
+                    <td>
+                        <input type="text" id="Total_Car_Lib_Nm" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>ITEM</th>
+                    <td>
+                        <input type="text" id="Total_ITEM_NoNm" value="" disabled />
+                    </td>
+                    <th>ITEM 구분</th>
+                    <td>
+                        <input type="text" id="Total_ITEM_MiddleNm" value="" disabled />
+                    </td>
+                    <th>생성일</th>
+                    <td>
+                        <input type="text" id="Total_CreateDt" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>제품명</th>
+                    <td>
+                        <input type="text" id="Total_ProductNm" value="" disabled />
+                    </td>
+                    <th>고객사</th>
+                    <td>
+                        <input type="text" id="Total_CustomerNm" value="" disabled />
+                    </td>
+
+                    <th>생성자</th>
+                    <td>
+                        <input type="text" id="Total_CreateUsNm" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>프로젝트명</th>
+                    <td colspan="3">
+                        <input type="text" id="Total_Name" value="" disabled />
+                    </td>
+                    <th>등급</th>
+                    <td>
+                        <input type="text" id="Total_ProjGrade" value="" disabled />
+                    </td>
+                </tr>
+                <tr class="tr_tall">
+                    <th>설명</th>
+                    <td colspan="5">
+                        <input type="text" id="Total_Description" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td>
+                        <input type="text" id="Total_StatusNm" value="" disabled />
+                    </td>
+                    <th>달력</th>
+                    <td>
+                        <input type="text" id="Total_CalendarName" value="" disabled />
+                    </td>
+                    <th>기준일</th>
+                    <td>
+                        <input type="text" id="Total_EstStartDt1" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>예상시작일</th>
+                    <td>
+                        <input type="text" id="Total_EstStartDt2" value="" disabled />
+                    </td>
+                    <th>실제시작일</th>
+                    <td>
+                        <input type="text" id="Total_ActStartDt" value="" disabled />
+                    </td>
+                    <th>예상기간</th>
+                    <td>
+                        <input type="text" id="Total_EstDuration" value="" disabled />
+                    </td>
+                </tr>
+                <tr>
+                    <th>예상완료일</th>
+                    <td>
+                        <input type="text" id="Total_EstEndDt" value="" disabled />
+                    </td>
+                    <th>실제완료일</th>
+                    <td>
+                        <input type="text" id="Total_ActEndDt" value="" disabled />
+                    </td>
+                    <th>실기간</th>
+                    <td>
+                        <input type="text" id="Total_ActDuration" value="" disabled />
+                    </td>
+                </tr>
+            </table>
+            <br />
+                <h3 class="cleanTitle"><i class="fas fa-users"></i> &nbsp;CFT 인원 정보</h3>
+            <div id="Total_Person"></div>
+        </div>
     </div>
 </div>
 
 
 
 <script type="text/javascript">
+    var PersonGrd$ = $('#Total_Person');
+    var personSource;
+    var personData = [];
     $(function () {
         var CarData = {};
         var TempChart$ = $('#TempChart');
+        var DivCustomerSchedule$ = $('#DivCustomerSchedule');
         var CustomerSchedule$ = $('#CustomerSchedule');
-        var TotalProjMngt = @Html.Raw(Json.Encode(ViewBag.TotalProjMngt));
+        var ProjectProperties$ = $('#ProjectProperties');
+        @* TotalProjMngt = @Html.Raw(Json.Encode(ViewBag.TotalProjMngt));*@
         var OemCarTree$ = $('#OemCarTree');
+
+        RequestData("/Pms/SelTotalProjMngt", null, function (res) {
+            OemCarTree$.jqxTree({ source: res });
+            if (res != null && res.length > 0) {
+                OemCarTree$.jqxTree('selectItem', OemCarTree$.find('li:first')[0]);
+            }
+        });
+        
         OemCarTree$.jqxTree({
             width: '100%',
             height: '93%',
-            source: TotalProjMngt,
+            //source: TotalProjMngt,
         });
 
         CustomerSchedule$.attr('hidden', true);
-
+        ProjectProperties$.attr('hidden', true);
         OemCarTree$.on('select', function (event) {
             var args = event.args;
             var item = OemCarTree$.jqxTree('getItem', args.element);
-            
+
             CarData = {};
             CarData.Car_Lib_OID = item.id;
 
-            if (item.type == "@Common.Constant.PmsConstant.TYPE_OEM") {
+            if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_OEM") {
                 //CustomerSchedule$
+                DivCustomerSchedule$.attr('hidden', true);
                 CustomerSchedule$.attr('hidden', true);
-                TempChart$.append("<div>12342142321312</div>");
-            } else if (item.type == "@Common.Constant.PmsConstant.TYPE_CAR") {
+                ProjectProperties$.attr('hidden', true);
+                var partnerProjInfo = '<div>';
+                var ADTotalDonutChart$ = '<div id="ADTotalDonutChart"></div>';
+                var CKTotalDonutChart$ = '<div id="CKTotalDonutChart"></div>';
+                var EDTotalDonutChart$ = '<div id="EDTotalDonutChart"></div>';
+                var X2TotalDonutChart$ = '<div id="X2TotalDonutChart"></div>';
+                partnerProjInfo += '<h3 class="cleanTitle"><i class="fas fa-info-circle"></i> &nbsp;고객사별 통합 프로젝트 정보</h3><div class="partnerChartBox">';
+                partnerProjInfo += ADTotalDonutChart$ + CKTotalDonutChart$ + EDTotalDonutChart$ + X2TotalDonutChart$;
+                partnerProjInfo += '</div></div>';
+                TempChart$.append(partnerProjInfo);
+
+                 var partnerProjSampleData = [
+                { status: '완료', amount: 10 },
+                { status: '진행중', amount: 40 },
+                { status: '중단', amount: 20 },
+                { status: '페기', amount: 30 },
+            ];
+            var partnerTotalChartSetting = {
+                description: '',
+                colorScheme: 'scheme26',
+                padding: {
+                    left: 5,
+                    top: 20,
+                    right: 5,
+                    bottom: 20
+                },
+                borderLineColor: 'transparent',
+                showLegend: true,
+                legendLayout: { flow: 'horizon' },
+                source: partnerProjSampleData,
+                enableAnimations: true,
+                categoryAxis: {
+                    dataField: 'status',
+                    showGridLines: false,
+                },
+                seriesGroups: [{
+                    type: 'pie',
+                    useGradient: false,
+                    showLabels: true,
+                    series: [
+                        {
+                            dataField: 'amount',
+                            displayText: 'status',
+                            labelRadius: 85,
+                            initialAngle: 15,
+                            radius: 85,
+                            innerRadius: 50,
+                            legendFormatFunction: function (value, itemIndex, serie, group) {
+                                return value;
+                            },
+                            formatSettings: { sufix: '%' }
+                        }
+                    ]
+                }],
+            };
+
+                $('#ADTotalDonutChart').jqxChart(partnerTotalChartSetting);
+                $('#ADTotalDonutChart').jqxChart({title :'AD 차종 총  프로젝트'});
+                $('#CKTotalDonutChart').jqxChart(partnerTotalChartSetting);
+                $('#CKTotalDonutChart').jqxChart({title :'CK 차종 총  프로젝트'});
+                $('#EDTotalDonutChart').jqxChart(partnerTotalChartSetting);
+                $('#EDTotalDonutChart').jqxChart({title: 'ED 차종 총  프로젝트' });
+                $('#X2TotalDonutChart').jqxChart(partnerTotalChartSetting);
+                $('#X2TotalDonutChart').jqxChart({title :'X2 차종 총  프로젝트'});
+
+            } else if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_CAR") {
                 TempChart$.children().remove();
+                DivCustomerSchedule$.attr('hidden', false);
                 CustomerSchedule$.attr('hidden', false);
+                ProjectProperties$.attr('hidden', true);
                 getCustomerScheduleList(CustomerSource, CustomerSchedule$, CarData);
+            }else if (item.type == "@Common.Constant.PmsConstant.TYPE_PROJECT") {
+                TempChart$.children().remove();
+                DivCustomerSchedule$.attr('hidden', true);
+                CustomerSchedule$.attr('hidden', true);
+                ProjectProperties$.attr('hidden', false);
+                var param = {};
+                param.OID = item.id;
+                getProjectInfo(param);
             }
-            
+
         });
-        
+
+         personSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'OID', type: 'number' },
+                { name: 'Ord', type: 'number' },
+                { name: 'RoleOID', type: 'number' },
+                { name: 'RoleOIDNm', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'PersonNm', type: 'string' },
+                { name: 'DepartmentNm', type: 'string' },
+                { name: 'Action', type: 'string' },
+                { name: 'diseditable', type: 'array' },
+                { name: 'Thumbnail', type: 'string' },
+            ],
+            id: 'ToOID',
+            addRow: function (rowID, rowData, position, parentID, commit) {
+                commit(true);
+            },
+            deleteRow: function (rowID, commit) {
+                _.each(rowID, function (item) {
+                    console.log(item);
+                    deleteResourceData.push({ 'Action': '@Common.Constant.PmsConstant.ACTION_DELETE', 'ToOID': item, 'FromOID': ProjectOID, 'RootOID': ProjectOID });
+                });
+                commit(true);
+            },
+            updateRow: function (rowID, rowData, commit) {
+                commit(true);
+            }
+        };
+        var personAdapter = new $.jqx.dataAdapter(personSource);
+        PersonGrd$.jqxTreeGrid('render');
+        PersonGrd$.jqxTreeGrid(
+            {
+                width: '100%',
+                height: 312,
+                theme: "kdnc",
+                source: personAdapter,
+                columnsResize: true,
+                sortable: false,
+                checkboxes: false,
+                selectionMode: "custom",
+                editable: false,
+                pagerButtonsCount: 8,
+                toolbarHeight: 44,
+                editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                ready: function () {
+
+                },
+                columns: [
+                    {
+                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '역할', datafield: 'RoleOIDNm', width: "30%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, columnType: "template", },
+                    { text: '부서', datafield: 'DepartmentNm', width: "30%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, editable: false, },
+                    {
+                        text: '멤버', width: "30%", datafield: 'PersonNm', align: 'center', editable: false,
+                        cellsrenderer: function (row, column, value) {
+                            var rowData = personData.filter(function (item) {
+                                return item.ToOID == row;
+                            });
+                            if (rowData.length < 1 || rowData[0].Thumbnail == null) {
+                                return "<div class='pmsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value + "</div>";
+                            } else {
+                                return "<div class='pmsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData[0].Thumbnail + "'></div>" + value + "</div>";
+                            }
+                        }
+                    },
+                ],
+            });
+
+
+
         var CustomerSource = {
             dataType: "json",
             dataFields: [
@@ -65,7 +354,7 @@
         CustomerSchedule$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: '100%',
+            height: 753,
             rowsheight: 28,
             columnsheight: 30,
             sortable: false,
@@ -83,12 +372,9 @@
                     }
                 },
                 { text: '차종', dataField: 'Car_Lib_OID', width: '15%', align: 'center', cellsalign: 'center', hidden:'true' },
-                { text: '고객일정명', dataField: 'Name', width: '70%', align: 'center', cellsalign: 'left', },
+                { text: '고객일정명', dataField: 'Name', width: '77.9%', align: 'center', cellsalign: 'left', },
                 { text: '순서', dataField: 'Ord', width: '10%', align: 'center', cellsalign: 'center', hidden: 'true'},
-                {
-                    text: '시작일', dataField: 'StartDt', cellsFormat: 'yyyy-MM-dd', width: '15%', align: 'center', columntype: 'datetimeinput', cellsalign: 'center',
-                    
-                },
+                { text: '시작일', dataField: 'StartDt', cellsFormat: 'yyyy-MM-dd', width: '15%', align: 'center', columntype: 'datetimeinput', cellsalign: 'center', },
             ],
             rendertoolbar: function (toolBar) {
                 toolBar.empty();
@@ -177,5 +463,49 @@
         });
     }
 
+    function getProjectInfo(_Param) {
+        RequestData("/Pms/SelProject", _Param, function (res) {
+            $('#Total_ProjectType').val(res.ProjectType);
+            $('#Total_Oem_Lib_Nm').val(res.Oem_Lib_Nm);
+            $('#Total_Car_Lib_Nm').val(res.Car_Lib_Nm);
+            $('#Total_ITEM_NoNm').val(res.ITEM_NoNm);
+            $('#Total_ITEM_MiddleNm').val(res.ITEM_MiddleNm);
+            $('#Total_CreateDt').val(getDate(res.CreateDt));
+            $('#Total_ProductNm').val(res.ProductNm);
+            $('#Total_CustomerNm').val(res.CustomerNm);
+            $('#Total_CreateUsNm').val(res.CreateUsNm);
+            $('#Total_Name').val(res.Name);
+            $('#Total_ProjGrade').val(res.ProjectGrade);
+            $('#Total_Description').val(res.Description);
+            $('#Total_StatusNm').val(res.BPolicy.StatusNm);
+            $('#Total_CalendarName').val(res.Calendar.Name);
+            $('#Total_EstStartDt1').val(getDate(res.EstStartDt));
+            $('#Total_EstStartDt2').val(getDate(res.EstStartDt));
+            $('#Total_ActStartDt').val(getDate(res.ActStartDt));
+            $('#Total_EstDuration').val(res.EstDuration);
+            $('#Total_EstEndDt').val(getDate(res.EstEndDt));
+            $('#Total_ActEndDt').val(getDate(res.ActEndDt));
+            $('#Total_ActDuration').val(res.ActDuration);
+
+            RequestData("/Pms/SelMembers", { 'FromOID': _Param.OID }, function (res) {
+                personData = res;
+                PrintJqxTreeGrid(personSource, PersonGrd$, res);
+            });
+
+        });
+    }
+    function getDate(t) {
+        if (t == null || t == undefined || t == "") {
+            return "";
+        }
+       var date =(new Date(t.match(/\d+/)[0] * 1));
+
+        var year = date.getFullYear();
+        var month = (1 + date.getMonth());
+        month = month >= 10 ? month : '0' + month;
+        var day = date.getDate();
+        day = day >= 10 ? day : '0' + day;
+        return year + '-' + month + '-' + day;
+    }
 
 </script>

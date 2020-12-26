@@ -15,7 +15,7 @@
             }
             else
             {
-                <li>@ViewBag.Menu[i].SubMenu[j].Name</li>
+                <li>@Html.Raw(@ViewBag.Menu[i].SubMenu[j].Name)</li>
             }
         }
     </ul>

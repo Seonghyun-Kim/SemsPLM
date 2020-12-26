@@ -1,0 +1,179 @@
+﻿@{
+    Layout = null;
+}
+
+    <div id="gateViewCheckList_@ViewBag.ProcessOID" style="position:relative;">
+        <div style="width:100%;">
+            <div class="dlgCheckList" style="width:309px;float:left;">
+                <div class="searchBox">
+                    <div class="searchTitle" style="line-height: 34px; font-size: 17px; height: 33px;">
+                        <label style="font-weight:400;">GATE</label>
+                    </div>
+                </div>
+                <div class="dlggateview_@ViewBag.ProjectOID">
+                    <ul class="gateColumn">
+                        <li class="gateTop">
+                            <span>프로젝트</span>
+                            <h2>GATE</h2>
+                        </li>
+                        <li>구분</li>
+                        <li>이름</li>
+                        <li>진행 &amp; 상태</li>
+                        <li>예상 시작일</li>
+                        <li>예상 완료일</li>
+                        <li>실제 시작일</li>
+                        <li>실제 완료일</li>
+                    </ul>
+                </div>
+            </div><div style="height:600px;float:left;">
+                <div class="searchBox">
+                    <div class="searchTitle" style="line-height:34px;font-size:17px;height:33px;position:relative;">
+                        <label style="font-weight:400;">체크리스트</label>
+                        <button class="custom-button" style="position:absolute;right:0px;top:1px;line-height:1.1;"><i class="fas fa-save"></i> 저장</button>
+                    </div>
+                </div>
+                <div id="dlggateViewCheckList_@ViewBag.ProcessOID"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    $(function () {
+        var grdCheckList$ = $("#dlggateViewCheckList_@ViewBag.ProcessOID");
+        var gateBox = document.querySelector(".dlggateview_@ViewBag.ProjectOID");
+
+        var checkListSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'OID', type: 'number' },
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'Ord', type: 'number' },
+
+                //System Option
+                { name: 'expanded', type: 'bool' },
+                { name: 'diseditable', type: 'array' },
+
+                //Object Mandatory
+                { name: 'ObjName', type: 'string' },
+                { name: 'ObjType', type: 'string' },
+                { name: 'Id', type: 'number' },
+                { name: 'Dependency', type: 'string' },
+                { name: 'ObjSt', type: 'number' },
+                { name: 'ObjStNm', type: 'string' },
+                { name: 'Complete', type: 'number' },
+                { name: 'Members', type: 'array' },
+                { name: 'EstDuration', type: 'number' },
+                { name: 'EstStartDt', type: 'date' },
+                { name: 'EstEndDt', type: 'date' },
+                { name: 'ActDuration', type: 'number' },
+                { name: 'ActStartDt', type: 'date' },
+                { name: 'ActEndDt', type: 'date' },
+                { name: 'CheckListEtc', type: 'string' },
+                { name: 'No', type: 'string' },
+
+                //Object Optional
+                { name: 'Description', type: 'string' },
+            ],
+        }
+
+        grdCheckList$.jqxGrid({
+            width: 1178,
+            height: 542,
+            rowsheight: 28,
+            columnsheight: 40,
+            sortable: false,
+            pageable: false,
+            columnsresize: true,
+            showtoolbar: false,
+            rendertoolbar: function (statusbar) {
+            },
+            columns: [
+                { text: 'NO', dataField: 'No', width: "8%", cellsalign: 'left', align: 'center', },
+                { text: 'TASK/산출물', dataField: 'ObjName', width: '32%', cellsalign:'center', align:'center',},
+                {
+                    text: 'Responsibility', dataField: 'Members', width: '10%', cellsalign: 'center', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        if (value != null && value != undefined) {
+                            if (value.length > 0) {
+                                var tmpTag = "<div style='text-align: center;width:100%;padding-top:4.5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;padding-left:10px;'>";
+                                for (var index = 0; index < value.length; index++) {
+                                    if (value[index].Thumbnail != null) {
+                                        tmpTag += "<div class='wbsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + value[index].Thumbnail + "'></div>" + value[index].PersonNm +"&nbsp;</div>";
+                                    } else {
+                                        tmpTag += "<div class='wbsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value[index].PersonNm + "</div>";
+                                    }
+                                }
+                                tmpTag += "</div></div>";
+                                return tmpTag;
+                            }
+                        }
+                    },
+                },
+                { text: 'Yes/No', width:'10%', cellsalign:'center', align:'center',},
+                { text: 'Due Date', dataField: 'ActEndDt', width: '15%', cellsalign: 'center', align: 'center', cellsFormat: 'yyyy-MM-dd',},
+                { text: '비고', dataField: 'CheckListEtc', width:'25%', cellsalign:'left', align:'center',},
+            ]
+        });
+
+        RequestData("/Pms/SelGateCheckList", { 'ProjectOID': '@ViewBag.ProjectOID', "ProcessOID": '@ViewBag.ProcessOID' }, function (res) {
+            PrintJqxGrid(checkListSource, grdCheckList$, res);
+        });
+
+        function addGateDetail(params) {
+            var project = document.createElement("div");
+            var gateImg = document.createElement("div");
+            var gateType = document.createElement("span");
+            var gateName = document.createElement("h3");
+            var gateStatus = document.createElement("div");
+            var gateESdate = document.createElement("p");
+            var gateEFdate = document.createElement("p");
+            var gateASdate = document.createElement("p");
+            var gateAFdate = document.createElement("p");
+
+            project.className = "gatebox";
+            gateStatus.className = "gatestatus";
+
+            gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
+            gateStatus.innerHTML = "<span>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
+            gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) + '..' : params.Name);
+            gateESdate.innerHTML = params.EstStartDt != null ? moment(params.EstStartDt).format('YYYY-MM-DD') : '<br/>';
+            gateEFdate.innerHTML = params.EstEndDt != null ? moment(params.EstEndDt).format('YYYY-MM-DD') : '<br/>';
+            gateASdate.innerHTML = params.ActStartDt != null ? moment(params.ActStartDt).format('YYYY-MM-DD') : '<br/>';
+            gateAFdate.innerHTML = params.ActEndDt != null ? moment(params.ActEndDt).format('YYYY-MM-DD') : '<br/>';
+
+            gateBox.appendChild(project);
+            project.appendChild(gateImg);
+            project.appendChild(gateType);
+            project.appendChild(gateName);
+            project.appendChild(gateStatus);
+            project.appendChild(gateESdate);
+            project.appendChild(gateEFdate);
+            project.appendChild(gateASdate);
+            project.appendChild(gateAFdate);
+
+            $(document).ready(function () {
+                $(".gatebox").addClass("gates");
+                $(".gatebox > h3").addClass("gateName");
+                $(".gatestatus").addClass("status");
+                $(".gatebox > p").addClass("gateDates");
+                $(".gatestatus > span").addClass("progress");
+            });
+        }
+
+        @{
+             var jss = new System.Web.Script.Serialization.JavaScriptSerializer();
+             var gateVals = jss.Serialize(ViewBag.lGateViewDetail);
+        }
+        var gateVal = '@Html.Raw(gateVals)';
+        var gateArr = [$.parseJSON(gateVal)];
+        for (var index = 0; index < gateArr.length; index++) {
+            addGateDetail(gateArr[index]);
+        }
+    });
+
+
+
+    </script>

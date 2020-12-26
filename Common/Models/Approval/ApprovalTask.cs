@@ -65,6 +65,20 @@ namespace Common.Models
             return lApprovalTasks; ;
         }
 
+        public static List<ApprovalTask> SelInboxMyTasks(HttpSessionStateBase Context, ApprovalTask _param)
+        {
+            _param.PersonOID = Convert.ToInt32(Context["UserOID"]);
+            List<ApprovalTask> lApprovalTasks = DaoFactory.GetList<ApprovalTask>("Comm.SelMyApprovalTask", _param);
+            lApprovalTasks.ForEach(task =>
+            {
+                task.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = task.BPolicyOID }).First();
+                task.PersonObj = PersonRepository.SelPerson(Context, new Person { OID = task.PersonOID });
+                task.PersonNm = task.PersonObj.Name;
+                task.DepartmentNm = task.PersonObj.DepartmentNm;
+            });
+            return lApprovalTasks;
+        }
+
         public static int InsInboxTask(ApprovalTask _param)
         {
             return DaoFactory.SetInsert("Comm.InsApprovalTask", _param);

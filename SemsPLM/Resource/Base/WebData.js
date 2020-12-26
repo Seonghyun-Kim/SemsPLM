@@ -11,6 +11,7 @@ var renderWord = function (row, columnfield, value, defaulthtml, columnpropertie
 
 function RequestData(_Url, _Args, _CallBackFunc) {
     const loading = $('#loading');
+    console.log(loading);
     var retData = null;
     var param = _Args;
     loading.css('display', 'block');
@@ -196,7 +197,13 @@ function fStatusAction(_status, _current, _oid) {
         }
 
         _status[index].addEventListener('click', function (event) {
-           
+            RequestData('Common/PromoteObjectTask', 
+                { Type: this.getAttribute('data-Type'), Status: _current, GoStatusOID: this.getAttribute('data-Status'), OID: _oid, }, function () {
+                    gClickDuplication = false;
+                setTimeout(function () {
+                    $("#tabMenu").trigger('itemclick');
+                }, 500);
+            });
         });
 
         _status[index].addEventListener('mouseover', function (event) {

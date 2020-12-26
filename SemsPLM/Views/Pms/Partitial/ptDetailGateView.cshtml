@@ -41,7 +41,7 @@
             gateIcon.className = "gateicons";
 
             gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
-            gateStatus.innerHTML = "<span onclick='fProcess(" + projOid + ", " + params.OID + ", " + params.BPolicyOID + ")' style='cursor:pointer;'>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
+            gateStatus.innerHTML = "<span onclick='fProcess(" + projOid + ", " + params.OID + ", " + "\"" + params.BPolicy.Name + "\"" + ")' style='cursor:pointer;'>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
             gateIcon.innerHTML = "<button onclick='fMetting(" + projOid + ", " + params.OID + ")'><img src='/Images/group.png' alt='Metting' style='border:0px;'>회의록</button>";
             gateIcon.innerHTML += "<button onclick='fCheckList(" + projOid + ", " + params.OID + ")'><img src= '/Images/checklist.png' alt='Check List' style='border:0px;'>체크리스트</button>";
             gateIcon.innerHTML += "<button onclick='fSignOffReport(" + projOid + ", " + params.OID + ")'><img src= '/Images/report.png' alt='Report' style='border:0px;'>Sign Off 보고서</button>";
@@ -83,7 +83,38 @@
         }
     });
 
+    function fProcess(_projOID, _processOID, _bpolicyNm) {
+        if (_bpolicyNm == '@Common.Constant.PmsConstant.POLICY_PROCESS_STARTED') {
+            RequestData('/Pms/ApprovProcess', { 'OID': _processOID }, function (res) {
+                OpenApprovalDialog(function () {
+                    PageReload();
+                }, null, { TargetOID: _processOID, AutoStatus: false }, '/Common/Approval', '결재');
+            });
+        } else {
+            alert('결재할 수 있는 상태가 아닙니다.');
+        }  
+    }
+
     function fSignOffReport(_projOID, _processOID) {
-        OpenGateSignOffDialog(null, null, {}, '/Pms/GateSignOffReport', 'Gate Review Sign Off 보고서');
+        OpenGateSignOffDialog(null, null, {
+            ProjectOID: _projOID, ProcessOID: _processOID
+        }, '/Pms/GateSignOffReport', 'Gate Review Sign Off 보고서');
+    }
+
+    function fMetting(_projOID, _processOID) {
+        OpenAddModifyGateViewDetailDialog(null, null, {
+            ProjectOID: _projOID, ProcessOID: _processOID
+        }, '/Pms/DetailGateViewMeeting', '회의록');
+    }
+    function fDeliveres(_projOID, _processOID) {
+        OpenAddModifyGateViewDetailDialog(null, null, {
+            ProjectOID: _projOID, ProcessOID: _processOID
+        }, '/Pms/DetailGateViewDeliveres', '산출물')
+    }
+
+    function fCheckList(_projOID, _processOID) {
+        OpenGateCheckListDialog(null, null, {
+            ProjectOID: _projOID, ProcessOID: _processOID
+        }, '/Pms/DetailGateCheckList', '체크리스트')
     }
 </script>

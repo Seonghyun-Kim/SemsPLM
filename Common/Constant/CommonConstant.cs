@@ -63,6 +63,8 @@ namespace Common.Constant
         public static string ICON_COMPANY = "./images/comp.png";
         public static string ICON_DEPARTMENT = "./images/depart.png";
         public static string ICON_PERSON = "./images/user.png";
+        public static string ICON_DOCUMENT = "./images/doctype.png";
+        public static string ICON_DOCUMENT_DETAIL = "./images/docdetail.png";
 
         public static string TEXT_ENCRYPT_KEY = "SemsText";
         public static string FILE_ENCRYPT_KEY = "SemsFile";
@@ -82,5 +84,25 @@ namespace Common.Constant
         public static string AUTH_DOWNLOAD = "Download";
         public static string AUTH_PROMOTE = "Promote";
         public static string AUTH_RELATION = "Relation";
+
+        //Attribute
+        public static string ATTRIBUTE_ITEM = "ITEM";
+        public static string ATTRIBUTE_OEM = "OEM";
+        public static string ATTRIBUTE_CAR = "CAR";
+        public static string ATTRIBUTE_CUSTOMER = "CUSTOMER";
+        public static string ATTRIBUTE_REASONCHANGE = "ReasonChange";
+        public static string ATTRIBUTE_TDOC = "TDOC";
+        public static string ATTRIBUTE_PDOC = "PDOC";
+        public static string ATTRIBUTE_PRODUCED_PLACE = "PRODUCED_PLACE";
+        public static string ATTRIBUTE_EPARTTYPE = "EPARTTYPE";
+        public static string ATTRIBUTE_PSIZE = "PSIZE";
+        public static string ATTRIBUTE_CARTYPE = "CARTYPE";
+        public static string ATTRIBUTE_DEVSTEP = "DEVSTEP";
+        public static string ATTRIBUTE_TESTITEMLIST = "TESTITEMLIST";
+        
+
+        //Doc Class
+        public static string ATTRIBUTE_DOCUMENT = "일반문서";
+        public static string ATTRIBUTE_PROJECT_DOCUMENT = "프로젝트 문서";
     }
 }

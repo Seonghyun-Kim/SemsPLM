@@ -1,4 +1,124 @@
-﻿.dashboardTop,
+﻿/* mainDashboard */
+
+.mainDashboard{
+    width:100%;
+    height:805px;
+}
+
+.mainDashboard h1, .mainDashboard h2, .mainDashboard h3, .mainDashboard h4, .mainDashboard h5, .mainDashboard h6, .mainDashboard p {
+    font-size: unset;
+    line-height: unset;
+    margin: 0;
+}
+
+.mainDashboard h3{
+    font-size:16px;
+    line-height:40px;
+    text-indent:8px;
+}
+
+.mainDashboard > div{
+    width:49.5%;
+    height:100%;
+    float:left;
+} 
+
+.mainStatusCount > div {
+    width: 24%;
+    margin-right:1.3%;
+    margin-bottom:20px;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px #aaa;
+    float: left;
+}
+
+.mainStatusCount > div:last-child{
+    margin-right:0 !important;
+}
+
+.mainStatusCount .icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 25px;
+    line-height: 45px;
+    text-align: center;
+    margin: 8px;
+    float: left;
+}
+
+.mainStatusCount .text{
+    text-align:center;
+    line-height:30px;
+}
+
+.mainStatusCount .text p>span{
+    margin-right:5px;
+    font-size:21px;
+    font-weight:bold;
+}
+
+.mainProjectCharts > div {
+    height: 310px;
+    float: left;
+}
+
+.mainProjectCharts > div > div{
+    width:465px;
+    height:280px;
+    border-radius:4px;
+    box-shadow: 0 1px 4px #aaa;
+}
+
+.mainApprovalGrids{
+    margin-bottom:20px;
+}
+
+.mainApprovalList > li{
+    margin:5px 5px 0 5px;
+    height:22px !important;
+    padding-left:18px;
+    border-radius:4px 4px 0 0;
+}
+
+.mainNoticeGrid {
+    position: relative;
+}
+.mainNoticeGrid > button{
+    position:absolute;
+    top:8px;
+    right:5px;
+    font-size:14px;
+    padding:3px 8px;
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:4px;
+}
+
+.mainNoticeGrid > button:hover{
+    background:#eee;
+}
+
+.mainApprovalGrids {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px #aaa;
+    overflow:hidden;
+}
+
+.grdNotice {
+    border-radius: 4px;
+    overflow: hidden;
+    border: none;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 1px 4px #aaa;
+}
+
+/**/
+.dashboardTop,
 .dashboardGraphs {
     margin-bottom: 20px;
 }
@@ -14,12 +134,12 @@
     }
 
     .dashboardTop > div {
-        width: 270px;
+        width: 13%;
         height: 100px;
-        padding: 20px;
+        padding: 20px 1.5%;
         line-height: 60px;
         box-sizing: border-box;
-        margin-right: 56px;
+        margin-right: 1.5%;
     }
 
         .dashboardTop > div:last-child {
@@ -37,7 +157,7 @@
         }
 
         .dashboardTop > div > p {
-            width: 180px;
+            width: 80%;
             position: relative;
         }
 
@@ -53,7 +173,7 @@
 
     .dashboardGraphs > div {
         height: 320px;
-        margin-right: 40px;
+        margin-right: 1.3%;
     }
 
         .dashboardGraphs > div:last-child {
@@ -61,11 +181,11 @@
         }
 
     .dashboardGraphs > .piechart {
-        width: 350px;
+        width: 20%;
     }
 
     .dashboardGraphs > .barchart {
-        width: 540px;
+        width: 28%;
     }
 
 .piechart > div:last-child, .barchart > div:last-child {
@@ -81,14 +201,16 @@
     position: relative;
 }
 
-.dashboardGrids > div {
+.dashboardGrids > div:first-child {
+    margin-right: 1%;
+    width: 50%;
     float: left;
-    width: 940px;
+}
+.dashboardGrids > div:last-child {
+    float: left;
+    width: 49%;
 }
 
-.dashboardGrids > div:first-child {
-    margin-right: 20px;
-}
 
 .graphH button {
     background: transparent;
@@ -113,8 +235,82 @@
     margin-right: 8px;
 }
 
+.chartTopAxis{
+    width:100%;
+    position:relative;
+}
+
+.chartTopAxis >table {
+    position:absolute;
+    left:162px;
+    text-align:center;
+    width:1614px;
+    box-sizing:border-box;
+}
+
+.chartTopAxis > table:first-of-type{
+    top:-20px;
+}
+
+.chartTopAxis > table:nth-of-type(2){
+    top:24px;
+    height:24px;
+    color:#fff;
+}
+
+.chartTopAxis > table:nth-of-type(2) td{
+    border:2px solid #fff;
+}
+
+.chartTopAxis > table:first-of-type tr:first-child{
+    border-bottom:1px solid #c5c5c5;
+}
+
+.chartTopAxis > table:first-of-type tr:nth-child(2) > td{
+    width:8.3%;
+    border:1px solid #ccc;
+    border-bottom:none;
+}
+
+
+.chartTopAxis > h4:first-of-type {
+    position: absolute;
+    line-height: 25px;
+    width: 140px;
+    top: 0px;
+    left: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-left: 10px;
+    font-size: 14px;
+}
+
+.chartTopAxis > h4:last-of-type {
+    position:absolute;
+    top:0;
+    right:10px;
+    width:105px;
+    text-align:center;
+    line-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.diagonalLine{
+    position:absolute;
+    top:27px;
+    left:10px;
+    width:145px;
+    height:1px;
+    background-color:#ccc;
+    transform:rotate(18deg);
+}
+
+
 .pmDelayTask {
-    width: 8%;
+    width: 5%;
+    margin-left:1%;
     padding-right: 10px;
     box-sizing: border-box;
     height: 90%;
@@ -122,20 +318,30 @@
     text-align: center;
 }
 
-.pmDelayTask > h4{
-    width:100%;
-    line-height:41px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    border-bottom:1px solid #e0e0e0;
-}
 
 .pmDelayTask > ul{
     width:100%;
-    line-height:76px;
+    line-height:68px;
+    border-top:20px solid transparent;
 }
 
-.pmDelayTask > ul > li{
-    border-bottom: 1px solid #e0e0e0;
+.apexcharts-menu-icon{
+    opacity:0 !important;
+}
+
+.pmProjectList {
+    width:100%;
+    padding-left:5px;
+    margin-top: 50px;
+    overflow-y:scroll;
+    height:210px;
+}
+
+.pmProjectList::-webkit-scrollbar{
+    width:5px;
+    background-color:#fff;
+}
+
+.pmProjectList::-webkit-scrollbar-thumb{
+    background-color:#ddd;
 }

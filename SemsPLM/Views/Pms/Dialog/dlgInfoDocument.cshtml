@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="padding:20px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 문서 상세</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="dlgInfoDocument_editbtn" class="custom-button ModifiableCustomBox"><i class="fas fa-edit"></i> 수정</button>
+                    <button id="dlgInfoDocument_savebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-save"></i> 저장</button>
+                    <button id="dlgInfoDocument_canclebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <table class="createtable doc_create">
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서 분류</th>
+            <td>
+                <input type="hidden" id="dlgInfoDocument_DocClassOID" autocomplete="off" value="@ViewBag.Detail.DocType" />
+                <input type="text" id="dlgInfoDocument_DocClassName" autocomplete="off" readonly value="@ViewBag.Detail.DocType_KorNm" />
+            </td>
+
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 제목</th>
+            <td>
+                <input type="text" id="dlgInfoDocument_Title" class="Modifiable" readonly autocomplete="off" value="@ViewBag.Detail.Title" />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성자</th>
+            <td><input type="text" id="dlgInfoDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off" value="@ViewBag.Detail.CreateUsNm"></td>
+
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 문서번호</th>
+            <td>
+                <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="@ViewBag.Detail.Name" />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성일</th>
+            <td><input type="text" id="" class="readonly" readonly="readonly" autocomplete="off" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.CreateDt)" /></td>
+        </tr>
+        <tr>
+            <th class="reqVal"><i class="fa fa-caret-right"></i> 리비전</th>
+            <td>
+                <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="@ViewBag.Detail.Revision" />
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 내용</th>
+            <td colspan="3">
+                <textarea id="dlgInfoDocument_Description" class="Modifiable" autocomplete="off" readonly>@ViewBag.Detail.Description</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+            <td colspan="3">
+                <div id="dlgInfoDocument_Files" style="width:100%;">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    var documentFile = $('#dlgInfoDocument_Files').FileUpload({ OID : '@ViewBag.Detail.OID'});
+    var docClassName = $('#dlgInfoDocument_DocClassName');
+    var docClassOID = $('#dlgInfoDocument_DocClassOID');
+    $(function () {
+
+        documentFile.ReadOnlyMode();
+         $('.ModifiableEditCustomBox').attr('hidden', true);
+
+        $('#dlgInfoDocument_editbtn').on('click', function () {
+            $('.Modifiable').removeAttr('readonly');
+            $('.ModifiableCustomBox').attr('hidden', true);
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            documentFile.EditMode();
+        });
+
+    });
+</script>

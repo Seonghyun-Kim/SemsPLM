@@ -10,14 +10,49 @@
     <title>우리산업 PLM</title>
     <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/login.css" />
-    <script type="text/javascript" src="~/Resource/JQuery/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="~/Resource/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/Resource/JQuery/jquery.form.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Resource/bxslider-4-master/dist/jquery.bxslider.css" />
 </head>
 <body>
-    <div class="l_top">
-        <h1><a href="#" title="MMA"><img src="~/images/logo_big.png" alt="semsLogo" /></a></h1>
+    <header>
+        <h1><a href="#" title="MMA"><img src="~/images/woori_login.png" alt="Logo" /></a></h1>
+    </header>
+
+    <div class="visual">
+        <div class="bx-wrapper" style="max-width: 100%;">
+            <div class="bx-viewport" aria-live="polite" style="width: 100%; overflow: hidden; position: relative; height: 800px;">
+                <ul class="roll" style="width: auto; position: relative;">
+                    <li aria-hidden="false" class="active" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 50; display: block;">
+                        <div class="bg __pc" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img1.jpg" alt=""></div>
+                        <div class="slogan">
+                            <p class="text firstSlogan">
+                                <strong>[변화와 혁신]<span class="underline"></span></strong>
+                                <span>새로운 가치를 만들어 갑니다</span>
+                            </p>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;">
+                        <div class="bg __pc" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img2.jpg" alt=""></div>
+                        <div class="slogan">
+                            <p class="text">
+                                <strong>[미래차]<span class="underline"></span></strong>
+                                <span>편안하고 안전한 드라이빙을 추구합니다</span>
+                            </p>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;">
+                        <div class="bg __pc" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img3.jpg" alt=""></div>
+                        <div class="slogan">
+                            <p class="text">
+                                <strong>[환경]<span class="underline"></span></strong>
+                                <span>을 먼저 생각하는 글로벌 기업이 되겠습니다</span>
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
+
 
     <div class="login">
         <div>
@@ -29,6 +64,10 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="~/Resource/JQuery/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="~/Resource/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/Resource/JQuery/jquery.form.min.js"></script>
+    <script type="text/javascript" src="~/Resource/bxslider-4-master/dist/jquery.bxslider.js"></script>
     <script type="text/javascript">
         $(function () {
 
@@ -56,6 +95,54 @@
             $('#pwd, #id').on('keydown', function (e) {
                 if (e.keyCode === 13) $('#check').click();
             });
+
+
+            function sliderImgInit() {
+                $('.bg').css({ "background-position-x": -80});
+                $('.text strong').css({ "opacity": 0, "top": "-50px" });
+                $('.text .underline').css({ "width": 0 });
+                $('.text > span').css({ "opacity": 0, "right": "-80px" });
+            };
+
+            sliderImgInit();
+
+            $('.visual .roll').bxSlider({
+                'auto': true,
+                'mode': 'fade',
+                'controls': true,
+                'useCSS': false,
+                'easing': 'easeInOutExpo',
+                'speed': 600,
+                'pause': 6000,
+                'touchEnabled': false,
+                'adaptiveHeight': true,
+                'onSliderLoad': function (currentIndex) {
+                    var activePic = $('.visual .roll li').eq(currentIndex);
+                        activePic.addClass('active');
+                    
+                        activePic.find('.bg').animate({ "background-position-x":0 }, 5000);
+
+                    activePic.find('.text strong').animate({ "opacity": 1, "top": "0" }, 1000, function () {
+                        activePic.find('.text .underline').animate({ "width": "100%" }, 800, function () {
+                            activePic.find('.text > span').animate({ "opacity": 1, "right": "-10px" }, 1200)
+                        })
+                    });
+                        sliderImgInit();
+                },
+                'onSlideAfter': function ($slideElement, oldIndex, newIndex) {
+                    $slideElement.addClass('active').siblings().removeClass('active');
+
+                    $slideElement.find('.bg').animate({ "background-position-x": 0 }, 5000);
+
+                    $slideElement.find('.text strong').animate({ "opacity": 1, "top": "0" }, 1000, function () {
+                        $slideElement.find('.text .underline').animate({ "width": "100%" }, 800, function () {
+                            $slideElement.find('.text > span').animate({ "opacity": 1, "right": "-10px" }, 1200)
+                        })
+                    });
+                    sliderImgInit();
+                }
+            });
+
         });
     </script>
 </body>

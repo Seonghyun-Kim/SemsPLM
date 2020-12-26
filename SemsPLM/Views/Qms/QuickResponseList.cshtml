@@ -67,6 +67,7 @@
             { name: 'Summary', type: 'string' },
             { name: 'CreateUsNm', type: 'string' },
             { name: 'PlanUserNm', type: 'string' },
+            { name: 'StatusNm', type: 'string' },
             { name: 'FinishDt', type: 'date' },
             
             { name: 'ModuleBlockadeOID', type: 'number' },
@@ -316,7 +317,10 @@
                 container.append(deleteButton);
 
                 addButton.on('click', function () {
-                    OpenDlgQuickResponse(null);
+                    var linkName = "신속대응 등록";
+                    var linkUrl = '/Qms/CreateQuickResponse';
+
+                    TabPageLoad(linkUrl, linkName);
                 });
 
                 deleteButton.on('click', function () {
@@ -330,26 +334,37 @@
 
     var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
         var retJson = {};
-
         var BackgroundColor = "white";
         var ChargeUserText = ModuleFl ? ChargeUserNm : "N/A";
         var milli = EstEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
         var EstDate = new Date(parseInt(milli));
+        var CompareEstDate = addDays(EstDate, 1);
+        var nowDate = new Date();
 
         if (!ModuleFl) {
             BackgroundColor = "lightgreen";
-        } else if (BPolicyNm === "Compleated") {
+        } else if (BPolicyNm === "Completed") {
             BackgroundColor = "lightgreen";
             ChargeUserText = "(완료) " + ChargeUserText;
-        } else if (BPolicyNm === "Started" && EstDate <= nowDate) {
-            BackgroundColor = "yellow";
+        } else if (BPolicyNm === "Started" && CompareEstDate >= nowDate) {
+            BackgroundColor = "Yellow";
             ChargeUserText = "(실행전) " + ChargeUserText;
-        } else if (BPolicyNm === "Prepare" && EstDate >= nowDate) {
+        } else if (BPolicyNm === "Prepare" && CompareEstDate >= nowDate) {
             BackgroundColor = "white";
+        } else if (BPolicyNm === "Confirm" && CompareEstDate >= nowDate) {
+            BackgroundColor = "Yellow";
+        }  else if (BPolicyNm === "Review" && CompareEstDate >= nowDate) {
+            BackgroundColor = "Yellow";
+            ChargeUserText = "(결재중) " + ChargeUserText;
         } else {
             BackgroundColor = "red";
             ChargeUserText = "(실행전) " + ChargeUserText;
         }
+
+        //else if (BPolicyNm === "Started" && EstDate <= nowDate) {
+        //    BackgroundColor = "yellow";
+        //    ChargeUserText = "(실행전) " + ChargeUserText;
+        //} 
         
         retJson.BackgroundColor = BackgroundColor;
         retJson.ChargeUserText = ChargeUserText;
@@ -394,6 +409,8 @@
     
     function OpenErrorProof(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        if (!rowData.ModuleErrorProofFl) { return; }
+
         var linkName = "[" + rowData.Title + "] Error Prrof";
         var linkUrl = '/Qms/InfoErrorProof?OID=' + rowData.ModuleErrorProofOID;
 
@@ -403,6 +420,8 @@
         
     function OpenLpaUnfit(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        if (!rowData.ModuleLpaFl) { return; }
+
         var linkName = "[" + rowData.Title + "] LPA 감사";
         var linkUrl = '/Qms/InfoLpaUnfit?OID=' + rowData.ModuleLpaOID;
 
@@ -414,6 +433,8 @@
      */
     function OpenQuickValidation(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        if (!rowData.ModuleCheckFl) { return; }
+
         var linkName = "[" + rowData.Title + "] 유효성 검증";
         var linkUrl = '/Qms/InfoQuickValidation?OID=' + rowData.ModuleCheckOID;
 
@@ -425,6 +446,8 @@
      */
     function OpenStandardFollowUp(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        if (!rowData.ModuleStandardFl) { return; }
+
         var linkName = "[" + rowData.Title + "] 표준화";
         var linkUrl = '/Qms/InfoStandardFollowUp?OID=' + rowData.ModuleStandardOID;
 
@@ -436,6 +459,8 @@
      */
     function OpenWorkerEducation(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
+        if (!rowData.ModuleWorkerEduFl) { return; }
+
         var linkName = "[" + rowData.Title + "] 작업자 교육";
         var linkUrl = '/Qms/InfoWorkerEducation?OID=' + rowData.ModuleWorkerEduOID;
 

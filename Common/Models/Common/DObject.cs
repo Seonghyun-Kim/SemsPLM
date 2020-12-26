@@ -92,7 +92,7 @@ namespace Common.Models
             if (dObject != null)
             {
                 dObject.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObject.Type, OID = dObject.BPolicyOID }).First();
-                dObject.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObject);
+                dObject.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObject, null);
             }
             return dObject;
         }
@@ -103,7 +103,7 @@ namespace Common.Models
             lDObject.ForEach(dObj =>
             {
                 dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
-                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj);
+                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, null);
             });
             return lDObject;
         }

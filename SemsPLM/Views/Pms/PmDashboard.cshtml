@@ -21,11 +21,15 @@
         <button>+</button>
     </div>
     <div>
-        <p>이슈/리스크<span>4</span></p>
+        <p>이슈<span>4</span></p>
         <button>+</button>
     </div>
     <div>
-        <p>DV/PV 현황<span>6</span></p>
+        <p>DV 현황<span>6</span></p>
+        <button>+</button>
+    </div>
+    <div>
+        <p>PV 현황<span>6</span></p>
         <button>+</button>
     </div>
 </div>
@@ -36,13 +40,35 @@
             프로젝트 진행 상태
             <div class="dashboardSelBox"></div>
         </div>
-        <div id="pmTaskRate" style="width:92%;height:90%;float:left;"></div>
-        <div class="pmDelayTask">
+        <div class="chartTopAxis">
+            <h4>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                고객대일정
+                <br />프로젝트명
+            </h4>
+            <div class="diagonalLine"></div>
+            <table>
+                <tr>
+                    <td colspan="12" id="thisYear"></td>
+                </tr>
+                <tr id="includeMonth">
+                </tr>
+            </table>
+            <table>
+                <tr id="taskLegend">
+                </tr>
+            </table>
             <h4>지연일수</h4>
-            <ul id="delaySumList">
-            </ul>
+        </div>
+        <div class="pmProjectList">
+            <div id="pmTaskRate" style="width:94%;height:180px;float:left;"></div>
+            <div class="pmDelayTask">
+                <ul id="delaySumList">
+                </ul>
+            </div>
         </div>
     </div>
+    
 </div>
 
 <div class="dashboardGrids clearfix">
@@ -65,67 +91,14 @@
     $(function () {
 
         $('.dashboardSelBox').jqxComboBox({
-            width: 120,
+            width: 110,
             height: 32,
         });
-
-        //var sampleTaskRate = [
-        //    { project: '프로젝트1', rfq: 16, design: 10, develop: 25, master: 16, etc:5 },
-        //        { project: '프로젝트2', rfq: 5, design: 12, develop: 17, master: 2, etc:14 },
-        //        { project: '프로젝트3', rfq: 22, design: 12, develop: 25, master: 33, etc:10 },
-        //];
-
-        //var pmTaskRateSetting = {
-        //    title: '',
-        //    description: '',
-        //    colorScheme: 'scheme26',
-        //    enableAnimations: true,
-        //    showLegend: false,
-        //    padding: { left: 50, top: 10, right: 50, bottom: 15 },
-        //    source: sampleTaskRate,
-        //    borderLineColor: 'transparent',
-        //    xAxis:
-        //    {
-        //        dataField: 'project',
-        //        flip:true,
-        //        axisSize: 'auto',
-        //        labels: {angle :90,}
-        //    },
-        //    valueAxis:
-        //    {
-        //        unitInterval: 10,
-        //        flip:true,
-        //        tickMarks: {color: '#BCBCBC'},
-        //        gridLines: {color: '#BCBCBC'},
-        //        labels: {
-        //            horizontalAlignment: 'left',
-        //            formatSettings: { sufix: '%'}
-        //        },
-        //    },
-        //    seriesGroups:
-        //        [
-        //            {
-        //                type: 'stackedcolumn100',
-        //                orientation:'horizontal',
-        //                useGradient: false,
-        //                columnsGapPercent: 40,
-        //                seriesGapPercent: 5,
-        //                series: [
-        //                        { dataField: 'rfq', displayText: 'RFQ접수' },
-        //                        { dataField: 'design', displayText: '제품설계' },
-        //                        { dataField: 'develop', displayText: '시작개발' },
-        //                        { dataField: 'master', displayText: '마스터카' },
-        //                        { dataField: 'etc', displayText: 'etc' },
-        //                    ]
-        //            }
-        //        ]
-        //};
-        //$('#pmTaskRate').jqxChart(pmTaskRateSetting);
 
 
         $('#pmScheduleList').jqxGrid({
             width: '100%',
-            height: 320,
+            height: 300,
             editable: false,
             columnsHeight: 44,
             columns: [
@@ -142,7 +115,7 @@
 
         $('#pmDelayList').jqxGrid({
             width: '100%',
-            height: 320,
+            height: 300,
             editable: false,
             showtoolbar: true,
             toolbarheight: 44,
@@ -178,7 +151,7 @@
         var sampleTaskRateArray = [
             // 상태
             {
-                name: 'Gate1',
+                name: 'RFQ접수',
                 data: [{
                     x: 'project1',
                     y: [
@@ -207,7 +180,7 @@
             },
             // 상태
             {
-                name: 'Gate2',
+                name: '제품설계',
                 data: [{
                     x: 'project1',
                     y: [
@@ -236,7 +209,7 @@
             },
             // 상태
             {
-                name: 'Gate3',
+                name: '시작개발',
                 data: [{
                     x: 'project1',
                     y: [
@@ -265,7 +238,7 @@
             },
             // 상태
             {
-                name: 'Gate4',
+                name: '마스터카',
                 data: [{
                     x: 'project1',
                     y: [
@@ -294,7 +267,7 @@
             },
             // 상태
             {
-                name: 'Gate5',
+                name: 'P1',
                 data: [{
                     x: 'project1',
                     y: [
@@ -328,13 +301,13 @@
         var pmTaskRateOptions = {
             series: sampleTaskRateArray,
             chart: {
-                height: 300,
+                height: 250,
                 type: 'rangeBar'
             },
             plotOptions: {
                 bar: {
                     horizontal: true,
-                    barHeight: '50%',
+                    barHeight: '60%',
                     rangeBarGroupRows: true
                 }
             },
@@ -350,9 +323,9 @@
                 min: new Date('2020-01-01').getTime(),
                 max: new Date('2020-12-31').getTime(),
                 labels: {
-                    datetimeFormatter: {
-                        month: "yyyy/MM",
-                    },
+                    show: false,
+                }, axisTicks: {
+                    show: false,
                 },
             },
             yaxis: {
@@ -379,22 +352,22 @@
                         borderRadius: 2,
                         text: '현재',
                         textAnchor: 'right',
-                        position: 'bottom',
+                        position: 'top',
                         orientation: 'horizontal',
                         offsetX: 5,
-                        offsetY: -9,
+                        offsetY: 0,
                         style: {
                             background: 'rgba(255,255,255,0.8)',
                             color: '#777',
                             fontSize: '12px',
                             padding: {
-                            left: 5,
-                            right: 5,
-                            top: 12,
-                            bottom: 0,
-                        }
+                                left: 5,
+                                right: 5,
+                                top: 5,
+                                bottom: 5,
+                            }
                         },
-                        
+
                     },
                 }]
             }
@@ -402,7 +375,6 @@
 
         var pmTaskRateChart = new ApexCharts(document.querySelector("#pmTaskRate"), pmTaskRateOptions);
         pmTaskRateChart.render();
-
 
         function loadDelayDate() {
             const delayUl = $("#delaySumList");
@@ -419,6 +391,26 @@
             };
         };
         loadDelayDate();
+
+        function loadTopAxis() {
+            $('#thisYear').append(today.getFullYear());
+            for (i = 1; i < 13; i++) {
+                var month = '<td>';
+                month += i + '</td>';
+                $('#includeMonth').append(month);
+            }
+
+            for (a = 0; a < pmTaskRateOptions.colors.length; a++) {
+                var color = pmTaskRateOptions.colors[a];
+                var width = 100/pmTaskRateOptions.colors.length;
+                var legend = '<td style="background-color:'+ color +';width:'+ width +'%;">';
+                legend += sampleTaskRateArray[a].name + '</td>';
+                $('#taskLegend').append(legend);
+            }
+            
+        };
+        loadTopAxis();
+
     });
 
 

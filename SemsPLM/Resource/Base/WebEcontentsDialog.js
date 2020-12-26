@@ -1,4 +1,6 @@
 ﻿function OpenProblemsLibraryCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
     var popLayer = document.createElement("div");
     popLayer.style.display = "none";
 
@@ -66,6 +68,7 @@
     });
 
     $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");
     });

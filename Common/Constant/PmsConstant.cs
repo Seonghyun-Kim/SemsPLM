@@ -21,6 +21,7 @@ namespace Common.Constant
         public static string TYPE_BASE_LINE_PROJECT = "BASE_LINE_PROJECT";
         public static string TYPE_GATEVIEW_METTING = "METTING";
         public static string TYPE_GATEVIEW_CHECKLIST = "CHECKLIST";
+        public static string TYPE_RELIABILITY = "RELIABILITY";
 
         //이슈 체크박스 타입
         public static string ATTRIBUTE_ISSUE_SPEC = "SPEC";
@@ -43,6 +44,7 @@ namespace Common.Constant
         public static string RELATIONSHIP_GATEVIEW_METTING = "METTING";
         public static string RELATIONSHIP_GATEVIEW_CHECKLIST = "CHECKLIST";
         public static string RELATIONSHIP_DOC_CLASS = "DOC_CLASS";
+        public static string RELATIONSHIP_DOC_MASTER = "DOC_MASTER";
 
         public static string ROLE_PM = "PM";
         public static string ROLE_PE = "PE";
@@ -51,6 +53,7 @@ namespace Common.Constant
         public static string TABLE_PROJECT = "T_DPMS_PROJECT";
         public static string TABLE_PROCESS = "T_DPMS_PROCESS";
         public static string TABLE_ISSUE = "T_DPMS_ISSUE";
+        public static string TABLE_RELIABILITY = "T_DPMS_RELIABILITY_FROM";
 
         //기본기간
         public static int INIT_DURATION = 1;
@@ -67,6 +70,9 @@ namespace Common.Constant
         public static string POLICY_PROJECT_PAUSED = "Paused";
         public static string POLICY_PROJECT_COMPLETED = "Completed";
         public static string POLICY_PROJECT_DISPOSAL = "Disposal";
+
+        public static string POLICY_PROJECT_TEMP_EXIST = "Exist";
+        public static string POLICY_PROJECT_TEMP_DISPOSAL = "Disposal";
 
         public static string POLICY_PROCESS_PREPARE = "Prepare";
         public static string POLICY_PROCESS_STARTED = "Started";

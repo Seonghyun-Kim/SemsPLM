@@ -1,0 +1,146 @@
+﻿@{
+    Layout = null;
+}
+
+<input type="hidden" id="hidCalendarOID" value="" />
+<input type="hidden" id="hidWorkingDay" value="" />
+<input type="hidden" id="hidTemplateOID" value="" />
+<input type="hidden" id="hidProdecessorProject" value="" />
+
+<div style="width:100%;text-align:right;padding-right:10px;">
+    <button id="btnDlgModifyProject" class="custom-button"><i class='fas fa-check-circle'></i> 수정</button>
+</div>
+
+<div class="dlg_table dlgCreateProject_table">
+    <input type="hidden" id="dlgOem" />
+    <input type="hidden" id="dlgCar" />
+    <table>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>구분</label></td>
+            <td><input type="text" id=""style="width:100%" readonly="readonly" value="@ViewBag.Detail.ProjectType"/></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>OEM</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.Oem_Lib_Nm" readonly="readonly" /></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>차종</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.Car_Lib_Nm" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>ITEM</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.ITEM_NoNm" readonly="readonly" /></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i>제품구분</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.ITEM_MiddleNm" readonly="readonly" /></td>
+        </tr>
+        <tr class="dlgPredecessorData" style="display:none;">
+            <td>
+                <label class="lbText"><i class="fa fa-caret-right"></i> 선행프로젝트</label>
+            </td>
+            <td colspan="3">
+                <input type="text" id="txtDlgProdecessorProject" class="txtBox large" style="width:70%;" readonly />
+                <button id="schDlgProdecessorProject" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgProdecessorProjectClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 제품명</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.ProductNm" readonly="readonly" /></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트명</label></td>
+            <td><input type="text" id="" style="width:100%;" value="@ViewBag.Detail.Name" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 프로젝트 등급</label></td>
+            <td><div id="dlgProjGrade" class="txtBox large" style="width:99%;"></div></td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 고객사</label></td>
+            <td><div id="dlgCust" class="dlgProjjqxComboBox" style="width:99%;"></div></td>
+        </tr>
+        <tr style="display:none">
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 복사 프로젝트</label></td>
+            <td colspan="3">
+                <div id="isCopyTemplate" class="custom-checkbox" hidden="hidden">&nbsp;템플릿</div>
+                <input  type="text" id="txtDlgProjectTemplate" class="txtBox large" style="width:68.4%;" readonly />
+                <button hidden="hidden"id="schDlgProjectTemplate" class="custom-button"><i class='fas fa-search'></i></button>
+                <button hidden="hidden"id="schDlgProjectTemplateClear" class="custom-button"><i class='fas fa-eraser'></i></button>
+            </td>
+        </tr>
+        <tr style="display:none">
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 템플릿 내용</label></td>
+            <td colspan="3">
+                <div id="isWbs" class="custom-checkbox templateContents">&nbsp;WBS</div>
+                <div id="isMember" class="custom-checkbox templateContents">&nbsp;멤버</div>
+                <div id="isRisk" class="custom-checkbox templateContents">&nbsp;리스크</div>
+                <div id="IsCheckList" class="custom-checkbox templateContents">&nbsp;체크리스트</div>
+                <div id="IsDocument" class="custom-checkbox templateContents">&nbsp;산출물</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 기준일</label></td>
+            <td>
+                <input type="text" id="" style="width:100%;" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstStartDt)" readonly="readonly" />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 근무일수</label></td>
+            <td>
+                <input type="text" id="" style="width:100%;" value="@ViewBag.Detail.Calendar.WorkingDay" readonly="readonly" />
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align:baseline;"><label class="lbText"><i class="fa fa-caret-right"></i> 내용</label></td>
+            <td colspan="3"><textarea id="txtDlgContent" style="width:99%;height:50px;">@ViewBag.Detail.Description</textarea></td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 달력</label></td>
+            <td colspan="3">
+                <input type="text" id="" class="txtBox large" style="width:84%;" value="@ViewBag.Detail.Calendar.Name" readonly />
+                @*<button id="schDlgCalendar" class="custom-button"><i class='fas fa-search'></i></button>
+                <button id="schDlgCalendarClear" class="custom-button"><i class='fas fa-eraser'></i></button>*@
+            </td>
+        </tr>
+        <tr>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 생성일</label></td>
+            <td>
+                <input type="text" id="" style="width:100%;" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.CreateDt)" readonly="readonly" />
+            </td>
+            <td><label class="lbText"><i class="fa fa-caret-right"></i> 작성자</label></td>
+            <td>
+                <input type="text" id="" style="width:100%;" value="@ViewBag.Detail.CreateUsNm" readonly="readonly" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+        var itemList =  @Html.Raw(Json.Encode(ViewBag.ItemList));
+        var placeList = @Html.Raw(Json.Encode(ViewBag.placeList));
+        var epartList = @Html.Raw(Json.Encode(ViewBag.epartList));
+        var oemList =   @Html.Raw(Json.Encode(ViewBag.oemList));
+        var custList =   @Html.Raw(Json.Encode(ViewBag.custList));
+
+        $('.dlgProjjqxComboBox').jqxComboBox({ width: 270, height: 30, });
+        const dlgProjGrade$ = $('#dlgProjGrade');
+        const dlgCust$ = $('#dlgCust');
+
+        var dlgCustSource =
+        {
+            localdata: custList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' }
+                ]
+        };
+        var dlgCustAdapter = new $.jqx.dataAdapter(dlgCustSource);
+        dlgCust$.jqxComboBox({ source: dlgCustAdapter, displayMember: "KorNm", valueMember: "OID" });
+        dlgCust$.val('@ViewBag.Detail.Customer_OID');
+
+        dlgProjGrade$.jqxComboBox({ source: ['', 'A', 'B', 'C', 'D', 'E'], selectedIndex: 0, width: 185, height: 30, });
+        dlgProjGrade$.val('@ViewBag.Detail.ProjectGrade');
+
+    });
+
+</script>

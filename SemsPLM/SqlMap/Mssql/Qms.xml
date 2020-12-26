@@ -225,6 +225,10 @@
         PoorPicture = #PoorPicture#
       </isNotNull>
 
+      <isNotNull prepend="," property="FinishDt">
+        FinishDt = #FinishDt#
+      </isNotNull>
+
       WHERE OID = #OID#
     </update>
 
@@ -233,7 +237,7 @@
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
@@ -250,6 +254,7 @@
       LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
       LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
+      LEFT JOIN T_BPOLICY P ON AO.BPolicyOID = P.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
           A.OID = #OID#
@@ -319,12 +324,12 @@
         <isNotNull prepend="and" property="ModuleType">
           B.Type = #ModuleType#
         </isNotNull>
-        
+
         <isNotNull prepend="and" property="ModuleFl">
           A.ModuleFl = #ModuleFl#
         </isNotNull>
       </dynamic>
-      
+
       ORDER BY OID
     </select>
 
@@ -585,9 +590,11 @@
       ,B.Description
       ,C.Name AS EduUserNm
       ,C.Description
+      , D.ChargeUserOID
       FROM T_DQMS_WORKER_EDU A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.EduUserOID = C.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = D.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
         B.OID = #OID#
@@ -644,9 +651,11 @@
       , B.BPolicyOID
       , B.Description
       , C.Name AS CheckUserNm
+      , D.ChargeUserOID
       FROM T_DQMS_CHECK A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = D.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -731,10 +740,11 @@
 
     <!-- Error Proof SQL ModuleOID == OID-->
     <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
-      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm
+      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm, D.ChargeUserOID
       FROM T_DQMS_ERROR_PRROF A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = D.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -782,12 +792,14 @@
       , D.Name AS PartNm
       , E.Name AS LpaUserNm
       , F.Name AS MeasureUserNm
+      , G.ChargeUserOID
       FROM T_DQMS_LPA_UNFIT A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.LpaCheckUserOID = C.OID
       LEFT JOIN T_DOBJECT D ON A.PartOID = D.OID
       LEFT JOIN T_DOBJECT E ON A.LpaUserOID = E.OID
       LEFT JOIN T_DOBJECT F ON A.MeasureUserOID = F.OID
+      LEFT JOIN T_DQMS_QUICK_MODULE G ON A.ModuleOID = G.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#

@@ -21,15 +21,15 @@
         </tr>
         <tr>
             <td><label class="lbText"><i class="fa fa-caret-right"></i>OEM</label></td>
-            <td><input type="text" id="txtDlgOem" style="width:50%;" value="" readonly="readonly" /></td>
+            <td><input type="text" id="txtDlgOem" style="width:100%;" value="" readonly="readonly" /></td>
             <td><label class="lbText"><i class="fa fa-caret-right"></i>차종</label></td>
-            <td><input type="text" id="txtDlgCar" style="width:50%;" readonly="readonly" /></td>
+            <td><input type="text" id="txtDlgCar" style="width:100%;" readonly="readonly" /></td>
         </tr>
         <tr>
             <td><label class="lbText"><i class="fa fa-caret-right"></i>ITEM</label></td>
-            <td><div id="dlgItem" style="width:50%;" class="dlgProjjqxComboBox"></div></td>
+            <td><div id="dlgItem" style="width:100%;" class="dlgProjjqxComboBox"></div></td>
             <td><label class="lbText"><i class="fa fa-caret-right"></i>제품구분</label></td>
-            <td><div id="dlgItemMiddle" style="width:50%;" class="dlgProjjqxComboBox"></div></td>
+            <td><div id="dlgItemMiddle" style="width:100%;" class="dlgProjjqxComboBox"></div></td>
         </tr>
         <tr class="dlgPredecessorData" style="display:none;">
             <td>
@@ -101,7 +101,7 @@
             </td>
             <td><label class="lbText"><i class="fa fa-caret-right"></i> 작성자</label></td>
             <td>
-                <input type="text" id="txtDlgCreateUs" class="txtBox large" style="width:98%;" readonly value="" />
+                <input type="text" id="txtDlgCreateUs" class="txtBox large" style="width:98%;" readonly value="@Session["UserNm"]" />
             </td>
         </tr>
     </table>
@@ -121,8 +121,7 @@
         var oemList =   @Html.Raw(Json.Encode(ViewBag.oemList));
         var custList =   @Html.Raw(Json.Encode(ViewBag.custList));
 
-        $('.dlgProjjqxComboBox').jqxComboBox({ width: 185, height: 30, });
-
+        $('.dlgProjjqxComboBox').jqxComboBox({ width: 270, height: 30, });
 
         const txtDlgItemName$ = $('#txtDlgProductNm');
         const dlgOem$ = $('#dlgOem');

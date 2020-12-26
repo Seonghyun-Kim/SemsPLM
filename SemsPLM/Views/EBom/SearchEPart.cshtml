@@ -94,7 +94,8 @@
         SearchEPartOemLib$.on('change', function (evt) {
             var param = {};
             param.fromOID = SearchEPartOemLib$.val();
-            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
 
                 var CarSource =
                 {
@@ -260,7 +261,7 @@
             var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
             var param = {};
-            param.Name = $('#SearchEPartName').val();          
+            param.Name = $('#SearchEPartName').val();
             param.Division = SearchDivision;
             param.Car_Lib_OID = SearchEPartCarLib$.val();
             param.ITEM_No = SearchEPartItemLib$.val();

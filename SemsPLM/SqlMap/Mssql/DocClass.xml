@@ -22,7 +22,7 @@
         A.OID = #OID#
       </isNotNull>
       <isNotNull prepend="and" property="FromOID">
-        A.FromOID = #FromOID#
+        B.FromOID = #FromOID#
       </isNotNull>
       <isNotNull prepend="and" property="Name">
         A.Name like '%' + #Name# + '%'

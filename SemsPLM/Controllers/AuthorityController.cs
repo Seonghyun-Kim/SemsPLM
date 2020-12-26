@@ -34,6 +34,7 @@ namespace SemsPLM.Controllers
                 Session["LoginID"] = person.ID;
                 Session["UserNm"] = person.Name;
                 Session["SessionID"] = SessionID;
+                Session.Timeout = 120;
                 return Json(new { result = "Redirect", url = Url.Action("index", "Home") });
             }
             catch(Exception ex)

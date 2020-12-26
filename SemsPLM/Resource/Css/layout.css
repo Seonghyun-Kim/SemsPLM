@@ -5,6 +5,42 @@
     padding: 0;
 }
 
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: .83em;
+}
+
+h6 {
+    font-size: .67em;
+}
+
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: bold;
+    line-height: normal;
+    margin: 0;
+}
+
+img{
+    vertical-align:baseline;
+}
+
 ul, ol, li {
     list-style: none;
 }
@@ -662,6 +698,10 @@ button > .fas{
     height: 820px;
 }
 
+.doc_content .basic_grid > label{
+    margin:10px 0;
+}
+
 .changeOrder_content, .eBomChangeContents{
     float: left;
     position: absolute;
@@ -927,7 +967,7 @@ button > .fas{
 
 .wbsMember {
     position: relative;
-    width:100px;
+    width:90px;
     height:21px;
     padding-left:32px;
     float:left;
@@ -1038,6 +1078,34 @@ input[name=gateReportRadio]:checked + label {
     overflow-x:hidden;
 }
 
+.dlgGateReportContent .dlgTopInfo{
+    position:relative;
+    width:100%;
+    border-bottom:1px solid #ddd;
+    height:42px;
+    padding:8px 5px;
+    margin-bottom:8px;
+}
+
+.dlgGateReportContent .dlgTopInfo > label{
+    margin-top:4px;
+    padding:0 10px 0 0;
+    border-right:1px solid #ccc;
+}
+
+.dlgGateReportContent .dlgTopInfo > span{
+    margin-top:4px;
+    margin-right:50px;
+    padding-left:5px;
+    color:#d11e1e;
+}
+
+.dlgGateReportContent .dlgTopInfo > button{
+    position:absolute;
+    top:4px;
+    right:5px;
+}
+
 .dlgGateReportContent h4{
     font-size:14px;
     line-height:30px;
@@ -1051,6 +1119,7 @@ input[name=gateReportRadio]:checked + label {
 
 .dlgGateReportTable td{
     border:1px solid #aaa;
+    text-align:center;
 }
 
 .dlgGateReportTable thead td{
@@ -1060,8 +1129,82 @@ input[name=gateReportRadio]:checked + label {
 }
 
 .dlgGateReportTable .remark{
-    width:240px;
+    min-width:240px !important;
 }
+
+.grSchedule td{
+    width:100px;
+}
+
+.dlgGateReportTable input[type=text]{
+    width:98%;
+    margin:0 1%;
+    text-indent:5px;
+    border:none;
+    border-bottom:2px solid #c5c5c5;
+    border-radius:unset;
+}
+
+.oemSchedule td{
+    width:100px;
+}
+
+.issueStatusPointer{
+    position:absolute;
+    top:1px;
+    left:50%;
+    clear:both;
+}
+
+.issueStatusPointer > div{
+    float:left;
+    width:100px;
+    height:30px;
+    line-height:30px;
+    background-color:#ddd;
+    margin-right:3px;
+    text-align:center;
+    text-indent:15px;
+    position:relative;
+    font-size:15px;
+}
+
+    .issueStatusPointer > div:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 15px solid white;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+    }
+
+    .issueStatusPointer > div:before {
+        content: "";
+        position: absolute;
+        right: -15px;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 15px solid #ddd;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+    }
+
+.issueStatusPointer > .crtStatus{
+    background-color:#3798ae !important;
+    color:#fff !important;
+    font-weight:bold;
+}
+
+.issueStatusPointer > .crtStatus:before{
+    border-left:15px solid #3798ae !important;
+}
+
+
+
 
 /* createtable */
 .createtable {
@@ -1175,7 +1318,7 @@ input[name=gateReportRadio]:checked + label {
 
 .treeButtonWrap {
     width:100.5%;
-    padding: 10px;
+    padding: 10px 18px;
     position: relative;
     border: 1px solid #ccc;
     border-bottom:none;
@@ -1271,8 +1414,8 @@ input[name=gateReportRadio]:checked + label {
 .gateColumn {
     float: left;
     text-align: right;
-    height: 100%;
-    padding: 0 20px 170px 40px;
+    height: 544px;
+    padding: 0 20px 0 40px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
 }
@@ -1291,6 +1434,7 @@ input[name=gateReportRadio]:checked + label {
 
 .gates {
     width: 160px;
+    height:544px;
     padding: 0 10px;
     float: left;
     text-align: center;
@@ -1988,29 +2132,6 @@ table[TableType=Why] th, table[TableType=Why] td {
     border: none !important;
 }
 
-
-/* CreateChangeOrder, CreateChangeRequest */
-
-/*.eBomChangeTopMenu{
-    margin-bottom:10px;
-}
-
-.eBomChangeTopMenu > ul > li{
-    float:left;
-    width:300px;
-    margin-right:10px;
-    height:40px;
-    line-height:40px;
-    text-align:center;
-    border:1px solid #ccc;
-    cursor:pointer;
-    border-radius:4px;
-}
-
-.eBomChangeTopMenu > ul > li:hover{
-    background-color:rgba(55, 152, 174, 0.3);
-}*/
-
 .eBomChangeContents > div {
     width: 100%;
 }
@@ -2078,6 +2199,33 @@ table[TableType=Why] th, table[TableType=Why] td {
     float:left;
 }
 
+
+/* TotalProjMngt */
+.cleanTitle {
+    height: 45px;
+    line-height: 45px;
+    text-indent: 5px;
+}
+
+.partnerChartBox{
+    width:100%;
+    height:755px;
+    overflow-y:scroll;
+}
+
+.partnerChartBox > div{
+    width:24%;
+    height:360px;
+    margin-right:1%;
+    float:left;
+    background:#eee;
+}
+
+.partnerChartBox > div:nth-child(4n){
+    margin-right:0 !important;
+}
+
+
 /* etc */
 .editableCell {
     position: relative;
@@ -2106,10 +2254,19 @@ table[TableType=Why] th, table[TableType=Why] td {
     border-right:10px solid transparent;
 }
 
-.chkbox{
-    display:inline-block;
-    transform:translateY(-6px);
-    margin-left:4px !important;
+.tskStartBtn{
+    padding:3px 6px !important;
+}
+
+.tskStartBtn > i{
+    color:#d11e1e;
+    font-size:16px;
+}
+
+.chkbox {
+    display: inline-block;
+    transform: translateY(-6px);
+    margin-left: 4px !important;
 }
 
 .infoTopFix {
@@ -2121,8 +2278,13 @@ table[TableType=Why] th, table[TableType=Why] td {
     z-index: 100;
 }
 
+.dlgMeeting .gatebox{
+    height:544px;
+}
+
+
 .jqx-tree-item-li > .jqx-tree-item {
-    margin-left:8px !important;
+    margin-left: 8px !important;
 }
 
 .jqx-listbox .jqx-fill-state-pressed{

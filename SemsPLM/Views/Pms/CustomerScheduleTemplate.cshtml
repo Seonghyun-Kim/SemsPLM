@@ -79,7 +79,7 @@
                         }
                     },
                     {
-                        text: '템플릿명', datafield: 'Name', type: 'string', width: '90%',
+                        text: '템플릿명', datafield: 'Name', type: 'string', width: '85%',
                         cellsrenderer: function (row, column, value) {
                             var item = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
@@ -248,7 +248,7 @@
                         }
                     },
                     {
-                        text: '고객일정명', width: '90%', datafield: 'Name', type: 'string', cellsrenderer: function (row, column, value) {
+                        text: '고객일정명', width: '85%', datafield: 'Name', type: 'string', cellsrenderer: function (row, column, value) {
                             var item = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
                                 return "<div class='modifyTag' style='text-align:center;vertical-align:middle;'></div><p style='line-height:32px;text-indent:4px;'>" + value + "</p>";

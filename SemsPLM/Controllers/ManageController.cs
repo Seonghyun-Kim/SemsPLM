@@ -782,6 +782,18 @@ namespace SemsPLM.Controllers
         #region -- 문서분류체계 검색
         public JsonResult SelProjectDocumentClassification(DocClass _param)
         {
+            DocClass Document = new DocClass();
+            if (_param.Type == Common.Constant.DocumentConstant.TYPE_DOCUMENT)
+            {
+                Document = DocClassRepository.SelDocClassObject(Session, new DocClass { Name = CommonConstant.ATTRIBUTE_DOCUMENT });
+            }
+            else
+            {
+                Document = DocClassRepository.SelDocClassObject(Session, new DocClass { Name = CommonConstant.ATTRIBUTE_PROJECT_DOCUMENT });
+            }
+            _param.OID = Document.OID;
+            _param.FromOID = Document.OID;
+
             return Json(DocClassRepository.SelProjectDocClass(Session, _param));
         }
         #endregion

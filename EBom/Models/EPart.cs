@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using Common.Constant;
 using Common.Factory;
 using System.Security.Cryptography;
+using System.Web;
+using Common.Models.File;
 
 namespace EBom.Models
 {
-    public class EPart : DObject, IDObject
+    public class EPart : DObject, IDObject, IObjectFile
     {
         public string Title { get; set; }
         public string Rep_Part_No { get; set; }
@@ -62,6 +64,8 @@ namespace EBom.Models
         public int? RootOID { get; set; }
         public int? FromOID { get; set; }
         public int? ToOID { get; set; }
+        public List<HttpPostedFileBase> Files { get; set; }
+        public List<HttpFile> delFiles { get; set; }
 
         public int? isDuplicate { get; set; }
 

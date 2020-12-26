@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
-                @if (ViewBag.ErrorProof.BPolicyOID == 73)
+                @if ((ViewBag.ErrorProof.BPolicyOID == 73 || ViewBag.Blockade.BPolicyOID == 75) && ViewBag.Blockade.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
                 <table class="tableTopButtonBox">
                     <tbody>

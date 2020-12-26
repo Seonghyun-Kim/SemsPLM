@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auth\PmsAuth.cs" />
     <Compile Include="Interface\IPmsRelationship.cs" />
     <Compile Include="Models\CustomerSchedule.cs" />
     <Compile Include="Models\PmsBaseLineProcess.cs" />
@@ -49,10 +50,13 @@
     <Compile Include="Models\PmsBaseLineRelationship.cs" />
     <Compile Include="Models\PmsCompare.cs" />
     <Compile Include="Models\PmsDocClass.cs" />
+    <Compile Include="Models\PmsGateMetting.cs" />
+    <Compile Include="Models\PmsGateSignOff.cs" />
     <Compile Include="Models\PmsIssue.cs" />
     <Compile Include="Models\PmsProcess.cs" />
     <Compile Include="Models\PmsProject.cs" />
     <Compile Include="Models\PmsRelationship.cs" />
+    <Compile Include="Models\PmsReliability.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\PmsUtils.cs" />
   </ItemGroup>
@@ -60,6 +64,14 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{fc5bf52d-1116-4c8c-b25f-be81c0b7065f}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentClassification\DocumentClassification.csproj">
+      <Project>{a995eb28-6adc-46f8-9770-29807486c4d0}</Project>
+      <Name>DocumentClassification</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Document\Document.csproj">
+      <Project>{37d30513-fffe-472b-97c5-7bb8a2ae709d}</Project>
+      <Name>Document</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

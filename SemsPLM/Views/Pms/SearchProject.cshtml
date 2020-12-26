@@ -71,7 +71,8 @@
     var selCarOID =null;
     var selCarText = "";
     var selOemOID = null;
-    var selOemText="";
+    var selOemText = "";
+    var selProjOID = null;
     $(function () {
 
         var ProjectSource = {
@@ -110,18 +111,26 @@
         ProjOemCarTree$.on('select', function (event) {
             var args = event.args;
             var item = ProjOemCarTree$.jqxTree('getItem', args.element);
-
-            selCarOID = item.id;
-            selCarText = item.label;
-            selOemOID = item.parentId;
-            var parentval = ProjOemCarTree$.jqxTree('getItem', args.element.parentElement.parentElement);
-            if (parentval != null) {
-                selOemText = parentval.label;
-            }
-
             var param = {};
-            param.Car_Lib_OID = selCarOID;
-            getPmsProjectList(ProjectSource, Grd$, param);
+            if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_OEM") {
+                param.Oem_Lib_OID = item.id;
+                getPmsProjectList(ProjectSource, Grd$, param);
+                Grd$.jqxGrid('clearselection');
+                selProjOID = null;
+            } else if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_CAR") {
+                selCarOID = item.id;
+                selCarText = item.label;
+                selOemOID = item.parentId;
+
+                var parentval = ProjOemCarTree$.jqxTree('getItem', args.element.parentElement.parentElement);
+                if (parentval != null) {
+                    selOemText = parentval.label;
+                }              
+                param.Car_Lib_OID = selCarOID;
+                getPmsProjectList(ProjectSource, Grd$, param);
+                Grd$.jqxGrid('clearselection');
+                selProjOID = null;
+            }          
         });
 
         const Grd$ = $('#grd');
@@ -134,6 +143,7 @@
             sortable: false,
             pageable: false,
             selectionmode: 'singlerow',
+            columnsresize: true,
             columns: [
                 {
                     text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
@@ -141,9 +151,9 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'left', },
+                { text: '프로젝트명', datafield: 'Name', width: "20%", align: 'center', cellsalign: 'left', },
                 { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '차종', datafield: 'Car_Lib_Nm', width: "13%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "8%", align: 'center', cellsalign: 'center', },
                 { text: '구분', datafield: 'ProjectType', width: "5%", align: 'center', cellsalign: 'center', },
                 {
                     text: '상태', datafield: 'BPolicy', width: "5%", align: 'center', cellsalign: 'center',
@@ -184,9 +194,20 @@
                 });
 
                 btnMod.on('click', function () {
-
+                    if (selProjOID == null || selProjOID == "") {
+                        alert('프로젝트를 선택하여주세요.');
+                        return;
+                    }
+                    OpenPmsCreateDialog(function () {
+                        getPmsProjectList(ProjectSource, Grd$);
+                    }, null, { ProjectOID: selProjOID }, '/Pms/ModifyProject?OID=' + selProjOID, '프로젝트 수정');
                 });
             },
+        });
+        Grd$.on('rowselect', function (event) {
+            var args = event.args;
+            var rowData = args.row;
+            selProjOID = rowData.OID;
         });
 
         Grd$.on('celldoubleclick', function (e) {

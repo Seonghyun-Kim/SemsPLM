@@ -2,15 +2,17 @@
 using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ChangeRequest.Models
 {
-    public class ECR : DObject, IDObject
+    public class ECR : DObject, IDObject, IObjectFile
     {
         public string ItemGroup { get; set; } //품목그룹
         public string Title { get; set; } //제목
@@ -226,6 +228,8 @@ namespace ChangeRequest.Models
 
         public int? RootOID { get; set; }
         public int? ToOID { get; set; }
+        public List<HttpPostedFileBase> Files { get; set; }
+        public List<HttpFile> delFiles { get; set; }
     }
     public static class ECRRepository
     {

@@ -15,18 +15,14 @@
       (OID
       ,DocType
       ,Title
-      ,Eo_No
-      ,Doc_Lib_Lev1_OID
-      ,Doc_Lib_Lev2_OID
-      ,Doc_Lib_Lev3_OID)
+      ,DocGroup
+      )
       VALUES
       (#OID#
       ,#DocType#
       ,#Title#
-      ,#Eo_No#
-      ,#Doc_Lib_Lev1_OID#
-      ,#Doc_Lib_Lev2_OID#
-      ,#Doc_Lib_Lev3_OID#)
+      ,#DocGroup#
+      )
     </insert>
 
 
@@ -58,17 +54,26 @@
         <isNotNull prepend="and" property="Eo_No">
           B.Eo_No LIKE CONCAT('%',#Eo_No#,'%')
         </isNotNull>
+        <isNotNull prepend="and" property="DocGroup">
+          B.DocGroup = #DocGroup#
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
     </select>
     
   
   <update id="UdtDoc" parameterClass="Doc">
-      UPDATE T_DDOCUMENT SET
-      Eo_No = #Eo_No#
-      ,Title       =  #Title#
-      WHERE OID   =  #OID#
-    </update>
+    UPDATE T_DDOCUMENT
+    <dynamic prepend="SET">
+    <isNotNull prepend="," property="DocType">
+      DocType = #DocType#
+    </isNotNull>
+    <isNotNull prepend="," property="Title">
+      Title =  #Title#
+    </isNotNull>
+    WHERE OID   =  #OID#
+  </dynamic>
+  </update>
 
     
   </statements>

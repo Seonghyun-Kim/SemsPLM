@@ -37,7 +37,7 @@
                 <tr>
                     <th>Yes/No</th>
                     <th>항목명</th>
-                    <th>예정일자</th>
+                    <th>완료예정일자</th>
                     <th>처리담당자</th>
                 </tr>
                 <tr>
@@ -215,9 +215,9 @@
         $("#btnDlgStandardPlanUserSearch").jqxButton();
         $("#btnDlgWorkerEduPlanUserSearch").jqxButton();
 
-        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 30, width: 120,  checked: true, onLabel : "Yes", offLabel : "No" });
-        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
-        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        $('#btnBlockadeUseFl').jqxSwitchButton({ height: 30, width: 120,  checked: true, onLabel : "Yes", offLabel : "No", disabled: true  });
+        $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No", disabled: true  });
+        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" , disabled: true });
         $('#btnErrorProofUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
         $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
         $('#btnCheckUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
@@ -292,11 +292,11 @@
         });
         @if(ViewBag.Lpa.EstEndDt == null)
         {
-            <text>$("#txtDlgErrorProofPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
+            <text>$("#txtDlgLpaUnfitPlanDt").val(WebUtils.GetDate(14, "d", "-"))</text>
         }
         else
         {
-            <text>$("#txtDlgErrorProofPlanDt").val("@ViewBag.Lpa.EstEndDt.ToString("yyyy-MM-dd")")</text>
+            <text>$("#txtDlgLpaUnfitPlanDt").val("@ViewBag.Lpa.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
 
         $("#txtDlgCheckPlanDt").jqxDateTimeInput(DateFormat);
@@ -307,7 +307,7 @@
         });
         @if(ViewBag.Check.EstEndDt == null)
         {
-            <text>$("#txtDlgCheckPlanDt").val(WebUtils.GetDate(21, "d", "-"))</text>
+            <text>$("#txtDlgCheckPlanDt").val(WebUtils.GetDate(34, "d", "-"))</text>
         }
         else
         {
@@ -322,7 +322,7 @@
         });
         @if(ViewBag.Standard.EstEndDt == null)
         {
-            <text>$("#txtDlgStandardPlanDt").val(WebUtils.GetDate(22, "d", "-"))</text>
+            <text>$("#txtDlgStandardPlanDt").val(WebUtils.GetDate(35, "d", "-"))</text>
         }
         else
         {
@@ -337,7 +337,7 @@
         });
         @if(ViewBag.WorkerEdu.EstEndDt == null)
         {
-            <text>$("#txtDlgWorkerEduPlanDt").val(WebUtils.GetDate(27, "d", "-"))</text>
+            <text>$("#txtDlgWorkerEduPlanDt").val(WebUtils.GetDate(40, "d", "-"))</text>
         }
         else
         {
@@ -362,14 +362,13 @@
         }, null, null, '/Common/ApprovalPerson', '사용자 검색');
     };
 
-
     var SaveQuickResponse = function () {
         var params = [];
 
         var blockadd = {};
         blockadd.QuickOID = $("#hiddenDlgQuickOID").val();
         blockadd.OID = $("#hiddenDlgBlockadeOID").val();
-        blockadd.ModuleFl = $("#btnBlockadeUseFl").val();
+        blockadd.ModuleFl = 1;
         blockadd.EstEndDt = $("#txtDlgBloackAdePlanDt").val();
         blockadd.ChargeUserOID = $("#txtDlgBlockAdePlanUserNm").attr("UserOID");
         params.push(blockadd);
@@ -382,7 +381,7 @@
         var occurrenceCause = {};
         occurrenceCause.QuickOID = $("#hiddenDlgQuickOID").val();
         occurrenceCause.OID = $("#hiddenDlgOccurrenceCauseOID").val();
-        occurrenceCause.ModuleFl = $("#btnOccurrenceCauseUseFl").val();
+        occurrenceCause.ModuleFl = 1;
         occurrenceCause.EstEndDt = $("#txtDlgOccurrenceCausePlanDt").val();
         occurrenceCause.ChargeUserOID = $("#txtDlgOccurrenceCausePlanUserNm").attr("UserOID");
         params.push(occurrenceCause);
@@ -395,7 +394,7 @@
         var ImproveCountermeasure = {};
         ImproveCountermeasure.QuickOID = $("#hiddenDlgQuickOID").val();
         ImproveCountermeasure.OID = $("#hiddenDlgImproveCountermeasureOID").val();
-        ImproveCountermeasure.ModuleFl = $("#btnImproveCountermeasureUseFl").val();
+        ImproveCountermeasure.ModuleFl = 1;
         ImproveCountermeasure.EstEndDt = $("#txtDlgImproveCountermeasurePlanDt").val();
         ImproveCountermeasure.ChargeUserOID =$("#txtDlgImproveCountermeasurePlanUserNm").attr("UserOID");
         params.push(ImproveCountermeasure);
@@ -408,7 +407,7 @@
         var ErrorProof = {};
         ErrorProof.QuickOID = $("#hiddenDlgQuickOID").val();
         ErrorProof.OID = $("#hiddenDlgErrorProofOID").val();
-        ErrorProof.ModuleFl = $("#btnErrorProofUseFl").val();
+        ErrorProof.ModuleFl = ($("#btnErrorProofUseFl").val() === true ? 1 : 0);
         ErrorProof.EstEndDt = $("#txtDlgErrorProofPlanDt").val();
         ErrorProof.ChargeUserOID = $("#txtDlgErrorProofPlanUserNm").attr("UserOID");
         params.push(ErrorProof);
@@ -421,7 +420,7 @@
         var lpa = {};
         lpa.QuickOID = $("#hiddenDlgQuickOID").val();
         lpa.OID = $("#hiddenDlgLpaOID").val();
-        lpa.ModuleFl = $("#btnLpaUnfitUseFl").val();
+        lpa.ModuleFl = ($("#btnLpaUnfitUseFl").val() === true ? 1 : 0);
         lpa.EstEndDt = $("#txtDlgLpaUnfitPlanDt").val();
         lpa.ChargeUserOID = $("#txtDlgLpaUnfitPlanUserNm").attr("UserOID");
         params.push(lpa);
@@ -434,7 +433,7 @@
         var check = {};
         check.QuickOID = $("#hiddenDlgQuickOID").val();
         check.OID = $("#hiddenDlgCheckOID").val();
-        check.ModuleFl = $("#btnCheckUseFl").val();
+        check.ModuleFl = ($("#btnCheckUseFl").val() === true ? 1 : 0);
         check.EstEndDt = $("#txtDlgCheckPlanDt").val();
         check.ChargeUserOID = $("#txtDlgCheckPlanUserNm").attr("UserOID");
         params.push(check);
@@ -447,7 +446,7 @@
         var standard = {};
         standard.QuickOID = $("#hiddenDlgQuickOID").val();
         standard.OID = $("#hiddenDlgStandardOID").val();
-        standard.ModuleFl = $("#btnStandardUseFl").val();
+        standard.ModuleFl = ($("#btnStandardUseFl").val() === true ? 1 : 0);
         standard.EstEndDt = $("#txtDlgStandardPlanDt").val();
         standard.ChargeUserOID = $("#txtDlgStandardPlanUserNm").attr("UserOID");
         params.push(standard);
@@ -460,7 +459,7 @@
         var workeredu = {};
         workeredu.QuickOID = $("#hiddenDlgQuickOID").val();
         workeredu.OID = $("#hiddenDlgWorkerEduOID").val();
-        workeredu.ModuleFl = $("#btnWorkerEduUseFl").val();
+        workeredu.ModuleFl = ($("#btnWorkerEduUseFl").val() === true ? 1 : 0);
         workeredu.EstEndDt = $("#txtDlgWorkerEduPlanDt").val();
         workeredu.ChargeUserOID = $("#txtDlgWorkerEduPlanUserNm").attr("UserOID");
         params.push(workeredu);
@@ -469,7 +468,7 @@
             alert("작업자교육 항목이 YES 인데 처리담당자가 없습니다.");
             return;
         }
-
+        
         $.post('/Qms/SaveQuickResponseModule', { _params: params }, function (response) {
                 if (response.isError) {
                 alert(response.resultMessage);

@@ -1,0 +1,213 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="gateViewCheckList_@ViewBag.ProcessOID" style="position:relative;">
+    <div style="width:100%;display:flex;flex-direction:row;overflow-y:hidden;">
+        <div style="height:590px;flex:1;">
+            <div class="searchBox" style="height:34px">
+                <div class="searchTitle" style="line-height:34px;font-size:17px;height: 33px;">
+                    <label>GATE</label>
+                </div>
+            </div>
+            <div class="gateView_@ViewBag.ProcessOID">
+                <ul class="gateColumn">
+                    <li class="gateTop">
+                        <span>프로젝트</span>
+                        <h2>GATE</h2>
+                    </li>
+                    <li>구분</li>
+                    <li>이름</li>
+                    <li>진행 &amp; 상태</li>
+                    <li>예상 시작일</li>
+                    <li>예상 완료일</li>
+                    <li>실제 시작일</li>
+                    <li>실제 완료일</li>
+                </ul>
+            </div>
+        </div>
+        <div style="height:590px;flex:4.5;margin-left: 10px;">
+            <div class="searchBox" style="height:34px;width: 99%;">
+                <div class="searchTitle"style="line-height:34px;font-size:17px;height: 33px;">
+                    <label>목록</label>
+                </div>
+            </div>
+            <div id="gateViewDeliveresContent_@ViewBag.ProcessOID"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var gateDeliveriesSource = {
+        datatype: 'json',
+        datafields: [
+            { name: 'OID' },
+            { name: 'RootOID' },
+            { name: 'ToOID' },
+            { name: 'FromOID' },
+            { name: 'ProjectNm' },
+            { name: 'TaskNm' },
+            { name: 'Type' },
+            { name: 'DocClassNm' },
+            { name: 'DocNm' },
+            { name: 'DocRev' },
+            { name: 'Name' },
+            { name: 'BPolicyOID' },
+            { name: 'BPolicy' },
+            { name: 'DocStNm' },
+            { name: 'CreateUsNm' },
+            { name: 'CreateDt', type: 'date' },
+            { name: 'Revision' },
+            { name: 'Children', type: 'array'  },
+        ],
+        hierarchy:
+        {
+            root: 'Children',
+        },
+        id: 'OID',
+    };
+
+    $(function () {
+        var gateBox = document.querySelector(".gateView_@ViewBag.ProcessOID");
+        function addGateDetail(param) {
+            var project = document.createElement("div");
+            var gateImg = document.createElement("div");
+            var gateType = document.createElement("span");
+            var gateName = document.createElement("h3");
+            var gateStatus = document.createElement("div");
+            var gateESdate = document.createElement("p");
+            var gateEFdate = document.createElement("p");
+            var gateASdate = document.createElement("p");
+            var gateAFdate = document.createElement("p");
+            project.id = "dlgGateDetail";
+            project.className = "gatebox";
+            gateStatus.className = "gatestatus";
+
+            gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
+            gateStatus.innerHTML = "<span>" + param.BPolicy.StatusNm + "</span><div class='level' style='width:" + param.Complete + "%;'></div>";
+            gateName.innerHTML = "<span>" + param.Type + "</span>" + (param.Name.length > 9 ? param.Name.substring(0, 9) + '..' : param.Name);
+            gateESdate.innerHTML = param.EstStartDt != null ? moment(param.EstStartDt).format('YYYY-MM-DD') : '<br/>';
+            gateEFdate.innerHTML = param.EstEndDt != null ? moment(param.EstEndDt).format('YYYY-MM-DD') : '<br/>';
+            gateASdate.innerHTML = param.ActStartDt != null ? moment(param.ActStartDt).format('YYYY-MM-DD') : '<br/>';
+            gateAFdate.innerHTML = param.ActEndDt != null ? moment(param.ActEndDt).format('YYYY-MM-DD') : '<br/>';
+
+            gateBox.appendChild(project);
+            project.appendChild(gateImg);
+            project.appendChild(gateType);
+            project.appendChild(gateName);
+            project.appendChild(gateStatus);
+            project.appendChild(gateESdate);
+            project.appendChild(gateEFdate);
+            project.appendChild(gateASdate);
+            project.appendChild(gateAFdate);
+
+            $(document).ready(function () {
+                $(".gatebox").addClass("gates");
+                $("#dlgGateDetail").css({ width: "54%", height: 544 });
+                $(".gatebox > h3").addClass("gateName");
+                $(".gatestatus").addClass("status");
+                $(".gatebox > p").addClass("gateDates");
+                $(".gatestatus > span").addClass("progress");
+            });
+        }
+        @{
+             var jss = new System.Web.Script.Serialization.JavaScriptSerializer();
+             var gateVals = jss.Serialize(ViewBag.lGateViewDetail);
+        }
+        var gateVal = '@Html.Raw(gateVals)';
+        var gateArr = [$.parseJSON(gateVal)];
+        for (var index = 0; index < gateArr.length; index++) {
+            addGateDetail(gateArr[index]);
+        }
+
+        var grdDeliveresList$ = $("#gateViewDeliveresContent_@ViewBag.ProcessOID");
+        grdDeliveresList$.jqxTreeGrid('render');
+        grdDeliveresList$.jqxTreeGrid({
+            theme: 'kdnc',
+            width: "99%",
+            height: 542,
+            pagerButtonsCount: 8,
+            toolbarHeight: 35,
+            source: gateDeliveriesSource,
+            sortable: false,
+            pageable: false,
+            selectionMode: "custom",
+            editable: false,
+            editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+            columnsResize: true,
+            checkboxes: false,
+            columns: [
+                { text: '분류체계', width: "18%", datafield: 'DocClassNm', pinned: true, align: 'center', },
+                { text: '프로젝트', width: "24%", datafield: 'ProjectNm', align: 'center', cellsalign: 'center' },
+                { text: 'Task명', width: "10%", datafield: 'TaskNm', align: 'center', cellsalign: 'center' },
+                { text: '문서명', width: "19%", datafield: 'DocNm', align: 'center', cellsalign: 'center' },              
+                { text: '리비전', width: "6%", datafield: 'DocRev', align: 'center', cellsalign: 'center' },
+                { text: '상태', width: '6%', datafield: 'DocStNm', align: 'center', cellsalign: 'center'},
+                { text: '생성일', width: "10%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
+                { text: '생성자', width: "7%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
+
+            ],
+            showtoolbar: false,
+            rendertoolbar: function (statusbar) {
+            },
+            pagerRenderer: function () {
+                RequestData("/Pms/SelectGateDeliveries", { ProjectOID: @ViewBag.ProjectOID, ProcessOID: @ViewBag.ProcessOID }, function (res) {
+                    PrintJqxTreeGrid(gateDeliveriesSource, grdDeliveresList$, res);
+                    grdDeliveresList$.jqxTreeGrid('expandAll');
+                });
+            }
+        });
+        grdDeliveresList$.jqxTreeGrid('pagerRenderer');
+        grdDeliveresList$.on("rowDoubleClick", function (event) {
+                    if (clickDuplicationChk) { return; }
+                    clickDuplicationChk = true;
+                    const args = event.args;
+                    const key = args.key;
+                    let row = args.row;
+                    var rowParent = row.parent;
+
+                    // 분류체계 선택 시 예외 처리
+                    if (row.RelType === "@Common.Constant.PmsConstant.RELATIONSHIP_DOC_CLASS") {
+                        alert("산출물을 선택 해주세요.");
+                        clickDuplicationChk = false;
+                        return;
+                    }
+
+                    var param = {};
+                    param.RootOID = rowParent.FromOID;
+                    param.DocClassOID = rowParent.DocClassOID;
+                    param.DocClassPID = rowParent.DocClassPID;
+
+                    // DB 항목이면서 의뢰서 일 경우
+                    if (rowParent.DatabaseFl === "Y") {
+                        // DB 항목 OID
+                        param.DevelopRequestOID = row.LinkOID;
+
+                        var url = rowParent.PMSEditUrl;
+                        var popupWidth = 1200;
+                        var popupHeight = 900;
+
+                        if (isEmpty(url)) {
+                            alert("작성화면 URL 이 존재 하지 않습니다.");
+                            clickDuplicationChk = false;
+                            return;
+                        }
+
+                        // callbackFunction, param, EditUrl, width, height
+                        OpenEditRequest(null, param, url, popupWidth, popupHeight);
+                        clickDuplicationChk = false;
+                    }
+                    // 일반 문서 일 경우
+                    else {
+                        param.DocOID = row.DocOID;
+                        param.WrapID = "dlgEditDocumentInfo";
+
+                        // 콜백 용 그리드
+                        param.TargetGrd = null;
+
+                        OpenEditDocumentInfoDialog(document.getElementById("pms_@ViewBag.ProjectOID"), param);
+                        clickDuplicationChk = false;
+                    }
+                });
+    });
+</script>

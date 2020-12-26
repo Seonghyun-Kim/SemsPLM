@@ -1,5 +1,467 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Homepage";
 }
 
-<div>메인페이지</div>
+
+<div class="mainDashboard">
+
+    <div id="wrapProject" style="margin-right:1%;">
+        <div class="mainStatusCount clearfix">
+            <h3>업무 현황</h3>
+            <div>
+                <div style="background-color:#008FFB;" class="icon">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+                <div class="text">
+                    <h4>진행 중 업무</h4>
+                    <p><span>21</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#00E396;" class="icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="text">
+                    <h4>완료 업무</h4>
+                    <p><span>4</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#FEB019;" class="icon">
+                    <i class="far fa-calendar-check"></i>
+                </div>
+                <div class="text">
+                    <h4>진행 예정 업무</h4>
+                    <p><span>10</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#FF4560;" class="icon">
+                    <i class="far fa-calendar-times"></i>
+                </div>
+                <div class="text">
+                    <h4>지연 업무</h4>
+                    <p><span>2</span>건</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainProjectCharts">
+            <div style="margin-right:10px;">
+                <h3>전체 프로젝트 진행 제품군</h3>
+                <div id="chartPrjectGroup"></div>
+            </div>
+            <div>
+                <h3>이슈/리스크 현황</h3>
+                <div id="chartMyTask"></div>
+            </div>
+            <div style="padding-top:20px;">
+                <h3>진행중인 프로젝트 진척률</h3>
+                <div id="chartPrjectTask" style="width:940px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="wrapApprovalNotice">
+        <div class="mainStatusCount clearfix">
+            <h3>결재사항</h3>
+            <div>
+                <div style="background-color:#775DD0;" class="icon">
+                    <i class="far fa-paper-plane"></i>
+                </div>
+                <div class="text">
+                    <h4>진행 중 결재</h4>
+                    <p><span>4</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#546E7A;" class="icon">
+                    <i class="far fa-file-alt"></i>
+                </div>
+                <div class="text">
+                    <h4>금주 완료된 결재</h4>
+                    <p><span>2</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#26a69a;" class="icon">
+                    <i class="fas fa-pen-fancy"></i>
+                </div>
+                <div class="text">
+                    <h4>처리할 결재</h4>
+                    <p><span>2</span>건</p>
+                </div>
+            </div>
+            <div>
+                <div style="background-color:#D10CE8;" class="icon">
+                    <i class="fas fa-redo"></i>
+                </div>
+                <div class="text">
+                    <h4>반려된 결재</h4>
+                    <p><span>1</span>건</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainApprovalGrids">
+            <div id="tabApproval">
+                <ul class="mainApprovalList">
+                    <li>진행중 결재</li>
+                    <li>완료된 결재</li>
+                    <li>반려된 결재</li>
+                    <li>승인할 결재</li>
+                    <li>승인완료 결재</li>
+                    <li>배포 내역</li>
+                </ul>
+                <!--TAB을 이중으로 감싸서 각 Page들의 Div 에 Margin 값이 적용 안되게 처리함-->
+                <!--<div id="mainApprovalCont">-->
+                <div>
+                    <div id="grdApprovalDemandList"></div>
+                </div>
+                <div>
+                    <div id="grdApprovalFinishList"></div>
+                </div>
+                <div>
+                    <div id="grdApprovalRejectList"></div>
+                </div>
+                <div>
+                    <div id="grdApprovalConfirmList"></div>
+                </div>
+                <div>
+                    <div id="grdApprovedList"></div>
+                </div>
+                <div>
+                    <div id="grdDistList"></div>
+                </div>
+                <!--</div>-->
+            </div>
+        </div>
+        <div class="mainNoticeGrid">
+            <h3>공지사항</h3>
+            <button id="btnNotice"><i class="fas fa-plus" style="transform:unset;"></i> More</button>
+            <div id="grdNotice" class="grdNotice"></div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //전체 프로젝트 진행 제품군
+        var processingProductSample = [
+            { product: 'Actuator', amount:22},
+            { product: 'Heater', amount:30},
+            { product: 'Control Head', amount:34},
+            { product: 'Clutch Coil', amount:41},
+            { product: 'Sensors', amount:25},
+            { product: 'Valve', amount:30},
+            { product: 'EPB', amount:14},
+        ];
+
+        var processingProductSetting = {
+            title: '',
+            description: '',
+            colorScheme: 'scheme26',
+            padding: {
+                left: 5,
+                top: 5,
+                right: 150,
+                bottom: 5
+            },
+            borderLineColor: 'transparent',
+            showLegend: true,
+            legendLayout: {left:320, top:70, width:100, height:200, flow:'vertical'},
+            source: processingProductSample,
+            enableAnimations: true,
+            categoryAxis: {
+                dataField: 'product',
+                showGridLines: false,
+            },
+            seriesGroups: [{
+                type: 'pie',
+                useGradient: false,
+                showLabels: true,
+                series: [
+                    {
+                        dataField: 'amount',
+                        displayText: 'product',
+                        labelRadius: 100,
+                        initialAngle: 15,
+                        radius: 80,
+                        centerOffset:4,
+                        legendFormatFunction: function (value, itemIndex, serie, group) {
+                                return value;
+                            },
+                            formatSettings: { sufix: '%' }
+                    }
+                ]
+            }],
+        };
+
+        $("#chartPrjectGroup").jqxChart(processingProductSetting);
+
+
+        //이슈 리스크 현황
+        var issueRiskSample = [
+                { data: 'task1', finish: 18, delay: 10, onprocess: 30 },
+                { data: 'task2', finish: 5, delay: 2, onprocess: 12 },
+                { data: 'task3', finish: 12, delay: 16, onprocess: 18 },
+                { data: 'task4', finish: 20, delay: 10, onprocess: 23 },
+            ];
+            var issueRiskSetting = {
+                title: '',
+                description: '',
+                colorScheme: 'scheme26',
+                padding: {
+                    left: 10,
+                    top: 25,
+                    right: 10,
+                    bottom: 15
+                },
+                borderLineColor: 'transparent',
+                showLegend: true,
+                source: issueRiskSample,
+                enableAnimations: true,
+                categoryAxis: {
+                    dataField: 'data',
+                    showGridLines: false,
+                },
+                seriesGroups: [{
+                    type: 'column',
+                    useGradient: false,
+                    valueAxis: {
+                        minValue: 0,
+                        maxValue: 40,
+                        unitInterval: 10,
+                    },
+                    series: [
+                        { dataField: 'finish', displayText: '완료' },
+                        { dataField: 'delay', displayText: '지연' },
+                        { dataField: 'onprocess', displayText: '진행' },
+                    ],
+                }],
+            };
+        $("#chartMyTask").jqxChart(issueRiskSetting);
+
+
+        //진행중인 프로젝트 진척률
+        var prjectTaskSample = [
+                { data: 'task1', finish: 18, delay: 10, ready: 20, onprocess: 30 },
+                { data: 'task2', finish: 5, delay: 2, ready: 10, onprocess: 12 },
+                { data: 'task3', finish: 12, delay: 16, ready: 23, onprocess: 18 },
+                { data: 'task4', finish: 20, delay: 10, ready: 43, onprocess: 23 },
+            ]
+
+            var prjectTaskSetting = {
+                title: '',
+                description: '',
+                colorScheme: 'scheme26',
+                padding: {
+                    left: 10,
+                    top: 20,
+                    right: 10,
+                    bottom: 15
+                },
+                borderLineColor: 'transparent',
+                showLegend: true,
+                source: prjectTaskSample,
+                enableAnimations: true,
+                categoryAxis: {
+                    dataField: 'data',
+                    showGridLines: false,
+                },
+                seriesGroups: [{
+                    type: 'column',
+                    useGradient: false,
+                    valueAxis: {
+                        minValue: 0,
+                        maxValue: 50,
+                        unitInterval: 10,
+                    },
+                    series: [
+                        { dataField: 'finish', displayText: '완료' },
+                        { dataField: 'delay', displayText: '지연' },
+                        { dataField: 'ready', displayText: '준비' },
+                        { dataField: 'onprocess', displayText: '진행' },
+                    ],
+                }],
+            }
+
+        $("#chartPrjectTask").jqxChart(prjectTaskSetting);
+
+
+        //결재
+        $('#tabApproval').jqxTabs({ width: "100%", height: 344, });
+
+        $("#grdApprovalDemandList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", align: 'center', cellsalign: 'left', },
+                { text: '결재자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 요청일', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center' }
+            ]
+        });
+
+        $("#grdApprovalFinishList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", align: 'center', cellsalign: 'left', },
+                { text: '최종 승인자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 요청일', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $("#grdApprovalRejectList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", align: 'center', cellsalign: 'left', },
+                { text: '반려자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 반려일', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $("#grdApprovalConfirmList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", align: 'center', cellsalign: 'left', },
+                { text: '결재 요청자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 요청일', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $("#grdApprovedList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", align: 'center', cellsalign: 'left', },
+                { text: '결재 요청자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 요청일', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $("#grdDistList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '모듈', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "40%", align: 'center', cellsalign: 'left', },
+                { text: '결재 요청자', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '결재 요청일', width: "18%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '결재 상태', width: "10%", align: 'center', cellsalign: 'center', },
+                { text: '확인', width: "7%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+
+        //공지사항
+        $("#grdNotice").jqxGrid({
+            width: "100%",
+            height: 245,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '제목', width: "70%", align: 'center', cellsalign: 'left', },
+                { text: '작성자', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', width: "17%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd' },
+            ]
+        });
+
+    });
+</script>

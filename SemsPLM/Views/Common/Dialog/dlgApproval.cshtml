@@ -372,14 +372,16 @@
     }
 
     var foDataApprov = function (_param) {
+        
         var approv$ = $('span.approver');
         var approval = {};
         approval.Name = $("#approvalLineComboBox").jqxComboBox('val');
         approval.InboxStep = [];
-        if (_param != null) {
+        if (_param != null && (typeof _param != 'object')) {
             approval.TargetOID = '';
         } else {
             approval.TargetOID = @ViewBag.TargetOID;
+            approval.AutoStatus = (_param.hasOwnProperty('AutoStatus') ? _param.AutoStatus : null);
         }
         approval.Description = $('#txtTitle').val();
         approval.Comment = $('#docEditor').jqxEditor('val');
