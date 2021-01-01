@@ -22,7 +22,7 @@
 
 <script>
     var param = {};
-
+    var selDocClassDialog;
     var TypeDocument = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
     var TypeTask = '@Common.Constant.PmsConstant.TYPE_TASK';
     var dlgDocClassSearchSource =
@@ -60,6 +60,13 @@
         width: "100%",
         height: 590,
         theme: "kdnc",
+        checkboxes: function (rowKey, dataRow) {
+            var level = dataRow.level;
+            if (level == 0) {
+                return false;
+            }
+            return true;
+        },
         sortable: true,
         columns: [
             {
@@ -79,17 +86,51 @@
         renderToolbar: function (toolbar) {
             toolbar.empty();
             var container = $("<div class='lGridComponent'></div>");
-            if ('@ViewBag.Detail.Type' == '@Common.Constant.DocumentConstant.TYPE_DOCUMENT') {
-                var btnAdd = $("<button id='dlgDocClassSelectBtn'><i class='fas fa-plus'></i> 선택</button>").jqxButton();
-            } else {
-                var btnAdd = $("<button id='dlgDocClassInsertBtn'><i class='fas fa-plus'></i> 선택</button>").jqxButton();
-            }
+            var btnAdd = $("<button id=''><i class='fas fa-plus'></i> 선택</button>").jqxButton();
             container.append(btnAdd);
             toolbar.append(container);
 
+            btnAdd.on('click', function () {
+                if ('@ViewBag.Detail.Type' != '@Common.Constant.DocumentConstant.TYPE_DOCUMENT') {
 
+                    var selectedRecords = new Array();
+                    var checkedRows = dlgDocClassSearchGrid$.jqxTreeGrid('getCheckedRows');
+                    for (var i = 0; i < checkedRows.length; i++) {
+                        console.log(checkedRows[i]);
+                        var param = {};
+                        param.RootOID = selDocClassDialog.Data.RootOID;
+                        param.FromOID = selDocClassDialog.Data.FromOID;
+                        param.ToOID = checkedRows[i].OID;
+                        selectedRecords[selectedRecords.length] = param;
+                    }
+                    if (selectedRecords.length == 0) {
+                        alert("문서가 선택이 되지 않았습니다");
+                        return false;
+                    }
+                    RequestData("/Pms/InsProjectDocumentClassification", selectedRecords, function (res) {
+                        selDocClassDialog.CallBackFunction();
+                        selDocClassDialog.close();
+                        selDocClassDialog = null;
+                    });
+
+                } else {
+                    var selectedRecords = new Array();
+                    var checkedRows = dlgDocClassSearchGrid$.jqxTreeGrid('getCheckedRows');
+                    if (checkedRows.length == 0) {
+                        alert("문서가 선택이 되지 않았습니다");
+                        return false;
+                    }
+                    if (checkedRows.length > 1) {
+                        alert("하나의 문서만 선택하여주세요.");
+                        return false;
+                    }
+                    parent.docClassOID.val(checkedRows[0].OID);
+                    parent.docClassName.val(checkedRows[0].Name);
+                    selDocClassDialog.close();
+                    selDocClassDialog = null;
+                }
+            });
         }
-            
     });
 
 

@@ -28,7 +28,7 @@
 
 
 <script>
-    var selRow;
+    var selRow = {};
     var LibSearchBtn$ = $('#LibraryManage_SearchBtn');
     $(function () {
         var rowKey = null;
@@ -67,7 +67,6 @@
                 // call commit with parameter true if the synchronization with the server is successful
                 // and with parameter false if the synchronization failed.
                 commit(true);
-                console.log(rowData);
             },
         };
         var initialized = false;
@@ -75,7 +74,7 @@
         LibraryGrd$.jqxTreeGrid(
             {
                 width: "100%",
-                height: 680,
+                height: 675,
                 theme: "kdnc",
                 //      source: dataAdapter,
                 sortable: true,
@@ -120,24 +119,15 @@
                         //행 추가
                         libAddBtn$.on('click', function (e) {
                             var datarow = {};
-                            //LibraryGrd$.jqxTreeGrid('expandRow', rowKey);
-                            //LibraryGrd$.jqxTreeGrid('addRow', null, {}, 'first', rowKey);
-                            //LibraryGrd$.jqxTreeGrid('clearSelection');
-                            //LibraryGrd$.jqxTreeGrid('selectRow', newRowID);
-                            //LibraryGrd$.jqxTreeGrid('beginRowEdit', newRowID);
-                            if (selRow == null || selRow == undefined) {
+                            if (selRow == null || selRow == undefined ||selRow.OID ==null) {
                                 OpenLibraryManipDialog(function (res) {
-                                    getLibraryList(Librarysource, LibraryGrd$);
-                                    setTimeout(function () {
-                                        LibraryGrd$.jqxTreeGrid('selectRow', res);
-                                    }, 100);
+                                    getLibraryList(Librarysource, LibraryGrd$,null,res);
+
                                 }, null, null, '/Manage/dlgLibraryManip', '라이브러리 관리', "Create");
                             } else {
                                 OpenLibraryManipDialog(function (res) {
-                                    getLibraryList(Librarysource, LibraryGrd$);
-                                    setTimeout(function () {
-                                        LibraryGrd$.jqxTreeGrid('selectRow', res);
-                                    }, 100);
+                                    getLibraryList(Librarysource, LibraryGrd$,null,res);
+
                                 }, null, selRow.OID, '/Manage/dlgLibraryManip', '라이브러리 관리', "Create");
                             }
 
@@ -167,7 +157,6 @@
 
                         });
                     }
-                    LibraryGrd$.jqxTreeGrid('expandAll');
                 }
 
 
@@ -199,24 +188,26 @@
             }, null, selRow.OID, '/Manage/dlgLibraryManip', '라이브러리 관리', "Edit");
         });
 
-        getLibraryList(Librarysource, LibraryGrd$,null);
+        getLibraryList(Librarysource, LibraryGrd$,null,null);
 
         LibSearchBtn$.on('click', function () {
             var param = {};
             param.Name = $('#LibraryManage_Name').val();
             param.KorNm = $('#LibraryManage_KorNm').val();
-            getLibraryList(Librarysource, LibraryGrd$, param);
-
+            getLibraryList(Librarysource, LibraryGrd$, param,null);
         });
-
-
     });
 
-    function getLibraryList(_Source, _Grid$,_param) {
+    function getLibraryList(_Source, _Grid$,_param,_key) {
         RequestData("/Manage/SelLibrary", _param, function (res) {
             PrintJqxTreeGrid(_Source, _Grid$, res);
+            callBackListSelect(_Grid$, _key);
         });
-
+        
+    }
+    function callBackListSelect(_Grid$, _key) {
+        selRow.OID = _key;
+        _Grid$.jqxTreeGrid('selectRow', _key);
     }
 
 

@@ -2,27 +2,54 @@
     Layout = null;
 }
 <input type="hidden" id="dlgDiv" value="" />
-<div style="width:100%;text-align:right;padding:0 10px 5px 0;position:relative; border-bottom:1px solid #c5c5c5;">
+<input type="hidden" id="editType" value="" />
+<div style="width:100%;text-align:right;padding:0 10px 5px 0;height:38px;position:relative; border-bottom:1px solid #c5c5c5;">
     <div id="issueStatusPointer" class="issueStatusPointer"></div>
     <div class="ModifiableCustomBox Prepare">
-        <button id="dlgEditIssue" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-        <button id="dlgProcessIssue" onclick="" class="custom-button processBtn"><i class="fas fa-caret-square-right"></i> 처리진행</button>
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+        {
+            <button id="dlgEditIssue" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+        }
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
+        {
+            <button id="dlgProcessIssue" onclick="" class="custom-button processBtn" ApprovalType="@Common.Constant.CommonConstant.ACTION_PROMOTE"><i class="fas fa-caret-square-right"></i> 처리진행</button>
+        }
     </div>
+
     <div class="ModifiableEditCustomBox">
         <button id="dlgSaveIssue" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
         <button id="dlgCancelIssue" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
     </div>
+
+
     <div class="Process">
-        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
-        <button id="dlgFinishIssue" onclick="" class="custom-button processBtn"><i class="fas fa-check-square"></i> 처리완료</button>
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+        {
+            <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        }
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
+        {
+            <button id="dlgFinishIssue" onclick="" class="custom-button processBtn"ApprovalType="@Common.Constant.CommonConstant.ACTION_PROMOTE" ><i class="fas fa-check-square"></i> 처리완료</button>
+        }
     </div>
+
     <div class="Finish">
-        <button id="dlgEditFinish" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-        <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+        {
+            <button id="dlgEditFinish" onclick="" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+            <button id="dlgSaveContents" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        }
+    </div>
+    <div class="BeforeCompleted" hidden>
+        @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
+        {
+            <button id="dlgPromoteBtn" onclick="" class="custom-button processBtn" ApprovalType="@Common.Constant.CommonConstant.ACTION_PROMOTE"><i class="fas fa-edit"></i> 완료</button>
+        <button id="dlgRejectBtn" onclick="" class="custom-button processBtn" ApprovalType="@Common.Constant.CommonConstant.ACTION_REJECT"><i class="fas fa-save"></i> 반려</button>
+        }
     </div>
 </div>
 
-<div>
+<div class="scrollY" style="width:100%;height:718px;">
     <table class="createtable">
         <colgroup>
             <col style="width:18%" />
@@ -45,7 +72,7 @@
         <tr class="TaskVal">
             <th><i class="fa fa-caret-right"></i> 타스크명</th>
             <td colspan="3">
-                <input type="text" class="Modifiable" id="dlgTaskNm" value="@ViewBag.Detail.TaskNm" readonly />
+                <input type="text" class="" id="dlgTaskNm" value="@ViewBag.Detail.TaskNm" readonly />
             </td>
         </tr>
         <tr>
@@ -68,7 +95,7 @@
             </td>
             <th><i class="fa fa-caret-right"></i> 예상처리일</th>
             <td>
-                <input type="text" class="ModifiableCustomBox" value="@ViewBag.Detail.EstFinDt" readonly />
+                <input type="text" class="ModifiableCustomBox" value="@string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstFinDt)" readonly />
                 <div class="ModifiableEditCustomBox">
                     <div id="issueEstimatedFinDate"></div>
                 </div>
@@ -107,7 +134,7 @@
             </td>
         </tr>
         <tr class="Process">
-            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 첨부파일</th>
             <td colspan="3">
                 <div id="dlgFile_FileList_@ViewBag.Detail.OID">
                 </div>
@@ -149,12 +176,18 @@
             $('.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
             fileUpload.EditMode();
+        }else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+            $('tr.Process').attr('hidden', false);
+            $('.Prepare').attr('hidden', true);
+            $('.BeforeCompleted').attr('hidden', false);
+            $('#dlgContents').attr('readonly', 'readonly');
         } else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
             $('.Finish').attr('hidden', false);
             $('tr.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
             $('#dlgContents').attr('readonly', 'readonly');
         }
+
         $('.issueRadioBtn').jqxRadioButton('disable');
 
         $('#dlgEditIssue').on('click', function () {
@@ -208,15 +241,16 @@
             }, '/Pms/dlgSelectIssueManager', '처리자 등록');
         });
 
-        $('.processBtn').on('click', function () {
+        $('.processBtn').on('click', function (e) {
+            var ApprovalType = $(e.target).attr('ApprovalType');
             var param = {};
             param.Type = '@ViewBag.Detail.Type';
             param.OID = '@ViewBag.Detail.OID';
             param.BPolicyOID = '@ViewBag.Detail.BPolicyOID';
-            param.ApprovalType = '@Common.Constant.CommonConstant.ACTION_PROMOTE';
+            param.ApprovalType = ApprovalType;
             var orginData =@Html.Raw(Json.Encode(ViewBag.Detail));
 
-            if (confirm('처리 진행하시겠습니까?')) {
+            if (confirm('처리를 진행하시겠습니까?')) {
                 RequestData('/Pms/ProcessIssue', param, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);

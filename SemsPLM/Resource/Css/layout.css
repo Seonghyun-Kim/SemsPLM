@@ -115,7 +115,7 @@ input[type=text]{
     border-radius:3px;
 }
 
-button, .menu_h, .btn_icon, .sub > li {
+button, .menu_h, .btn_icon, .btn_user, .sub > li {
     cursor: pointer !important;
 }
 
@@ -124,7 +124,33 @@ button, .menu_h, .btn_icon, .sub > li {
     width: 32px;
 }
 
-    .btn_icon > img {
+.btn_user {
+    display: inline-block;
+    margin-right:15px;
+}
+
+.btn_user > .img{
+    display: inline-block;
+    border:2px solid #888;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    overflow:hidden;
+    margin-right:4px;
+}
+
+.btn_user i{
+    font-size:21px;
+    transform:translate(4px,2px);
+    color:#888;
+}
+
+.btn_user > span{
+    display:inline-block;
+    transform:translateY(-9px);
+}
+
+    .btn_icon > img, .btn_user img {
         width: 100%;
     }
 
@@ -415,6 +441,38 @@ nav {
         -webkit-animation-delay: 0;
         animation-delay: 0;
     }
+
+
+/* scroll design */
+
+.scrollX{
+    overflow-x: auto;
+}
+
+.scrollX::-webkit-scrollbar{
+    height:4px;
+    background-color:#eee;
+}
+
+.scrollX::-webkit-scrollbar-thumb{
+    background-color:#c5c5c5;
+    
+}
+
+.scrollY {
+    overflow-y: auto;
+}
+
+.scrollY::-webkit-scrollbar {
+    width: 4px;
+    background-color: #eee;
+}
+
+.scrollY::-webkit-scrollbar-thumb {
+    background-color: #c5c5c5; 
+    width: 2px;
+}
+
 
 
 .custom-button{
@@ -1152,7 +1210,7 @@ input[name=gateReportRadio]:checked + label {
 .issueStatusPointer{
     position:absolute;
     top:1px;
-    left:50%;
+    left:49%;
     clear:both;
 }
 
@@ -1238,7 +1296,7 @@ input[name=gateReportRadio]:checked + label {
 
 .createtable textarea{
     width:100%;
-    height:300px;
+    height:200px;
 }
 
 .doc_create th{
@@ -1339,7 +1397,6 @@ input[name=gateReportRadio]:checked + label {
 /* AuthorityManage */
 
 .authUserList, .authSetting {
-    height: 820px;
     float:left;
 }
 
@@ -1398,9 +1455,9 @@ input[name=gateReportRadio]:checked + label {
 
 .manageObject{
     width:100%;
-    height:8%;
+    height:60px;
     border:1px solid #c5c5c5;
-    margin-bottom:2%;
+    margin-bottom:7px;
 }
 
 .authobjCheckbox{
@@ -1414,7 +1471,7 @@ input[name=gateReportRadio]:checked + label {
 .gateColumn {
     float: left;
     text-align: right;
-    height: 544px;
+    height: 560px;
     padding: 0 20px 0 40px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
@@ -1433,9 +1490,9 @@ input[name=gateReportRadio]:checked + label {
     }
 
 .gates {
-    width: 160px;
-    height:544px;
-    padding: 0 10px;
+    width: 200px;
+    height:560px;
+    padding: 0 5px;
     float: left;
     text-align: center;
     border-left:none;
@@ -1450,15 +1507,26 @@ input[name=gateReportRadio]:checked + label {
         display: block;
     }
 
-.gateName > span {
-    font-size: 0.8em;
+.gateName {
+    width:100%;
+    font-size:16px;
+    line-height:21px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.gateType {
+    line-height:20px;
     display: block;
-    font-weight: normal;
+    font-size: 14px;
     margin:2px 0 18px;
 }
 
 .gatestatus {
+    width:80%;
     border: 1px solid #aaa;
+    margin-left:10%;
     margin-top: 20px;
     height: 20px;
     line-height: 20px;
@@ -1466,13 +1534,14 @@ input[name=gateReportRadio]:checked + label {
     position: relative;
 }
 
-.progress {
+.gatestatus .progress {
     position: absolute;
     display: block;
     width: 100%;
     left: 0;
     top: 0;
     z-index: 100;
+    background-color:transparent;
 }
 
 .level {
@@ -1481,11 +1550,12 @@ input[name=gateReportRadio]:checked + label {
     left: 0;
     z-index: 10;
     height: 100%;
-    background-color: #17ffc9;
+    background-color: #87edbe;
 }
 
 .gateDates {
-    margin: 18px 0;
+    margin: 19px 0;
+    line-height:20px;
 }
 
     .gateDates img {
@@ -1493,12 +1563,8 @@ input[name=gateReportRadio]:checked + label {
         cursor: pointer;
     }
 
-.gateicons{
-    padding-bottom:8px;
-}
-
 .gateicons > button {
-    width: 100%;
+    width: 85%;
     font-size: 12px;
     line-height: 22px;
     border: none;
@@ -1513,546 +1579,9 @@ input[name=gateReportRadio]:checked + label {
 
 .gateicons > button > img{
     transform:translateY(5px);
-    margin:0 8px;
+    margin:0 8px 0 12px;
 }
 
-/* ApprovalLine, dlgApprovalPerson */
-
-.approvalLine, .approvalTopBtn{
-    width:100%;
-}
-
-.approvalTopBtn{
-    padding-bottom:10px;
-    text-align:right;
-}
-
-.approvalLine > div{
-    float:left;
-}
-.approvalLine > .wholeUserList{
-    width:36%;
-}
-.approvalLine > .selectedUserList{
-    width:53%;
-}
-
-.approvalList, .approvalOrder{
-    height:310px;
-    border: 1px solid #c5c5c5;
-    margin-bottom:4px;
-    overflow-y:scroll;
-}
-
-.approvalList > table, .approvalOrder > table{
-    width:100%;
-}
-
-.approvalList > table tr, .approvalOrder > table tr{
-    border-bottom:1px solid #c5c5c5;
-    background-color:#fff;
-    overflow:hidden;
-    vertical-align:top;
-}
-
-.approvalList > table tr > th, .approvalOrder > table tr > th{
-    background-color:#eee;
-    border-right:1px solid #c5c5c5;
-    text-align:center;
-    line-height:40px;
-}
-
-.approvalList > table tr > td:first-of-type, .approvalOrder > table tr > td:first-of-type{
-    border-right:1px solid #c5c5c5;
-    text-align:center;
-    line-height:40px;
-}
-
-.approvalList > table tr > td:last-of-type{
-    position:relative;
-    padding-right:30px;
-}
-
-.approvalList > table i.fa-window-close {
-    position: absolute;
-    cursor: pointer;
-    right: 8px;
-    top: 12px;
-    z-index: 100;
-    color:#aaa;
-}
-
-.approver{
-    display:inline-block;
-    background-color:#eee;
-    border-radius:4px;
-    margin:5px 0 5px 8px;
-    padding:5px 8px;
-}
-
-.approver > small{
-    font-size:11px;
-    color:#888;
-}
-
-.approver > i{
-    cursor:pointer;
-    font-size:0.8em;
-    transform:translateY(-1px);
-    margin-left:10px;
-}
-
-.agreeTd ul{
-    /*height:0;*/
-    overflow:hidden;
-    margin-bottom:0 !important;
-}
-
-.agreeTd > ul > li{
-    float:left;
-    margin-right:10px;
-}
-
-#organiListGridApr .jqx-tree-item{
-    font-size:15px !important;
-}
-
-.selectedAgree {
-    background-color: #fffcd7 !important;
-}
-
-
-.approvalLine h4 {
-    width: 100%;
-    background-color: #eee;
-    line-height: 39px;
-    border: 1px solid #c5c5c5;
-    text-indent: 5px;
-    border-radius: 3px 3px 0 0;
-    border-bottom: none;
-    position: relative;
-}
-
-.savedLine {
-    padding: 3px;
-    background-color: #eee;
-    border: 1px solid #c5c5c5;
-    border-bottom: none;
-    border-radius: 3px 3px 0 0;
-}
-
-.savedLine > div{
-    display:inline-block;
-    vertical-align:top;
-}
-
-.orderedList > .connectedList {
-    width: 50%;
-    height: 257px;
-    border: 1px solid #c5c5c5;
-    box-sizing: border-box;
-    float: left;
-}
-
-.connectedList > li{
-    padding: 6px 0 6px 40px;
-    border-bottom:1px solid #c5c5c5;
-    position:relative;
-}
-
-.connectedList > li::before{
-    position:absolute;
-    top:0;
-    left:0;
-    background-color:#eee;
-    width:28px;
-    height:31px;
-    border-right:1px solid #c5c5c5;
-    text-align:center;
-    line-height:31px;
-}
-
-.connectedList > li > i {
-    position:absolute;
-    right: 8px;
-    top:8px;
-    cursor:pointer;
-}
-
-
-.selectedUserList > .distList {
-    border: 1px solid #c5c5c5;
-    height: 80px;
-    overflow-y: scroll;
-}
-
-.doc_editor {
-    width: 100%;
-}
-
-.doc_editor > h4 > span{
-    margin:0 7px 0 6px;
-}
-.doc_editor > h4 > input{
-    width:690px;
-    height:27px;
-    line-height:27px;
-    border-radius:unset !important;
-    font-weight:normal;
-}
-
-.approvalButtonBox {
-    padding-top: 15%;
-    width: 11%;
-    text-align: center;
-}
-
-.approvalButtonBox > button{
-    margin-bottom:5px;
-}
-
-.dlgApprovalPerson > div {
-    height: 600px;
-    float: left;
-}
-
-.dlgApprovalPerson h4 {
-    width: 100%;
-    background-color: #eee;
-    padding: 7px;
-    border: 1px solid #c5c5c5;
-    text-indent: 5px;
-    border-radius: 3px 3px 0 0;
-    border-bottom: none;
-    position: relative;
-}
-
-.dlgApprovalPerson h4 > button{
-    position:absolute;
-    top:0px;
-    right:0px;
-}
-
-.dlgApprovalPerson > .wholeUserList {
-    width: 50%;
-    margin-right: 2%;
-}
-.selectedUserList{
-    width:48%;
-}
-
-.selectedUserList > ul > li{
-    height:32px;
-    line-height:32px;
-    text-indent:10px;
-    position:relative;
-    border-bottom:1px solid #c5c5c5;
-}
-
-.selectedUserList > ul > li > i{
-    position:absolute;
-    top:7px;
-    right:8px;
-    cursor:pointer;
-}
-
-.findPerson {
-    width: 316.5px;
-    height: 33px;
-    text-indent: 8px;
-    border-radius: unset !important;
-    border-bottom: none !important;
-    font-size:15px;
-}
-
-.findPerson + button.custom-button{
-    border-radius:unset !important;
-    border-top:1px solid #c5c5c5;
-    border-right:1px solid #c5c5c5;
-    border-left:1px solid transparent;
-    border-bottom:1px solid transparent;
-}
-
-.selectedUserList > ul {
-    border: 1px solid #c5c5c5;
-    height:94%;
-}
-
-.dective {
-    display: none;
-}
-
-.buttonSeparator {
-    border-left: 1px solid #bbb;
-    margin: 0 15px 0 5px;
-    font-size: 140%;
-    vertical-align: middle;
-}
-
-.approvalState {
-    color: #d11e1e;
-    width: 100%;
-    height: 45px;
-    line-height: 45px;
-    text-align: center;
-    background: rgb(232, 232, 232);
-}
-
-
-.approvalContents{
-    float:left;
-    margin-left:10px;
-    width:436px;
-}
-
-.approvalContents > .infoTable{
-    height:355px;
-    line-height:44px;
-    margin-bottom:10px;
-}
-
-.approvalContents > .infoTable th{
-    width:15%;
-}
-
-.approverInfo {
-    width: 100px;
-    box-sizing: border-box;
-    float: left;
-    border:1px solid #ddd;
-}
-
-.approverInfo > div {
-    width: 100%;
-    height: 36px;
-    text-align:center;
-    line-height: 20px;
-    padding: 8px;
-    box-sizing: border-box;
-    background-color: rgba(0,0,0,0.05);
-}
-
-.approverInfo > div:nth-child(2){
-    height:60px;
-    background-color:#fff;
-}
-
-.approverInfo > div:nth-child(2) > img{
-    max-width:84px;
-    max-height:44px;
-}
-
-.approverInfo > div:last-child{
-    font-size:11px;
-}
-
-.approvalComment{
-    width:100%;
-    height:336px;
-}
-
-.approvalComment tr:first-child {
-    height: 43px;
-    line-height:43px;
-    text-indent:8px;
-    background-color: rgb(232,232,232);
-}
-
-.approvalComment tr:last-child{
-    height:42px;
-}
-
-.approvalComment td{
-    border:1px solid #c5c5c5;
-}
-
-.approvalComment .opinion div {
-    width:434px;
-    height:241px;
-    overflow-y:scroll;
-    vertical-align:sub;
-}
-
-.approvalComment .opinion p{
-    width:416px;
-    line-height:36px;
-    text-indent:8px;
-    border-bottom:1px solid #ddd;
-}
-
-.approvalComment .opinion p > span{
-    font-weight:bold;
-    margin-right:10px;
-}
-
-.approvalComment textarea{
-    width:360px;
-    height:100%;
-    border-radius:0;
-    border:none;
-    resize:none;
-    padding:5px;
-    float:left;
-    display:block;
-}
-
-.approvalComment button{
-    display:block;
-    float:left;
-    width:74px;
-    height:100%;
-    border-left:1px solid #c5c5c5;
-    border-right:none;
-    border-top:none;
-    border-bottom:none;
-}
-
-/* ResourceDashBoard */
-.resourceDashboard {
-    width: 1900px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-.resourceDashboard label{
-    margin-bottom:0 !important;
-}
-
-input[name=rscRadio] {
-    display: none;
-}
-
-input[name=rscRadio]:checked + label{
-    background-color:#3798ae !important;
-    color:#fff !important;
-}
-
-input[name=rscRadio] + label{
-    display:inline-block;
-    width:177px;
-    height:40px;
-    line-height:40px;
-    text-align:center;
-    background-color:#eee;
-    border-radius:5px 5px 0 0;
-    cursor:pointer;
-}
-
-.resourceInfo{
-    padding-top:5px;
-    position:relative;
-}
-
-.resourceInfo, .resourceInfo > div {
-    width: 100%;
-    height:775px;
-}
-
-.resourceInfo .rscComboBox{
-    position:absolute;
-    top:-36px;
-    right:0;
-}
-
-.rscList {
-    float: left;
-}
-
-.rscContent{
-    width:1530px;
-    margin-left:10px;
-    float:left;
-}
-
-.rscTopInfo{
-    width:100%;
-    height:160px;
-    margin-bottom:12px;
-    border:1px solid #c5c5c5;
-    box-sizing:border-box;
-    padding:24px 50px;
-}
-
-.rscTopInfo > table{
-    width:100%;
-    text-align:center;
-}
-
-.rscTopInfo > table td{
-    line-height:36px;
-}
-
-.rscTopInfo > table label{
-    width:60px;
-    border-right:2px solid #aaa;
-    line-height:16px;
-    margin:5px 10px 0 0;
-}
-
-.rscTopInfo > table td > b{
-    line-height:50px;
-    font-size:24px;
-}
-
-.rscProjectState{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    float:left;
-    margin:21px;
-}
-
-.rscProjectName{
-    font-size:20px;
-    line-height:45px;
-}
-
-.rscProgress{
-    margin: 10px auto;
-    width:60%;
-    height:30px;
-    border:1px solid #ccc;
-    box-shadow:1px 1px 3px #eee inset;
-    overflow:hidden;
-    border-radius:4px;
-}
-
-.rscProgress > .gauge{
-    height:100%;
-    background-color:#3798ae;
-}
-
-.rscPeopleImg{
-    text-align:left;
-}
-
-.rscPeopleImg > img{
-    width:96px;
-    height:96px;
-}
-
-.rscPieChart{
-    margin-left:40px;
-    width:110px;
-    height:110px;
-}
-
-.rscGridChart > div {
-    float: left;
-}
-
-.rscGridChart > div:first-child{
-    margin-right:10px;
-}
-
-.rscGridChart > div:last-child{
-    width:608px;
-    height:603px;
-}
-
-.tblChart{
-    border-color: transparent !important;
-}
 
 /* CreateProblemsLibrary */
 .fixedCreateTop {
@@ -2210,7 +1739,6 @@ table[TableType=Why] th, table[TableType=Why] td {
 .partnerChartBox{
     width:100%;
     height:755px;
-    overflow-y:scroll;
 }
 
 .partnerChartBox > div{
@@ -2269,20 +1797,6 @@ table[TableType=Why] th, table[TableType=Why] td {
     margin-left: 4px !important;
 }
 
-.infoTopFix {
-    /* 인포페이지 상단 버튼박스 고정 */
-    border-bottom: 1px solid #c5c5c5 !important;
-    position: fixed;
-    top: 285px;
-    left:220px;
-    z-index: 100;
-}
-
-.dlgMeeting .gatebox{
-    height:544px;
-}
-
-
 .jqx-tree-item-li > .jqx-tree-item {
     margin-left: 8px !important;
 }
@@ -2327,6 +1841,29 @@ table.tableTopButtonBox input[type=text]{
 
 #resource .jqx-tree-grid-checkbox {
     transform: translateY(3px);
+}
+
+.effectAssessList .jqx-listbox > div > div > div {
+    width: 100% !important;
+}
+
+
+.effectAssessList .jqx-listbox > div > div > div > div {
+    width: 100% !important;
+    z-index:10;
+}
+
+.effectAssessList .jqx-scrollbar-state-normal{
+    right:0 !important;
+    left:auto !important;
+}
+
+.effectAssessList .jqx-listbox-bottomright{
+    display:none !important;
+}
+
+.effectAssessList .jqx-fill-state-disabled{
+    background-color: transparent !important;
 }
 
 /* IE6,7,8 */

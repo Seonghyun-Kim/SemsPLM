@@ -1,0 +1,336 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div id="detailContent" style="width:100%;height:auto;">
+    <table class="infoTable" style="table-layout: fixed; width: 100%; margin-bottom:10px;">
+        <colgroup>
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th colspan="10" style="text-align:right;font-weight:normal;">
+                    <button id='dlgEditBtn' class='custom-button'><i class='fas fa-check-circle'></i> 수정</button>
+                    <button id='dlgSaveBtn' class='custom-button' hidden="hidden"><i class='fas fa-check-circle'></i> 저장</button>
+                    <button id='dlgCancelBtn' class='custom-button'><i class='fas fa-check-circle'></i> 취소</button>
+
+                </th>
+            </tr>
+
+            <tr>
+                <th>문서번호</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.Name" />
+                </td>
+                <th>리비전</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.Revision" />
+                </td>
+                <th>개발단계</th>
+                <td>
+                    <input type="text" class="ModifiableCustomBox" readonly="readonly" value="@ViewBag.Detail.DevStepNm" />
+                    <div id="dlgDevStep" style="width:50%;" class="ModifiableEditCustomBox"></div>
+                </td>
+                <th></th>
+                <td>
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>등록자</th>
+                <td>
+                    @ViewBag.Detail.CreateUsNm
+                </td>
+                <th>등록일</th>
+                <td>
+                    @Html.Raw((ViewBag.Detail.CreateDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.CreateDt) : ""))
+                </td>
+                <th>상태</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.BPolicy.StatusNm" />
+                </td>
+                <th></th>
+                <td>
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>총 시험 항목</th>
+                <td>
+                    <input type="text" readonly="readonly" id="TotalTestItem" value="@ViewBag.Detail.TotalTestItem" />
+                </td>
+                <th>대기건수</th>
+                <td>
+                    <input type="text" readonly="readonly" id="WaitingNum" value="@ViewBag.Detail.WaitingNum" />
+                </td>
+                <th>진행건수</th>
+                <td>
+                    <input type="text" readonly="readonly" id="ProgressNum" value="@ViewBag.Detail.ProgressNum" />
+                </td>
+                <th>완료건수</th>
+                <td>
+                    <input type="text" readonly="readonly" id="CompleteNum" value="@ViewBag.Detail.CompleteNum" />
+                </td>
+                <th>NG건수</th>
+                <td>
+                    <input type="text" readonly="readonly" id="NGNum" value="@ViewBag.Detail.NGNum" />
+                </td>
+            </tr>
+            <tr>
+                <th>제품명</th>
+                <td>
+
+                </td>
+                <th>전체 시험 일정</th>
+                <td colspan="3">
+                    <input type="text" class="ModifiableCustomBox" readonly="readonly" value="@Html.Raw((ViewBag.Detail.TotalTestStartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestStartDt) : "")) ~ @Html.Raw((ViewBag.Detail.TotalTestEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestEndDt) : ""))" />
+                    <div id="ReportTotalTestDt" class="ModifiableEditCustomBox"></div> 
+                </td>
+                <th>시험목적</th>
+                <td>
+                    <input type="text" id="TestPurpose"  class="Modifiable"  readonly="readonly" value="@ViewBag.Detail.TestPurpose" />
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="ReportTestItemListGrid"></div>
+</div>
+
+<script type="text/javascript">
+    var InfoReliabilityReportOID = @ViewBag.Detail.OID;
+    var ReportTestItemListGrid$ = $('#ReportTestItemListGrid');
+    var ReportTotalTestDt$ = $('#ReportTotalTestDt');
+
+    //var DevStep$ = $('#DevStep');
+    var DevStepList = @Html.Raw(Json.Encode(ViewBag.DevStepList));
+    var ProgressList = @Html.Raw(Json.Encode(ViewBag.ProgressList));
+    var dlgDevStep$ = $('#dlgDevStep');
+    var dlgEditBtn$ = $('#dlgEditBtn');
+    var dlgCancelBtn$ = $('#dlgCancelBtn');
+    var dlgSaveBtn$ = $('#dlgSaveBtn');
+
+    var TestItem$ = $('#TotalTestItem');
+    var Complete$ = $('#CompleteNum');
+    var Waiting$ = $('#WaitingNum');
+    var Progress$ = $('#ProgressNum');
+    var NG$ = $('#NGNum');
+
+    $(function () {
+        var startDt = '@Html.Raw((ViewBag.Detail.TotalTestStartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestStartDt) : ""))';
+        var endDt = '@Html.Raw((ViewBag.Detail.TotalTestEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestEndDt) : ""))';
+        $('.ModifiableEditCustomBox').attr('hidden', true);
+        var TotalTestItem = 0;
+        var WaitingNum = 0;
+        var ProgressNum = 0;
+        var CompleteNum = 0;
+        var NGNum = 0;
+
+        ReportTotalTestDt$.jqxDateTimeInput({ width: 300, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+        ReportTotalTestDt$.jqxDateTimeInput('setRange', startDt, endDt );
+        var DevStepSource = {
+            localdata: DevStepList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ],
+        };
+        var DevStepAdapter = new $.jqx.dataAdapter(DevStepSource);
+        dlgDevStep$.jqxComboBox({ source: DevStepAdapter, displayMember: "KorNm", valueMember: "OID", width: 100 });
+        dlgDevStep$.val('@ViewBag.Detail.DevStep');
+
+        dlgEditBtn$.on('click', function () {
+            $('.Modifiable').removeAttr('readonly');
+            $('.ModifiableCustomBox').attr('hidden', true);
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+            $('.Modifiable').parent().css('position', 'relative');
+            $('.Modifiable').parent().append(modifyTag);
+
+            ReportTestItemListGrid$.jqxGrid({ editable: true });
+
+            dlgEditBtn$.prop('hidden', 'hidden');
+            dlgSaveBtn$.removeAttr('hidden');
+        });
+
+        var ReportTestItemListSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Title' },
+                { name: 'TestItemNm' },
+
+                { name: 'FromOID' },
+                { name: 'ToOID' },
+
+                { name: 'KorNm' },
+                { name: 'ETC' },
+
+                { name: 'EstStartDt', type: 'date' },
+                { name: 'EstEndDt', type: 'date'},
+                { name: 'ActStartDt', type: 'date' },
+                { name: 'ActEndDt', type: 'date'},
+                { name: 'ProgressResult' },
+                { name: 'ProgressResultNm' },
+            ],
+        }
+
+        var ProgressSource = {
+            localdata: ProgressList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int', label: 'KorNm' },
+                ],
+        };
+        var ProgressAdapter = new $.jqx.dataAdapter(ProgressSource, { contentType: 'application/json' });
+
+        ReportTestItemListGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 570,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            editable: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '시험항목', datafield: 'TestItemNm', width: "15%", align: 'center', cellsalign: 'center' },
+                { text: '시작일', datafield: 'EstStartDt', columntype: 'datetimeinput', cellsFormat: 'yyyy-MM-dd', columnGroup: 'Planned', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '종료일', datafield: 'EstEndDt', columntype: 'datetimeinput', cellsFormat: 'yyyy-MM-dd', columnGroup: 'Planned', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '시작일', datafield: 'ActStartDt', columntype: 'datetimeinput', cellsFormat: 'yyyy-MM-dd', columnGroup: 'Actual', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '종료일', datafield: 'ActEndDt', columntype: 'datetimeinput', cellsFormat: 'yyyy-MM-dd', columnGroup: 'Actual', width: "12%", align: 'center', cellsalign: 'center', },
+               {
+                    text: '금주진행결과', datafield: 'ProgressResultNm', width: "10%", align: 'center', cellsalign: 'center', columntype: 'combobox',
+                    createeditor: function (row, column, editor) {
+                        editor.jqxComboBox({
+                            autoOpen: true,
+                            searchMode: 'none',
+                            animationType: 'none',
+                            source: ProgressAdapter,
+                            valueMember: 'OID',
+                            displayMember: 'KorNm'
+                        });
+                    },
+
+                    cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
+                        for (var i = 0; i < ProgressList.length; i++) {
+                            if (newvalue == ProgressList[i].OID) {
+                                ReportTestItemListGrid$.jqxGrid('setcellvalue', row, "ProgressResult", ProgressList[i].OID);
+                                ReportTestItemListGrid$.jqxGrid('setcellvalue', row, "ProgressResultNm", ProgressList[i].KorNm);
+
+                                WaitingNum = 0;
+                                ProgressNum = 0;
+                                CompleteNum = 0;
+                                NGNum = 0;
+
+                                var Num = ReportTestItemListGrid$.jqxGrid('getrows');
+                                TestItem$.val(Num.length);
+                                for (var j = 0; j < Num.length; j++) {
+                                    if (Num[j].ProgressResultNm == "완료") {
+                                        CompleteNum = CompleteNum + 1;
+                                    }
+                                    else if (Num[j].ProgressResultNm == "대기중") {
+                                        WaitingNum = WaitingNum + 1;
+                                    }
+                                    else if (Num[j].ProgressResultNm == "진행중") {
+                                        ProgressNum = ProgressNum + 1;
+                                    }
+                                    else if (Num[j].ProgressResultNm == "NG") {
+                                        NGNum = NGNum + 1;
+                                    }
+                                }
+                                Complete$.val(CompleteNum);
+                                Waiting$.val(WaitingNum);
+                                Progress$.val(ProgressNum);
+                                NG$.val(NGNum);
+
+                                return ProgressList[i].KorNm;
+                            }
+                        }
+                        if (newvalue == "") return oldvalue;
+                    }
+                },
+                { text: '금주진행결과', datafield: 'ProgressResult', width: "10%", align: 'center', cellsalign: 'center',hidden:true },
+                { text: '비고', datafield: 'ETC', width: "22%", align: 'center', cellsalign: 'left', }
+            ],
+            columnGroups: [
+                { text: '계획(Planned)', name: 'Planned',align: 'center', cellsalign: 'center', },
+                { text: '실적(Actual)', name: 'Actual', align: 'center', cellsalign: 'center', },
+            ],
+            toolbarheight: 45,
+            showtoolbar: true,
+            rendertoolbar: function (toolBar) {
+                toolBar.empty();
+                var container = $("<div class='lGridComponent' ></div>");
+                var AddButton = $("<button id='AddBtn' class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var deleteButton = $("<button id='DeleteBtn' class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
+
+                container.append(AddButton);
+                container.append(deleteButton);
+                toolBar.append(container);
+
+                var rowkey;
+
+                AddButton.click(function (event) {
+                    var checkRows = ReportTestItemListGrid$.jqxGrid('getSelection');
+                    if (checkRows.length == 0) {
+                        return;
+                    }
+                    ReportTestItemListGrid$.jqxGrid('addrow', null, {});
+
+                });
+
+                deleteButton.click(function (event) {
+                    ReportTestItemListGrid$.jqxGrid('deleterow', rowkey);
+                });
+
+                ReportTestItemListGrid$.on('rowselect', function (event) {
+                    var args = event.args;
+                    rowkey = args.row.uid;
+                });
+            },
+        });
+
+        _param = {};
+        _param.FromOID = '@ViewBag.Detail.OID';
+        getSearchReportTestItemList(ReportTestItemListSource, ReportTestItemListGrid$, _param);
+    });
+
+    function getSearchReportTestItemList(_Source, _Grid$, _param) {
+        RequestData("/Pms/SelInfoReportTestItemList", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

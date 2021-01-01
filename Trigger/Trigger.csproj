@@ -46,6 +46,7 @@
     <Compile Include="Trigger\ChangeOrder\ChangeOrderTrigger.cs" />
     <Compile Include="Trigger\Common\ApprovalTrigger.cs" />
     <Compile Include="Trigger\EBom\EPartApprovalTrigger.cs" />
+    <Compile Include="Trigger\Pms\IssueTrigger.cs" />
     <Compile Include="Trigger\Pms\GateTirgger.cs" />
     <Compile Include="Trigger\Pms\ProcessTrigger.cs" />
     <Compile Include="Trigger\Pms\ProjectTrigger.cs" />
@@ -64,6 +65,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{fc5bf52d-1116-4c8c-b25f-be81c0b7065f}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DocumentClassification\DocumentClassification.csproj">
+      <Project>{a995eb28-6adc-46f8-9770-29807486c4d0}</Project>
+      <Name>DocumentClassification</Name>
     </ProjectReference>
     <ProjectReference Include="..\Document\Document.csproj">
       <Project>{37d30513-fffe-472b-97c5-7bb8a2ae709d}</Project>

@@ -55,7 +55,9 @@ namespace DocumentClassification.Models
     {
         public static List<DocClass> SelDocClass(HttpSessionStateBase Context, DocClass _param)
         {
+
             _param.Type = DocClassConstant.TYPE_DOCCLASS;
+
             List<DocClass> lDocClass = DaoFactory.GetList<DocClass>("DocClass.SelDocClass", _param);
             lDocClass.ForEach(obj =>
             {
@@ -65,16 +67,19 @@ namespace DocumentClassification.Models
         }
         public static DocClass SelDocClassObject(HttpSessionStateBase Context, DocClass _param)
         {
+
             _param.Type = DocClassConstant.TYPE_DOCCLASS;
+
             DocClass lDocClass = DaoFactory.GetData<DocClass>("DocClass.SelDocClass", _param);
             lDocClass.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lDocClass.Type, OID = lDocClass.BPolicyOID }).First();
-
             return lDocClass;
         }
 
         public static List<DocClass> SelProjectDocClass(HttpSessionStateBase Context, DocClass _param)
         {
+
             _param.Type = DocClassConstant.TYPE_DOCCLASS;
+
             List<DocClass> lDocClass = DaoFactory.GetList<DocClass>("DocClass.SelProjectDocClass", _param);
             lDocClass.ForEach(obj =>
             {

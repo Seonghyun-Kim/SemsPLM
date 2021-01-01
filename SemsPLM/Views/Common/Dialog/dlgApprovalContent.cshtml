@@ -1,73 +1,91 @@
 ﻿@{
     Layout = null;
 }
-
-
-<div class="approvalOrder" style="width:503px;height:745px;float:left;">
-    <table>
-        <colgroup>
-            <col width="6%">
-            <col width="11%">
-            <col width="83%">
-        </colgroup>
-        <tbody id="sampleApprovalLine">
-        </tbody>
-    </table>
+<div style="text-align:right;height:33px;margin-bottom:5px;">
+    @if (ViewBag.ApprovalTaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_STARTED)
+    {
+        <button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 승인</button>
+        <button class="custom-button" id="btnReject"><i class="fas fa-reply"></i> 반려</button>
+    }
 </div>
-<div class="approvalContents">
-    <table class="tableTopButtonBox">
-        <tbody>
-            <tr>
-                <td style="text-align: right;">
-                    @if (ViewBag.ApprovalTaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_STARTED)
-                    {
-                        <button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 승인</button>
-                        <button class="custom-button" id="btnReject"><i class="fas fa-reply"></i> 반려</button>
-                    }
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="infoTable">
-        <tbody>
-            <tr>
-                <th>제목</th>
-                <td>@ViewBag.ApprvalData.Description</td>
-            </tr>
-            <tr style="vertical-align:top;">
-                <th>내용</th>
-                <td style="padding:0 !important;">
-                    <div style="width:100%;height:250px;overflow-y:scroll;">
-                        @Html.Raw(ViewBag.ApprvalData.Comment)
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>Link</th>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="approval clearfix">
+    <div>결재</div>
+    <ul>
+        <li style="float:left;width:447px;">
+            <div class="approvalOrder scrollY" style="height:579px;">
+                <table>
+                    <colgroup>
+                        <col width="6%">
+                        <col width="12%">
+                        <col width="82%">
+                    </colgroup>
+                    <tbody id="sampleApprovalLine">
+                    </tbody>
+                </table>
+            </div>
 
-    <table class="approvalComment">
-        <tr>
-            <td>
-                <i class="fas fa-pen-alt"></i> 의견
-            </td>
-        </tr>
-        <tr class="opinion">
-            <td>
-                <div id="approvalOpinion"><!--이미 작성된 의견 목록--></div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <textarea id="txtApprovalComment" placeholder="의견을 입력하세요"></textarea>
-                <button id="btnApprovalComment">제출</button>
-            </td>
-        </tr>
-    </table>
+            <table class="approvalComment">
+                <tr>
+                    <td>
+                        <i class="fas fa-paper-plane"></i> 수신
+                    </td>
+                </tr>
+                <tr>
+                    <td class="received">
+                    </td>
+                </tr>
+            </table>
 
+        </li>
+        <li style="float:left;width:500px;margin-left:5px;">
+            <div class="approvalContents">
+                <table class="infoTable">
+                    <colgroup>
+                        <col width="15%" />
+                        <col width="auto" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>제목</th>
+                            <td>@ViewBag.ApprvalData.Description</td>
+                        </tr>
+                        <tr style="vertical-align:top;">
+                            <th>내용</th>
+                            <td style="padding:0 !important;">
+                                <div class="scrollY" style="width:100%;height:318px;padding:3px 10px;">
+                                    @Html.Raw(ViewBag.ApprvalData.Comment)
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="approvalComment">
+                    <tr>
+                        <td>
+                            <i class="fas fa-pen-alt"></i> 의견
+                        </td>
+                    </tr>
+                    <tr class="opinion">
+                        <td>
+                            <div class="scrollY" id="approvalOpinion"><!--이미 작성된 의견 목록--></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <textarea id="txtApprovalComment" placeholder="의견을 입력하세요"></textarea>
+                            <button id="btnApprovalComment">제출</button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="approvalDocument scrollX scrollY" id="divPreview">
+    <!--내용-->
 </div>
 
 <script type="text/javascript">
@@ -75,14 +93,26 @@
         var ApprovDatas = @Html.Raw(Json.Encode(ViewBag.ApprvalData));
         var ApprovOID = ApprovDatas.OID;
         var sampleArray = ApprovDatas.InboxStep;
-        const sampleApprovalLine$ = $("#sampleApprovalLine");
+        const sampleApprovalLine$ = $("#sampleApprovalLine"),
+              receivedList$ = $(".received");
 
         function loadSample() {
             var listLength = sampleArray.length;
             for (var i = 0; i < listLength; i++) {
                 var type = sampleArray[i].ApprovalType;
+
+                if (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST') {
+                    var TaskData = sampleArray[i].InboxTask;
+                    _.each(TaskData, function (item, index) {
+                        var newSpan = '<span>';
+                        newSpan += '<span class="approver">' + item.PersonObj.Name + ' <small>' + item.PersonObj.DepartmentNm + '</small></span>';
+                        receivedList$.append(newSpan);
+                    });
+                    return;
+                }
+
                 var newTr = '<tr>';
-                newTr += '<th>' + (i + 1) + '</th><td>' + (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV' ? '결재' : '합의') + '</td><td>';
+                newTr += '<th>' + (i + 1) + '</th><td>' + (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV' ? '결재' : (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE' ? '합의' : '수신')) + '</td><td>';
                 var person = '<div class="approverInfo">';
                 if (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV') {
                     var TaskData = sampleArray[i].InboxTask[0];
@@ -154,6 +184,11 @@
                 loadComment();
                 txtApprovalComment.val('');
             });
+        });
+
+        $('#divPreview').empty();
+        $('#divPreview').load('@ViewBag.ApprovalTaskData.DocUrl', { OID: @ViewBag.ApprovalTaskData.DocOID }, function () {
+            $(".approval").jqxExpander({ width: '964px', expanded: true });
         });
 
     });

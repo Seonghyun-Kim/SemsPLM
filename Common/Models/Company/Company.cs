@@ -30,7 +30,7 @@ namespace Common.Models
             jqTreeModel.type = CommonConstant.TYPE_COMPANY;
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
+            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
@@ -56,7 +56,7 @@ namespace Common.Models
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
+            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
@@ -89,7 +89,7 @@ namespace Common.Models
             jqTreeModel.checkitemtypes = checkitemtypes;
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
+            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
@@ -116,7 +116,7 @@ namespace Common.Models
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
+            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {

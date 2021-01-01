@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/layout.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/dashboard.css" />
+    <link rel="stylesheet" type="text/css" href="~/Resource/Css/approval.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/jqwidgets-ver11.0.0/styles/jqx.kdc.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/all.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/fontawesome-free-5.14.0-web/css/brands.css" />
@@ -35,12 +36,18 @@
         </nav>
 
         <div class="lnb">
-            @*<div class="search">
-                <input type="text" placeholder="검색어를 입력하세요">
-                <button><img src="~/images/search.png" alt="검색"></button>
+            <div class="btn_user">
+                <div class="img">
+                    <i class="fas fa-user"></i> <!--이미지 없을 경우-->
+                </div>
+                <span><!--접속자명-->@Session["UserNm"]</span>
             </div>
-        <span class="btn_icon"><img src="~/images/user.png" alt="user"></span>
-        <span class="btn_icon"><img src="~/images/settings.png" alt="settings"></span>*@
+            @*<div class="search">
+                        <input type="text" placeholder="검색어를 입력하세요">
+                        <button><img src="~/images/search.png" alt="검색"></button>
+                    </div>
+                <span class="btn_icon"><img src="~/images/user.png" alt="user"></span>
+                <span class="btn_icon"><img src="~/images/settings.png" alt="settings"></span>*@
             <span class="btn_icon">
                 @using (Html.BeginForm("TryLogOut", "Authority", FormMethod.Post, new { id = "logoutForm" }))
                 {
@@ -137,7 +144,12 @@
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebFileUpload.js")></script>
 
     <!--ApexChart-->
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.min.js")></script>
+    <script type="text/javascript">
+        window.Promise || document.write('<script defer type="text/javascript" src="@Url.Content("~/Resource/apexcharts-bundle/loadUtils/promise-polyfill.min.js")"><\/script>');
+        window.Promise || document.write('<script defer type="text/javascript" src="@Url.Content("~/Resource/apexcharts-bundle/loadUtils/classlist.min.js")"><\/script>');
+        window.Promise || document.write('<script defer type="text/javascript" src="@Url.Content("~/Resource/apexcharts-bundle/loadUtils/findIndex.js")"><\/script>');
+    </script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.js")></script>
 
 
     <div id="loading">

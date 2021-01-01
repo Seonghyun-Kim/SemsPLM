@@ -5,7 +5,7 @@
 <input type="hidden" id="hidCalendarOID" value="" />
 <input type="hidden" id="hidWorkingDay" value="" />
 <input type="hidden" id="hidTemplateOID" value="" />
-<input type="hidden" id="hidProdecessorProject" value="" />
+<input type="hidden" id="hidBaseProject" value="" />
 
 <div style="width:100%;text-align:right;padding-right:10px;">
     <button id="btnDlgCreateProject" class="custom-button"><i class='fas fa-check-circle'></i> 등록</button>
@@ -65,10 +65,8 @@
         <tr>
             <td><label class="lbText"><i class="fa fa-caret-right"></i> 템플릿 내용</label></td>
             <td colspan="3">
-                <div id="isWbs" class="custom-checkbox">&nbsp;WBS</div>
-                <div id="isMember" class="custom-checkbox">&nbsp;멤버</div>
-                <div id="isRisk" class="custom-checkbox">&nbsp;리스크</div>
-                <div id="IsCheckList" class="custom-checkbox">&nbsp;체크리스트</div>
+                <div id="IsWbs" class="custom-checkbox">&nbsp;WBS</div>
+                <div id="IsMember" class="custom-checkbox">&nbsp;멤버</div>
                 <div id="IsDocument" class="custom-checkbox">&nbsp;산출물</div>
             </td>
         </tr>
@@ -163,7 +161,6 @@
             param.fromOID = dlgItem$.val();
             param.Code1 = 'CLASS';
                 RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
-
                     var middleSource =
                     {
                         localdata: res,
@@ -200,10 +197,8 @@
 
         $('#isCopyTemplate').jqxCheckBox({ width: 88, height: 25, checked: true });
 
-        $('#isWbs').jqxCheckBox({ width: 80, height: 25, locked: true });
-        $('#isMember').jqxCheckBox({ width: 80, height: 25, locked: true });
-        $('#isRisk').jqxCheckBox({ width: 100, height: 25, locked: true });
-        $('#IsCheckList').jqxCheckBox({ width: 130, height: 25, locked: true });
+        $('#IsWbs').jqxCheckBox({ width: 80, height: 25, locked: true });
+        $('#IsMember').jqxCheckBox({ width: 80, height: 25, locked: true });
         $('#IsDocument').jqxCheckBox({ width: 100, height: 25, locked: true });
 
         const dlgProjDate$ = $('#txtDlgProjDate');
@@ -227,6 +222,24 @@
             $('#hidCalendarOID').val('');
             $('#hidWorkingDay').val('');
             $('#txtWorkingDay').val('');
+        });
+
+        $('#schDlgProjectTemplate').on('click', function () {
+            OpenCreateProjectContentDialog(function (checkData) {
+                $('#txtDlgProjectTemplate').val(checkData.Name);
+                $('#hidTemplateOID').val(checkData.OID);
+                $("#IsWbs").jqxCheckBox({ checked: true, locked: false });
+                $("#IsMember").jqxCheckBox({ checked: true, locked: false });
+                $("#IsDocument").jqxCheckBox({ checked: true, locked: false });
+            }, null, "/Pms/CreateProjectContent", { Title: '템플릿 검색', Mode: 'Template' });
+        });
+
+        $('#schDlgProjectTemplateClear').on('click', function () {
+            $('#txtDlgProjectTemplate').val('');
+            $('#hidTemplateOID').val('');
+            $("#IsWbs").jqxCheckBox({ checked: false, locked: true });
+            $("#IsMember").jqxCheckBox({ checked: false, locked: true });
+            $("#IsDocument").jqxCheckBox({ checked: false, locked: true });
         });
 
         dlgItemMiddle$.on('change', function (evt) {

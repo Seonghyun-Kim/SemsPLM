@@ -4,6 +4,7 @@ using Common.Factory;
 using Common.Models;
 using Common.Models.File;
 using EBom.Models;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class EBomController : Controller
     {
         // GET: EBom
@@ -58,7 +60,7 @@ namespace SemsPLM.Controllers
         public ActionResult InfoEPart(int OID)
         {
             ViewBag.OID = OID;
-            EPart InfoEPart = EPartRepository.SelEPartObject(new EPart { OID = OID });
+            EPart InfoEPart = EPartRepository.SelEPartObject(Session, new EPart { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EBomConstant.TYPE_PART });
 
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
@@ -152,12 +154,42 @@ namespace SemsPLM.Controllers
             ViewBag.psizeList = psizeList;
             return PartialView("Dialog/dlgCreateEPart");
         }
+
+        #region 조립도이고 Assy인 제품 검색
+        public ActionResult dlgSearchEPartAssy(string RootOID)
+        {
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+
+            Library EPartTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = EBomConstant.PART_TYPE });
+            List<Library> EPartTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EPartTypeKey.OID });
+
+            Library AssyKey = new Library();
+            EPartTypeList.ForEach(item => {
+                if(item.KorNm == EBomConstant.PART_TYPE_ASSY)
+                {
+                    AssyKey = item;
+                    return;
+                }
+            });
+
+            ViewBag.EPartTypeAssy = AssyKey.OID;
+            ViewBag.RootOID = RootOID;
+            ViewBag.oemList = oemList;
+            ViewBag.ItemList = ItemList;
+            return PartialView("Dialog/dlgSearchEPartAssy");
+        }
+        #endregion
+
         #endregion
 
         #region EPart 검색
         public JsonResult SelEPart(EPart _param)
         {
-            List<EPart> Epart = EPartRepository.SelEPart(_param);
+            List<EPart> Epart = EPartRepository.SelEPart(Session, _param);
             return Json(Epart);
         }
         #endregion
@@ -216,7 +248,7 @@ namespace SemsPLM.Controllers
         #region EPart 정전개
         public JsonResult SelectEBom(EPart _param)
         {
-            EBOM lBom = EPartRepository.getListEbom(0, Convert.ToInt32(_param.OID));
+            EBOM lBom = EPartRepository.getListEbom(Session, 0, Convert.ToInt32(_param.OID));
             return Json(lBom);
         }
         #endregion
@@ -224,7 +256,7 @@ namespace SemsPLM.Controllers
         #region EPart 역전개
         public JsonResult SelectReverseEBom(EPart _param)
         {
-            EBOM lBom = EPartRepository.getListReverseEbom(0, Convert.ToInt32(_param.OID));
+            EBOM lBom = EPartRepository.getListReverseEbom(Session, 0, Convert.ToInt32(_param.OID));
             return Json(lBom);
         }
         #endregion
@@ -279,7 +311,7 @@ namespace SemsPLM.Controllers
         #region EBOM 편집 추가
         public JsonResult SelectEBomAddChild(EPart _param)
         {
-            List<EBOM> lBom = EPartRepository.getListEbomAddChild(0, _param.Name, _param);
+            List<EBOM> lBom = EPartRepository.getListEbomAddChild(Session, 0, _param.Name, _param);
             return Json(lBom);
         }
         #endregion
@@ -336,8 +368,8 @@ namespace SemsPLM.Controllers
             int level = 0;
             List<EBOM> CompareList = new List<EBOM>();
         
-            EPart LPataData = EPartRepository.SelEPartObject(new EPart { OID = LOID });
-            EPart RPataData = EPartRepository.SelEPartObject(new EPart { OID = ROID });
+            EPart LPataData = EPartRepository.SelEPartObject(Session, new EPart { OID = LOID });
+            EPart RPataData = EPartRepository.SelEPartObject(Session, new EPart { OID = ROID });
 
             List<EBOM> LList = new List<EBOM>();
             List<EBOM> RList = new List<EBOM>();
@@ -438,7 +470,7 @@ namespace SemsPLM.Controllers
                 {
                     tmpCompareItem.Action = PmsConstant.ACTION_NONE;
 
-                    EPart LDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.ToOID });
+                    EPart LDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.ToOID });
                     tmpCompareItem.LOId = LDetail.OID;
                     tmpCompareItem.LName = LDetail.Name;
                     tmpCompareItem.LType = LDetail.Type;
@@ -450,7 +482,7 @@ namespace SemsPLM.Controllers
                     tmpCompareItem.LThumbnail = LDetail.Thumbnail;
 
 
-                    EPart RDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.RToOld });
+                    EPart RDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.RToOld });
                     tmpCompareItem.ROId = RDetail.OID;
                     tmpCompareItem.RName = RDetail.Name;
                     tmpCompareItem.RType = RDetail.Type;
@@ -479,7 +511,7 @@ namespace SemsPLM.Controllers
                 else if (tmpCompareItem.Action.Equals(PmsConstant.ACTION_LEFT))
                 {
                     tmpCompareItem.Action = PmsConstant.ACTION_ADD_NM;
-                    EPart LDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.ToOID });
+                    EPart LDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.ToOID });
                     tmpCompareItem.LOId = LDetail.OID;
                     tmpCompareItem.LName = LDetail.Name;
                     tmpCompareItem.LType = LDetail.Type;
@@ -497,11 +529,11 @@ namespace SemsPLM.Controllers
                     EPart RDetail = new EPart();
                     if (tmpCompareItem.RToOld != null)
                     {
-                        RDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.RToOld });
+                        RDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.RToOld });
                     }
                     else
                     {
-                        RDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.ToOID });
+                        RDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.ToOID });
                     }
                     tmpCompareItem.ROId = RDetail.OID;
                     tmpCompareItem.RName = RDetail.Name;
@@ -541,7 +573,7 @@ namespace SemsPLM.Controllers
                 {
                     tmpCompareItem.Action = PmsConstant.ACTION_NONE;
 
-                    EPart LDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.ToOID });
+                    EPart LDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.ToOID });
                     tmpCompareItem.LOId = LDetail.OID;
                     tmpCompareItem.LName = LDetail.Name;
                     tmpCompareItem.LType = LDetail.Type;
@@ -549,7 +581,7 @@ namespace SemsPLM.Controllers
                     tmpCompareItem.LOrd = lRelation[j].Ord;
 
 
-                    EPart RDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.RToOld });
+                    EPart RDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.RToOld });
                     tmpCompareItem.ROId = RDetail.OID;
                     tmpCompareItem.RName = RDetail.Name;
                     tmpCompareItem.RType = RDetail.Type;
@@ -574,7 +606,7 @@ namespace SemsPLM.Controllers
                 else if (tmpCompareItem.Action.Equals(PmsConstant.ACTION_LEFT))
                 {
                     tmpCompareItem.Action = PmsConstant.ACTION_ADD_NM;
-                    EPart LDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.ToOID });
+                    EPart LDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.ToOID });
                     tmpCompareItem.LOId = LDetail.OID;
                     tmpCompareItem.LName = LDetail.Name;
                     tmpCompareItem.LType = LDetail.Type;
@@ -584,7 +616,7 @@ namespace SemsPLM.Controllers
                 else if (tmpCompareItem.Action.Equals(PmsConstant.ACTION_RIGHT))
                 {
                     tmpCompareItem.Action = PmsConstant.ACTION_DELETE_NM;
-                    EPart RDetail = EPartRepository.SelEPartObject(new EPart { OID = tmpCompareItem.RToOld });
+                    EPart RDetail = EPartRepository.SelEPartObject(Session, new EPart { OID = tmpCompareItem.RToOld });
                     tmpCompareItem.ROId = RDetail.OID;
                     tmpCompareItem.RName = RDetail.Name;
                     tmpCompareItem.RType = RDetail.Type;

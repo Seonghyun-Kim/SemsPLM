@@ -34,7 +34,7 @@ namespace ChangeOrder.Trigger
                         {
                             eobj = null;
                         }
-                        eobj = EPartRepository.SelEPartObject(new EPart { OID = obj.ToOID });
+                        eobj = EPartRepository.SelEPartObject(Context, new EPart { OID = obj.ToOID });
                         TriggerUtil.StatusPromote(Context, false, EBomConstant.TYPE_PART, Convert.ToString(eobj.BPolicyOID), Convert.ToInt32(eobj.OID), Convert.ToInt32(eobj.OID), PromoteType, null);
 
                     });

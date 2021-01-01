@@ -1,0 +1,47 @@
+﻿
+@{
+    Layout = null;
+}
+<div style="width:100%; margin-right:20px;">
+    <!--검색창-->
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;신뢰성 결과서 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div>문서번호</div>
+                <div><input id="dlgDocNm" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">개발단계(구분)</div>
+                <div> <div id="dlgDevStep" class="searchEpartComboBox"></div></div>
+            </div>
+            <div class="searchButton">
+                <button id="dlgsearchBtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="SearchReliabilityReportGrid"></div>
+
+<script type="text/javascript">
+    var DevStepList = @Html.Raw(Json.Encode(ViewBag.DevStepList));
+    var ReliabilityReportGrid$ = $('#SearchReliabilityReportGrid');
+    var dlgDevStep$ = $('#dlgDevStep');
+    var dlgsearchBtn$ = $('#dlgsearchBtn');
+    $(function () {
+        var DevStepSource = {
+            localdata: DevStepList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ],
+        };
+        var DevStepAdapter = new $.jqx.dataAdapter(DevStepSource);
+        dlgDevStep$.jqxComboBox({ source: DevStepAdapter, displayMember: "KorNm", valueMember: "OID", width: 100, height: 32 });
+    });
+
+</script>

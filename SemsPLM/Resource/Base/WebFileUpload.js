@@ -150,13 +150,13 @@
                 },
                 columns: [
                     {
-                        text: '제목', datafield: 'OrgNm', resizable: true, align: 'center', cellsalign: 'left', width: '76.2%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                        text: '제목', datafield: 'OrgNm', resizable: true, align: 'center', cellsalign: 'left', width: '60%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
                             return "<div style='display:flex;align-items:center;width:100%;height:100%;' title='" + value + "'><div style='width:calc(100% - 8px);margin-left:8px;'>" + value + "</div></div>";
                         }
                     },
-                    { text: '작성자', datafield: 'CreateUsNm', width: CellCreateUsNm, align: 'center', cellsalign: 'center', width:'6%', },
-                    { text: '작성일', datafield: 'CreateDt', width: CellCreateDt, align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd', width: '10%', },
-                    { text: '', datafield: '', width: CellButton, align: 'center', cellsalign: 'center', cellsrenderer: GridCellFileBtn, width: '6%', },
+                    { text: '작성자', datafield: 'CreateUsNm', width: CellCreateUsNm, align: 'center', cellsalign: 'center', width:'12%', },
+                    { text: '작성일', datafield: 'CreateDt', width: CellCreateDt, align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd', width: '16%', },
+                    { text: '', datafield: '', width: CellButton, align: 'center', cellsalign: 'center', cellsrenderer: GridCellFileBtn, width: '10%', },
                 ]
             });
 

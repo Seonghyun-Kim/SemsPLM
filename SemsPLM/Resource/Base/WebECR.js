@@ -77,12 +77,12 @@
                         }
                     },
 
-                    { name: 'OID', dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', width: '9%', hidden: 'true' },
+                    { name: 'OID', dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', hidden: 'true' },
 
-                    { name: 'Name', dataField: 'Name', type: 'text', align: 'center', cellsalign: 'center', text: 'ECO', width: '16%' },
-                    { name: 'DesignChangeDt', dataField: 'DesignChangeDt', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd', width: '12%' },
-                    { name: 'CreateDt', dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd', width: '12%' },
-                    { name: 'BPolicyOID', dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '5%' },
+                    { name: 'Name', dataField: 'Name', type: 'text', align: 'center', cellsalign: 'center', text: 'ECO', width: '56%' },
+                    { name: 'DesignChangeDt', dataField: 'DesignChangeDt', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd', width: '15%' },
+                    { name: 'CreateDt', dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd', width: '15%' },
+                    { name: 'BPolicyOID', dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '5.9%' },
 
                 ],
                 rendertoolbar: function (toolBar) {

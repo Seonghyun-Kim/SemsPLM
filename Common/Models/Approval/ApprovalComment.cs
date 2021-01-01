@@ -31,8 +31,9 @@ namespace Common.Models
             return lTmpApprovalComment;
         }
 
-        public static int InsApprovalComment(ApprovalComment _param)
+        public static int InsApprovalComment(HttpSessionStateBase Context, ApprovalComment _param)
         {
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             return DaoFactory.SetInsert("Comm.InsApprovalComment", _param);
         }
     }

@@ -3,6 +3,7 @@ using Common.Constant;
 using Common.Factory;
 using Common.Models;
 using DocumentClassification.Models;
+using SemsPLM.Filter;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class ManageController : Controller
     {
         // GET: Manage
@@ -158,11 +160,16 @@ namespace SemsPLM.Controllers
                 DObject dobj = DObjectRepository.SelDObjects(Session, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = _param.id }).First();
                 ViewBag.label = dobj.Name;
                 ViewBag.value = dobj.Description;
+                ViewBag.CreateDt = dobj.CreateDt;
+                ViewBag.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID =dobj.CreateUs}).Name;
+
             }
             else
             {
                 ViewBag.label = "";
                 ViewBag.value = "";
+                ViewBag.CreateDt = Convert.ToString(DateTime.Now.ToString("yyyy-MM-dd"));
+                ViewBag.CreateUsNm = Session["UserNm"];
             }
             return PartialView("Dialog/dlgEditDepartment");
         }
@@ -178,7 +185,7 @@ namespace SemsPLM.Controllers
                 dRel.Type = CommonConstant.RELATIONSHIP_DEPARTMENT;
                 dRel.FromOID = _param.parentId;
                 dRel.ToOID = _param.id;
-                result = DRelationshipRepository.DelDRelationship(dRel);
+                result = DRelationshipRepository.DelDRelationship(Session, dRel);
 
                 DaoFactory.Commit();
             }
@@ -233,7 +240,7 @@ namespace SemsPLM.Controllers
                 dRel.Type = CommonConstant.RELATIONSHIP_DEPARTMENT;
                 dRel.FromOID = _param.parentId;
                 dRel.ToOID = result;
-                DRelationshipRepository.InsDRelationshipNotOrd(dRel);
+                DRelationshipRepository.InsDRelationshipNotOrd(Session, dRel);
 
                 DaoFactory.Commit();
             }
@@ -278,6 +285,7 @@ namespace SemsPLM.Controllers
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_PERSON;
                 dobj.Name = _param.Name;
+                dobj.CreateUs = Convert.ToInt32(Session["UserOID"]);
                 result = DObjectRepository.InsDObject(Session, dobj);
 
                 _param.OID = result;
@@ -721,7 +729,7 @@ namespace SemsPLM.Controllers
             List<Role> lRoles = RoleRepository.SelRoles(new Role { });
             if (_param.FromOID != null)
             {
-                DRelationshipRepository.SelRelationship(new DRelationship { Type = CommonConstant.RELATIONSHIP_ROLE, FromOID = _param.FromOID }).ForEach(role =>
+                DRelationshipRepository.SelRelationship(Session, new DRelationship { Type = CommonConstant.RELATIONSHIP_ROLE, FromOID = _param.FromOID }).ForEach(role =>
                 {
                     lRoles.FindAll(innerRole => innerRole.OID == role.ToOID).ForEach(filterRole =>
                     {

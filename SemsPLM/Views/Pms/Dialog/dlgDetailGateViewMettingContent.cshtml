@@ -16,8 +16,11 @@
         <tbody>
             <tr>
                 <th colspan="4" style="text-align:right;font-weight:normal;">
-                    <button id='dlgSaveBtnMeeting' class='custom-button'><i class='fas fa-check-circle'></i> 등록</button>
-                </th>
+                    @if ((ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED) && (ViewBag.ProcessDetail.BPolicy.Name != Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED))
+                    {
+                        <button id='dlgSaveBtnMeeting' class='custom-button'><i class='fas fa-check-circle'></i> 등록</button>
+                    }
+                    </th>
             </tr>
 
             <tr>
@@ -31,9 +34,9 @@
                 </td>
             </tr>
             <tr>
-                <th>처리내용</th>
+                <th>회의내용</th>
                 <td colspan="3">
-                    <textarea style="width:99%; height: 300px; resize: none;" class="editCompleteTextArea" id="dlgtxtMettingDescription">@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.Description : "" )</textarea>
+                    <textarea style="width:99%; height: 200px; resize: none;" class="editCompleteTextArea" id="dlgtxtMettingDescription">@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.Description : "" )</textarea>
                 </td>
             </tr>
             <tr>
@@ -75,6 +78,7 @@
                     return;
                 }
 
+                //InfoFiles.ClearFile();
                 dlgtxtMettingDescription$.val("");
 
 

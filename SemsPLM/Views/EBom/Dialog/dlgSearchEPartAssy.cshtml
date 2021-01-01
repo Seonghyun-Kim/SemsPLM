@@ -1,0 +1,103 @@
+﻿
+@{
+    Layout = null;
+}
+<div style="width:100%; margin-right:20px;">
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;E-PART 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div>부품번호</div>
+                <div><input id="dlgSearchEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_NO</div>
+                <div> <div id="dlgSearchEPartItemNo" class="dlgSearchEPartComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">OEM</div>
+                <div>
+                    <div id="dlgSearchEPartOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="dlgSearchEPartCar" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchButton">
+                <button id="dlgSearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="digSearchEPartAssyGrid"></div>
+
+<script>
+    var EPartAssyDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+    var EPartTypeAssy = "@ViewBag.EPartTypeAssy";
+    var digSearchEPartAssyGrid$ = $('#digSearchEPartAssyGrid');
+
+    $(function () {
+        var dlgSearchEPartOemLib$ = $('#dlgSearchEPartOem');
+        var dlgSearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var EPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var dlgSearchEPartItemLib$ = $('#dlgSearchEPartItemNo');
+        var dlgSearchEPartCarLib$ = $('#dlgSearchEPartCar');
+
+        var oemSource =
+        {
+            localdata: EPartOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSearchEPartOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = dlgSearchEPartOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                dlgSearchEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+        var ItemSource =
+        {
+            localdata: dlgSearchEPartItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        //$('#dlgSearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+
+
+    });
+</script>

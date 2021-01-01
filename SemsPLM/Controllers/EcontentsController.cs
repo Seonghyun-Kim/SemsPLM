@@ -9,9 +9,11 @@ using System.Web;
 using System.Web.Mvc;
 
 using Econtents.Models;
+using SemsPLM.Filter;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class EcontentsController : Controller
     {
         // GET: Econtents

@@ -233,7 +233,7 @@ namespace ChangeOrder.Models
 
     public static class ECORepository
     {
-        public static List<ECO> SelChangeOrder(ECO _param)
+        public static List<ECO> SelChangeOrder(HttpSessionStateBase Context, ECO _param)
         {
             _param.Type = EoConstant.TYPE_CHANGE_ORDER;
             List<ECO> lECO = DaoFactory.GetList<ECO>("ChangeOrder.SelChangeOrder", _param);
@@ -246,7 +246,7 @@ namespace ChangeOrder.Models
             return lECO;
         }
 
-        public static ECO SelChangeOrderObject(ECO _param)
+        public static ECO SelChangeOrderObject(HttpSessionStateBase Context, ECO _param)
         {
             _param.Type = EoConstant.TYPE_CHANGE_ORDER;
             ECO lECO = DaoFactory.GetData<ECO>("ChangeOrder.SelChangeOrder", _param);
@@ -254,6 +254,7 @@ namespace ChangeOrder.Models
             lECO.ReasonChangeNm = LibraryRepository.SelLibraryObject(new Library { OID = lECO.ReasonChange }).KorNm;
 
             lECO.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lECO.Type, OID = lECO.BPolicyOID }).First();
+            lECO.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lECO, null);
             return lECO;
         }
         #region 설계변경 수정

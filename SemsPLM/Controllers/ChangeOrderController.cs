@@ -9,12 +9,41 @@ using EBom.Models;
 using System.Linq;
 using ChangeRequest.Models;
 using Common.Models.File;
+using SemsPLM.Filter;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class ChangeOrderController : Controller
     {
         // GET: ChangeOrder
+        public ActionResult InfoMiniChangeOrder(int OID)
+        {
+            ECO ECODetail = ECORepository.SelChangeOrderObject(Session, new ECO { OID = OID });
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
+            List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            List<EO> SelassessList = EORepository.SelEOContentsOID(new EO { RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST });  //설계변경의 체크리스트 마스터OID검색
+            List<Library> originList = new List<Library>();
+            SelassessList.ForEach(item =>
+            {
+                Library pdata = LibraryRepository.SelAssessLibraryObject(new Library { OID = item.ToOID }); //마스터 검색
+
+                pdata.Cdata = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = pdata.OID }); //마스터 자녀들검색
+                originList.Add(pdata);
+
+                List<EO> checkData = EORepository.SelEOContentsOID(new EO { ToOID = item.ToOID, RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
+
+                item.CheckData = checkData;  //체크리스트 검색
+            });
+
+            ViewBag.reasonList = reasonList;
+            ViewBag.SelassessList = SelassessList;
+            ViewBag.originList = originList;
+            ViewBag.ECODetail = ECODetail;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_ORDER });
+
+            return PartialView("InfoChangeOrder");
+        }
         public ActionResult CreateChangeOrder()
         {
             Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
@@ -42,7 +71,7 @@ namespace SemsPLM.Controllers
 
         public ActionResult InfoChangeOrder(int OID)
         {
-            ECO ECODetail = ECORepository.SelChangeOrderObject(new ECO { OID = OID });
+            ECO ECODetail = ECORepository.SelChangeOrderObject(Session, new ECO { OID = OID });
             Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
             List<EO> SelassessList = EORepository.SelEOContentsOID(new EO { RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST });  //설계변경의 체크리스트 마스터OID검색
@@ -106,7 +135,7 @@ namespace SemsPLM.Controllers
                 var selName = "WRO" + YYYY + MM + dd + "-001";
                 var NewName = "WRO" + YYYY + MM + dd;
 
-                var LateName = ECORepository.SelChangeOrder(new ECO { Name = NewName });
+                var LateName = ECORepository.SelChangeOrder(Session, new ECO { Name = NewName });
 
                 if (LateName.Count == 0)
                 {
@@ -193,7 +222,7 @@ namespace SemsPLM.Controllers
         #region 설계변경 검색
         public JsonResult SelChangeOrder(ECO _param)
         {
-            List<ECO> lECO = ECORepository.SelChangeOrder(_param);
+            List<ECO> lECO = ECORepository.SelChangeOrder(Session, _param);
             return Json(lECO);
         }
         #endregion
@@ -312,7 +341,7 @@ namespace SemsPLM.Controllers
                 {
                     if (obj != null)
                     {
-                        EPart eobj = EPartRepository.SelEPartObject(new EPart { OID = obj.ToOID });
+                        EPart eobj = EPartRepository.SelEPartObject(Session, new EPart { OID = obj.ToOID });
                         eobj.RootOID = _param.RootOID;
                         eobj.Type = _param.Type;
                         eobj.ToOID = eobj.OID;

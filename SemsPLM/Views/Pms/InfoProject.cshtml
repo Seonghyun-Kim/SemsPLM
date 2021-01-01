@@ -293,14 +293,46 @@
             hidWbsFileInfo = data.Export;
         });
 
-        const productGrd$ = $('#product_@ViewBag.OID');
+        var SelProEPartParam = {};
+        SelProEPartParam.RootOID = ProjectOID;
+
+        var ProjectEPartrowKey = null;
+
+        var ProjectEPartSource = {
+            datatype: 'json',
+            datafields: [
+                //System Mandatory
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'OID', type: 'number' },
+                { name: 'Ord', type: 'number' },
+                { name: 'RoleOID', type: 'number' },
+                { name: 'RoleOIDNm', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'PersonNm', type: 'string' },
+                { name: 'DepartmentNm', type: 'string' },
+                { name: 'Action', type: 'string' },
+                { name: 'diseditable', type: 'array' },
+                { name: 'Thumbnail', type: 'string' },
+
+                { name: 'ObjName'},
+                { name: 'Title' },
+                { name: 'DocRev' },
+                { name: 'CreatUsNm' },
+                { name: 'CreateDt', type: 'date' },
+            ],
+            id: 'OID',
+        };
+        var ProjectEPartAdapter = new $.jqx.dataAdapter(ProjectEPartSource);
+        var productGrd$ = $('#product_@ViewBag.OID');
         productGrd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
             height: 278,
             rowsheight: 28,
             columnsheight: 30,
-            //source: ProjectSource,
+            source: ProjectEPartAdapter,
             sortable: false,
             pageable: false,
             columns: [
@@ -310,15 +342,13 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '품번', datafield: 'Name', width: "22%", align: 'center', cellsalign: 'center', },
+                { text: '품번', datafield: 'ObjName', width: "22%", align: 'center', cellsalign: 'center', },
                 { text: '품명', datafield: 'Title', width: "32%", align: 'center', cellsalign: 'center', },
-                { text: 'Rev', datafield: 'Revision', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: 'Rev', datafield: 'DocRev', width: "12%", align: 'center', cellsalign: 'center', },
                 { text: '생성자', datafield: 'CreatUsNm', width: "12%", align: 'center', cellsalign: 'center' },
                 { text: '생성일', datafield: 'CreateDt', width: "12%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-
-                //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
             ],
-            showtoolbar: true,
+            showtoolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1 || (ViewBag.Detail.BPolicyNm != Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED)),
             toolbarheight: 45,
             rendertoolbar: function (statusbar) {
                 statusbar.empty();
@@ -331,14 +361,38 @@
                 statusbar.append(container);
 
                 btnAdd.on('click', function () {
-
+                    OpenSearchEPartAssyDialog(
+                        function (res) {
+                            RequestData('/Pms/SelProjectEPartRelation', SelProEPartParam, function (res) {
+                                PrintJqxGrid(ProjectEPartSource, productGrd$, res);
+                            });
+                        }, null, { RootOID: @ViewBag.OID }, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
                 });
 
                 btnDelete.on('click', function () {
-
+                    if (ProjectEPartrowKey == null) {
+                        alert('제품을 선택해주세요');
+                        return;
+                    }
+                    RequestData('/Pms/DelProjectEPartRelation', { OID: ProjectEPartrowKey }, function (res) {
+                        SelProEPart(ProjectEPartSource, productGrd$, SelProEPartParam);
+                    });
                 });
             },
         });
+
+        productGrd$.on('rowselect', function (event) {
+            var args = event.args;
+            ProjectEPartrowKey = args.row.OID;
+        });
+
+        function SelProEPart(source, grid, param) {
+            RequestData('/Pms/SelProjectEPartRelation', param, function (res) {
+                PrintJqxGrid(source, grid, res);
+            });
+        }
+
+        SelProEPart(ProjectEPartSource, productGrd$, SelProEPartParam);
 
         $('#pms_' + ProjectOID + ' .tab').on('click', function () {
             if ($(this).hasClass('info_focus')) {
@@ -470,37 +524,37 @@
                     toolbarHeight: 44,
                     editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
                     showToolbar: true,
-                        ready: function () {
+                    ready: function () {
 
-                            var batch$ = $("#importWbsBatch_" + ProjectOID);
-                            batch$.jqxWindow({
-                                resizable: false,
-                                width: 310,
-                                height: 220,
-                                position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
-                                autoOpen: false,
-                                isModal: true,
-                                modalOpacity: 0.2,
-                            });
+                        var batch$ = $("#importWbsBatch_" + ProjectOID);
+                        batch$.jqxWindow({
+                            resizable: false,
+                            width: 310,
+                            height: 220,
+                            position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
+                            autoOpen: false,
+                            isModal: true,
+                            modalOpacity: 0.2,
+                        });
 
-                            batch$.on('close', function () {
-                                $('#importWbsBatchTxt_' + ProjectOID).empty();
-                                hidWbsFileInfo = '';
-                            });
+                        batch$.on('close', function () {
+                            $('#importWbsBatchTxt_' + ProjectOID).empty();
+                            hidWbsFileInfo = '';
+                        });
 
-                            batch$.css('visibility', 'visible');
+                        batch$.css('visibility', 'visible');
 
-                            $("#importWbsBatchSave_" + ProjectOID).mousedown(function () {
-                                RequestData('/Pms/ImportExcelWbs', { OID: ProjectOID, ExcelFile: hidWbsFileInfo }, function (res) {
-                                    PrintJqxTreeGrid(source, projWbsInfo$, [res]);
-                                    batch$.jqxWindow('close');
-                                });
-                            });
-
-                            $("#importWbsBatchCancel_" + ProjectOID).mousedown(function () {
+                        $("#importWbsBatchSave_" + ProjectOID).mousedown(function () {
+                            RequestData('/Pms/ImportExcelWbs', { OID: ProjectOID, ExcelFile: hidWbsFileInfo }, function (res) {
+                                PrintJqxTreeGrid(source, projWbsInfo$, [res]);
                                 batch$.jqxWindow('close');
                             });
-                        },
+                        });
+
+                        $("#importWbsBatchCancel_" + ProjectOID).mousedown(function () {
+                            batch$.jqxWindow('close');
+                        });
+                    },
                     columns: [
                         {
                             text: '이름', dataField: 'ObjName', width: '20%', pinned: true, align: 'center',
@@ -639,7 +693,16 @@
                                 }
                             },
                         },
-                        { text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        {
+                            text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '4%', align: 'center', editable: false, cellsAlign: 'center',
+                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                if ((rowData.ActStartDt == null && rowData.ActEndDt == null) || (rowData.ActStartDt != null && rowData.ActEndDt != null)) {
+                                    return cellText;
+                                } else if (rowData.ActStartDt != null && rowData.ActEndDt == null) {
+                                    //return weekendCalc(rowData.ActStartDt, today.getFullYear() + "-" + ((today.getMonth() + 1).toString().length === 1 ? "0" + (today.getMonth() + 1) : (today.getMonth() + 1)) + "-" + (today.getDate().toString().length === 1 ? "0" + (today.getDate()) : today.getDate()), workingDay, sHoliday);
+                                }
+                            }
+                        },
                         { text: '시작일', dataField: 'ActStartDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
                         { text: '완료일', dataField: 'ActEndDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
                         { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
@@ -652,8 +715,8 @@
                     renderToolbar: function (toolBar) {
                         const editable = projWbsInfo$.jqxTreeGrid('editable');
                         if (!editable && toolBar[0].children.length > 0) {
-                            if (toolBar[0].children[0].children[18] != undefined) {
-                                toolBar[0].children[0].children[18].click();
+                            if (toolBar[0].children[0].children[14] != undefined) {
+                                toolBar[0].children[0].children[14].click();
                             }
                             return;
                         }
@@ -803,7 +866,7 @@
                                     if (NoData == null || NoData == undefined || NoData.length < 1) {
                                         maxData = '#10';
                                     } else {
-                                        maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                        maxData = _.max(NoData, function (item) { return item != undefined && parseInt(item.replace('#', '')) });
                                         if (maxData == null || maxData == undefined) {
                                             maxData = '#10';
                                         } else {
@@ -815,7 +878,7 @@
                                     if (getNoData.length < 1) {
                                         maxData = parentData.No + '-1';
                                     } else {
-                                        maxData = _.max(getNoData, function (item) { return item != undefined && item.replace(parentData.No + '-', '') });
+                                        maxData = _.max(getNoData, function (item) { return item != undefined && parseInt(item.replace(parentData.No + '-', '')) });
                                         maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                     }
                                 }
@@ -968,10 +1031,10 @@
                             if (WebUtils.isPopupOpen("wbsBatch_" + ProjectOID)) {
                                 return;
                             }
-
                             batch$.jqxWindow('open');
                         });
                     },
+
                     pagerRenderer: function () {
                         RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
                             projectDatas = [];
@@ -1068,10 +1131,11 @@
 
                     } else if (dataField == 'Dependency') {
                         const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                        const gettingDep = fGettingDependData(value);
                         const selDep = arrRows.filter(function (item) {
-                            return item.Id == value;
+                            return gettingDep.hasOwnProperty(item.Id);
                         });
-                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, 2, workingDay, sHoliday));
+                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, (1 + gettingDep[selDep[0].Id]), workingDay, sHoliday));
                     }
                 });
 
@@ -1082,16 +1146,17 @@
                     var rowKey = args.key;
                     var dataField = args.dataField;
                     var records = row.records;
+                    var allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
 
                     if (dataField == 'EstStartDt') {
                         if (records != undefined && records.length > 0) {
                             for (var i = 0; i < records.length; i++) {
                                 var rowKey = projWbsInfo$.jqxTreeGrid('getKey', records[i]);
                                 projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                fDependencyRecureTargetDataControl(projWbsInfo$, ProjectOID, records[i], allDatas);
                             }
                         }
                     }
-
                     fDependencyRescureControl(ProjectOID, row);
                 });
 
@@ -1332,7 +1397,7 @@
                         { name: 'expanded', type: 'bool' },
                         { name: 'Files', type: 'number' },
 
-                        { name: 'Type', type: 'number' },
+                        { name: 'Type', type: 'string' },
                         { name: 'DocToOID', type: 'number' },
                         { name: 'DocClassOID', type: 'number' },
 
@@ -1357,14 +1422,15 @@
                         { name: 'ModifyDt', type: 'date' },
                         { name: 'ModifyUsNm', type: 'date' },
                         { name: 'FromNm', type: 'string' },
-
-                        { name: 'OID', type: 'number' },
+                        { name: 'BPolicyAuths', type: 'Array' },
+                        { name: 'OID'},
                         { name: 'FromOID', type: 'number' },
                         { name: 'ToOID', type: 'number' },
                         { name: 'RootOID', type: 'number' },
-                        { name: 'ProjectNm', type: 'number' },
+                        { name: 'ProjectNm', type: 'string' },
                         { name: 'DocClassNm', type: 'string' },
                         { name: 'TaskNm', type: 'string' },
+                        { name: 'TaskOID'}
                     ],
                     hierarchy:
                     {
@@ -1398,10 +1464,21 @@
                         {
                             text: 'Action', width: "6%", align: 'center', cellsalign: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (rowData.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER') {
-                                    gPmsModifyDeliveryMaster[row] = { source: deliveriesSource, obj$ : deliveriesGrd$ };
-                                    btnAddAction = "<img src= '/Images/doc_add.png' alt='생성' style='border:0px;width:27px;cursor:pointer;' onclick='project(" + row + ")'>"
-                                    return "<div>" + btnAddAction + "</div>";
+                                if (rowData.BPolicyAuths != null) {
+                                    var chkAuths = rowData.BPolicyAuths.findIndex(function (item) {
+                                        return item.AuthNm == '@Common.Constant.CommonConstant.AUTH_MODIFY'
+                                    });
+                                    if (chkAuths > -1) {
+                                        if (rowData.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER') {
+                                            gPmsModifyDeliveryMaster[row] = { source: deliveriesSource, obj$: deliveriesGrd$ };
+                                            btnAddAction = "<img src= '/Images/doc_add.png' alt='생성' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectInfoDoc(" + row + ")'>"
+                                            if (rowData.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT") {
+                                                btnSearchAction = "<img src= '/Images/search.png' alt='신뢰성 결과서 추가' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectSearchDoc(" + row + ")'>"
+                                                return "<div>" + btnSearchAction + "</div>";
+                                            }
+                                            return "<div>" + btnAddAction + "</div>";
+                                        }
+                                    }
                                 }
                             },
                         },
@@ -1410,7 +1487,7 @@
                         { text: '생성일', width: "8%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
                         { text: '생성자', width: "8%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
                     ],
-                    showtoolbar: true,
+                    showtoolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION && item.AuthTargetOID == 1) > -1),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -1438,14 +1515,29 @@
                             var delItem = deliveriesGrd$.jqxTreeGrid('getCheckedRows');
 
                             if (delItem.length < 1) {
-                                alert("선택이 되지 않았습니다.")
+                                alert("선택이 되지 않았습니다.");
                                 return;
                             }
                             delparam.OID = delItem[0].OID;
 
+                            delparam.RootOID = delItem[0].RootOID;
+                            delparam.FromOID = delItem[0].FromOID;
+                            delparam.ToOID = delItem[0].ToOID;
+                            delparam.Type = delItem[0].Type;
+
                             deliveriesparam.RootOID = ProjectOID;
 
-                            RequestData("/Pms/DelProjectDocumentClassification", delparam, function (res) {
+                            if (delparam.OID == null) {
+                                if (delparam.RootOID != null && delparam.FromOID != null && delparam.ToOID != null) {
+
+                                }
+                                else {
+                                    alert("선택이 되지 않았습니다");
+                                    return;
+                                }
+                            }
+
+                            RequestData("/Pms/DelProjectDocumentClassification", { _param : delparam }, function (res) {
                                 getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
                                 deliveriesGrd$.jqxTreeGrid('expandAll');
                             });
@@ -1501,7 +1593,15 @@
                                 gClickDuplication = false;
                             }, 250);
                         } else {
-                            alert('새창');
+                            if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
+                                OpenInfoReliabilityDialog(function (res) {
+                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
+                            } else {
+                                OpenInfoReliabilityReportDialog(function (res) {
+                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
+                            }
                         }
                     }
                 });
@@ -1561,7 +1661,6 @@
                     selectionMode: "custom",
                     editable: false,
                     editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
-                    showtoolbar: true,
                     columnsResize: true,
                     checkboxes: true,
                     columns: [
@@ -1580,7 +1679,7 @@
                         { text: '예상처리일', cellsalign: 'center', align: 'center', datafield: 'EstFinDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                         { text: '처리완료일', cellsalign: 'center', align: 'center', datafield: 'ActProcessDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                     ],
-                    showtoolbar: true,
+                    showtoolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -1830,23 +1929,27 @@
         });
     });
 
-    function project(_rowData) {
+    function ProjectInfoDoc(_rowData) {
         var row$ = gPmsModifyDeliveryMaster[_rowData];
         var param = {};
         var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
         param.DocType = row.ToOID;
         param.DocType_KorNm = row.DocClassNm;
         param.RootOID = row.RootOID;
-        // param.TaskOID = row.FromOID;
+        if (param.RootOID != param.FromOID) {
+            param.TaskOID = row.FromOID;
+        }
         param.FromOID = row.ToOID;
 
         if (row.ViewUrl != null) {
-            OpenReliabilityDialog(function () {
-                RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID }, function (res) {
-                    PrintJqxTreeGrid(row$.source, row$.obj$, res);
-                    row$.obj$.jqxTreeGrid('expandAll');
-                });
-            }, null, param, '/Pms/dlgReliabilityForm', '신뢰성 시험 의뢰서');
+            if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
+                OpenReliabilityDialog(function () {
+                    RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID }, function (res) {
+                        PrintJqxTreeGrid(row$.source, row$.obj$, res);
+                        row$.obj$.jqxTreeGrid('expandAll');
+                    });
+                }, null, param, '/Pms/dlgReliabilityForm', '신뢰성 시험 의뢰서');
+            }
         } else {
             param.DocGroup = '@Common.Constant.DocClassConstant.TYPE_DOCCLASS';
             OpenPmsDocumentDialog(function () {
@@ -1856,7 +1959,26 @@
                 });
             }, null, param, '/Pms/CreateDocument', '문서 등록');
         }
-        //alert("프로젝트 ID는" + _rootOid + "이고 행은" + _targetOid + "입니다");
+    }
+
+    function ProjectSearchDoc(_rowData) {
+        var row$ = gPmsModifyDeliveryMaster[_rowData];
+        var param = {};
+        var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
+        param.DocType = row.ToOID;
+        param.DocType_KorNm = row.DocClassNm;
+        param.RootOID = row.RootOID;
+        if (param.RootOID != param.FromOID) {
+            param.TaskOID = row.FromOID;
+        }
+        param.FromOID = row.ToOID;
+
+        OpenSearchReliabilityReportDialog(function () {
+            RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID }, function (res) {
+                PrintJqxTreeGrid(row$.source, row$.obj$, res);
+                row$.obj$.jqxTreeGrid('expandAll');
+            });
+        }, null, param, '/Pms/dlgSearchReliabilityReport', '신뢰성 시험 결과서');
     }
 
 </script>

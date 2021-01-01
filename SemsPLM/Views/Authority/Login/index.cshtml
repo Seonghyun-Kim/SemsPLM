@@ -11,47 +11,223 @@
     <link rel="stylesheet" type="text/css" href="~/Resource/jquery-ui-1.12.1/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/Css/login.css" />
     <link rel="stylesheet" type="text/css" href="~/Resource/bxslider-4-master/dist/jquery.bxslider.css" />
+    <style>
+        #main #mainWrap {
+            position: relative;
+        }
+
+        #main .visual {
+            position: relative;
+        }
+
+            #main .visual .roll li {
+                position: relative;
+                overflow: hidden;
+            }
+
+            #main .visual .bg {
+                width: 100%;
+                height: 892px;
+                background-repeat: no-repeat;
+                background-position: 100% center;
+                transition: all 12s;
+                transition-timing-function: linear;
+            }
+
+            #main .visual .scroll {
+                position: absolute;
+                bottom: 90px;
+                left: 50%;
+                z-index: 60;
+                margin-left: -29px;
+            }
+
+            #main .visual .slogan {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                z-index: 60;
+                width: 100%;
+                margin-top: -81px;
+            }
+
+                #main .visual .slogan > * {
+                    display: block;
+                }
+
+                #main .visual .slogan p {
+                    text-align: center;
+                }
+
+                #main .visual .slogan strong {
+                    font-size: 62px;
+                    color: #fff;
+                    font-weight: 600;
+                    letter-spacing: -0.02em;
+                    line-height: 1em;
+                    position: relative;
+                    opacity: 0;
+                    top: -50px;
+                    transition: all 1s 1s;
+                }
+
+                    #main .visual .slogan strong:after {
+                        display: block;
+                        clear: both;
+                        content: '';
+                        position: absolute;
+                        bottom: -10px;
+                        left: 0;
+                        width: 0;
+                        height: 2px;
+                        background: #fff;
+                        transition: all 0.5s 1.8s;
+                    }
+
+                #main .visual .slogan p span {
+                    font-size: 62px;
+                    color: #fff;
+                    font-weight: 300;
+                    letter-spacing: -0.02em;
+                    line-height: 1em;
+                    position: relative;
+                    opacity: 0;
+                    right: -30px;
+                    transition: all 2s 2s;
+                }
+
+                #main .visual .slogan a {
+                    border: 1px solid #fff;
+                    width: 162px;
+                    height: 48px;
+                    line-height: 48px;
+                    color: #fff;
+                    text-align: center;
+                    margin: 50px auto 0;
+                    text-decoration: none;
+                    opacity: 0.4;
+                    transition: all 1s 3s;
+                }
+
+            #main .visual .roll li.active .bg {
+                background-position: 0 center;
+            }
+
+            #main .visual .roll li.active .slogan strong {
+                opacity: 1;
+                top: 0;
+            }
+
+                #main .visual .roll li.active .slogan strong:after {
+                    width: 100%;
+                }
+
+            #main .visual .roll li.active .slogan p span {
+                opacity: 1;
+                right: 0;
+            }
+
+            #main .visual .roll li.active .slogan a {
+                opacity: 1;
+            }
+
+            #main .visual .bx-pager {
+                position: absolute;
+                bottom: 50px;
+                left: 0;
+                width: 100%;
+                z-index: 81;
+                text-align: center;
+            }
+
+            #main .visual .bx-pager-item {
+                display: inline-block;
+                margin: 0 5px;
+            }
+
+                #main .visual .bx-pager-item a {
+                    display: block;
+                    width: 58px;
+                    height: 5px;
+                    background: #fff;
+                    text-indent: -999em;
+                    opacity: 0.45;
+                }
+
+                    #main .visual .bx-pager-item a.active {
+                        opacity: 1;
+                    }
+
+            #main .visual .bx-controls-direction a {
+                width: 37px;
+                height: 73px;
+                position: absolute;
+                top: 50%;
+                z-index: 88;
+                margin-top: -36.5px;
+                display: block;
+                overflow: hidden;
+                text-indent: -9999px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: contain;
+            }
+
+            #main .visual .bx-prev {
+                background-image: url('../images/main/vis-prev.png');
+                left: 50%;
+                margin-left: -700px;
+            }
+
+            #main .visual .bx-next {
+                background-image: url('../images/main/vis-next.png');
+                right: 50%;
+                margin-right: -700px;
+            }
+    </style>
 </head>
 <body>
     <header>
-        <h1><a href="#" title="MMA"><img src="~/images/woori_login.png" alt="Logo" /></a></h1>
+        <h1><a href="#" title="MMA"><img src="~/images/logo.png" alt="Logo" /></a></h1>
     </header>
 
-    <div class="visual">
-        <div class="bx-wrapper" style="max-width: 100%;">
-            <div class="bx-viewport" aria-live="polite" style="width: 100%; overflow: hidden; position: relative; height: 800px;">
-                <ul class="roll" style="width: auto; position: relative;">
-                    <li aria-hidden="false" class="active" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 50; display: block;">
-                        <div class="bg __pc" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img1.jpg" alt=""></div>
-                        <div class="slogan">
-                            <p class="text firstSlogan">
-                                <strong>[변화와 혁신]<span class="underline"></span></strong>
-                                <span>새로운 가치를 만들어 갑니다</span>
-                            </p>
-                        </div>
-                    </li>
-                    <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;">
-                        <div class="bg __pc" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img2.jpg" alt=""></div>
-                        <div class="slogan">
-                            <p class="text">
-                                <strong>[미래차]<span class="underline"></span></strong>
-                                <span>편안하고 안전한 드라이빙을 추구합니다</span>
-                            </p>
-                        </div>
-                    </li>
-                    <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;">
-                        <div class="bg __pc" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img3.jpg" alt=""></div>
-                        <div class="slogan">
-                            <p class="text">
-                                <strong>[환경]<span class="underline"></span></strong>
-                                <span>을 먼저 생각하는 글로벌 기업이 되겠습니다</span>
-                            </p>
-                        </div>
-                    </li>
-                </ul>
+    <section id="main">
+        <div class="visual">
+            <div class="bx-wrapper" style="max-width: 100%;">
+                <div class="bx-viewport" aria-live="polite" style="width: 100%; overflow: hidden; position: relative; height: 892px;">
+                    <ul class="roll" style="width: auto; position: relative;">
+                        <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 50; display: none;" class="">
+                            <div class="bg __pc" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img1.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img1.jpg" alt=""></div>
+                            <div class="slogan">
+                                <p class="text">
+                                    <strong>[변화와 혁신]</strong> <span>새로운 가치를 만들어 갑니다</span>                    <!--<strong>[변화와 혁신]</strong> <span>새로운 가치를 만들어 갑니다</span>-->
+
+                                </p>
+                            </div>
+                        </li>
+                        <li aria-hidden="false" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;" class="">
+                            <div class="bg __pc" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img3.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img3.jpg" alt=""></div>
+                            <div class="slogan">
+                                <p class="text">
+                                    <strong>[미래차]</strong> <span>편안하고 안전한 드라이빙을 추구합니다</span>                    <!--<strong>[변화와 혁신]</strong> <span>새로운 가치를 만들어 갑니다</span>-->
+
+                                </p>
+                            </div>
+                        </li>
+                        <li aria-hidden="true" style="float: none; list-style: none; position: absolute; width: 2543px; z-index: 0; display: none;" class="">
+                            <div class="bg __pc" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __ta" style="background-image: url(../../../images/login_img2.jpg)"></div><div class="bg __mo"><img src="../../../images/login_img2.jpg" alt=""></div>
+                            <div class="slogan">
+                                <p class="text">
+                                    <strong>[환경]</strong> <span>을 먼저 생각하는 글로벌 기업이 되겠습니다</span>                    <!--<strong>[변화와 혁신]</strong> <span>새로운 가치를 만들어 갑니다</span>-->
+
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div><div class="bx-controls bx-has-controls-direction bx-has-pager"><div class="bx-controls-direction"><a class="bx-prev" href="">Prev</a><a class="bx-next" href="">Next</a></div><div class="bx-pager bx-default-pager"><div class="bx-pager-item"><a href="" data-slide-index="0" class="bx-pager-link">1</a></div><div class="bx-pager-item"><a href="" data-slide-index="1" class="bx-pager-link active">2</a></div><div class="bx-pager-item"><a href="" data-slide-index="2" class="bx-pager-link">3</a></div></div></div>
             </div>
         </div>
-    </div>
+    </section>
 
 
     <div class="login">
@@ -64,12 +240,31 @@
         </div>
     </div>
 
+    <div id="loginLoading" style="width:100%;background-color:#fff;">
+        <div class="loader-inner ball-grid-pulse">
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#d11e1e"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
+            <div style="background:#ccc;"></div>
+            <div style="background:#3798ae;"></div>
+        </div>
+    </div>
+
     <script type="text/javascript" src="~/Resource/JQuery/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="~/Resource/jquery-ui-1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="~/Resource/JQuery/jquery.form.min.js"></script>
     <script type="text/javascript" src="~/Resource/bxslider-4-master/dist/jquery.bxslider.js"></script>
     <script type="text/javascript">
         $(function () {
+
+            //var winHeight = $(window).innerHeight();
+            //$('#loginLoading').css("height", winHeight);
+            $('#loginLoading').css("display", "none");
+
 
             $('#check').on('click', function () {
                 var tryLoginID = $("#id").val();
@@ -78,6 +273,8 @@
                 var param = {};
                 param.ID = tryLoginID;
                 param.Password = tryLoginPW;
+
+                //$('#loginLoading').css("display", "block");
 
                 $.post('/Authority/TryLogin', param, function (res) {
                     if (res.isError) {
@@ -89,7 +286,8 @@
                 }).fail(function (err) {
                     alert("시스템 오류가 발생하였습니다. 관리자에게 문의 부탁드립니다.");
                     console.log(err);
-                })
+                });
+
             });
 
             $('#pwd, #id').on('keydown', function (e) {
@@ -97,52 +295,49 @@
             });
 
 
-            function sliderImgInit() {
-                $('.bg').css({ "background-position-x": -80});
-                $('.text strong').css({ "opacity": 0, "top": "-50px" });
-                $('.text .underline').css({ "width": 0 });
-                $('.text > span').css({ "opacity": 0, "right": "-80px" });
-            };
-
-            sliderImgInit();
-
-            $('.visual .roll').bxSlider({
-                'auto': true,
-                'mode': 'fade',
-                'controls': true,
-                'useCSS': false,
-                'easing': 'easeInOutExpo',
-                'speed': 600,
-                'pause': 6000,
-                'touchEnabled': false,
-                'adaptiveHeight': true,
-                'onSliderLoad': function (currentIndex) {
-                    var activePic = $('.visual .roll li').eq(currentIndex);
-                        activePic.addClass('active');
-                    
-                        activePic.find('.bg').animate({ "background-position-x":0 }, 5000);
-
-                    activePic.find('.text strong').animate({ "opacity": 1, "top": "0" }, 1000, function () {
-                        activePic.find('.text .underline').animate({ "width": "100%" }, 800, function () {
-                            activePic.find('.text > span').animate({ "opacity": 1, "right": "-10px" }, 1200)
-                        })
-                    });
-                        sliderImgInit();
-                },
-                'onSlideAfter': function ($slideElement, oldIndex, newIndex) {
-                    $slideElement.addClass('active').siblings().removeClass('active');
-
-                    $slideElement.find('.bg').animate({ "background-position-x": 0 }, 5000);
-
-                    $slideElement.find('.text strong').animate({ "opacity": 1, "top": "0" }, 1000, function () {
-                        $slideElement.find('.text .underline').animate({ "width": "100%" }, 800, function () {
-                            $slideElement.find('.text > span').animate({ "opacity": 1, "right": "-10px" }, 1200)
-                        })
-                    });
-                    sliderImgInit();
+            var VARS = {
+                'ani': {
+                    'speed': 600,
+                    'easing': 'easeInOutExpo'
                 }
-            });
+            }
 
+            /**************************************************
+                main
+            **************************************************/
+            //visual
+            var visual = {
+                'init': function () {
+                    this.action();
+                },
+                'action': function () {
+                    var $ele = {
+                        'roll': $('.visual .roll'),
+                        'li': $('.visual .roll li'),
+                    }
+                    var rolling = function () {
+                        $ele.roll.bxSlider({
+                            'auto': true,
+                            'mode': 'fade',
+                            'controls': true,
+                            'useCSS': false,
+                            'easing': VARS.ani.easing,
+                            'speed': VARS.ani.speed,
+                            'pause': 7000,
+                            'touchEnabled': false,
+                            'adaptiveHeight': true,
+                            'onSliderLoad': function (currentIndex) {
+                                $ele.li.eq(currentIndex).addClass('active');
+                            },
+                            'onSlideAfter': function ($slideElement, oldIndex, newIndex) {
+                                $slideElement.addClass('active').siblings().removeClass('active');
+                            }
+                        });
+                    }
+                    rolling();
+                }
+            }
+            visual.init();
         });
     </script>
 </body>

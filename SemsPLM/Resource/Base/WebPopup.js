@@ -771,11 +771,11 @@ function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (960 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (795 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 960, maxWidth: 960, height: 795, minHeight: 795, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1800, maxWidth: 1800, height: 900, minHeight: 900, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
             $('#btnApprov').on('click', function () {

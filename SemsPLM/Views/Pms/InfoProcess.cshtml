@@ -10,6 +10,7 @@
             <li class="tab" info="resource"><i class="fas fa-users"></i> 멤버</li>
             <li class="tab" info="deliveries"><i class="fas fa-file-medical"></i> 산출물</li>
             <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 이슈</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
         </ul>
     </div>
 
@@ -49,10 +50,10 @@
                         <td style="text-align: right;" id="">
                             @if (
                                     ((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1
-                                    && ViewBag.ParentType != Common.Constant.PmsConstant.TYPE_TASK
+                                    && ViewBag.ParentType != Common.Constant.PmsConstant.TYPE_TASK && ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROCESS_STARTED && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)
                                 )
                             {
-                                <button id = "procApprovalBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 결재</button>
+                                <button id="procApprovalBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 결재</button>
                             }
                         </td>
                     </tr>
@@ -162,6 +163,10 @@
             <div id="riskIssueInfo_@ViewBag.OID"></div>
         </div>
 
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.OID">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -183,7 +188,6 @@
             if (currentStatus != null && currentStatus.length > 0) {
                 currentStatus[0].className += ' ' + 'pointer_focus';
             }
-            console.log();
             if (parentType == '@Common.Constant.PmsConstant.TYPE_TASK' && '@ViewBag.Detail.BPolicy.Name' != '@Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED') {
                 fStatusAction(headerStatus, current, OID);
             }
@@ -191,9 +195,11 @@
 
         $('#procApprovalBtn_' + OID).on('click', function () {
             RequestData('/Pms/ApprovProcess', { 'OID': OID }, function (res) {
-                OpenApprovalDialog(function () {
-                    PageReload();
-                }, null, { TargetOID: OID, AutoStatus: false }, '/Common/Approval', '결재');
+                setTimeout(function () {
+                    OpenApprovalDialog(function () {
+                        PageReload();
+                    }, null, { TargetOID: OID, AutoStatus: false }, '/Common/Approval', '결재');
+                }, 50)
             });
         });
 
@@ -277,7 +283,6 @@
                     pagerButtonsCount: 8,
                     toolbarHeight: 44,
                     editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
-                    showToolbar: true,
                     ready: function () {
 
                     },
@@ -307,7 +312,7 @@
                                 if (('@ViewBag.ProjectDetail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
                                     && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
                                     if (!gPmsModifyHistoryMaster.hasOwnProperty(ProjectOID)) {
-                                        gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
+                                        gPmsModifyHistoryMaster[ProjectOID] = { obj: procWbsInfo$, data: processDatas, source: source };
                                     }
                                     return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + row + ")'><i class='fas fa-caret-right'></i> 시작</button>";
                                 }
@@ -370,21 +375,9 @@
                         { text: '실제', name: 'Actual' },
                         { text: 'Dependency', name: 'Dependency' },
                     ],
-                    showToolbar: true,
+                    showToolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1),
                     renderToolbar: function (toolBar) {
                         toolBar.empty();
-                        var modifyFlag = false;
-                        var container = $("<div class='lGridComponent' ></div>");
-                        var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
-                        var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
-                        var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
-                        saveButton.jqxButton({ disabled: true });
-                        cancelButton.jqxButton({ disabled: true });
-                        container.append(modifyButton);
-                        container.append('<span class="buttonSeparator"></span>');
-                        container.append(saveButton);
-                        container.append(cancelButton);
-                        toolBar.append(container);
                     },
                     pagerRenderer: function () {
                         RequestData('/Pms/SelProcessWbs', { 'OID': OID, 'RootOID': ProjectOID }, function (res) {
@@ -518,10 +511,11 @@
                         { name: 'FromOID', type: 'number' },
                         { name: 'ToOID', type: 'number' },
                         { name: 'RootOID', type: 'number' },
-                        { name: 'ProjectNm', type: 'number' },
+                        { name: 'ProjectNm', type: 'string' },
                         { name: 'DocClassNm', type: 'string' },
                         { name: 'TaskNm', type: 'string' },
                         { name: 'Type', type: 'string' },
+                        { name: 'BPolicyAuths', type: 'Array' },
                     ],
                     hierarchy:
                     {
@@ -555,10 +549,21 @@
                         {
                             text: 'Action', width: "6%", align: 'center', cellsalign: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (rowData.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER') {
-                                    gPmsModifyDeliveryMaster[row] = { source: deliveriesSource, obj$: deliveriesGrd$ };
-                                    btnAddAction = "<img src= '/Images/doc_add.png' alt='생성' style='border:0px;width:27px;cursor:pointer;' onclick='project(" + row + ")'>"
-                                    return "<div>" + btnAddAction + "</div>";
+                                if (rowData.BPolicyAuths != null) {
+                                    var chkAuths = rowData.BPolicyAuths.findIndex(function (item) {
+                                        return item.AuthNm == '@Common.Constant.CommonConstant.AUTH_MODIFY'
+                                    });
+                                    if (chkAuths > -1) {
+                                        if (rowData.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER') {
+                                            gPmsModifyDeliveryMaster[row] = { source: deliveriesSource, obj$: deliveriesGrd$ };
+                                            btnAddAction = "<img src= '/Images/doc_add.png' alt='생성' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectInfoDoc(" + row + ")'>"
+                                            if (rowData.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT") {
+                                                btnSearchAction = "<img src= '/Images/search.png' alt='신뢰성 결과서 추가' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectSearchDoc(" + row + ")'>"
+                                                return "<div>" + btnSearchAction + "</div>";
+                                            }
+                                            return "<div>" + btnAddAction + "</div>";
+                                        }
+                                    }
                                 }
                             },
                         },
@@ -567,7 +572,7 @@
                         { text: '생성일', width: "8%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
                         { text: '생성자', width: "8%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
                     ],
-                    showtoolbar: true,
+                    showtoolbar:@Json.Encode((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1 || ((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -595,6 +600,11 @@
                                 return;
                             }
                             deltaskparam.OID = deltaskItem[0].OID;
+
+                            deltaskparam.RootOID = deltaskItem[0].RootOID;
+                            deltaskparam.FromOID = deltaskItem[0].FromOID;
+                            deltaskparam.ToOID = deltaskItem[0].ToOID;
+                            deltaskparam.Type = deltaskItem[0].Type;
 
                             deliveriesparam.RootOID = ProjectOID;
                             deliveriesparam.FromOID = OID;
@@ -635,23 +645,40 @@
                     pagerRenderer: function () {
                     }
                 });
-                 deliveriesGrd$.on('rowDoubleClick', function (event) {
+                deliveriesGrd$.on('rowDoubleClick', function (event) {
                     const args = event.args;
                     const key = args.key;
                     const row = args.row;
-                    console.log(row);
                     if (row.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_CLASS') {
                         var param = {};
                         param.OID = row.ToOID;
-                        param.Type = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
-                        if (gClickDuplication) { return; }
-                        gClickDuplication = true;
-                        setTimeout(function () {
-                            OpenPmsDocumentDialog(function (res) {
-                                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
-                            }, null, param, '/Pms/InfoDocument', '문서 상세');
-                            gClickDuplication = false;
-                        }, 250);
+                        if (row.ViewUrl == null) {
+                            param.Type = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+                            if (gClickDuplication) { return; }
+                            gClickDuplication = true;
+                            setTimeout(function () {
+                                OpenPmsDocumentDialog(function (res) {
+                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                }, null, param, '/Pms/InfoDocument', '문서 상세');
+                                gClickDuplication = false;
+                            }, 250);
+                        } else {
+                            if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
+                                setTimeout(function () {
+                                    OpenInfoReliabilityDialog(function (res) {
+                                        getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
+                                    gClickDuplication = false;
+                                }, 250);
+                            } else {
+                                setTimeout(function () {
+                                    OpenInfoReliabilityReportDialog(function (res) {
+                                        getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
+                                    gClickDuplication = false;
+                                }, 250);
+                            }
+                        }
                     }
                 });
                 getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
@@ -730,7 +757,7 @@
                         { text: '예상처리일', cellsalign: 'center', align: 'center', datafield: 'EstFinDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                         { text: '처리완료일', cellsalign: 'center', align: 'center', datafield: 'ActProcessDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                     ],
-                    showtoolbar: true,
+                    showtoolbar: @Json.Encode((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1 || ((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -816,25 +843,37 @@
                     }
                 });
                 issueRiskGrd$.jqxTreeGrid('pagerRenderer');
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: OID }, function (res) {
+                    $('#ApphisInfo_' + OID).html(res);
+                });
             }
         });
     });
 
-    function task(_rootOid, _taskOid, _targetOid) {
-        alert("프로젝트 ID는" + _rootOid + " 타스크" + _taskOid + " 이고 행은" + _targetOid + "입니다");
-    }
-    function project(_rowData) {
+    function ProjectInfoDoc(_rowData) {
         var row$ = gPmsModifyDeliveryMaster[_rowData];
         var param = {};
         var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
         param.DocType = row.ToOID;
         param.DocType_KorNm = row.DocClassNm;
         param.RootOID = row.RootOID;
-        // param.TaskOID = row.FromOID;
+        if (param.RootOID != param.FromOID) {
+            param.TaskOID = row.FromOID;
+        }
         param.FromOID = row.ToOID;
-
         if (row.ViewUrl != null) {
-            OpenReliabilityDialog(null, null, null, '/Pms/dlgReliabilityForm', '신뢰성 시험 의뢰서');
+            if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
+                OpenReliabilityDialog(function () {
+                    RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID }, function (res) {
+                        PrintJqxTreeGrid(row$.source, row$.obj$, res);
+                        row$.obj$.jqxTreeGrid('expandAll');
+                    });
+                }, null, param, '/Pms/dlgReliabilityForm', '신뢰성 시험 의뢰서');
+            }
+            else {
+
+            }
         } else {
             param.DocGroup = '@Common.Constant.DocClassConstant.TYPE_DOCCLASS';
             OpenPmsDocumentDialog(function () {
@@ -844,6 +883,25 @@
                 });
             }, null, param, '/Pms/CreateDocument', '문서 등록');
         }
-        //alert("프로젝트 ID는" + _rootOid + "이고 행은" + _targetOid + "입니다");
+    }
+
+    function ProjectSearchDoc(_rowData) {
+        var row$ = gPmsModifyDeliveryMaster[_rowData];
+        var param = {};
+        var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
+        param.DocType = row.ToOID;
+        param.DocType_KorNm = row.DocClassNm;
+        param.RootOID = row.RootOID;
+        if (param.RootOID != param.FromOID) {
+            param.TaskOID = row.FromOID;
+        }
+        param.FromOID = row.ToOID;
+
+        OpenSearchReliabilityReportDialog(function () {
+            RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID, FromOID: @ViewBag.OID }, function (res) {
+                PrintJqxTreeGrid(row$.source, row$.obj$, res);
+                row$.obj$.jqxTreeGrid('expandAll');
+            });
+        }, null, param, '/Pms/dlgSearchReliabilityReport', '신뢰성 시험 결과서');
     }
 </script>

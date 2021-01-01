@@ -33,15 +33,8 @@
                     <input type="text" readonly="readonly" value="00" />
                 </td>
                 <th>상태</th>
-                <td>
+                <td colspan="5">
                     <input type="text" readonly="readonly" value="작성중" />
-                </td>
-                <th></th>
-                <td>
-                </td>
-                <th></th>
-                <td>
-                </td>
             </tr>
             <tr>
                 <th>등록자</th>
@@ -68,7 +61,7 @@
             <tr>
                 <th>접수번호</th>
                 <td>
-                    <input type="text" id="접수번호" />
+                    <input type="text" id="RegNum" />
                 </td>
                 <th>품명</th>
                 <td>
@@ -78,7 +71,7 @@
                 <td>
                     <input type="text" readonly="readonly" value="SYSTEM"/>
                 </td>
-                <th>사험방법 Review일</th>
+                <th>사험방법 <br>Review일</th>
                 <td>
                     <div id="TestMethodDt"></div>
                 </td>
@@ -101,11 +94,8 @@
                     <input type="text" id="CANVer" />
                 </td>
                 <th>시험적용 VER</th>
-                <td>
+                <td colspan="3">
                     <input type="text" id="TestApplyVer" />
-                </td>
-                <th></th>
-                <td>
                 </td>
             </tr>
             <tr>
@@ -193,12 +183,18 @@
                 { name: 'CreateDt', type: 'date' },
                 { name: 'Description' },
                 { name: 'Title' },
+                { name: 'TestItemLib_OID'},
+                { name: 'TestItemNm' },
 
                 { name: 'FromOID' },
                 { name: 'ToOID' },
 
                 { name: 'KorNm' },
-                { name: 'ETC'}
+                { name: 'ETC' },
+
+                { name: 'TestStandardNo' },
+                { name: 'TestCondition' },
+                { name: 'Sample' },
             ],
         }
 
@@ -218,17 +214,45 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '라이브러리 OID', datafield: 'OID', width: "15%", align: 'center', cellsalign: 'center', editable: false, hidden: true, },
-                { text: '시험항목', datafield: 'KorNm', width: "15%", align: 'center', cellsalign: 'center', editable: false, },
+                { text: '시험항목', datafield: 'TestItemNm', width: "15%", align: 'center', cellsalign: 'center' },
                 { text: '시험표준 NO', datafield: 'TestStandardNo', width: "20%", align: 'center', cellsalign: 'center', },
                 { text: '시험조건', datafield: 'TestCondition', width: "20%", align: 'center', cellsalign: 'center', },
                 { text: '시료수', datafield: 'Sample', width: "20%", align: 'center', cellsalign: 'center', },
                 { text: '비고', datafield: 'ETC', width: "20%", align: 'center', cellsalign: 'center', }
             ],
-            //showtoolbar: true,
+            showtoolbar: true,
             toolbarheight: 45,
-            //rendertoolbar: function (toolBar) {
-            //}
+            rendertoolbar: function (toolBar) {
+                toolBar.empty();
+                var container = $("<div class='lGridComponent' ></div>");
+                var AddButton = $("<button id='AddBtn' class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var deleteButton = $("<button id='DeleteBtn' class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
+
+                container.append(AddButton);
+                container.append(deleteButton);
+                toolBar.append(container);
+
+                var rowkey;
+
+                AddButton.click(function (event) {
+                    var checkRows = TestItemListGrid$.jqxGrid('getSelection');
+                    if (checkRows.length == 0) {
+                        return;
+                    }
+                    TestItemListGrid$.jqxGrid('addrow', null, {});
+
+                });
+
+                deleteButton.click(function (event) {
+                    TestItemListGrid$.jqxGrid('deleterow', rowkey);
+                });
+
+                TestItemListGrid$.on('rowselect', function (event) {
+                    var args = event.args;
+                    //args.rowindex;
+                    rowkey = args.row.uid;
+                });
+            },
         });
 
         getSearchTestItemList(TestItemListSource, TestItemListGrid$, null);
@@ -238,5 +262,14 @@
         RequestData("/Pms/SelTestItemList", param, function (res) {
             PrintJqxGrid(_Source, _Grid$, res);
         });
+
+        function showUsableTag() {
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+            $('#detailContent td').css('position', 'relative');
+            $('#detailContent td').append(modifyTag);
+            $('input[readonly=readonly]').parent('td').find('.modifyTag').remove();
+        }
+        showUsableTag();
     }
 </script>

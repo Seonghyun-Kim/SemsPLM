@@ -4,6 +4,7 @@ using Common.Constant;
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class ChangeRequestController : Controller
     {
         // GET: ChangeRequest
@@ -238,7 +240,7 @@ namespace SemsPLM.Controllers
                 {
                     if (obj != null)
                     {
-                        ECO eobj = ECORepository.SelChangeOrderObject(new ECO { OID = obj.ToOID });
+                        ECO eobj = ECORepository.SelChangeOrderObject(Session, new ECO { OID = obj.ToOID });
                         //eobj.RootOID = _param.RootOID;
                         //eobj.Type = _param.Type;
                         //eobj.ToOID = eobj.OID;

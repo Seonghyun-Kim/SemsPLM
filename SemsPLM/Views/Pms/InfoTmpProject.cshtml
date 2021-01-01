@@ -530,8 +530,8 @@
                     renderToolbar: function (toolBar) {
                         const editable = projWbsInfo$.jqxTreeGrid('editable');
                         if (!editable && toolBar[0].children.length > 0) {
-                            if (toolBar[0].children[0].children[18] != undefined) {
-                                toolBar[0].children[0].children[18].click();
+                            if (toolBar[0].children[0].children[14] != undefined) {
+                                toolBar[0].children[0].children[14].click();
                             }
                             return;
                         }
@@ -681,7 +681,7 @@
                                     if (NoData == null || NoData == undefined || NoData.length < 1) {
                                         maxData = '#10';
                                     } else {
-                                        maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                        maxData = _.max(NoData, function (item) { return item != undefined && parseInt(item.replace('#', '')) });
                                         if (maxData == null || maxData == undefined) {
                                             maxData = '#10';
                                         } else {
@@ -693,7 +693,7 @@
                                     if (getNoData.length < 1) {
                                         maxData = parentData.No + '-1';
                                     } else {
-                                        maxData = _.max(getNoData, function (item) { return item != undefined && item.replace(parentData.No + '-', '') });
+                                        maxData = _.max(getNoData, function (item) { return item != undefined && parseInt(item.replace(parentData.No + '-', '')) });
                                         maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                     }
                                 }
@@ -752,7 +752,7 @@
                                     if (NoData == null || NoData == undefined || NoData.length < 1) {
                                         maxData = '#10';
                                     } else {
-                                        maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                        maxData = _.max(NoData, function (item) { return item != undefined && parseInt(item.replace('#', '')) });
                                         if (maxData == null || maxData == undefined) {
                                             maxData = '#10';
                                         } else {
@@ -764,7 +764,7 @@
                                     if (getNoData.length < 1) {
                                         maxData = parentData.No + '-1';
                                     } else {
-                                        maxData = _.max(getNoData, function (item) { return item != undefined && item.replace(parentData.No + '-', '') });
+                                        maxData = _.max(getNoData, function (item) { return item != undefined && parseInt(item.replace(parentData.No + '-', '')) });
                                         maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                     }
                                 }
@@ -922,7 +922,7 @@
                             const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
                             for (var i = 0; i < records.length; i++) {
                                 var rowKey = projWbsInfo$.jqxTreeGrid('getKey', records[i]);
-                                if (records[i].Dependency) {
+                                if (records[i].Dependency != null && records[i].Dependency != undefined) {
                                     const selDep = arrRows.filter(function (item) {
                                         return item.Id == records[i].Dependency;
                                     });
@@ -946,10 +946,11 @@
 
                     } else if (dataField == 'Dependency') {
                         const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                        const gettingDep = fGettingDependData(value);
                         const selDep = arrRows.filter(function (item) {
-                            return item.Id == value;
+                            return gettingDep.hasOwnProperty(item.Id);
                         });
-                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, 2, workingDay, sHoliday));
+                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, (1 + gettingDep[selDep[0].Id]), workingDay, sHoliday));
                     }
                 });
 
@@ -960,16 +961,18 @@
                     var rowKey = args.key;
                     var dataField = args.dataField;
                     var records = row.records;
+                    var allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
 
                     if (dataField == 'EstStartDt') {
                         if (records != undefined && records.length > 0) {
                             for (var i = 0; i < records.length; i++) {
                                 var rowKey = projWbsInfo$.jqxTreeGrid('getKey', records[i]);
                                 projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                fDependencyRecureTargetDataControl(projWbsInfo$, ProjectOID, records[i], allDatas);
                             }
                         }
                     }
-
+                    
                     fDependencyRescureControl(ProjectOID, row);
                 });
 
@@ -1310,6 +1313,11 @@
                                 return;
                             }
                             delparam.OID = delItem[0].OID;
+
+                            delparam.RootOID = delItem[0].RootOID;
+                            delparam.FromOID = delItem[0].FromOID;
+                            delparam.ToOID = delItem[0].ToOID;
+                            delparam.Type = delItem[0].Type;
 
                             deliveriesparam.RootOID = ProjectOID;
 

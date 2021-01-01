@@ -79,7 +79,7 @@ namespace EBom.Models
     public static class EPartRepository
     {
         #region EPart 리스트 검색
-        public static List<EPart> SelEPart(EPart _param)
+        public static List<EPart> SelEPart(HttpSessionStateBase Context, EPart _param)
         {
             _param.Type = EBomConstant.TYPE_PART;
             //_param.StartCreateDt = 
@@ -120,11 +120,14 @@ namespace EBom.Models
         #endregion
 
         #region EPart 오브젝트 검색
-        public static EPart SelEPartObject(EPart _param)
+        public static EPart SelEPartObject(HttpSessionStateBase Context, EPart _param)
         {
             EPart lEPart = DaoFactory.GetData<EPart>("EBom.SelEPart", new EPart { Type = EBomConstant.TYPE_PART, OID = _param.OID });
-            lEPart.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lEPart.Type, OID = lEPart.BPolicyOID }).First();
 
+            lEPart.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lEPart.CreateUs }).Name;
+            lEPart.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lEPart.Type, OID = lEPart.BPolicyOID }).First();
+            lEPart.BPolicyNm = lEPart.BPolicy.Name;
+   
             if (lEPart.ITEM_No != null)
             {
                 lEPart.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_No }).KorNm;
@@ -165,7 +168,6 @@ namespace EBom.Models
                 lEPart.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Material_OID }).KorNm;
             }
 
-
             return lEPart;
         }
         #endregion
@@ -187,14 +189,14 @@ namespace EBom.Models
         #endregion
 
         #region EPart 정전개
-        public static EBOM getListEbom(int _level, int _rootOID)
+        public static EBOM getListEbom(HttpSessionStateBase Context, int _level, int _rootOID)
         {
             EBOM getStructure = new EBOM();
             getStructure.Level = _level;
             getStructure.ToOID = _rootOID;
             getStructure.TimeOID = 0;
 
-            EPart PataData = SelEPartObject(new EPart { OID = _rootOID });
+            EPart PataData = SelEPartObject(Context, new EPart { OID = _rootOID });
             getStructure.ToData = PataData;
             getStructure.Description = PataData.Description;
             getStructure.ObjName = PataData.Name;
@@ -223,31 +225,31 @@ namespace EBom.Models
 
             getStructure.diseditable = EBomConstant.DISEDITABLE;
 
-            getEbomStructure(getStructure, _rootOID, getStructure.TimeOID);
+            getEbomStructure(Context, getStructure, _rootOID, getStructure.TimeOID);
             return getStructure;
         }
 
-        public static void getEbomStructure(EBOM _relData, int _rootOID, int? TimeOID) 
+        public static void getEbomStructure(HttpSessionStateBase Context, EBOM _relData, int _rootOID, int? TimeOID) 
         {
             
-            _relData.Children = getEbom(new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _relData.ToOID }, _rootOID, TimeOID);
+            _relData.Children = getEbom(Context, new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _relData.ToOID }, _rootOID, TimeOID);
             
             _relData.Children.ForEach(item =>
             {
                 item.Level = _relData.Level + 1;
                 item.TimeOID = item.Level + item.TimeOID;
-                getEbomStructure(item, _rootOID, item.TimeOID);
+                getEbomStructure(Context, item, _rootOID, item.TimeOID);
             });
         }
 
-        public static List<EBOM> getEbom(EBOM _param, int _rootOID, int? TimeOID)
+        public static List<EBOM> getEbom(HttpSessionStateBase Context, EBOM _param, int _rootOID, int? TimeOID)
         {
             List<EBOM> EBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", _param);
 
             foreach (EBOM Obj in EBom)
             {
                 TimeOID = TimeOID + 1;
-                EPart PataData = SelEPartObject(new EPart { OID = Obj.ToOID });
+                EPart PataData = SelEPartObject(Context, new EPart { OID = Obj.ToOID });
                 Obj.TimeOID = TimeOID;
                 Obj.ToData = PataData;
                 Obj.Description = PataData.Description;
@@ -282,13 +284,13 @@ namespace EBom.Models
         #endregion
 
         #region EPart 역전개
-        public static EBOM getListReverseEbom(int _level, int _rootOID)
+        public static EBOM getListReverseEbom(HttpSessionStateBase Context, int _level, int _rootOID)
         {
             EBOM getStructure = new EBOM();
             getStructure.Level = _level;
             getStructure.FromOID = _rootOID;
 
-            EPart PataData = SelEPartObject(new EPart { OID = _rootOID });
+            EPart PataData = SelEPartObject(Context, new EPart { OID = _rootOID });
             getStructure.FromData = PataData;
             getStructure.Description = PataData.Description;
             getStructure.ObjName = PataData.Name;
@@ -327,27 +329,27 @@ namespace EBom.Models
 
             getStructure.BPolicy = PataData.BPolicy;
 
-            getReverseEbomStructure(getStructure, _rootOID);
+            getReverseEbomStructure(Context, getStructure, _rootOID);
             return getStructure;
         }
 
-        public static void getReverseEbomStructure(EBOM _relData, int _rootOID)
+        public static void getReverseEbomStructure(HttpSessionStateBase Context, EBOM _relData, int _rootOID)
         {
-            _relData.Parents = getReverseEbom(new EBOM { Type = EBomConstant.TYPE_PART, ToOID = _relData.FromOID }, _rootOID);
+            _relData.Parents = getReverseEbom(Context, new EBOM { Type = EBomConstant.TYPE_PART, ToOID = _relData.FromOID }, _rootOID);
             _relData.Parents.ForEach(item =>
             {
                 item.Level = _relData.Level + 1;
-                getReverseEbomStructure(item, _rootOID);
+                getReverseEbomStructure(Context, item, _rootOID);
             });
         }
 
-        public static List<EBOM> getReverseEbom(EBOM _param, int _rootOID)
+        public static List<EBOM> getReverseEbom(HttpSessionStateBase Context, EBOM _param, int _rootOID)
         {
             List<EBOM> EBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", _param);
 
             foreach (EBOM Obj in EBom)
             {
-                EPart PataData = SelEPartObject(new EPart { OID = Obj.FromOID });
+                EPart PataData = SelEPartObject(Context, new EPart { OID = Obj.FromOID });
                 Obj.FromData = PataData;
                 Obj.Description = PataData.Description;
                 Obj.ObjName = PataData.Name;
@@ -436,9 +438,9 @@ namespace EBom.Models
         #endregion
 
         #region EBOM 편집 추가 버튼 클릭시 나타나는 페이지
-        public static List<EBOM> getListEbomAddChild(int _level, string _Name, EPart _Param)
+        public static List<EBOM> getListEbomAddChild(HttpSessionStateBase Context, int _level, string _Name, EPart _Param)
         {
-            List<EPart> EPartList = EPartRepository.SelEPart(_Param);
+            List<EPart> EPartList = EPartRepository.SelEPart(Context, _Param);
 
             List<EBOM> getStructureList = new List<EBOM>();
 
@@ -479,7 +481,7 @@ namespace EBom.Models
                 getStructure.BPolicy = obj.BPolicy;
 
 
-                getEbomStructure(getStructure, Convert.ToInt32(obj.OID), TimeOID);
+                getEbomStructure(Context, getStructure, Convert.ToInt32(obj.OID), TimeOID);
 
                 getStructureList.Add(getStructure);
             }

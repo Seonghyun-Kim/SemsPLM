@@ -55,9 +55,8 @@
         </div>
     </div>
 </div>
-
-        <div id="SearchEPartGrid"></div>
-        <script type="text/javascript">
+<div id="SearchEPartGrid"></div>
+<script type="text/javascript">
 
     $(function () {
         //const CreEPartEoAppDate$ = $('#CreateEPartEo_No_ApplyDate');
@@ -160,12 +159,12 @@
         SearchEPartGrid$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 580,
+            height: 620,
             rowsheight: 28,
             columnsheight: 30,
             //source: SearchEPartSource,
             sortable: false,
-            pageable: false,
+            pageable: true,
             columns: [
                 {
                     text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
@@ -277,28 +276,4 @@
             PrintJqxGrid(_Source, _Grid$, res);
         });
     }
-
-
-    //function SearchChangeEPartLib(OID, ID) {
-    //    var comboBox$ = ID;
-    //    var param = {};
-    //    param.fromOID = OID;
-    //    var comboSource;
-    //    RequestData("/Manage/SelLibrary", param, function (res) {
-    //        if (res.length > 0) {
-    //            comboSource =
-    //            {
-    //                localdata: res,
-    //                datatype: "json",
-    //                datafields:
-    //                    [
-    //                        { name: 'KorNm', type: 'string' },
-    //                        { name: 'OID', type: 'int' },
-    //                    ]
-    //            };
-    //            var comboAdapter = new $.jqx.dataAdapter(comboSource);
-    //            comboBox$.jqxComboBox({ source: comboAdapter, displayMember: "KorNm", valueMember: "OID"});
-    //        }
-    //    });
-    //}
-        </script>
+</script>

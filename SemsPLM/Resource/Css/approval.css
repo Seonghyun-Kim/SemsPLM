@@ -1,0 +1,435 @@
+﻿/* ApprovalLine, dlgApprovalPerson */
+
+.approvalLine, .approvalTopBtn {
+    width: 100%;
+}
+
+.approvalTopBtn{
+    padding-bottom:10px;
+    text-align:right;
+}
+
+.approvalLine > div{
+    float:left;
+}
+
+.approvalLine > .wholeUserList{
+    width:36%;
+}
+
+.approvalLine > .selectedUserList{
+    width:53%;
+}
+
+.approval{
+    position:absolute;
+    top:40px;
+    left:5px;
+    z-index:999;
+}
+
+.approval > ul{
+    padding:5px;
+}
+
+.approval > ul > li{
+    font-size:15px !important;
+}
+
+.approvalDocument {
+    width: 100%;
+    max-width:1790px;
+    height: 818px;
+}
+
+.approvalDocument .info_menubar{
+    width:160px;
+    height:818px;
+}
+
+.approvalDocument .info_menubar > ul > li{
+    padding:2px;
+}
+.approvalDocument .project_content{
+    left:165px;
+    width:1623px;
+    height:818px;
+}
+
+.approvalDocument .changeOrder_content{
+    left:255px;
+    width:1533px;
+    height:818px;
+}
+
+.approvalDocument .project_basic{
+    margin-bottom:8px;
+}
+
+
+.approvalList, .approvalOrder{
+    height:310px;
+    border: 1px solid #c5c5c5;
+    margin-bottom:4px;
+}
+
+.approvalList > table, .approvalOrder > table{
+    width:100%;
+}
+
+.approvalList > table tr, .approvalOrder > table tr{
+    border-bottom:1px solid #c5c5c5;
+    background-color:#fff;
+    overflow:hidden;
+    vertical-align:top;
+}
+
+.approvalList > table tr > th, .approvalOrder > table tr > th{
+    background-color:#eee;
+    border-right:1px solid #c5c5c5;
+    text-align:center;
+    line-height:40px;
+}
+
+.approvalList > table tr > td:first-of-type, .approvalOrder > table tr > td:first-of-type{
+    border-right:1px solid #c5c5c5;
+    text-align:center;
+    line-height:40px;
+}
+
+.approvalOrder > table tr > th, .approvalOrder > table tr > td:first-of-type{
+    line-height:30px !important;
+}
+
+.approvalList > table tr > td:last-of-type{
+    position:relative;
+    padding-right:30px;
+}
+
+.approvalList > table i.fa-window-close {
+    position: absolute;
+    cursor: pointer;
+    right: 8px;
+    top: 12px;
+    z-index: 100;
+    color:#aaa;
+}
+
+.approver{
+    display:inline-block;
+    background-color:#eee;
+    border-radius:4px;
+    margin:5px 0 5px 8px;
+    padding:5px 8px;
+}
+
+.approver > small{
+    font-size:11px;
+    color:#888;
+}
+
+.approver > i{
+    cursor:pointer;
+    font-size:0.8em;
+    transform:translateY(-1px);
+    margin-left:10px;
+}
+
+.agreeTd ul{
+    /*height:0;*/
+    overflow:hidden;
+    margin-bottom:0 !important;
+}
+
+.agreeTd > ul > li{
+    float:left;
+    margin-right:10px;
+}
+
+#organiListGridApr .jqx-tree-item{
+    font-size:15px !important;
+}
+
+.selectedAgree {
+    background-color: #fffcd7 !important;
+}
+
+
+.approvalLine h4 {
+    width: 100%;
+    background-color: #eee;
+    line-height: 39px;
+    border: 1px solid #c5c5c5;
+    text-indent: 5px;
+    border-radius: 3px 3px 0 0;
+    border-bottom: none;
+    position: relative;
+}
+
+.savedLine {
+    padding: 3px;
+    background-color: #eee;
+    border: 1px solid #c5c5c5;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+}
+
+.savedLine > div{
+    display:inline-block;
+    vertical-align:top;
+}
+
+.orderedList > .connectedList {
+    width: 50%;
+    height: 257px;
+    border: 1px solid #c5c5c5;
+    box-sizing: border-box;
+    float: left;
+}
+
+.connectedList > li{
+    padding: 6px 0 6px 40px;
+    border-bottom:1px solid #c5c5c5;
+    position:relative;
+}
+
+.connectedList > li::before{
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:#eee;
+    width:28px;
+    height:31px;
+    border-right:1px solid #c5c5c5;
+    text-align:center;
+    line-height:31px;
+}
+
+.connectedList > li > i {
+    position:absolute;
+    right: 8px;
+    top:8px;
+    cursor:pointer;
+}
+
+
+.selectedUserList > .distList {
+    border: 1px solid #c5c5c5;
+    height: 80px;
+    overflow-y: scroll;
+}
+
+.doc_editor {
+    width: 100%;
+}
+
+.doc_editor > h4 > span{
+    margin:0 7px 0 6px;
+}
+.doc_editor > h4 > input{
+    width:690px;
+    height:27px;
+    line-height:27px;
+    border-radius:unset !important;
+    font-weight:normal;
+}
+
+.approvalButtonBox {
+    padding-top: 15%;
+    width: 11%;
+    text-align: center;
+}
+
+.approvalButtonBox > button{
+    margin-bottom:5px;
+}
+
+.dlgApprovalPerson > div {
+    height: 600px;
+    float: left;
+}
+
+.dlgApprovalPerson h4 {
+    width: 100%;
+    background-color: #eee;
+    padding: 7px;
+    border: 1px solid #c5c5c5;
+    text-indent: 5px;
+    border-radius: 3px 3px 0 0;
+    border-bottom: none;
+    position: relative;
+}
+
+.dlgApprovalPerson h4 > button{
+    position:absolute;
+    top:0px;
+    right:0px;
+}
+
+.dlgApprovalPerson > .wholeUserList {
+    width: 50%;
+    margin-right: 2%;
+}
+.selectedUserList{
+    width:48%;
+}
+
+.selectedUserList > ul > li{
+    height:32px;
+    line-height:32px;
+    text-indent:10px;
+    position:relative;
+    border-bottom:1px solid #c5c5c5;
+}
+
+.selectedUserList > ul > li > i{
+    position:absolute;
+    top:7px;
+    right:8px;
+    cursor:pointer;
+}
+
+.findPerson {
+    width: 316.5px;
+    height: 33px;
+    text-indent: 8px;
+    border-radius: unset !important;
+    border-bottom: none !important;
+    font-size:15px;
+}
+
+.findPerson + button.custom-button{
+    border-radius:unset !important;
+    border-top:1px solid #c5c5c5;
+    border-right:1px solid #c5c5c5;
+    border-left:1px solid transparent;
+    border-bottom:1px solid transparent;
+}
+
+.selectedUserList > ul {
+    border: 1px solid #c5c5c5;
+    height:94%;
+}
+
+.dective {
+    display: none;
+}
+
+.buttonSeparator {
+    border-left: 1px solid #bbb;
+    margin: 0 15px 0 5px;
+    font-size: 140%;
+    vertical-align: middle;
+}
+
+.approvalState {
+    color: #d11e1e;
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    background: rgb(232, 232, 232);
+}
+
+
+.approvalContents > .infoTable{
+    height:150px;
+    margin-bottom:4px;
+}
+
+.approvalContents > .infoTable th, .approvalContents > .infoTable td{
+    height:45px;
+    line-height:36px;
+}
+
+.approverInfo {
+    width: 90px;
+    box-sizing: border-box;
+    float: left;
+    border:1px solid #ddd;
+}
+
+.approverInfo > div {
+    width: 100%;
+    text-align:center;
+    line-height: 18px;
+    padding: 5px;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.approverInfo > div:nth-child(2){
+    height:60px;
+    background-color:#fff;
+}
+
+.approverInfo > div:nth-child(2) > img{
+    max-width:84px;
+    max-height:44px;
+}
+
+.approverInfo > div:last-child{
+    font-size:11px;
+}
+
+.approvalComment{
+    width:100%;
+}
+
+.approvalComment tr:first-child {
+    height: 30px;
+    line-height:30px;
+    text-indent:4px;
+    background-color: rgb(232,232,232);
+}
+
+.approvalComment tr:last-child{
+    height:30px;
+}
+
+.approvalComment td{
+    border:1px solid #c5c5c5;
+}
+
+.approvalComment .opinion div {
+    height:360px;
+    vertical-align:sub;
+}
+
+.approvalComment .opinion p{
+    text-indent:8px;
+    border-bottom:1px solid #ddd;
+    line-height:36px;
+}
+
+.approvalComment .opinion p > span{
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.received{
+    height:198px;
+    vertical-align:top;
+}
+
+.approvalComment textarea {
+    width: 420px;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    resize: none;
+    padding: 5px;
+    float: left;
+    display: block;
+}
+
+.approvalComment button{
+    display:block;
+    float:left;
+    width:78px;
+    height:50px;
+    border-left:1px solid #c5c5c5;
+    border-right:none;
+    border-top:none;
+    border-bottom:none;
+}

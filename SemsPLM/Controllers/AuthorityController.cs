@@ -34,7 +34,19 @@ namespace SemsPLM.Controllers
                 Session["LoginID"] = person.ID;
                 Session["UserNm"] = person.Name;
                 Session["SessionID"] = SessionID;
-                Session.Timeout = 120;
+
+                string IsCookies = System.Configuration.ConfigurationManager.AppSettings["IsCookies"];
+                if (IsCookies.ToLower().Equals("true"))
+                {
+                    string CookiesKey = System.Configuration.ConfigurationManager.AppSettings["CookiesKey"];
+                    string CookiesHour = System.Configuration.ConfigurationManager.AppSettings["CookiesHour"];
+
+                    HttpCookie loginCookies = new HttpCookie(CookiesKey);
+                    loginCookies.Values["UserOID"] = Convert.ToString(person.OID);
+                    loginCookies.Expires = DateTime.Now.AddHours(Convert.ToDouble(CookiesHour));
+                    Response.Cookies.Add(loginCookies);
+                }
+                
                 return Json(new { result = "Redirect", url = Url.Action("index", "Home") });
             }
             catch(Exception ex)
@@ -43,11 +55,24 @@ namespace SemsPLM.Controllers
             }
         }
 
+
         [AuthorizeFilter]
         public ActionResult logout()
         {
             if (Session != null)
             {
+                string IsCookies = System.Configuration.ConfigurationManager.AppSettings["IsCookies"];
+                if (IsCookies.ToLower().Equals("true"))
+                {
+                    string CookiesKey = System.Configuration.ConfigurationManager.AppSettings["CookiesKey"];
+                    if (Request.Cookies.AllKeys.Contains(CookiesKey))
+                    {
+                        HttpCookie loginCookies = Request.Cookies[CookiesKey];
+                        loginCookies.Values["UserOID"] = null;
+                        loginCookies.Expires = DateTime.Now.AddHours(-1);
+                        Response.Cookies.Add(loginCookies);
+                    }
+                }
                 Session.Clear();
                 FormsAuthentication.SignOut();
             }

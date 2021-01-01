@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Common.Factory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Pms.Models
 {
@@ -29,4 +31,22 @@ namespace Pms.Models
         public int? ModifyUs { get; set; }
 
     }
+    public static class PmsGateSignOffRepository
+    {
+        public static PmsGateSignOff SelPmsGateSignOff(HttpSessionStateBase Context, PmsGateSignOff _param)
+        {
+            PmsGateSignOff lSignOff = DaoFactory.GetData<PmsGateSignOff>("Pms.SelPmsGateSignOff", _param);
+
+            return lSignOff;
+        }
+
+        public static PmsGateSignOff UdtChangeOrderObject(PmsGateSignOff _param)
+        {
+            DaoFactory.SetUpdate("Pms.UdtPmsGateSignOff", _param);
+
+            return _param;
+        }
+
+    }
+
 }

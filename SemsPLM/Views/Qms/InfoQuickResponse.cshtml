@@ -1,15 +1,5 @@
-﻿@using Common.Constant;
-@{
+﻿@{
     Layout = null;
-    string StoragePath = System.Configuration.ConfigurationManager.AppSettings["FileStorage"];
-    string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
-    string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + ViewBag.QuickDetail.OID.ToString();
-
-    string FullImgPath = "";
-    if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.PoorPicture != null)
-    {
-        FullImgPath = Path.Combine(StoragePath, imgVaulePath, SavePath, ViewBag.QuickDetail.PoorPicture);
-    }
 }
 
 <div id="InfoQuickResponse_@ViewBag.QuickDetail.OID" class="info_project clearfix">
@@ -51,187 +41,173 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
-            <div id="properties" class="basic_grid">
-                <table class="tableTopButtonBox" style="border-bottom:1px solid #c5c5c5;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align: right;" id="InfoQuickResponse_defaultBtn_@ViewBag.QuickDetail.OID">
-                                <button id="InfoQuickResponse_EditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                @*<button id="InfoQuickResponse_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                                <button id="InfoQuickResponse_EditCancleBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoQuickResponse_SaveBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="properties" class="basic_grid">
+            <table class="tableTopButtonBox" style="border-bottom:1px solid #c5c5c5;">
+                <tbody>
+                    <tr>
+                        <td style="text-align: right;" id="InfoQuickResponse_defaultBtn_@ViewBag.QuickDetail.OID">
+                            <button id="InfoQuickResponse_EditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                            @*<button id="InfoQuickResponse_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                            <button id="InfoQuickResponse_EditCancleBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                            <button id="InfoQuickResponse_SaveBtn_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
-                <table class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <th><label class="lbText">공장 구분</label></th>
-                            <td><div id="InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">검사유형</label></th>
-                            <td><div id="InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">고객사</label></th>
-                            <td><div id="InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID"></div></td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">품번</label></th>
-                            <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" /></td>
-                            <th><label class="lbText">LOT번호</label></th>
-                            <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtLotNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.LotNo" /></td>
-                            <th><label class="lbText">품질담당자</label></th>
-                            <td>
-                                <input type="text" readonly="readonly" id="InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" WorkUserOID="@ViewBag.QuickDetail.WorkUserOID" value="@ViewBag.QuickDetail.WorkUserNm" />
-                                <button id="InfoQuickResponse_btnWorkUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">작성일시</label></th>
-                            <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtWriteDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.OccurrenceDt == null ? "" : ViewBag.QuickDetail.WriteDt.ToString("yyyy-MM-dd"))" /></td>
-                            <th><label class="lbText">불량수량</label></th>
-                            <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPoorCnt_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PoorCnt" /></td>
-                            <td colspan="2"></td>
-                        </tr>
-                    </tbody>
+            <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">공장 구분</label></th>
+                        <td><div id="InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID"></div></td>
+                        <th><label class="lbText">검사유형</label></th>
+                        <td><div id="InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID"></div></td>
+                        <th><label class="lbText">고객사</label></th>
+                        <td><div id="InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID"></div></td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">품번</label></th>
+                        <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" /></td>
+                        <th><label class="lbText">LOT번호</label></th>
+                        <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtLotNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.LotNo"  /></td>
+                        <th><label class="lbText">품질담당자</label></th>
+                        <td>
+                            <input type="text" readonly="readonly" id="InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" WorkUserOID="@ViewBag.QuickDetail.WorkUserOID" value="@ViewBag.QuickDetail.WorkUserNm"  />
+                            <button id="InfoQuickResponse_btnWorkUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">작성일시</label></th>
+                        <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtWriteDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.OccurrenceDt == null ? "" : ViewBag.QuickDetail.WriteDt.ToString("yyyy-MM-dd"))"  /></td>
+                        <th><label class="lbText">불량수량</label></th>
+                        <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPoorCnt_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PoorCnt"  /></td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tbody>
 
-                </table>
+            </table>
 
-                <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
-                <table class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <th><label class="lbText">제목</label></th>
-                            <td colspan="5">
-                                <input type="text" class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXT" readonly="readonly" id="txtDlgTitle" style="width:98%;" value="@ViewBag.QuickDetail.Title" />
-                            </td>
-                        <tr>
-                            <th><label class="lbText">발생처</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbOccurrenceArea_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">유발공정</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">귀책구분</label></th>
-                            <td>
-                                <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID"></div>
-                                <div id="InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID" style="display:none;"></div>
-                                <input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm" style="display:none;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">발생장소</label></th>
-                            <td><input class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXT" type="text" readonly="readonly" id="InfoQuickResponse_txtOccurrencePlace_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.OccurrencePlace" /></td>
-                            <th><label class="lbText">발생일자</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtOccurrenceDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.OccurrenceDt == null ? "" : ViewBag.QuickDetail.OccurrenceDt.ToString("yyyy-MM-dd"))"></div></td>
-                            <th><label class="lbText">결함정도</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbDefectDegree_@ViewBag.QuickDetail.OID"></div></td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">재발여부 </label></th>
-                            <td> <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="CHECKBOX" id="InfoQuickResponse_chkRecurrenceFl_@ViewBag.QuickDetail.OID">재발여부 선택</div></td>
-                            <th><label class="lbText">시정판정</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">대책서회신요구일자</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtMeasureResponseDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.MeasureResponseDt == null ? "" : ViewBag.QuickDetail.MeasureResponseDt.ToString("yyyy-MM-dd"))"></div></td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">불량내용상세</label></th>
-                            <td colspan="5">
-                                <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtPoorDetail_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.PoorDetail</textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><label class="lbText">QA</label></th>
-                            <td colspan="5">
-                                <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">제목</label></th>
+                        <td colspan="5">
+                            <input type="text" class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXT" readonly="readonly" id="txtDlgTitle" style="width:98%;" value="@ViewBag.QuickDetail.Title" />
+                        </td>
+                    <tr>
+                        <th><label class="lbText">발생처</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbOccurrenceArea_@ViewBag.QuickDetail.OID"></div></td>
+                        <th><label class="lbText">유발공정</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>
+                        <th><label class="lbText">귀책구분</label></th>
+                        <td>
+                            <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID"></div>
+                            <div id="InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID" style="display:none;"></div>
+                            <input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm"  style="display:none;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">발생장소</label></th>
+                        <td><input class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXT" type="text" readonly="readonly" id="InfoQuickResponse_txtOccurrencePlace_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.OccurrencePlace"  /></td>
+                        <th><label class="lbText">발생일자</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtOccurrenceDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.OccurrenceDt == null ? "" : ViewBag.QuickDetail.OccurrenceDt.ToString("yyyy-MM-dd"))"></div></td>
+                        <th><label class="lbText">결함정도</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbDefectDegree_@ViewBag.QuickDetail.OID"></div></td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">재발여부 </label></th>
+                        <td> <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="CHECKBOX" id="InfoQuickResponse_chkRecurrenceFl_@ViewBag.QuickDetail.OID">재발여부 선택</div></td>
+                        <th><label class="lbText">시정판정</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>
+                        <th><label class="lbText">대책서회신요구일자</label></th>
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtMeasureResponseDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.MeasureResponseDt == null ? "" : ViewBag.QuickDetail.MeasureResponseDt.ToString("yyyy-MM-dd"))" ></div></td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">불량내용상세</label></th>
+                        <td colspan="5">
+                            <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtPoorDetail_@ViewBag.QuickDetail.OID" style="width:98%;" >@ViewBag.QuickDetail.PoorDetail</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">QA</label></th>
+                        <td colspan="5">
+                            <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <label><i class="fas fa-caret-square-down"></i> 고품사진</label>
-                <table class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <th><label class="lbText">고품사진</label></th>
-                            <td colspan="5">
-                                <div style="width:200px; height:240px; position:relative;">
-                                    <input type="file" multiple="true" id="InfoQuickResponse_imgPoorPicture_@ViewBag.QuickDetail.OID" style="display:none;">
-                                    <div class="inputImg" style="z-index:100" id="InfoQuickResponse_imgZone_@ViewBag.QuickDetail.OID">
-                                        <span id="InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID">고품 사진</span>
-                                    </div>
-                                    <div class="showImg" id="InfoQuickResponse_imgResult_@ViewBag.QuickDetail.OID">
-                                        @if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.PoorPicture != null)
-                                        {
-                                            @*<img class="img-thumbnail" src="@Url.Content("~/images/Qms/PoorPicture/")@ViewBag.QuickDetail.PoorPicture" />*@
-                                            <img class="img-thumbnail" src="@Url.Content(FullImgPath)" />
-                                        }
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <label><i class="fas fa-caret-square-down"></i> 고품사진</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">고품사진</label></th>
+                        <td colspan="5">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
-                <table class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                        <col style="width:190px;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <th><label class="lbText">봉쇄조치 </label></th>
-                            <td colspan="3">
-                                <div style="display:flex;flex-direction:row;">
-                                    <div id="InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID">원재료</div>
-                                    <div id="InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID">외주품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID">공정품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID">완성품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID">창고재고</div>
-                                    <div id="InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID">고객출하</div>
-                                </div>
+            <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">봉쇄조치 </label></th>
+                        <td colspan="3">
+                            <div style="display:flex;flex-direction:row;">
+                                <div id="InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID">원재료</div>
+                                <div id="InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID">외주품</div>
+                                <div id="InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID">공정품</div>
+                                <div id="InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID">완성품</div>
+                                <div id="InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID">창고재고</div>
+                                <div id="InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID">고객출하</div>
+                            </div>
 
-                            </td>
-                            <th><label class="lbText">일정계획담당자</label></th>
-                            <td>
-                                <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
-                                <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </td>
+                        <th><label class="lbText">일정계획담당자</label></th>
+                        <td>
+                            <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm"  />
+                            <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
     </div>
 </div>
 <script type="text/javascript">
@@ -239,16 +215,16 @@
         const QuickDetailOID = '@ViewBag.QuickDetail.OID';
         const QuickDetailDiv$ = $('#InfoQuickResponse_' + QuickDetailOID);
 
-        $("#InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
+        $("#InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });        
         $("#InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
         $("#InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
         $("#InfoQuickResponse_cbOccurrenceArea_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
-        $("#InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
+        $("#InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });        
         $("#InfoQuickResponse_cbDefectDegree_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
         $("#InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
         @*$("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
         $("#InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
-
+        
          $("#InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.OemLibOID");
          $("#InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.PlantLibOID");
          $("#InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.OccurrenceLibOID");
@@ -290,36 +266,6 @@
         $("#InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeStorageProductFl" == "True"? true : false) , disabled: true});
         $("#InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeShipProductFl" == "True"? true : false), disabled: true });
 
-        // 고품사진
-        if ($('.showImg').children().length == 1) {
-            $('#InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID').hide();
-        }
-
-        $("#InfoQuickResponse_imgPoorPicture_@ViewBag.QuickDetail.OID").simpleUpload({
-            url: '/Qms/ImgUploadFile',
-            params: { OID : "@ViewBag.QuickDetail.OID"},
-            method: 'post',
-            maxFileNum: 1,
-            maxFileSize: 1000000,
-            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
-            dropZone: '#InfoQuickResponse_imgZone_@(ViewBag.QuickDetail.OID != null ? ViewBag.QuickDetail.OID : "")',
-        }).on('upload:over', function (e, files) {
-            alert('Number of files is over');
-        }).on('upload:invalid', function (e, files) {
-            for (var i = 0; i < files.length; i++) {
-                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
-            }
-        }).on('upload:done', function (e, file, index, data, xhr) {
-            var imgPictureResult$ = $('#InfoQuickResponse_imgResult_@ViewBag.QuickDetail.OID');
-            imgPictureResult$.empty();
-            imgPictureResult$.append('<img class="img-thumbnail" src="@Url.Content(FullImgPath)" />');
-            @*$('#hidPoorPictureImage_@ViewBag.QuickDetail.OID').val(data);*@
-            $('#InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID').hide();
-            $('.img-thumbnail').next().on('click', function () {
-                $(this).parent('li').remove();
-            });
-        });
-
         var btnDlgPlanUserSearch$ = $("#InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID").jqxButton({disabled: true});
         btnDlgPlanUserSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
@@ -330,7 +276,7 @@
 
                 $("#InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID").val(res[0].Name);
                 $("#InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID").attr("PlanUserOID", res[0].OID);
-
+                
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
@@ -344,7 +290,7 @@
 
                 $("#InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID").val(res[0].Name);
                 $("#InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID").attr("WorkUserOID", res[0].OID);
-
+                
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
@@ -352,7 +298,7 @@
             var ModifyAttr = $('.Modifiable_' + QuickDetailOID);
 
             ModifyAttr.each(function (i, v) {
-                ContentEditMode(v);
+                ContentEditMode(v);  
             });
 
             //수정 가능한 항목을 표시
@@ -363,9 +309,9 @@
 
             $('.Modifiable_' + QuickDetailOID).parent().append(modifyTag);
 
-            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "none");
+            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "none");            
             $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "inline-block");
-            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "inline-block");
+            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "inline-block");       
         });
 
         $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).jqxButton();
@@ -373,21 +319,21 @@
             var ModifyAttr = $('.Modifiable_' + QuickDetailOID);
 
             ModifyAttr.each(function (i, v) {
-                ContentReadMode(v);
+                ContentReadMode(v);             
             });
 
             $(".modifyTag").remove();
-            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "inline-block");
+            $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "inline-block");  
             $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "none");
-            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "none");
+            $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "none");       
         });
 
-
+        
         $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).jqxButton();
         $('#InfoQuickResponse_SaveBtn_' + QuickDetailOID).on("click", function () {
             var param = {};
-
-            param.OID = "@ViewBag.QuickDetail.OID";
+            
+            param.OID = "@ViewBag.QuickDetail.OID";     
             @*param.PlantLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID");
             param.OccurrenceLibOID =WebUtils.GetComboValue("InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID");*@
             //param.PartOID = 156;

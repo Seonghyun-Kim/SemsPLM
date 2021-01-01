@@ -13,7 +13,8 @@ namespace Common.Constant
 
         public static string TABLE_PART = "T_DEPART";
 
-        public static string PART_TYPE_ASSY = "A";
+        public static string PART_TYPE = "EPARTTYPE";
+        public static string PART_TYPE_ASSY = "Assy";
         public static string PART_TYPE_SASSY = "S";
         public static string PART_TYPE_DETAIL = "D";
 
