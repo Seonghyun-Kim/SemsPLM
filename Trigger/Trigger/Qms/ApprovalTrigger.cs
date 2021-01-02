@@ -73,5 +73,29 @@ namespace Qms.Trigger
             }
             return "";
         }
+
+        public string ActionModuleReview(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iAdmin = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
+            try
+            {
+                if (action == CommonConstant.ACTION_PROMOTE)
+                {
+                    BPolicy reviewSt = BPolicyRepository.SelBPolicy(new BPolicy { Type = type, Name = "Review" }).First();
+                    DObjectRepository.UdtDObject(Context, new DObject() { OID = Convert.ToInt32(oid), BPolicyOID = reviewSt.OID });
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
     }
 }

@@ -57,7 +57,7 @@
                     </tbody>
                 </table>
                 }
-                else
+                else if(ViewBag.LpaUnfit.BPolicyOID != 81 )
                 {
                 <table class="tableTopButtonBox">
                     <tbody>
@@ -187,8 +187,8 @@
         </div>
     </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {  
+    <script type="text/javascript">
+    $(document).ready(function () {
         const LpaUnfitOID = '@ViewBag.LpaUnfit.OID';
         var fileUpload = $("#InfoLpaUnfit_FileList_" + LpaUnfitOID).FileUpload({ OID: LpaUnfitOID });
 
@@ -370,12 +370,17 @@
             });
         });
 
-        $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {
-            var linkName = "[" + "@ViewBag.QuickDetail.Title" + "] LPA 대책서 등록";
-            var linkUrl = '/Qms/InfoLpaMeasure?OID=' + "@ViewBag.LpaMeasureOID";
+        @if (ViewBag.LpaUnfit.BPolicyOID != 81)
+        {
+            <text>
+            $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {
+                var linkName = "[" + "@ViewBag.QuickDetail.Title" + "] LPA 대책서 등록";
+                var linkUrl = '/Qms/InfoLpaMeasure?OID=' + "@ViewBag.LpaMeasureOID";
 
-            TabPageLoad(linkUrl, linkName);
-        });
+                TabPageLoad(linkUrl, linkName);
+            });
+            </text>
+        }
 
         // Combo Widget
         var comboLayerLib$ = $("#comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LayerLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
@@ -501,9 +506,11 @@
 
         var btnDlgPart$ = $("#btnDlgEditLPAIncongruityPart_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgPart$.on("click", function () {
-            $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val("테스트");
-            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val("PART-12345");
-            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", "12345");
+            OpenSearchEPartDialog(function (res) {
+                $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val(res.Name);
+                $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val(res.Name);
+                $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", res.OID);
+            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');
         });
 
         $("#btnLpaUnfitCheckAdd_" + LpaUnfitOID).jqxButton({ disabled: true });
@@ -580,4 +587,4 @@
 
         table$.append(tr$);
     }
-</script>
+    </script>
