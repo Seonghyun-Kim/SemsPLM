@@ -204,7 +204,7 @@
         </table>
     </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
         $("#btnDlgBlockAdePlanUserSearch").jqxButton();
         $("#btnDlgOccurrenceCausePlanUserSearch").jqxButton();
@@ -214,15 +214,39 @@
         $("#btnDlgCheckPlanUserSearch").jqxButton();
         $("#btnDlgStandardPlanUserSearch").jqxButton();
         $("#btnDlgWorkerEduPlanUserSearch").jqxButton();
-
         $('#btnBlockadeUseFl').jqxSwitchButton({ height: 30, width: 120,  checked: true, onLabel : "Yes", offLabel : "No", disabled: true  });
         $('#btnOccurrenceCauseUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No", disabled: true  });
-        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" , disabled: true });
+        $('#btnImproveCountermeasureUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No", disabled: true });
+
         $('#btnErrorProofUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        @if(ViewBag.ErrorProof.ModuleFl == 0)
+        {
+            <text> $('#btnErrorProofUseFl').val(false);</text>
+        }
+
         $('#btnLpaUnfitUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        @if(ViewBag.Lpa.ModuleFl == 0)
+        {
+            <text> $('#btnLpaUnfitUseFl').val(false);</text>
+        }
+
         $('#btnCheckUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        @if(ViewBag.Check.ModuleFl == 0)
+        {
+            <text> $('#btnCheckUseFl').val(false);</text>
+        }
+
         $('#btnStandardUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        @if(ViewBag.Standard.ModuleFl == 0)
+        {
+            <text> $('#btnStandardUseFl').val(false);</text>
+        }
+
         $('#btnWorkerEduUseFl').jqxSwitchButton({ height: 30, width: 120, checked: true, onLabel: "Yes", offLabel: "No" });
+        @if(ViewBag.WorkerEdu.ModuleFl == 0)
+        {
+            <text> $('#btnWorkerEduUseFl').val(false);</text>
+        }
 
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgBloackAdePlanDt").jqxDateTimeInput({
@@ -238,7 +262,7 @@
         {
             <text>$("#txtDlgBloackAdePlanDt").val("@ViewBag.Blockade.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
-        
+
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({
             width: 140,
@@ -358,7 +382,7 @@
 
             $("#" + textBoxID).val(res[0].Name);
             $("#" + textBoxID).attr("UserOID", res[0].OID);
-                
+
         }, null, null, '/Common/ApprovalPerson', '사용자 검색');
     };
 
@@ -468,7 +492,7 @@
             alert("작업자교육 항목이 YES 인데 처리담당자가 없습니다.");
             return;
         }
-        
+
         $.post('/Qms/SaveQuickResponseModule', { _params: params }, function (response) {
                 if (response.isError) {
                 alert(response.resultMessage);
@@ -478,6 +502,6 @@
         }).fail(function (err) {
             alert(err.responseText);
         });
-        
+
     }
-</script>
+    </script>

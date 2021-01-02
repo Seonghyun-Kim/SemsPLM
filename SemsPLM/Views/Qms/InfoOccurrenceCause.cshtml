@@ -254,7 +254,7 @@
                     why.OID = $(value).attr("OID") === "null" ? null : $(value).attr("OID");
                     why.OccurrenceCauseDetail = $($(value).find("[DataId='WhyDetail']")[0]).val();
 
-                    if ($(value).attr("Remove") === "Y" && why.OID !== null) {
+                    if ($(value).attr("Remove") === "Y") {
                         why.IsRemove = "Y";
                     }
 
@@ -419,12 +419,13 @@
             trWhy$.setAttribute("OID", null);
         }
         var tdWhy$ = document.createElement("th");
-        tdWhy$.style.width = "8%";
+        tdWhy$.style.textAlign = "center";
+        tdWhy$.style.width = "7%";
         tdWhy$.style.border = "1px solid #a2dfsd";
         tdWhy$.innerText = "why" + ($(tbWhy$).children().length + 1).toString();
 
         var tdWhyDetail$ = document.createElement("td");
-        tdWhyDetail$.style.width = "84%";
+        tdWhyDetail$.style.width = "calc(93% - 80px)";
         var txtWhyDetail$ = document.createElement("input");
         txtWhyDetail$.setAttribute("type", "text");
         txtWhyDetail$.style.width = "100%";
@@ -439,6 +440,7 @@
 
         var tdWhyBtn$ = document.createElement("td");
         tdWhyBtn$.style.textAlign = "center";
+        tdWhyBtn$.style.width = "80px";
         var btnWhyDelAdd$ = document.createElement("button");
         btnWhyDelAdd$.innerText = "삭제";
         btnWhyDelAdd$.className = "Modifiable_@ViewBag.OccurrenceCause.OID";
