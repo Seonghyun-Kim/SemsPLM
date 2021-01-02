@@ -4,6 +4,7 @@ using Common.Models;
 using Common.Models.File;
 using Document.Models;
 using DocumentClassification.Models;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,17 @@ using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class DocumentController : Controller
     {
         // GET: Document
+        public ActionResult InfoMiniDocument(int OID)
+        {
+            Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });
+            ViewBag.docDetail = docDetail;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
+            return PartialView("InfoDocument");
+        }
         public ActionResult Index()
         {
             return View();
@@ -28,10 +37,12 @@ namespace SemsPLM.Controllers
             
             return View();
         }
+
         public JsonResult SelDocClassTree()
         {
             return Json(DocClassRepository.SelDocClassTree(Session, CommonConstant.ATTRIBUTE_DOCUMENT));
         }
+
         public ActionResult InfoDocument(int OID)
         {
             Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });

@@ -17,8 +17,9 @@
                 <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
                 <button id="ECOSaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
             </div>
-            <div id="ECOprofile" class="ecoContents" style="height:770px;overflow-x:hidden;overflow-y:scroll;">
+            <div id="ECOprofile" class="ecoContents">
                 <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
+                <div class="scrollY" style="height:720px;">
                 <table class="infoTable">
                     <colgroup>
                         <col width="10%" />
@@ -126,11 +127,12 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
 
             <div id="ECOEffectAssess" class="ecoContents dective">
-                <div style="height:770px;overflow-x:hidden;overflow-y:scroll;">
-                    <table class="effectAssessList">
+                <div class="scrollY" style="height:770px;">
+                    <table id="effectAssessList" class="effectAssessList">
                     </table>
                 </div>
             </div>
@@ -152,7 +154,7 @@
         var ECOStatementGrid$ = $('#ECOStatementGrid');
         var devType$ = $('#CreateChangeOrder_devType');
         var reasonChange$ = $('#CreateChangeOrder_reasonChange');
-        var effectAssessList$ = $('.effectAssessList');
+        var effectAssessList$ = $('#effectAssessList');
         var assessList$ = @Html.Raw(Json.Encode(ViewBag.assessList));
         var reasonList$ =  @Html.Raw(Json.Encode(ViewBag.reasonList));
         var Compatible = null;
@@ -221,12 +223,12 @@
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                             }
                         },
-                        { text: 'ECR_NO', datafield: 'Name', width: '30%', },
-                        { text: '제목', datafield: 'Title', width: '40%', },
+                        { text: 'ECR_NO', datafield: 'Name', width: '20%', },
+                        { text: '제목', datafield: 'Title', width: '38.2%', },
                         { text: 'ECR_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd' },
-                        { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
+                        { text: '작성자', datafield: 'CreateUsNm', width: '8%', },
                         {
-                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            text: '상태', datafield: 'BPolicy', width: '12%',
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                             },
@@ -333,7 +335,7 @@
                     { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
                     { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
                     { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
-                    { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
+                    { text: '작성자', datafield: 'CreateUsNm', width: '8.2%', },
                     { text: '상태', datafield: 'BPolicy', width: '15%',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
@@ -535,7 +537,7 @@
                         }
                     },
                     { text: '변경내용', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
-                    { text: '비고', datafield: 'Description', width: "20%", align: 'center', cellsalign: 'center', },
+                    { text: '비고', datafield: 'Description', width: "20.2%", align: 'center', cellsalign: 'center', },
 
                     { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center', hidden: true },
                     { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', hidden: true },
@@ -601,20 +603,20 @@
                     nametag.innerHTML = assessList$[i].Name;
                     var div$ = document.createElement("div");
                     div$.id = "assessList_" + i;
-                    td.append(nametag);
-                    td.append(div$);
-                    tr.append(td);
+                    td.appendChild(nametag);
+                    td.appendChild(div$);
+                    tr.appendChild(td);
                 } else {
                     var td = document.createElement("td");
                     var nametag = document.createElement("h4");
                     nametag.innerHTML = assessList$[i].Name;
                     var div$ = document.createElement("div");
                     div$.id = "assessList_" + i;
-                    td.append(nametag);
-                    td.append(div$);
-                    tr.append(td);
+                    td.appendChild(nametag);
+                    td.appendChild(div$);
+                    tr.appendChild(td);
                 }
-                effectAssessList$.append(tr);
+                $(effectAssessList$).append(tr);
 
 
                 var source = {

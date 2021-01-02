@@ -1,0 +1,8 @@
+﻿2020-12-30 
+
+shkim 
+T_BPOLICY_AUTH 권한추가
+76	127	NULL	OWNER	Promote	진행	SYSTEM	NULL
+77	16	1	ROLE	Relation	연결	SYSTEM	NULL
+78	2	2	ROLE	Relation	연결	SYSTEM	NULL
+79	3	1	ROLE	Relation	연결	SYSTEM	NULL

@@ -84,18 +84,22 @@ function OpenPmsCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.ProdecessorOID = 0;
                 param.WorkingDay = $("#hidWorkingDay").val();
                 param.ProdecessorOID = $("#hidProdecessorProject").val();
+                param.TemplateOID = $('#hidTemplateOID').val();
+                param.TemplateContent = ($("#IsWbs").jqxCheckBox('checked') ? 'WBS' : '') + '|' + ($("#IsMember").jqxCheckBox('checked') ? 'MEMBER' : '') + '|' + ($("#IsDocument").jqxCheckBox('checked') ? 'DOC_MASTER' : '');
 
                 if (param.ProjectType == null || param.ProjectType.length < 1) {
                     alert('구분을 입력해주세요.');
                     return;
                 }
 
-                if ((param.TemplateOID == null || param.TemplateOID.length < 1) && (param.WorkingDay == null || param.WorkingDay.length < 1)) {
+                if (param.WorkingDay == null || param.WorkingDay.length < 1) {
                     alert('달력을 입력해주세요.');
                     return;
                 }
 
+                loading$.css('display', 'block');
                 $.post('/Pms/InsProject', param, function (response) {
+                    loading$.css('display', 'none');
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
@@ -421,7 +425,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
             var Data;
             var mkey; //메인idx
 
-            var ScheduleTemplateParentsource =
+            var ScheduleTemplatePLoadsource =
             {
                 dataType: "json",
                 dataFields: [
@@ -436,8 +440,8 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                 ],
             };
             var initialized = false;
-            var ScheduleTemplateParentGrd$ = $('#CustomerScheduleTemplate_ParentGrid');
-            ScheduleTemplateParentGrd$.jqxGrid(
+            var ScheduleTemplatePLoadGrd$ = $('#CustomerScheduleTemplate_PLoadGrid');
+            ScheduleTemplatePLoadGrd$.jqxGrid(
                 {
                     width: "30%",
                     height: 800,
@@ -463,7 +467,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                         {
                             text: '템플릿명', datafield: 'Name', type: 'string', width: '83%',
                             cellsrenderer: function (row, column, value) {
-                                var item = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', row);
+                                var item = ScheduleTemplatePLoadGrd$.jqxGrid('getrowdata', row);
                                 if (item.isChange == "Y") {
                                     return "<div class='modifyTag' style='text-align:center;vertical-align:middle;'></div><p style='line-height:32px;text-indent:4px;'>" + value + "</p>";
                                 } else {
@@ -485,7 +489,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                         statusbar.append(container$);
 
                         LoadButton.on('click', function () {
-                            var Check = ScheduleTemplateParentGrd$.jqxGrid('getselectedrowindexes');
+                            var Check = ScheduleTemplatePLoadGrd$.jqxGrid('getselectedrowindexes');
                             if (Check.length <= 0) {
                                 alert("템플릿을 선택해 주세요");
                                 return;
@@ -496,7 +500,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                                 return;
                             }
 
-                            var LoadData = ScheduleTemplateChildGrd$.jqxGrid('getrows');
+                            var LoadData = ScheduleTemplateCLoadGrd$.jqxGrid('getrows');
                             for (var i = 0; i < LoadData.length; i++) {
                                 _Param.jqxGrid('addrow', null, {
                                     "Car_Lib_OID": Car_Lib_OID,
@@ -510,7 +514,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                         });
                     }
                 });
-            getScheduleTemplateList(ScheduleTemplateParentsource, ScheduleTemplateParentGrd$, param);
+            getScheduleTemplateList(ScheduleTemplatePLoadsource, ScheduleTemplatePLoadGrd$, param);
 
             var ScheduleTemplateChildsource =
             {
@@ -526,14 +530,13 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
             };
 
             var initialized = false;
-            var ScheduleTemplateChildGrd$ = $('#CustomerScheduleTemplate_ChildGrid');
-            ScheduleTemplateChildGrd$.jqxGrid('refreshdata');
-            ScheduleTemplateChildGrd$.jqxGrid(
+            var ScheduleTemplateCLoadGrd$ = $('#CustomerScheduleTemplate_CLoadGrid');
+            ScheduleTemplateCLoadGrd$.jqxGrid('refreshdata');
+            ScheduleTemplateCLoadGrd$.jqxGrid(
                 {
                     width: "68%",
                     height: 800,
                     theme: "kdnc",
-                    //selectionmode: 'checkbox',
                     sortable: true,
                     ready: function () {
                         initialized = true;
@@ -550,7 +553,7 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                         },
                         {
                             text: '고객일정명', width: '90%', datafield: 'Name', type: 'string', cellsrenderer: function (row, column, value) {
-                                var item = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', row);
+                                var item = ScheduleTemplateCLoadGrd$.jqxGrid('getrowdata', row);
                                 if (item.isChange == "Y") {
                                     return "<div class='modifyTag' style='text-align:center;vertical-align:middle;'></div><p style='line-height:32px;text-indent:4px;'>" + value + "</p>";
                                 } else {
@@ -571,19 +574,19 @@ function OpenLoadTemplateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, 
                     }
 
                 });
-            ScheduleTemplateParentGrd$.on('rowselect', function (event) {
+            ScheduleTemplatePLoadGrd$.on('rowselect', function (event) {
                 var args = event.args;
                 mkey = args.rowindex;
-                var item = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', args.rowindex);
-                ScheduleTemplateChildGrd$.jqxGrid('clearselection');
-                PrintJqxGrid(ScheduleTemplateChildsource, ScheduleTemplateChildGrd$, item.Cdata);
+                var item = ScheduleTemplatePLoadGrd$.jqxGrid('getrowdata', args.rowindex);
+                ScheduleTemplateCLoadGrd$.jqxGrid('clearselection');
+                PrintJqxGrid(ScheduleTemplateChildsource, ScheduleTemplateCLoadGrd$, item.Cdata);
             });
-            ScheduleTemplateParentGrd$.on('cellclick', function (event) {
+            ScheduleTemplatePLoadGrd$.on('cellclick', function (event) {
                 var args = event.args;
                 mkey = args.rowindex;
-                var item = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', args.rowindex);
-                ScheduleTemplateChildGrd$.jqxGrid('clearselection');
-                PrintJqxGrid(ScheduleTemplateChildsource, ScheduleTemplateChildGrd$, item.Cdata);
+                var item = ScheduleTemplatePLoadGrd$.jqxGrid('getrowdata', args.rowindex);
+                ScheduleTemplateCLoadGrd$.jqxGrid('clearselection');
+                PrintJqxGrid(ScheduleTemplateChildsource, ScheduleTemplateCLoadGrd$, item.Cdata);
             });
         }
     });
@@ -717,6 +720,7 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 var param = {};
                 param.TYPE = _Param.Type;
                 param.OID = _Param.OID;
+               // param.Manager_OID = $('#dlgMangerOID').val();
                 param.Contents = $('#dlgContents').val();
                 var Files = fileUpload.Files();
 
@@ -725,7 +729,9 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                     param.delFiles = [];
                     param.delFiles = removeFiles;
                 }
-
+                if (param.Contents == "") {
+                    param.Contents = null;
+                }
                 SendDataWithFile('/Pms/UdtIssue', param,Files, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
@@ -748,6 +754,7 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.Description = $('#dlgDescription').val();
                 param.Manager_OID = $('#dlgMangerOID').val();
                 param.BPolicyNm = $('#dlgStatus').val();
+                param.Contents = null;
                 var chkIssueType = [];
                 for (var i = 0; i < $('input[name="IssueType"]').length; i++) {
                     if ($('input[name="IssueType"]')[i].value == "true") {
@@ -763,7 +770,10 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                     param.delFiles = [];
                     param.delFiles = removeFiles;
                 }
-
+                if (param.Name == null || param.Name.length < 1) {
+                    alert('이슈명을 입력해주세요.');
+                    return;
+                }
                 SendDataWithFile('/Pms/UdtIssue', param, Files, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
@@ -876,7 +886,7 @@ function OpenAddModifyGateViewDetailDialog(_CallBackFunction, _Wrap, _Param, _Ur
     var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 1800, maxWidth: 1800, height: 650, minHeight: 650, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1800, maxWidth: 1800, height: 660, minHeight: 660, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
         }
@@ -927,6 +937,10 @@ function OpenReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.RootOID = _Param.RootOID;
                 param.FromOID = _Param.FromOID;
 
+                if (_Param.RootOID != _Param.TaskOID) {
+                    param.TaskOID = _Param.TaskOID;
+                }
+                
                 param.Description = $('#Description').val();
 
                 param.RequiredSchedule = $('#RequiredSchedule').val();
@@ -1000,7 +1014,7 @@ function OpenGateCheckListDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title)
     var posY = (winHeight / 2) - (660 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 1500, maxWidth: 1500, height: 650, minHeight: 650, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1500, maxWidth: 1500, height: 660, minHeight: 660, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
         }
     });
@@ -1015,6 +1029,7 @@ function OpenGateCheckListDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title)
         $(popLayer).jqxWindow('modalDestory');
     });
 }
+
 // pms Document Dialog
 function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     const loading$ = $('#loading');
@@ -1051,11 +1066,8 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.Files = documentFile.Files();
                 param.RootOID = _Param.RootOID;
                 param.FromOID = _Param.FromOID;
-                if (param.RootOID == param.FromOID) {
-
-                } else {
-                    param.TaskOID = param.FromOID;
-                }
+                param.TaskOID = _Param.TaskOID;
+                
                 var removeFiles = documentFile.RemoveFiles();
                 if (!WebUtils.isEmpty(removeFiles)) {
                     param.delFiles = [];
@@ -1113,6 +1125,306 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
             });
         }
     });
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}
+
+// Pms 신뢰성 시험 의뢰서 상세
+function OpenInfoReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (850 / 2) + $(window).scrollTop();
+
+
+    $(popLayer).jqxWindow({
+        width: 1800, maxWidth: 1800, height: 850, minHeight: 850, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
+            dlgCancelBtn$.on('click', function () {
+                $(popLayer).jqxWindow('modalDestory');
+            });
+            
+            dlgSaveBtn$.on('click', function () {
+                var param = {};
+                param.OID = InfoReliabilityOID;
+                param.Description = $('#Description').val();
+
+                param.RequiredSchedule = $('#RequiredSchedule').val();
+                param.DevStep = DevStep$.val();
+                param.TestStandard = $('#TestStandard').val();
+                param.RegNum = $('#RegNum').val();
+                //param.PartNo = $('#PartNoPartNo'); //
+                //param.CarType = $('#CarTypeCarType'); //SYSTEM
+                param.TestMethodDt = TestMethodDt$.val(); //달력
+                param.NewVer = $('#NewVer').val();
+                param.HWVer = $('#HWVer').val();
+                param.SWVer = $('#SWVer').val();
+                param.CANVer = $('#CANVer').val();
+                param.TestApplyVer = $('#TestApplyVer').val();
+                param.TestCarType = $('#TestCarType').val();
+                param.TestPurpose = $('#TestPurpose').val();
+                param.TestContents = $('#TestContents').val();
+                param.SampleQuantity = $('#SampleQuantity').val();
+                param.TestStandardContents = $('#TestStandardContents').val();
+                param.Requirements = $('#Requirements').val();
+
+                RequestData('/Pms/UdtReliability', { _param: param, _ItemListParam: TestItemListGrid$.jqxGrid('getrows') }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("수정되었습니다.");
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}
+
+
+
+// Pms 신뢰성 시험 결과서 검색
+function OpenSearchReliabilityReportDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (850 / 2) + $(window).scrollTop();
+
+
+    $(popLayer).jqxWindow({
+        width: 1800, maxWidth: 1800, height: 850, minHeight: 850, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            var rowkey;
+            var row;
+            var param = {};
+            param.RootOID = _Param.RootOID;
+
+            var ReliabilityReportSource = {
+                datatype: 'json',
+                datafields: [
+                    { name: 'OID' },
+                    { name: 'Name' },
+                    { name: 'BPolicyOID' },
+                    { name: 'BPolicy' },
+                    { name: 'CreateUsNm' },
+                    { name: 'CreateDt', type: 'date' },
+                    { name: 'Description' },
+                    { name: 'FromOID' },
+                    { name: 'RootOID' },
+                    { name: 'Revision' },
+                    { name: 'DevStepNm' },
+                    { name: 'ReliabilityNm' },
+
+
+                ],
+            }
+            ReliabilityReportGrid$.jqxGrid({
+                theme: "kdnc",
+                width: "100%",
+                height: 600,
+                rowsheight: 28,
+                columnsheight: 30,
+                sortable: false,
+                pageable: false,
+                editable: false,
+                columns: [
+                    {
+                        text: 'NO', width: "6%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '문서번호', datafield: 'Name', width: "16%", align: 'center', cellsalign: 'center' },
+                    { text: '의뢰서 문서 번호', datafield: 'ReliabilityNm', width: "16%", align: 'center', cellsalign: 'center' },
+                    { text: '리비전', datafield: 'Revision', width: "11%", align: 'center', cellsalign: 'center', },
+                    { text: '개발단계', datafield: 'DevStepNm', width: "11%", align: 'center', cellsalign: 'center', },
+                    { text: '등록일', datafield: 'CreateDt', width: "20%", align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center', },
+                    { text: '등록자', datafield: 'CreateUsNm', width: "20%", align: 'center', cellsalign: 'center', }
+                ],
+                toolbarheight: 45,
+                showtoolbar: true,
+                renderToolbar: function (toolbar) {
+                    toolbar.empty();
+                    var container = $("<div class='lGridComponent'></div>");
+                    var btnAdd = $("<button id='dlgDocClassInsertBtn'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                    container.append(btnAdd);
+                    toolbar.append(container);
+
+                    btnAdd.on('click', function () {
+                        var data = ReliabilityReportGrid$.jqxGrid('getrowdata', rowkey);
+
+                        var RelParam = {};
+                        RelParam.RootOID = _Param.RootOID;
+                        RelParam.FromOID = _Param.FromOID;
+                        RelParam.ToOID = data.OID;
+                        if (_Param.RootOID != _Param.TaskOID) {
+                            RelParam.TaskOID = _Param.TaskOID;
+                        }
+
+                        RequestData("/Pms/InsRelationReliabilityReport", RelParam, function (res) {
+                            alert("추가 되었습니다.");
+                            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                                _CallBackFunction();
+                            }
+                            $(popLayer).jqxWindow('modalDestory');
+                        });
+                    });
+
+                    ReliabilityReportGrid$.on('rowselect', function (event) {
+                        var args = event.args;
+                        rowkey = args.row.uid;
+                        row = args;
+                    });
+                }
+            });
+
+            getSearchReliabilityReport(ReliabilityReportSource, ReliabilityReportGrid$, param);
+
+            function getSearchReliabilityReport(_Source, _Grid$, param) {
+                RequestData("/Pms/SelReliabilityReport", param, function (res) {
+                    PrintJqxGrid(_Source, _Grid$, res);
+                });
+            }
+            dlgsearchBtn$.on('click', function () {
+                param.Name = $('#dlgDocNm').val();
+                param.DevStep = dlgDevStep$.val();
+                getSearchReliabilityReport(ReliabilityReportSource, ReliabilityReportGrid$, param);
+            });
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}
+
+// Pms 신뢰성 시험 결과서 상세
+function OpenInfoReliabilityReportDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (850 / 2) + $(window).scrollTop();
+
+
+    $(popLayer).jqxWindow({
+        width: 1800, maxWidth: 1800, height: 850, minHeight: 850, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
+            dlgCancelBtn$.on('click', function () {
+                $(popLayer).jqxWindow('modalDestory');
+            });
+
+            dlgSaveBtn$.on('click', function () {
+                var param = {};
+                param.OID = InfoReliabilityReportOID;
+                param.TestPurpose = $('#TestPurpose').val();
+                param.DevStep = dlgDevStep$.val();
+                param.TotalTestItem = TestItem$.val();
+                param.CompleteNum = Complete$.val();
+                param.WaitingNum = Waiting$.val();
+                param.ProgressNum = Progress$.val();
+                param.NGNum = NG$.val();
+                var TestDt = ReportTotalTestDt$.jqxDateTimeInput('getRange');
+                param.TotalTestStartDt = TestDt.from;
+                param.TotalTestEndDt = TestDt.to;
+                if (param.DevStep == null || param.DevStep == undefined) {
+                    alert('개발단계를 선택하여주세요.');
+                    return;
+                }
+                RequestData('/Pms/UdtReliabilityReport', { _param: param, _ReportItemListParam: ReportTestItemListGrid$.jqxGrid('getrows') }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("수정되었습니다.");
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+        }
+    });
+
     $(popContent).load(_Url, _Param, function () {
         $(popLayer).jqxWindow('setTitle', _Title);
         $(popLayer).jqxWindow("show");

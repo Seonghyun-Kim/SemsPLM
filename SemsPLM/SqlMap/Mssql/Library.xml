@@ -85,7 +85,7 @@
           A.IsUse = #IsUse#
         </isNotNull>
         <isNotNull prepend="and" property="Code1">
-          A.Code1  LIKE CONCAT('%',#Code1#,'%')
+          A.Code1 =#Code1#
         </isNotNull>
         <isNotNull prepend="and" property="Code2">
           A.Code2  LIKE CONCAT('%',#Code2#,'%')

@@ -5,13 +5,12 @@
     .jqx-kanban-item-color-status {
         width: 100%;
         height: 30px;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
+        /*border-top-left-radius: 3px;
+        border-top-right-radius: 3px;*/
         position: relative;
         margin-top: 0px;
         top: 0px;
         overflow: hidden;
-        box-shadow: 1px 1px 3px #ccc;
     }
 
     .triangle-bottomright {
@@ -58,13 +57,14 @@
     }
 
     .jqx-kanban-item-text {
-        padding: 10px;
+        padding: 6px 10px 0;
     }
 
     .kanban-legend {
         clear: both;
         float: right;
-        padding: 5px;
+        padding: 10px 0;
+        line-height:normal;
     }
 
     .kanban-legend > ul > li {
@@ -81,15 +81,16 @@
 
     .jqx-kanban-item {
         position: relative;
+        cursor:default !important;
     }
 
     .jqx-kanban-item:after {
         content: "";
-        width: 100%;
-        height: 0px;
+        width: 0;
+        height: 0;
         position: absolute;
+        right:0;
         bottom: 0;
-        left: -30px;
         border-top: 30px solid transparent;
         border-right: 30px solid #ddd; /*칸반 배경색*/
     }
@@ -98,21 +99,55 @@
         list-style: none;
     }
 
-    li.show_date {
+    .prjtTitle{
+        padding-top:5px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+
+    .taskInfo > li{
         width: 50%;
+        padding-top:6px;
         float: left;
+        font-size:13px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
     }
 
     button.button {
-        display: inline-block;
-        margin-right: 9%;
-        text-align: left;
-        border: 1px solid #888;
+        border: 1px solid #c5c5c5;
         border-radius: 5px;
-        padding: 5px 10px;
-        margin-top: 10px;
-        z-index: 99999;
+        padding: 5px 12px;
+        background-color:#eee;
     }
+
+    button.button:hover {
+        background-color:#fff;
+    }
+
+    .filtercolumns{
+        height:24px !important;
+        line-height:24px;
+    }
+
+    input[role=textbox].jqx-input-group-addon{
+        border-radius:0;
+        height:26px !important;
+        width:260px !important;
+    }
+
+    .jqx-input-group{
+        height:26px !important;
+        line-height:26px;
+    }
+
+    .jqx-input-group-addon > .jqx-icon-search-kdnc{
+        width:17px;
+        height:17px;
+    }
+
 </style>
 
 <div>
@@ -122,8 +157,8 @@
         </div>
         <div id="emptyDiv" style="width:17px;"></div>
         <div style="display: block; width: 83%;">
-            <div style="margin-bottom:5px;">
-                <label class="lbText" style="font-weight:bold;"><i class="fas fa-briefcase"></i> My Task</label>
+            <div style="line-height:40px;">
+                <h3 style="display:inline;padding-left:10px;"><i class="fas fa-briefcase"></i> My Task</h3>
                 <div class='kanban-legend'>
                     <ul>
                         <li>
@@ -162,10 +197,11 @@
     $(function () {
         const taskStatus = @Html.Raw(Json.Encode(ViewBag.BPolicies));
         const kanbanColumn = taskStatus.map(function (item) {
-            item.text = item.StatusNm;
-            item.iconClassName = 'jqx-icon-plus-alt';
-            item.dataField = item.StatusOID;
-            return item
+            var tmpItem = {};
+            tmpItem.text = item.StatusNm;
+            tmpItem.iconClassName = 'jqx-icon-plus-alt';
+            tmpItem.dataField = item.OID;
+            return tmpItem;
         });
 
         var projClassSource =
@@ -190,7 +226,7 @@
         projClassInfo$.jqxTreeGrid({
             theme: 'kdnc',
             width: "100%",
-            height: 770,
+            height: 808,
             source: projClassdataAdapter,
             sortable: true,
             filterable: true,
@@ -198,9 +234,12 @@
                 { text: '분류', datafield: 'Name', width: "100%", align: 'center', cellsalign: 'left', }
             ],
             pagerRenderer: function () {
-
+                RequestData("/Pms/SelPmsClass", null, function (res) {
+                    PrintJqxTreeGrid(projClassSource, projClassInfo$, res);
+                });
             }
         });
+        projClassInfo$.jqxTreeGrid('pagerRenderer');
 
         var kanbanSource =
         {
@@ -233,25 +272,27 @@
                 + "<div style='display: none;' class='jqx-kanban-item-footer'></div>"
                 + "</div>",
             width: "100%",
-            height: 717,
+            height: 770,
             source: kanbanDataAdapter,
             // render column headers.
             columnRenderer: function (element, collapsedElement, column) {
 
             },
             itemRenderer: function (element, item, resource) {
-                var contentSplit = item.content.split('|');
-                $(element).find(".jqx-kanban-item-color-status").html("<span class='triangle-bottomright'></span><span class='item-status-text'>[" + contentSplit[0] + "] " + item.text + "</span>");
+                var contentSplit = item.content.split('|');//item.content
+                $(element).find(".jqx-kanban-item-color-status").html("<span class='triangle-bottomright'></span><span class='item-status-text'>"+item.text+"</span>");
                 var contentTag = "<div>";
-                contentTag = contentTag + "<ul><li><li class='show_date'>" + "예상시작일: " + contentSplit[1] + "</li>";
-                contentTag = contentTag + "<li><li class='show_date'>" + "예상완료일: " + contentSplit[2] + "</li>";
-                contentTag = contentTag + "<li><li class='show_date'>" + "실제시작일: " + contentSplit[3] + "</li>";
-                contentTag = contentTag + "<li><li class='show_date'>" + "실제완료일: " + contentSplit[4] + "</li></ul>";
-                contentTag = contentTag + "<li style='margin-left:40px;'><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='' data-type='PROJECT' data-proj-oid='" + item.resourceId + "' data-oid='' ><i class='fa fa-list-alt'></i>프로젝트</button><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='" + item.text + "' data-type='PROCESS' data-proj-oid='" + item.resourceId + "' data-oid='" + item.id +"'><i class='fa fa-file-o'></i>타스크</button></li></ul>";
-                contentTag = contentTag + "</div>";
+                contentTag = contentTag + "<p class='prjtTitle'>" + "프로젝트명: <strong>[" + contentSplit[0] +"]</strong></p>";
+                contentTag = contentTag + "<ul class='taskInfo clearfix'><li>" + "예상시작일: " + contentSplit[1] + "</li>";
+                contentTag = contentTag + "<li>" + "예상완료일: " + contentSplit[2] + "</li>";
+                contentTag = contentTag + "<li>" + "실제시작일: " + contentSplit[3] + "</li>";
+                contentTag = contentTag + "<li>" + "실제완료일: " + contentSplit[4] + "</li>";
+                contentTag = contentTag + "<li style='text-align:right;padding-right:10px;'><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='' data-type='PROJECT' data-proj-oid='" + item.resourceId + "' data-oid='' ><i class='fa fa-list-alt'></i> 프로젝트</button></li>";
+                contentTag = contentTag + "<li style='padding-left:20px;'><button class='button' data-proj-txt='" + contentSplit[0] + "' data-txt='" + item.text + "' data-type='PROCESS' data-proj-oid='" + item.resourceId + "' data-oid='" + item.id +"'><i class='fa fa-file-o'></i> 타스크</button></li>";
+                contentTag = contentTag + "</ul></div>";
                 $(element).find(".jqx-kanban-item-text").html(contentTag);
             },
-            columns: kanbanColumn
+            columns: kanbanColumn,
         });
 
         $(document).on('click', 'button.button', function () {
@@ -261,24 +302,25 @@
             var vProjTxt = $(this).attr('data-proj-txt');
             var vTxt = $(this).attr('data-txt');
 
-            if (clickDuplicationChk) { return; }
-            clickDuplicationChk = true;
-            isloading.start();
+            if (gClickDuplication) { return; }
+            gClickDuplication = true;
+            const loading$ = $('#loading');
+            loading$.css('display', 'block');
             setTimeout(function () {
                 var procLink = '';
                 var procName = '';
                 if (vType == 'PROJECT') {
-                    procLink = '/Pms/InfoProject?ProjectOID=' + vProjOid;
+                    procLink = '/Pms/InfoProject?OID=' + vProjOid;
                     procName = vProjTxt;
                 } else {
-                    procLink = '/Pms/InfoProcess?ProjectOID=' + vProjOid + "&ProcessOID=" + vOid;
+                    procLink = '/Pms/InfoProcess?ProjectOID=' + vProjOid + "&OID=" + vOid;
                     procName = "[" + vProjTxt + "] " + vTxt;
                 }
                 if ($("div[tabUrl='" + procLink + "']").length > 0) {
                     var tabDiv = $("div[tabUrl='" + procLink + "']")[0].parentNode;
                     $('#tabContent').jqxTabs('select', $(tabDiv).index());
-                    clickDuplicationChk = false;
-                    isloading.stop();
+                    gClickDuplication = false;
+                    loading$.css('display', 'none');
                     return;
                 }
 
@@ -295,10 +337,16 @@
                         $(content).html("<div class='wrapPage' tabUrl='" + procLink + "'>" + resHtml + "</div>");
                     }
                 });
-                clickDuplicationChk = false;
+                gClickDuplication = false;
             }, 500);
-            isloading.stop();
+            loading$.css('display', 'none');
         });
 
+        RequestData("/Pms/SelMyTask", { ProjectOID: selProjectOID }, function (res) {
+            if (res.length < 1) {
+                res = sample;
+            }
+            PrintJqxKanban(kanbanSource, projKanban$, res);
+        });
     });
 </script>

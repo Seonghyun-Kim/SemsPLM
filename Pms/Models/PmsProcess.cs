@@ -40,6 +40,8 @@ namespace Pms.Models
 
         //System
         public int? RootOID { get; set; }
+
+        public string ApprovStatus { get; set; }
     }
 
     public static class PmsProcessRepository

@@ -247,5 +247,42 @@ namespace Pms.Trigger
             return "";
         }
 
+        public string ActionTaskRelationshipPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iUser = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
+            try
+            {
+                if (action.Equals(CommonConstant.ACTION_PROMOTE))
+                {
+                    List<BPolicy> bPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
+                    int comIdx = bPolicies.FindIndex(x => x.Name == DocumentConstant.POLICY_DOCUMENT_COMPLETED);
+                    List<PmsRelationship> lChildren = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { TaskOID = Convert.ToInt32(oid) });
+                    DObject dobj = null;
+                    lChildren.ForEach(child =>
+                    {
+                        if (dobj != null)
+                        {
+                            dobj = null;
+                        }
+                        dobj = DObjectRepository.SelDObject(Context, new DObject { OID = child.ToOID });
+                        DObjectRepository.UdtDObject(Context, new DObject { OID = dobj.OID, BPolicyOID = Convert.ToInt32(bPolicies[comIdx].OID) });
+
+                        //TriggerUtil.StatusObjectPromote(Context, false, dobj.Type, Convert.ToString(dobj.BPolicyOID), null, Convert.ToInt32(dobj.OID), Convert.ToInt32(dobj.OID), action, "");
+                    });
+                }
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
     }
 }

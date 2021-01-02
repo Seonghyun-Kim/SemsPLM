@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+
+<div style="text-align:right;">
+    <button id="btnDlgSelContent" class="custom-button"><i class='fas fa-check-circle'></i>&nbsp;선택</button>
+</div>
+<div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;margin-top:10px;">
+    <div id="grdConetntList"></div>
+</div>
+
+<script type="text/javascript">
+    var checkData = null;
+    $(function () {
+        var templateSource = {
+            datatype: "json",
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'Description' },
+                { name: 'CreateDt', type: "date" },
+                { name: 'CreateUs' },
+                { name: 'CreateUsNm' },
+            ],
+            id: 'OID',
+            url: "/Pms/SelProjects",
+            data: { Type: '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP', IsTemplate: '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP' },
+            type: "post"
+        };
+
+        var dataDlgSelTemplateAdapter = new $.jqx.dataAdapter(templateSource);
+        $("#grdConetntList").jqxGrid({
+            width: "99.5%",
+            height: 550,
+            rowsheight: 28,
+            columnsheight: 30,
+            source: dataDlgSelTemplateAdapter,
+            sortable: false,
+            pageable: true,
+            pagesize: 15,
+            pagesizeoptions: ['15', '30', '45'],
+            showfilterrow: true,
+            filterable: true,
+            selectionmode: 'checkbox',
+            columns: [
+                { text: '프로젝트 명', datafield: 'Name', width: "25%", align: 'center', cellsalign: 'center', },
+                { text: '내용', datafield: 'Description', width: "35%", align: 'center', cellsalign: 'center', },
+                { text: '생성일', datafield: 'CreateDt', width: "20%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '생성자', datafield: 'CreateUsNm', width: "16%", align: 'center', cellsalign: 'center', },
+            ]
+        });
+
+        $('#grdConetntList').on('rowselect', function (event) {
+            var args = event.args;
+            var rowBoundIndex = args.rowindex;
+            var rowData = args.row;
+            if (checkData != null) {
+                $('#grdConetntList').jqxGrid('unselectrow', checkData.SelectRowIndex);
+            }
+            checkData = rowData;
+            checkData.SelectRowIndex = rowBoundIndex;
+        });
+
+        $('#grdConetntList').on('rowunselect', function (event) {
+            checkData = null;
+        });
+    });
+</script>

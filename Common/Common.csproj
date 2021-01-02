@@ -130,6 +130,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\SemsEncrypt.cs" />
     <Compile Include="Utils\SemsSecureEDecode.cs" />
+    <Compile Include="Utils\SemsSmtp.cs" />
     <Compile Include="Utils\SemsUtil.cs" />
     <Compile Include="Utils\SemsValut.cs" />
   </ItemGroup>

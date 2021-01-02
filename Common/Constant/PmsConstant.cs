@@ -22,6 +22,8 @@ namespace Common.Constant
         public static string TYPE_GATEVIEW_METTING = "METTING";
         public static string TYPE_GATEVIEW_CHECKLIST = "CHECKLIST";
         public static string TYPE_RELIABILITY = "RELIABILITY";
+        public static string TYPE_RELIABILITY_REPORT = "RELIABILITY_REPORT";
+        public static string TYPE_TOTAL = "TOTAL";
 
         //이슈 체크박스 타입
         public static string ATTRIBUTE_ISSUE_SPEC = "SPEC";
@@ -45,6 +47,7 @@ namespace Common.Constant
         public static string RELATIONSHIP_GATEVIEW_CHECKLIST = "CHECKLIST";
         public static string RELATIONSHIP_DOC_CLASS = "DOC_CLASS";
         public static string RELATIONSHIP_DOC_MASTER = "DOC_MASTER";
+        public static string RELATIONSHIP_PROJECT_EPART = "PROJECT_EPART";
 
         public static string ROLE_PM = "PM";
         public static string ROLE_PE = "PE";
@@ -54,6 +57,7 @@ namespace Common.Constant
         public static string TABLE_PROCESS = "T_DPMS_PROCESS";
         public static string TABLE_ISSUE = "T_DPMS_ISSUE";
         public static string TABLE_RELIABILITY = "T_DPMS_RELIABILITY_FROM";
+        public static string TABLE_RELIABILITY_REPORT = "T_DPMS_RELIABILITY_REPORT";
 
         //기본기간
         public static int INIT_DURATION = 1;

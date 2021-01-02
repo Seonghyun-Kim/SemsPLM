@@ -21,8 +21,8 @@ namespace Pms
                        || futureDate.DayOfWeek == DayOfWeek.Sunday
                        || (holidays != null && holidays.Contains(futureDate)))
                     {
-                        futureDate = futureDate.AddDays(1);
-                        numberofWorkDays++;
+                        //futureDate = futureDate.AddDays(1);
+                        //numberofWorkDays++;
                     }
                     else
                     {
@@ -43,8 +43,8 @@ namespace Pms
                     if (futureDate.DayOfWeek == DayOfWeek.Sunday
                        || (holidays != null && holidays.Contains(futureDate)))
                     {
-                        futureDate = futureDate.AddDays(1);
-                        numberofWorkDays++;
+                       //futureDate = futureDate.AddDays(1);
+                       //numberofWorkDays++;
                     }
                     else
                     {
@@ -154,6 +154,7 @@ namespace Pms
                     else if (betWeen.Days < 0)
                     {
                         iBetWeenDayCnt = betWeen.Days;
+                        break;
                     }
                     i++;
                 }

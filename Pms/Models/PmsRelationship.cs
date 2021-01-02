@@ -3,6 +3,7 @@ using Common.Factory;
 using Common.Models;
 using Document.Models;
 using DocumentClassification.Models;
+using Pms.Auth;
 using Pms.Interface;
 using System;
 using System.Collections.Generic;
@@ -96,6 +97,8 @@ namespace Pms.Models
         public string DocRev { get; set; }
 
         public string DocStNm { get; set; }
+
+        public List<BPolicyAuth> BPolicyAuths { get; set; }
     }
 
     public static class PmsRelationshipRepository
@@ -137,7 +140,7 @@ namespace Pms.Models
             _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             if (_param.OID == null)
             {
-                return DaoFactory.SetUpdate("Pms.DelPmsRelationshipByData", _param);
+                DaoFactory.SetUpdate("Pms.DelPmsRelationshipByData", _param);
             }
             return DaoFactory.SetUpdate("Pms.DelPmsRelationship", _param);
         }
@@ -565,6 +568,7 @@ namespace Pms.Models
                 item.Dependency = tmpToData.Dependency;
                 item.Complete = tmpToData.Complete;
                 item.No = tmpToData.No;
+                item.Level = tmpToData.Level;
                 item.Members = new List<PmsRelationship>();
                 PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = item.ToOID, Type = PmsConstant.RELATIONSHIP_MEMBER }).ForEach(member =>
                 {
@@ -585,53 +589,74 @@ namespace Pms.Models
             PmsProject project = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = _param.RootOID, Type = (_param.ObjType != null ? _param.ObjType : null), IsTemplate = (_param.ObjType != null ? _param.ObjType : null) });
             _param.Type = Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER;
             List<PmsRelationship> RelationshipList = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
+            List<PmsRelationship> lProjectList = PmsRelationshipRepository.GetProjWbsLIst(Context, Convert.ToString(project.OID));
             List<PmsRelationship> getStructureList = new List<PmsRelationship>();
+
+
+            DocClass DocClas = null;
+            PmsProcess Task = null;
 
             foreach (var obj in RelationshipList)
             {
-                PmsRelationship getStructure = new PmsRelationship();
-                DocClass DocClas = DocClassRepository.SelDocClassObject(Context, new DocClass { OID = obj.ToOID });
-                getStructure.Level = _Lev;
-                
-                getStructure.RootOID = project.OID;
-                getStructure.ProjectNm = project.Name;
-                getStructure.FromOID = obj.FromOID;
-                getStructure.DocClassNm = DocClas.Name;
-                getStructure.Type = obj.Type;
-
-                PmsProcess Task = new PmsProcess();
-                if (getStructure.FromOID != getStructure.RootOID)
+                if (lProjectList.FindAll(item => item.ToOID == obj.FromOID).Count > 0)
                 {
-                    Task = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = obj.FromOID });
-                    getStructure.TaskNm = Task.Name;
+                    if (DocClas != null)
+                    {
+                        DocClas = null;
+                    }
+                    if (Task != null)
+                    {
+                        Task = null;
+                    }
+                    PmsRelationship getStructure = new PmsRelationship();
+                    
+                    DocClas = DocClassRepository.SelDocClassObject(Context, new DocClass { OID = obj.ToOID });
+                    getStructure.Level = _Lev;
+
+                    getStructure.RootOID = project.OID;
+                    getStructure.ProjectNm = project.Name;
+                    getStructure.FromOID = obj.FromOID;
+                    getStructure.DocClassNm = DocClas.Name;
+                    getStructure.Type = obj.Type;
+                    getStructure.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                    Task = new PmsProcess();
+                    if (getStructure.FromOID != getStructure.RootOID)
+                    {
+                        Task = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = obj.FromOID });
+                        getStructure.TaskNm = Task.Name;
+                        getStructure.TaskOID = Task.OID;
+                        getStructure.BPolicyAuths = Task.BPolicyAuths;
+                    }
+                    getStructure.ToOID = DocClas.OID;
+                    getStructure.ViewUrl = DocClas.ViewUrl;
+
+                    getPmsDeliveriesStructure(Context, getStructure, Convert.ToInt32(obj.RootOID), project.Name, Task.Name, getStructure.ViewUrl);
+
+                    getStructureList.Add(getStructure);
                 }
-                getStructure.ToOID = DocClas.OID;
-                getStructure.ViewUrl = DocClas.ViewUrl;
-
-                getPmsStructure(Context, getStructure, Convert.ToInt32(obj.RootOID), project.Name, Task.Name, getStructure.ViewUrl);
-
-                getStructureList.Add(getStructure);
             }
             return getStructureList;
         }
 
-        public static void getPmsStructure(HttpSessionStateBase Context, PmsRelationship _relData, int _rootOID, string projectNm, string TaskNm, string ViewUrl)
+        public static void getPmsDeliveriesStructure(HttpSessionStateBase Context, PmsRelationship _relData, int _rootOID, string projectNm, string TaskNm, string ViewUrl)
         {
 
-            _relData.Children = getPms(Context, new PmsRelationship { RootOID = _rootOID, FromOID = _relData.ToOID }, _rootOID, projectNm, TaskNm, ViewUrl);
-
-            //_relData.Children.ForEach(item =>
-            //{
-            //    item.Level = _relData.Level + 1;
-            //    getPmsStructure(Context, item, _rootOID, projectNm, TaskNm);
-            //});
+            _relData.Children = getPmsDeliveries(Context, new PmsRelationship { RootOID = _rootOID, FromOID = _relData.ToOID, TaskOID = _relData.TaskOID, DocClassNm = _relData.DocClassNm }, _rootOID, projectNm, TaskNm, ViewUrl);
         }
 
-        public static List<PmsRelationship> getPms(HttpSessionStateBase Context, PmsRelationship _param, int _rootOID, string projectNm, string TaskNm, string ViewUrl)
+        public static List<PmsRelationship> getPmsDeliveries(HttpSessionStateBase Context, PmsRelationship _param, int _rootOID, string projectNm, string TaskNm, string ViewUrl)
         {
             _param.Type = Common.Constant.PmsConstant.RELATIONSHIP_DOC_CLASS;
-            List<PmsRelationship> ProjectList = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
-
+            List<PmsRelationship> ProjectList = new List<PmsRelationship>();
+            if (_param.TaskOID != null)
+            {
+                ProjectList = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
+            }
+            else
+            {
+                ProjectList = DaoFactory.GetList<PmsRelationship>("Pms.SelPmsRelationshipTaskIsNull", _param);
+            }
+            
             foreach (PmsRelationship Obj in ProjectList)
             {
                 Obj.RootOID = _rootOID;
@@ -650,15 +675,30 @@ namespace Pms.Models
                 }
                 else
                 {
-                    PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Context, new PmsReliability { OID = Obj.ToOID });
-                    //Obj.DocClassNm = Reliability.DocType_KorNm;
-                    Obj.ToOID = Reliability.OID;
-                    Obj.DocNm = Reliability.Name;
-                    Obj.DocRev = Reliability.Revision;
-                    Obj.DocStNm = Reliability.BPolicy.StatusNm;
-                    Obj.CreateDt = Reliability.CreateDt;
-                    Obj.CreateUsNm = Reliability.CreateUsNm;
-                    Obj.ViewUrl = ViewUrl;
+                    if(_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
+                    {
+                        PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Context, new PmsReliability { OID = Obj.ToOID });
+                        Obj.DocClassNm = _param.DocClassNm;
+                        Obj.ToOID = Reliability.OID;
+                        Obj.DocNm = Reliability.Name;
+                        Obj.DocRev = Reliability.Revision;
+                        Obj.DocStNm = Reliability.BPolicy.StatusNm;
+                        Obj.CreateDt = Reliability.CreateDt;
+                        Obj.CreateUsNm = Reliability.CreateUsNm;
+                        Obj.ViewUrl = ViewUrl;
+                    }
+                    else if(_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT)
+                    {
+                        PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Context, new PmsReliabilityReport { OID = Obj.ToOID });
+                        Obj.DocClassNm = _param.DocClassNm;
+                        Obj.ToOID = Reliability.OID;
+                        Obj.DocNm = Reliability.Name;
+                        Obj.DocRev = Reliability.Revision;
+                        Obj.DocStNm = Reliability.BPolicy.StatusNm;
+                        Obj.CreateDt = Reliability.CreateDt;
+                        Obj.CreateUsNm = Reliability.CreateUsNm;
+                        Obj.ViewUrl = ViewUrl;
+                    }
                 }
             }
             return ProjectList;

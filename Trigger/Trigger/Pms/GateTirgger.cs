@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Trigger;
 
 namespace Pms.Trigger
 {
@@ -69,7 +70,9 @@ namespace Pms.Trigger
                 DObject dobj = DObjectRepository.SelDObject(Context, new DObject { OID = Convert.ToInt32(oid) });
                 if (dobj.BPolicy.Name == PmsConstant.POLICY_PROCESS_COMPLETED && action.Equals(CommonConstant.ACTION_PROMOTE))
                 {
-                    int RootOID = Convert.ToInt32(PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, ToOID = dobj.OID }).First().RootOID);
+                    List<PmsRelationship> lParent = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, ToOID = Convert.ToInt32(oid) });
+
+                    int RootOID = Convert.ToInt32(lParent.First().RootOID);
                     PmsProject proj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = RootOID });
                     List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
                     PmsProcess tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = dobj.OID });
@@ -82,6 +85,21 @@ namespace Pms.Trigger
                         Complete = 100,
                         Dependency = tmpProcess.Dependency
                     });
+
+                    List<PmsRelationship> lProjWbs = PmsRelationshipRepository.GetProjWbsLIst(Context, Convert.ToString(proj.OID));
+                    if (lProjWbs.FindAll(wbs => wbs.ObjType != PmsConstant.TYPE_PROJECT && wbs.ObjStNm != PmsConstant.POLICY_PROCESS_COMPLETED).Count < 1)
+                    {
+                        PmsProjectRepository.UdtPmsProject(Context,
+                        new PmsProject
+                        {
+                            OID = proj.OID,
+                            ActEndDt = DateTime.Now,
+                            ActDuration = PmsUtils.CalculateGapFutureDuration(Convert.ToDateTime(Convert.ToDateTime(proj.ActStartDt).ToString("yyyy-MM-dd")), Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), Convert.ToInt32(proj.WorkingDay), lHoliday),
+                            Complete = 100,
+                        });
+                        DObjectRepository.UdtDObject(Context, new DObject { BPolicyOID = BPolicyRepository.SelBPolicy(new BPolicy { Type = proj.Type, Name = PmsConstant.POLICY_PROCESS_COMPLETED }).First().OID, OID = proj.OID });
+                    }
+                    lParent = null;
                 }
             }
             catch (Exception ex)

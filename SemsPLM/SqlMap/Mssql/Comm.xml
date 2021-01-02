@@ -396,12 +396,16 @@
       E.OID AS DocOID,
       E.Type AS DocType,
       E.Name AS DocNm,
-      E.CreateUs AS DocCreateUs
+      E.CreateUs AS DocCreateUs,
+      F.Name AS DocCreateNm,
+      G.LINK AS DocUrl
       FROM T_DAPPROVAL_TASK A
       LEFT OUTER JOIN T_DOBJECT B ON A.OID = B.OID
       LEFT OUTER JOIN T_DAPPROVAL C ON A.ApprovalOID = C.OID
       LEFT OUTER JOIN T_DAPPROVAL_STEP D ON A.StepOID = D.OID
       LEFT OUTER JOIN T_DOBJECT E ON C.TargetOID = E.OID
+      LEFT OUTER JOIN T_DOBJECT F ON F.OID = E.CreateUs
+      LEFT OUTER JOIN T_BDEFINE G ON G.TYPE = 'TYPE' AND G.NAME = E.TYPE
       WHERE B.DeleteDt IS NULL AND E.OID IS NOT NULL AND A.ApprovalType != 'DIST'
       <isNotNull prepend="and" property="PersonOID">
         A.PersonOID = #PersonOID#

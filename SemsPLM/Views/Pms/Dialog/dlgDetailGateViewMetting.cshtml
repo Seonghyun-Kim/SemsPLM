@@ -4,9 +4,9 @@
 }
 
 
-<div id="gateViewMeeting_@ViewBag.ProcessOID" style="position:relative;">
-    <div style="width:100%;display:flex;flex-direction:row;overflow-y:hidden;">
-        <div class="dlgMeeting">
+<div id="gateViewMeeting_@ViewBag.ProcessOID">
+    <div>
+        <div class="dlgMeeting" style="float:left;">
             <div class="searchBox">
                 <div class="searchTitle" style="line-height: 34px; font-size: 17px; height: 33px;">
                     <label style="font-weight:400;">GATE</label>
@@ -29,7 +29,7 @@
             </div>
 
         </div>
-        <div style="height:600px;flex:2.3;">
+        <div style="float:left;margin:0 8px;">
             <div class="searchBox">
                 <div class="searchTitle" style="line-height: 34px; font-size: 17px; height: 33px; ">
                     <label style="font-weight:400;">목록</label>
@@ -37,13 +37,13 @@
             </div>
             <div id="dlggateViewMeetingList_@ViewBag.ProcessOID"></div>
         </div>
-        <div style="height:600px;flex:2.3;">
+        <div style="width:720px;float:left;">
             <div class="searchBox">
                 <div class="searchTitle" style="line-height: 34px; font-size: 17px; height: 33px; ">
                     <label style="font-weight:400;">상세</label>
                 </div>
             </div>
-            <div id="dlggateViewMeetingAddEdit_@ViewBag.ProcessOID" style="overflow:auto;height:544px;"></div>
+            <div id="dlggateViewMeetingAddEdit_@ViewBag.ProcessOID" class="scrollY" style="height:560px;"></div>
         </div>
     </div>
 </div>
@@ -67,14 +67,16 @@
     var projOid = @ViewBag.ProjectOID;
 
     $(function () {
-        var gateArr = @Html.Raw(Json.Encode(ViewBag.lGateViewDetail));
+        //var gateArr = @Html.Raw(Json.Encode(ViewBag.lGateViewDetail));
+        var gateVal = '@Html.Raw(Json.Encode(ViewBag.lGateViewDetail))';
+        var gateArr = [$.parseJSON(gateVal)];
         for (var index = 0; index < gateArr.length; index++) {
             addGateDetail(gateArr[index]);
         }
 
         grdMetting$.jqxGrid({
-            width: 739,
-            height: 542,
+            width: 700,
+            height: 558,
             rowsheight: 28,
             columnsheight: 40,
             sortable: false,
@@ -86,15 +88,15 @@
             },
             columns: [
                 {
-                    text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    text: 'NO', width: "8%", cellsalign: 'center', columntype: 'number', align: 'center',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '작성일', datafield: 'CreateDt', width: "25%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
-                { text: '작성자', datafield: 'CreateUsNm', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "30%", align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '작성자', datafield: 'CreateUsNm', width: "15%", align: 'center', cellsalign: 'center', },
                 {
-                    text: '회의내용', datafield: 'ObjDescription', width: "45%", align: 'center', cellsalign: 'center',
+                    text: '회의내용', datafield: 'ObjDescription', width: "47%", align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, column, value) {
                         if (value != null && value.length > 10) {
                             return "<div style='width:100%;height:100%;text-align:left;vertical-align:middle;line-height:1.9;'>  " + value.substring(0, 10) + "....</div>"
@@ -139,6 +141,7 @@
     }
 
     function addGateDetail(params) {
+        console.log(params);
         var project = document.createElement("div");
         var gateImg = document.createElement("div");
         var gateType = document.createElement("span");
@@ -154,7 +157,9 @@
 
         gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
         gateStatus.innerHTML = "<span>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
-        gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) + '..' : params.Name);
+        gateType.innerHTML = params.Type;
+        gateName.innerHTML = params.Name;
+        //gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) + '..' : params.Name);
         gateESdate.innerHTML = params.EstStartDt != null ? moment(params.EstStartDt).format('YYYY-MM-DD') : '<br/>';
         gateEFdate.innerHTML = params.EstEndDt != null ? moment(params.EstEndDt).format('YYYY-MM-DD') : '<br/>';
         gateASdate.innerHTML = params.ActStartDt != null ? moment(params.ActStartDt).format('YYYY-MM-DD') : '<br/>';
@@ -170,12 +175,11 @@
         project.appendChild(gateASdate);
         project.appendChild(gateAFdate);
 
-        $(document).ready(function () {
-            $(".gatebox").addClass("gates");
-            $(".gatebox > h3").addClass("gateName");
-            $(".gatestatus").addClass("status");
-            $(".gatebox > p").addClass("gateDates");
-            $(".gatestatus > span").addClass("progress");
-        });
+        $(".gatebox").addClass("gates");
+        $(".gatebox > span").addClass("gateType");
+        $(".gatebox > h3").addClass("gateName");
+        $(".gatestatus").addClass("status");
+        $(".gatebox > p").addClass("gateDates");
+        $(".gatestatus > span").addClass("progress");
     }
 </script>

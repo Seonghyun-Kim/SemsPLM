@@ -3,15 +3,16 @@ using Common.Factory;
 using Common.Models;
 using Common.Models.File;
 using Qms.Models;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class QmsController : Controller
     {
         // GET: Qms
@@ -159,8 +160,10 @@ namespace SemsPLM.Controllers
 
         public ActionResult CreateQuickResponse()
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
+            //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
@@ -196,8 +199,10 @@ namespace SemsPLM.Controllers
 
         public ActionResult InfoQuickResponse(int OID)
         {
-            Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
-            List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
+            //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
@@ -461,7 +466,7 @@ namespace SemsPLM.Controllers
                     dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
                     dRelModule.FromOID = _param.OID;
                     dRelModule.ToOID = ModuleOID;
-                    DRelationshipRepository.InsDRelationshipNotOrd(dRelModule);
+                    DRelationshipRepository.InsDRelationshipNotOrd(Session, dRelModule);
 
                     return ModuleOID;
                 }
@@ -479,7 +484,7 @@ namespace SemsPLM.Controllers
                     dRelModule.Type = QmsConstant.RELATIONSHIP_QUICK_MODULE;
                     dRelModule.FromOID = ModuleOID;
                     dRelModule.ToOID = ItemOID;
-                    DRelationshipRepository.InsDRelationshipNotOrd(dRelModule);
+                    DRelationshipRepository.InsDRelationshipNotOrd(Session, dRelModule);
                 }
 
                 // 봉쇄조치
@@ -538,7 +543,7 @@ namespace SemsPLM.Controllers
                 dRelLpa.Type = QmsConstant.RELATIONSHIP_LPA;
                 dRelLpa.FromOID = LpaUnfitOID;
                 dRelLpa.ToOID = LpaUnMeasureOID;
-                DRelationshipRepository.InsDRelationshipNotOrd(dRelLpa);
+                DRelationshipRepository.InsDRelationshipNotOrd(Session, dRelLpa);
 
                 // 유효성 체크
                 SetQuickModule(QmsConstant.TYPE_QUICK_RESPONSE_CHECK);
@@ -581,65 +586,6 @@ namespace SemsPLM.Controllers
             }
             return Json(result);
         }
-
-        #region -- 고품사진
-        public JsonResult ImgUploadFile(int? OID)
-        {
-            string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
-            string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
-
-            string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID.ToString();
-
-            var fileName = "";
-            if (Request.Files.Count > 0)
-            {
-                HttpFileCollectionBase files = Request.Files;
-                HttpPostedFileBase File = files[0];
-                try
-                {
-                    DirectoryInfo di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
-
-                    if (!di.Exists)
-                    {
-                        di.Create();
-                    }
-
-                    System.TimeSpan tspan = System.TimeSpan.FromTicks(DateTime.Now.Ticks);
-                    long curTime = (long)tspan.TotalSeconds;
-                    string file_nm = Path.GetFileName(File.FileName);
-                    string file_format = file_nm.Substring(file_nm.LastIndexOf(".") + 1);
-                    string cfile_nm = curTime.ToString() + "." + file_format;
-
-                    FileStream fs = System.IO.File.Create(StoragePath + "/" + imgVaulePath + "/" + SavePath + "\\" + cfile_nm);
-                    File.InputStream.CopyTo(fs);
-
-                    fileName = cfile_nm;
-
-                    fs.Close();
-                    File.InputStream.Close();
-
-                    if (OID == null)
-                    {
-                        throw new Exception("잘못된 호출");
-                    }
-                    else
-                    {
-                        QuickResponse quickResponse = new QuickResponse()
-                        {
-                            OID = OID,
-                            PoorPicture = fileName,
-                        };
-                        QuickResponseRepository.UdtQuickResponse(quickResponse);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
-                }
-            }
-            return Json(fileName);
-        }
-        #endregion
 
         #endregion
 
@@ -1128,7 +1074,7 @@ namespace SemsPLM.Controllers
 
             List<LpaUnfitCheck> lpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = OID });
 
-            List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, FromOID = OID });
+            List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(Session, new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, FromOID = OID });
 
             ViewBag.LpaUnfit = lpaUnfit;
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
@@ -1358,7 +1304,7 @@ namespace SemsPLM.Controllers
                 lpaMeasure.ModuleOID = OID;
             }
 
-            List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, ToOID = OID });
+            List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(Session, new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, ToOID = OID });
 
             int? LpaUnfitOID = null;
             relLpa.ForEach(v => { LpaUnfitOID = v.FromOID; });

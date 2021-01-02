@@ -76,6 +76,7 @@ namespace Common.Constant
         public static string AUTH_DIV_ROLE = "ROLE";
         public static string AUTH_DIV_USER = "USER";
         public static string AUTH_DIV_PUBLIC = "PUBLIC";
+        public static string AUTH_DIV_MANAGER = "MANAGER";
 
         //Auth
         public static string AUTH_VIEW = "View";
@@ -90,7 +91,7 @@ namespace Common.Constant
         public static string ATTRIBUTE_OEM = "OEM";
         public static string ATTRIBUTE_CAR = "CAR";
         public static string ATTRIBUTE_CUSTOMER = "CUSTOMER";
-        public static string ATTRIBUTE_REASONCHANGE = "ReasonChange";
+        public static string ATTRIBUTE_REASONCHANGE = "REASONCHANGE";
         public static string ATTRIBUTE_TDOC = "TDOC";
         public static string ATTRIBUTE_PDOC = "PDOC";
         public static string ATTRIBUTE_PRODUCED_PLACE = "PRODUCED_PLACE";
@@ -99,7 +100,8 @@ namespace Common.Constant
         public static string ATTRIBUTE_CARTYPE = "CARTYPE";
         public static string ATTRIBUTE_DEVSTEP = "DEVSTEP";
         public static string ATTRIBUTE_TESTITEMLIST = "TESTITEMLIST";
-        
+        public static string ATTRIBUTE_PROGRESS = "PROGRESS";
+
 
         //Doc Class
         public static string ATTRIBUTE_DOCUMENT = "일반문서";

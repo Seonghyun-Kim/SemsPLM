@@ -4,6 +4,7 @@ using Common.Factory;
 using Common.Models;
 using Common.Models.File;
 using Common.Utils;
+using SemsPLM.Filter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,7 @@ using Trigger;
 
 namespace SemsPLM.Controllers
 {
+    [AuthorizeFilter]
     public class CommonController : Controller
     {
         // GET: Common
@@ -259,7 +261,7 @@ namespace SemsPLM.Controllers
 
                 if (_param.TargetOID != null)
                 {
-                    if((_param.AutoStatus != null && Convert.ToBoolean(_param.AutoStatus))){
+                    if((_param.AutoStatus == null || Convert.ToBoolean(_param.AutoStatus))){
                         DObject targetDobj = DObjectRepository.SelDObject(Session, new DObject { OID = _param.TargetOID });
                         TriggerUtil.StatusPromote(Session, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(targetDobj.OID), CommonConstant.ACTION_PROMOTE, null);
                     }
@@ -353,8 +355,7 @@ namespace SemsPLM.Controllers
 
         public JsonResult InsApprovalComment(ApprovalComment _param)
         {
-            _param.CreateUs = 75;
-            ApprovalCommentRepository.InsApprovalComment(_param);
+            ApprovalCommentRepository.InsApprovalComment(Session, _param);
             return Json(ApprovalCommentRepository.SelApprovalComment(Session, new ApprovalComment { ApprovalOID = _param.ApprovalOID } ));
         }
 

@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -196,6 +197,9 @@
     <Content Include="Resource\apexcharts-bundle\dist\apexcharts.js" />
     <Content Include="Resource\apexcharts-bundle\dist\apexcharts.min.js" />
     <Content Include="Resource\apexcharts-bundle\dist\locales\ko.js" />
+    <Content Include="Resource\apexcharts-bundle\loadUtils\findIndex.js" />
+    <Content Include="Resource\apexcharts-bundle\loadUtils\classlist.min.js" />
+    <Content Include="Resource\apexcharts-bundle\loadUtils\promise-polyfill.min.js" />
     <Content Include="Resource\apexcharts-bundle\samples\assets\github-data.js" />
     <Content Include="Resource\apexcharts-bundle\samples\assets\images\-ico-snapchat.png" />
     <Content Include="Resource\apexcharts-bundle\samples\assets\images\1101098.png" />
@@ -596,6 +600,7 @@
     <Content Include="Resource\Calendar\jQueryUI\jquery-ui.theme.min.css" />
     <Content Include="Resource\Calendar\jQueryUI\LICENSE.txt" />
     <Content Include="images\comp.png" />
+    <Content Include="Resource\Css\approval.css" />
     <Content Include="Resource\Css\dashboard.css" />
     <Content Include="Resource\Css\layout.css" />
     <Content Include="favicon.ico" />
@@ -3724,6 +3729,7 @@
     <Content Include="SqlMap\Mssql\Pms.xml" />
     <Content Include="SqlMap\Mssql\Qms.xml" />
     <Content Include="SqlMap\Mssql\Users.xml" />
+    <Content Include="TmpFile\db.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -3849,12 +3855,17 @@
     <Content Include="Views\Pms\Dialog\dlgCreateDocument.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgInfoDocument.cshtml" />
     <Content Include="Views\Pms\InfoTmpProcess.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgInfoReliabilityForm.cshtml" />
+    <Content Include="Views\Common\Dialog\dlgApprovalContent _201223.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgSearchReliabilityReport.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgCreateProjectContentTemplate.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgInfoReliabilityReport.cshtml" />
+    <Content Include="Views\EBom\Dialog\dlgSearchEPartAssy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
-    <Folder Include="TmpFile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

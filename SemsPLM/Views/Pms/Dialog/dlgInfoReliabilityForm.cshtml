@@ -1,0 +1,302 @@
+﻿
+@{
+    Layout = null;
+}
+<div id="detailContent" style="width:100%;height:auto;">
+    <table class="infoTable" style="table-layout: fixed; width: 100%; margin-bottom:10px;">
+        <colgroup>
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+            <col style="width:9%;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th colspan="10" style="text-align:right;font-weight:normal;">
+                    <button id='dlgEditBtn' class='custom-button'><i class='fas fa-check-circle'></i> 수정</button>
+                    <button id='dlgSaveBtn' class='custom-button' hidden="hidden"><i class='fas fa-check-circle'></i> 저장</button>
+                    <button id='dlgCancelBtn' class='custom-button'><i class='fas fa-check-circle'></i> 취소</button>
+                    
+                </th>
+            </tr>
+
+            <tr>
+                <th>문서번호</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.Name" />
+                </td>
+                <th>Rev</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.Revision" />
+                </td>
+                <th>상태</th>
+                <td>
+                    <input type="text" readonly="readonly" value="@ViewBag.Detail.BPolicy.StatusNm" />
+                </td>
+                <th></th>
+                <td>
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>등록자</th>
+                <td>
+                    @ViewBag.Detail.CreateUsNm
+                </td>
+                <th>등록일</th>
+                <td>
+                    @Html.Raw((ViewBag.Detail.CreateDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.CreateDt) : ""))
+                </td>
+                <th>요구일정</th>
+                <td>
+                    <input type="text" id="RequiredSchedule" value="@ViewBag.Detail.RequiredSchedule" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th>개발단계</th>
+                <td>
+                    <input type="text" value="@ViewBag.Detail.DevStepNm" class="ModifiableCustomBox"/>
+                    <div id="DevStep" class="ModifiableEditCustomBox"></div>
+                </td>
+                <th>시험규격</th>
+                <td>
+                    <input type="text" id="TestStandard" value="@ViewBag.Detail.TestStandard" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>접수번호</th>
+                <td>
+                    <input type="text" id="RegNum" value="@ViewBag.Detail.RegNum" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th>품명</th>
+                <td>
+                    <input type="text" readonly="readonly" value="SYSTEM" />
+                </td>
+                <th>차종</th>
+                <td>
+                    <input type="text" readonly="readonly" value="SYSTEM" />
+                </td>
+                <th>사험방법 <br>Review일</th>
+                <td>
+                    <div id="TestMethodDt"  class="ModifiableEditCustomBox"></div>
+                    <input type="text" value="@Html.Raw((ViewBag.Detail.TestMethodDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TestMethodDt) : ""))" class="ModifiableCustomBox" />
+                </td>
+                <th>최신 VER</th>
+                <td>
+                    <input type="text" id="NewVer"  value="@ViewBag.Detail.NewVer" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>H/W VER</th>
+                <td>
+                    <input type="text" id="HWVer" value="@ViewBag.Detail.HWVer" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th>S/W VER</th>
+                <td>
+                    <input type="text" id="SWVer" value="@ViewBag.Detail.SWVer" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th>CAN VER</th>
+                <td>
+                    <input type="text" id="CANVer" value="@ViewBag.Detail.CANVer" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th>시험적용 VER</th>
+                <td>
+                    <input type="text" id="TestApplyVer" value="@ViewBag.Detail.TestApplyVer" readonly="readonly" class="Modifiable"/>
+                </td>
+                <th></th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th>시험 목적 및 내용</th>
+                <td colspan="9">
+                    <input type="text" id="Description" value="@ViewBag.Detail.Description" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>1) 시험차종</th>
+                <td colspan="9">
+                    <input type="text" id="TestCarType" value="@ViewBag.Detail.TestCarType" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>2) 시험목적</th>
+                <td colspan="9">
+                    <input type="text" id="TestPurpose" value="@ViewBag.Detail.TestPurpose" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>3) 시혐내용</th>
+                <td colspan="9">
+                    <input type="text" id="TestContents" value="@ViewBag.Detail.TestContents" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>4) 시료수량</th>
+                <td colspan="9">
+                    <input type="text" id="SampleQuantity" value="@ViewBag.Detail.SampleQuantity" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>5) 시험규격</th>
+                <td colspan="9">
+                    <input type="text" id="TestStandardContents" value="@ViewBag.Detail.TestStandardContents" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+            <tr>
+                <th>6) 요구사항</th>
+                <td colspan="9">
+                    <input type="text" id="Requirements" value="@ViewBag.Detail.Requirements" readonly="readonly" class="Modifiable"/>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <div id="TestItemListGrid"></div>
+</div>
+
+<script type="text/javascript">
+    var InfoReliabilityOID =  '@ViewBag.Detail.OID';
+    var DevStep$ = $('#DevStep');
+    var DevStepList = @Html.Raw(Json.Encode(ViewBag.DevStepList));
+
+    var TestMethodDt$ = $('#TestMethodDt');
+    TestMethodDt$.jqxDateTimeInput({ width: 180, height: 32, formatString: 'yyyy/MM/dd' });
+    TestMethodDt$.val(@Html.Raw((ViewBag.Detail.TestMethodDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TestMethodDt) : "")));
+    var TestItemListGrid$ = $('#TestItemListGrid');
+
+    var dlgEditBtn$ = $('#dlgEditBtn');
+    var dlgCancelBtn$ = $('#dlgCancelBtn');
+    var dlgSaveBtn$ = $('#dlgSaveBtn');
+
+    $('.ModifiableEditCustomBox').attr('hidden', true);
+
+    $(function () {
+        var DevStepSource =
+        {
+            localdata: DevStepList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var DevStepAdapter = new $.jqx.dataAdapter(DevStepSource);
+        DevStep$.jqxComboBox({ source: DevStepAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+        DevStep$.jqxComboBox('selectItem', "@ViewBag.Detail.DevStep");
+
+        dlgEditBtn$.on('click', function () {
+            $('.Modifiable').removeAttr('readonly');
+            $('.ModifiableCustomBox').attr('hidden', true);
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            var modifyTag = document.createElement('div');
+            modifyTag.className = "modifyTag";
+            $('.Modifiable').parent().css('position', 'relative');
+            $('.Modifiable').parent().append(modifyTag);
+
+            TestItemListGrid$.jqxGrid({ editable: true });
+
+            dlgEditBtn$.prop('hidden', 'hidden');
+            dlgSaveBtn$.removeAttr('hidden');
+        });
+
+        var TestItemListSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+                { name: 'Title' },
+                { name: 'TestItemLib_OID'},
+                { name: 'TestItemNm' },
+
+                { name: 'FromOID' },
+                { name: 'ToOID' },
+
+                { name: 'KorNm' },
+                { name: 'ETC' },
+
+                { name: 'TestStandardNo' },
+                { name: 'TestCondition' },
+                { name: 'Sample' },
+            ],
+        }
+
+        TestItemListGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 300,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            editable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '시험항목', datafield: 'TestItemNm', width: "15%", align: 'left', cellsalign: 'center' },
+                { text: '시험표준 NO', datafield: 'TestStandardNo', width: "20%", align: 'left', cellsalign: 'center', },
+                { text: '시험조건', datafield: 'TestCondition', width: "20%", align: 'left', cellsalign: 'center', },
+                { text: '시료수', datafield: 'Sample', width: "20%", align: 'left', cellsalign: 'center', },
+                { text: '비고', datafield: 'ETC', width: "25%", align: 'left', cellsalign: 'center', }
+            ],
+            toolbarheight: 45,
+            showtoolbar: true,
+            rendertoolbar: function (toolBar) {
+                toolBar.empty();
+                var container = $("<div class='lGridComponent' ></div>");
+                var AddButton = $("<button id='AddBtn' class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var deleteButton = $("<button id='DeleteBtn' class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
+
+                container.append(AddButton);
+                container.append(deleteButton);
+                toolBar.append(container);
+
+                var rowkey;
+
+                AddButton.click(function (event) {
+                    var checkRows = TestItemListGrid$.jqxGrid('getSelection');
+                    if (checkRows.length == 0) {
+                        return;
+                    }
+                    TestItemListGrid$.jqxGrid('addrow', null, {});
+
+                });
+
+                deleteButton.click(function (event) {
+                    TestItemListGrid$.jqxGrid('deleterow', rowkey);
+                });
+
+                TestItemListGrid$.on('rowselect', function (event) {
+                    var args = event.args;
+                    rowkey = args.row.uid;
+                });
+            },
+        });
+
+        _param = {};
+        _param.FromOID = '@ViewBag.Detail.OID';
+        getSearchTestItemList(TestItemListSource, TestItemListGrid$, _param);
+    });
+
+    function getSearchTestItemList(_Source, _Grid$, _param) {
+        RequestData("/Pms/SelInfoTestItemList", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

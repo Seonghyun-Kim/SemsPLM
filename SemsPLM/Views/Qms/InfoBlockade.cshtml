@@ -41,7 +41,7 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
+        <div class="scrollY" style="height:668px;">
             <div id="properties" class="basic_grid">
                 @if ((ViewBag.Blockade.BPolicyOID == 58 || ViewBag.Blockade.BPolicyOID == 60) && ViewBag.Blockade.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 {

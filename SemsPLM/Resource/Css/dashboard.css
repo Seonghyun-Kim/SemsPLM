@@ -182,10 +182,26 @@
 
     .dashboardGraphs > .piechart {
         width: 20%;
+        position:relative;
     }
 
     .dashboardGraphs > .barchart {
         width: 28%;
+    }
+
+    .piechart > .chartTotal{
+        position:absolute;
+        top:46%;
+        left:50%;
+        z-index:1000;
+        width:100px;
+        margin-left:-50px;
+        text-align:center;
+    }
+
+    .piechart > .chartTotal > div{
+        font-size:24px;
+        font-weight:bold;
     }
 
 .piechart > div:last-child, .barchart > div:last-child {
@@ -344,4 +360,153 @@
 
 .pmProjectList::-webkit-scrollbar-thumb{
     background-color:#ddd;
+}
+
+
+
+/* ResourceDashBoard */
+.resourceDashboard {
+    width: 1900px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+    .resourceDashboard label {
+        margin-bottom: 0 !important;
+    }
+
+input[name=rscRadio] {
+    display: none;
+}
+
+    input[name=rscRadio]:checked + label {
+        background-color: #3798ae !important;
+        color: #fff !important;
+    }
+
+    input[name=rscRadio] + label {
+        display: inline-block;
+        width: 177px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        background-color: #eee;
+        border-radius: 5px 5px 0 0;
+        cursor: pointer;
+    }
+
+.resourceInfo {
+    padding-top: 5px;
+    position: relative;
+}
+
+    .resourceInfo, .resourceInfo > div {
+        width: 100%;
+        height: 775px;
+    }
+
+        .resourceInfo .rscComboBox {
+            position: absolute;
+            top: -36px;
+            right: 0;
+        }
+
+.rscList {
+    float: left;
+}
+
+.rscContent {
+    width: 1530px;
+    margin-left: 10px;
+    float: left;
+}
+
+.rscTopInfo {
+    width: 100%;
+    height: 160px;
+    margin-bottom: 12px;
+    border: 1px solid #c5c5c5;
+    box-sizing: border-box;
+    padding: 24px 50px;
+}
+
+    .rscTopInfo > table {
+        width: 100%;
+        text-align: center;
+    }
+
+        .rscTopInfo > table td {
+            line-height: 36px;
+        }
+
+        .rscTopInfo > table label {
+            width: 60px;
+            border-right: 2px solid #aaa;
+            line-height: 16px;
+            margin: 5px 10px 0 0;
+        }
+
+        .rscTopInfo > table td > b {
+            line-height: 50px;
+            font-size: 24px;
+        }
+
+.rscProjectState {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    float: left;
+    margin: 21px;
+}
+
+.rscProjectName {
+    font-size: 20px;
+    line-height: 45px;
+}
+
+.rscProgress {
+    margin: 10px auto;
+    width: 60%;
+    height: 30px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 3px #eee inset;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+    .rscProgress > .gauge {
+        height: 100%;
+        background-color: #3798ae;
+    }
+
+.rscPeopleImg {
+    text-align: left;
+}
+
+    .rscPeopleImg > img {
+        width: 96px;
+        height: 96px;
+    }
+
+.rscPieChart {
+    margin-left: 40px;
+    width: 110px;
+    height: 110px;
+}
+
+.rscGridChart > div {
+    float: left;
+}
+
+    .rscGridChart > div:first-child {
+        margin-right: 10px;
+    }
+
+    .rscGridChart > div:last-child {
+        width: 608px;
+        height: 603px;
+    }
+
+.tblChart {
+    border-color: transparent !important;
 }

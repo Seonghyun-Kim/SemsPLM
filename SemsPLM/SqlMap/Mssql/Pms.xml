@@ -16,7 +16,10 @@
 
     <typeAlias alias="PmsGateMetting" type="Pms.Models.PmsGateMetting" />
     <typeAlias alias="PmsReliability" type="Pms.Models.PmsReliability" />
-    
+    <typeAlias alias="PmsReliabilityItemList" type="Pms.Models.TestItemList" />
+    <typeAlias alias="PmsReliabilityReport" type="Pms.Models.PmsReliabilityReport" />
+    <typeAlias alias="PmsReliabilityReportItemList" type="Pms.Models.ReportTestItemList" />
+
     <typeAlias alias="CustomerSchedule" type="Pms.Models.CustomerSchedule" />
     <typeAlias alias="PmsGateSignOff" type="Pms.Models.PmsGateSignOff" />
   </alias>
@@ -37,13 +40,15 @@
       , WorkingDay
       , CalendarOID
       , Complete
-      ,Oem_Lib_OID
-      ,Car_Lib_OID
-      ,ITEM_No
-      ,ITEM_Middle
-      ,ProjectGrade
-      ,Customer_OID
-      ,ProductNm	)
+      , Oem_Lib_OID
+      , Car_Lib_OID
+      , ITEM_No
+      , ITEM_Middle
+      , ProjectGrade
+      , Customer_OID
+      , ProductNm
+      , TemplateOID
+      , TemplateContent )
       VALUES
       ( #OID#
       , #IsTemplate#
@@ -57,13 +62,15 @@
       , #WorkingDay#
       , #CalendarOID#
       , #Complete#
-      ,#Oem_Lib_OID#
-      ,#Car_Lib_OID#
-      ,#ITEM_No#
-      ,#ITEM_Middle#
-      ,#ProjectGrade#
-      ,#Customer_OID#
-      ,#ProductNm#	)
+      , #Oem_Lib_OID#
+      , #Car_Lib_OID#
+      , #ITEM_No#
+      , #ITEM_Middle#
+      , #ProjectGrade#
+      , #Customer_OID#
+      , #ProductNm#
+      , #TemplateOID#
+      , #TemplateContent# )
     </insert>
     
     <select id="SelPmsProject" parameterClass="PmsProject" resultClass="PmsProject">
@@ -598,13 +605,15 @@
       ,Importance
       ,EstFinDt
       ,Manager_OID
-      ,IssueType)
+      ,IssueType
+      ,FinDt)
       VALUES
       (#OID#
       ,#Importance#
       ,#EstFinDt#
       ,#Manager_OID#
-      ,#IssueType#);
+      ,#IssueType#
+      ,#FinDt#);
     </insert>
 
     <select id="SelIssue" parameterClass="PmsIssue" resultClass="PmsIssue">
@@ -645,8 +654,11 @@
         <isNotNull prepend="," property="IssueType">
           IssueType = #IssueType#
         </isNotNull>
-        <isNotNull prepend="," property="Contents">
+        <isNotEmpty prepend="," property="Contents">
           Contents = #Contents#
+        </isNotEmpty>
+        <isNotNull prepend="," property="FinDt">
+          FinDt = #FinDt#
         </isNotNull>
         WHERE OID = #OID#
       </dynamic>
@@ -739,9 +751,8 @@
       , #TestContents#
       , #SampleQuantity#
       , #TestStandardContents#
-      , #Requirements#);
+      , #Requirements#)
     </insert>
-
 
     <select id="SelPmsReliability" parameterClass="PmsReliability" resultClass="PmsReliability">
       SELECT
@@ -753,8 +764,243 @@
       <isNotNull prepend="and" property="OID">
         A.OID = #OID#
       </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
       AND A.DeleteDt IS NULL
     </select>
+
+    <update id="UdtPmsReliability" parameterClass="PmsReliability">
+      UPDATE T_DPMS_RELIABILITY_FROM
+      <dynamic prepend="SET">
+        <isNotNull prepend="," property="RequiredSchedule">
+          RequiredSchedule = #RequiredSchedule#
+        </isNotNull>
+        <isNotNull prepend="," property="DevStep">
+          DevStep = #DevStep#
+        </isNotNull>
+        <isNotNull prepend="," property="TestStandard">
+          TestStandard = #TestStandard#
+        </isNotNull>
+        <isNotNull prepend="," property="RegNum">
+          RegNum = #RegNum#
+        </isNotNull>
+        <isNotNull prepend="," property="TestMethodDt">
+          TestMethodDt = #TestMethodDt#
+        </isNotNull>
+        <isNotNull prepend="," property="NewVer">
+          NewVer = #NewVer#
+        </isNotNull>
+        <isNotNull prepend="," property="HWVer">
+          HWVer = #HWVer#
+        </isNotNull>
+        <isNotNull prepend="," property="SWVer">
+          SWVer = #SWVer#
+        </isNotNull>
+        <isNotNull prepend="," property="CANVer">
+          CANVer = #CANVer#
+        </isNotNull>
+        <isNotNull prepend="," property="TestApplyVer">
+          TestApplyVer = #TestApplyVer#
+        </isNotNull>
+        <isNotNull prepend="," property="TestCarType">
+          TestCarType = #TestCarType#
+        </isNotNull>
+        <isNotNull prepend="," property="TestPurpose">
+          TestPurpose = #TestPurpose#
+        </isNotNull>
+        <isNotNull prepend="," property="TestContents">
+          TestContents = #TestContents#
+        </isNotNull>
+        <isNotNull prepend="," property="SampleQuantity">
+          SampleQuantity = #SampleQuantity#
+        </isNotNull>
+        <isNotNull prepend="," property="TestStandardContents">
+          TestStandardContents = #TestStandardContents#
+        </isNotNull>
+        <isNotNull prepend="," property="Requirements">
+          Requirements = #Requirements#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsPmsReliabilityItemList" parameterClass="PmsReliabilityItemList">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DPMS_RELIABILITY_TESTITEMLIST
+      </selectKey>
+      INSERT INTO T_DPMS_RELIABILITY_TESTITEMLIST
+      (OID
+      , FromOID
+      , TestItemNm
+      , TestStandardNo
+      , TestCondition
+      , Sample
+      , ETC
+      )
+      VALUES
+      (#OID#
+      , #FromOID#
+      , #TestItemNm#
+      , #TestStandardNo#
+      , #TestCondition#
+      , #Sample#
+      , #ETC#
+      )
+    </insert>
+    
+    <select id="SelPmsReliabilityItemList" parameterClass="PmsReliabilityItemList" resultClass="PmsReliabilityItemList">
+      SELECT *
+      FROM T_DPMS_RELIABILITY_TESTITEMLIST
+      WHERE 1 = 1
+      <isNotNull prepend="and" property="FromOID">
+        FromOID = #FromOID#
+      </isNotNull>
+    </select>
+
+    <delete id="delTestItemList" parameterClass="PmsReliabilityItemList">
+      DELETE FROM T_DPMS_RELIABILITY_TESTITEMLIST
+      WHERE FromOID = #FromOID#
+    </delete>
+
+    <insert id="InsPmsReliabilityReport" parameterClass="PmsReliabilityReport">
+      INSERT INTO T_DPMS_RELIABILITY_REPORT
+      (OID
+      , DevStep
+      , TotalTestItem
+      , WaitingNum
+      , ProgressNum
+      , CompleteNum
+      , NGNum
+      , PartNm
+      , TotalTestStartDt
+      , TotalTestEndDt
+      , TestPurpose
+      , FromOID
+      , RootOID
+      )
+      VALUES
+      (#OID#
+      , #DevStep#
+      , #TotalTestItem#
+      , #WaitingNum#
+      , #ProgressNum#
+      , #CompleteNum#
+      , #NGNum#
+      , #PartNm#
+      , #TotalTestStartDt#
+      , #TotalTestEndDt#
+      , #TestPurpose#
+      , #FromOID#
+      , #RootOID#
+      )
+    </insert>
+
+    <select id="SelPmsReliabilityReport" parameterClass="PmsReliabilityReport" resultClass="PmsReliabilityReport">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_RELIABILITY_REPORT B ON A.OID = B.OID
+      WHERE A.Type = #Type#
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
+      <isNotNull prepend="and" property="RootOID">
+        B.RootOID = #RootOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="DevStep">
+        B.DevStep = #DevStep#
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        B.FromOID = #FromOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateDt">
+        A.CreateDt = #CreateDt#
+      </isNotNull>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <update id="UdtPmsReliabilityReport" parameterClass="PmsReliabilityReport">
+      UPDATE T_DPMS_RELIABILITY_REPORT
+      <dynamic prepend="SET">
+        <isNotNull prepend="," property="DevStep">
+          DevStep = #DevStep#
+        </isNotNull>
+        <isNotNull prepend="," property="TestPurpose">
+          TestPurpose = #TestPurpose#
+        </isNotNull>
+        <isNotNull prepend="," property="TotalTestItem">
+          TotalTestItem = #TotalTestItem#
+        </isNotNull>
+        <isNotNull prepend="," property="WaitingNum">
+          WaitingNum = #WaitingNum#
+        </isNotNull>
+        <isNotNull prepend="," property="ProgressNum">
+          ProgressNum = #ProgressNum#
+        </isNotNull>
+        <isNotNull prepend="," property="CompleteNum">
+          CompleteNum = #CompleteNum#
+        </isNotNull>
+        <isNotNull prepend="," property="TotalTestStartDt">
+          TotalTestStartDt = #TotalTestStartDt#
+        </isNotNull>
+        <isNotNull prepend="," property="TotalTestEndDt">
+          TotalTestEndDt = #TotalTestEndDt#
+        </isNotNull>
+        <isNotNull prepend="," property="NGNum">
+          NGNum = #NGNum#
+        </isNotNull>
+        WHERE OID = #OID#
+      </dynamic>
+    </update>
+
+    <insert id="InsPmsReliabilityReportItemList" parameterClass="PmsReliabilityReportItemList">
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DPMS_RELIABILITY_REPORT_TESTITEMLIST
+      </selectKey>
+      INSERT INTO T_DPMS_RELIABILITY_REPORT_TESTITEMLIST
+      (OID
+      , FromOID
+      , TestItemNm
+      , EstStartDt
+      , EstEndDt
+      , ActStartDt
+      , ActEndDt
+      , ProgressResult
+      , ETC
+      )
+      VALUES
+      (#OID#
+      , #FromOID#
+      , #TestItemNm#
+      , #EstStartDt#
+      , #EstEndDt#
+      , #ActStartDt#
+      , #ActEndDt#
+      , #ProgressResult#
+      , #ETC#
+      )
+    </insert>
+
+    <select id="SelPmsReliabilityReportItemList" parameterClass="PmsReliabilityReportItemList" resultClass="PmsReliabilityReportItemList">
+      SELECT *
+      FROM T_DPMS_RELIABILITY_REPORT_TESTITEMLIST
+      WHERE 1 = 1
+      <isNotNull prepend="and" property="FromOID">
+        FromOID = #FromOID#
+      </isNotNull>
+    </select>
+
+
+    <delete id="delReportTestItemList" parameterClass="PmsReliabilityReportItemList">
+      DELETE FROM T_DPMS_RELIABILITY_REPORT_TESTITEMLIST
+      WHERE FromOID = #FromOID#
+    </delete>
+
 
     <select id="SelPmsGateSignOff" parameterClass="PmsGateSignOff" resultClass="PmsGateSignOff">
       SELECT
@@ -796,7 +1042,7 @@
     <update id="UdtPmsGateSignOff" parameterClass="PmsGateSignOff">
       UPDATE T_DPMS_GATE_SIGN_OFF
       SET ModifyDt = GETDATE()
-      , ModifyUs = #DeleteUs#
+      , ModifyUs = #ModifyUs#
       <isNotNull prepend="," property="Forecast">
         Forecast = #Forecast#
       </isNotNull>
@@ -815,5 +1061,31 @@
       WHERE OID = #OID#
     </update>
 
+    
+    <select id="SelPmsRelationshipTaskIsNull" parameterClass="PmsRelationship" resultClass="PmsRelationship">
+      SELECT *
+      FROM T_DPMS_RELATIONSHIP
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="ToOID">
+          ToOID = #ToOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="RootOID">
+          RootOID = #RootOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="RoleOID">
+          RoleOID = #RoleOID#
+        </isNotNull>
+        AND TaskOID IS NULL
+        AND DeleteDt IS NULL
+      </dynamic>
+      ORDER BY Ord
+    </select>
+    
   </statements>
 </sqlMap>

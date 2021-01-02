@@ -1,4 +1,5 @@
-﻿using Common.Factory;
+﻿using Common.Constant;
+using Common.Factory;
 using Common.Interface;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,8 @@ namespace Common.Models
         public string DocType { get; set; }
 
         public string DocNm { get; set; }
+
+        public string DocUrl { get; set; }
 
         public int? DocCreateUs { get; set; }
 

@@ -22,6 +22,7 @@ namespace Pms.Models
         public int? Manager_OID { get; set; }
         public string ManagerNm { get; set; }
         public string Contents { get; set; }
+        public DateTime? FinDt { get; set; }
         public string IssueType { get; set; }
 
         public string IssueTypeNm
@@ -50,6 +51,22 @@ namespace Pms.Models
                 else
                 {
                     return "";
+                }
+            }
+        }
+        public string[] IssueTypeList
+        {
+            get
+            {
+                if (this.IssueType != null && this.IssueType.Count() > 0)
+                {
+                    string[] arrReason = this.IssueType.IndexOf(',') > -1 ? this.IssueType.Split(',') : new string[] { this.IssueType };
+
+                    return arrReason;
+                }
+                else
+                {
+                    return null;
                 }
             }
         }

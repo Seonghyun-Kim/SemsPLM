@@ -43,6 +43,11 @@ namespace Pms.Models
 
         public string PMNm { get; set; }
 
+        public int? TemplateOID { get; set; }
+
+        //프로젝트 템플릿 내용
+        public string TemplateContent { get; set; }
+
         public int? Oem_Lib_OID { get;set;}
         public int? Car_Lib_OID { get;set;}
         public int? ITEM_No { get;set;}
@@ -161,7 +166,7 @@ namespace Pms.Models
         #region -- Project
         public static List<JqTreeModel> SelTotalProjMngt(HttpSessionStateBase Context, string Type)
         {
-            List<Library> CodeLibrary = LibraryRepository.SelCodeLibrary(new Library { FromOID = 932 });
+            List<Library> CodeLibrary = LibraryRepository.SelCodeLibraryChild(new Library { Code1 = Common.Constant.CommonConstant.ATTRIBUTE_OEM });
             List<JqTreeModel> jqTreeModelList = new List<JqTreeModel>();
             foreach (Library obj in CodeLibrary)
             {
@@ -188,7 +193,7 @@ namespace Pms.Models
                     innerJqTreeModel.expanded = true;
                     innerJqTreeModel.type = PmsConstant.ATTRIBUTE_CAR;
                     innerJqTreeModel.items = new List<JqTreeModel>();
-                    if(Type == "Total")
+                    if(Type == Common.Constant.PmsConstant.TYPE_TOTAL)
                     {
                         SelCarLibrary(Context, innerJqTreeModel, item);
                     }

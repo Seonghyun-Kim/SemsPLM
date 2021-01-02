@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Common.Models
 {
@@ -40,25 +41,32 @@ namespace Common.Models
     public static class DRelationshipRepository
     {
 
-        public static int InsDRelationshipNotOrd(DRelationship _param)
+        public static int InsDRelationshipNotOrd(HttpSessionStateBase Context, DRelationship _param)
         {
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]); ;
             return DaoFactory.SetInsert("Comm.InsDRelationshipNotOrd", _param);
         }
 
-        public static int InsDRelationship(DRelationship _param)
+        public static int InsDRelationship(HttpSessionStateBase Context, DRelationship _param)
         {
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]); ;
             return DaoFactory.SetInsert("Comm.InsDRelationship", _param);
         }
 
-        public static int DelDRelationship(DRelationship _param)
+        public static int DelDRelationship(HttpSessionStateBase Context, DRelationship _param)
         {
-            _param.DeleteUs = 1;
+            _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
+            if (_param.OID == null)
+            {
+                if (_param.FromOID == null || _param.ToOID == null )
+                {
+                    return 0;
+                }
+            }
             return DaoFactory.SetUpdate("Comm.DelDRelationship", _param);
         }
 
-        public static List<DRelationship> SelRelationship(DRelationship _param)
+        public static List<DRelationship> SelRelationship(HttpSessionStateBase Context, DRelationship _param)
         {
             return DaoFactory.GetList<DRelationship>("Comm.SelDRelationship", _param);
         }

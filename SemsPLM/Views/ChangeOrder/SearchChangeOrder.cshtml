@@ -78,7 +78,7 @@
     $(function () {
         SearchECO_DesignChangeDt$.jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
-        var DevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+        var DevTypeList = [{type: "", value : null},{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
         { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
         var DevTypeSource =
         {
@@ -119,12 +119,12 @@
         SearchECOGrd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 640,
+            height: 675,
             rowsheight: 28,
             columnsheight: 30,
             //source: ProjectSource,
             sortable: false,
-            pageable: false,
+            pageable: true,
             columns: [
                 {
                     text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
@@ -149,7 +149,6 @@
             ],
             showtoolbar: true,
             toolbarheight: 45,
-
         });
 
         SearchECOGrd$.on('celldoubleclick', function (e) {

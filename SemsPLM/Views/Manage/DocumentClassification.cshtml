@@ -85,7 +85,7 @@
         DocumentClassificationGrid$.jqxTreeGrid(
             {
                 width: "100%",
-                height: 680,
+                height: 675,
                 theme: "kdnc",
                 sortable: true,
                 columns: [
@@ -170,6 +170,10 @@
                         if (confirm("분류 혹은 항목을 삭제하시겠습니까?")) {
                             var param = {};
                             param.OID = selection[0].OID;
+                            if (param.OID == null) {
+                                alert("삭제할 항목을 선택해주세요.");
+                                return;
+                            }
 
                             RequestData("/Manage/DelDocumentClassification", param, function (res) {
                                 alert("삭제 되었습니다.");

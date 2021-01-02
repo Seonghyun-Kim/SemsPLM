@@ -278,19 +278,19 @@ function OpenSearchECRDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Gr
                 },
                 columns: [
                     {
-                        text: 'NO', width: "6%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "5.5%", cellsalign: 'center', columntype: 'number', align: 'center',
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
 
-                    { dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', width: '9%', hidden: 'true' },
+                    { dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', hidden: 'true' },
 
                     { dataField: 'Name', type: 'text', align: 'center', cellsalign: 'center', text: 'ECR_NO', width: '16%' },
                     { dataField: 'Title', type: 'text', align: 'center', cellsalign: 'center', text: '제목', width: '40%' },
-                    { dataField: 'DesignChangeDt', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd', width: '12%' },
-                    { dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd', width: '12%' },
-                    { dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '5%' },
+                    { dataField: 'DesignChangeDt', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd', width: '15%' },
+                    { dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd', width: '15%' },
+                    { dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '6.4%' },
 
                 ],
                 rendertoolbar: function (toolBar) {

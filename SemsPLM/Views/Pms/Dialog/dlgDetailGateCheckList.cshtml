@@ -2,9 +2,9 @@
     Layout = null;
 }
 
-    <div id="gateViewCheckList_@ViewBag.ProcessOID" style="position:relative;">
-        <div style="width:100%;">
-            <div class="dlgCheckList" style="width:309px;float:left;">
+    <div id="gateViewCheckList_@ViewBag.ProcessOID">
+        <div class="scrollY">
+            <div class="dlgCheckList" style="float:left;">
                 <div class="searchBox">
                     <div class="searchTitle" style="line-height: 34px; font-size: 17px; height: 33px;">
                         <label style="font-weight:400;">GATE</label>
@@ -25,12 +25,16 @@
                         <li>실제 완료일</li>
                     </ul>
                 </div>
-            </div><div style="height:600px;float:left;">
+            </div>
+            <div style="float:left;margin-left:8px;">
                 <div class="searchBox">
                     <div class="searchTitle" style="line-height:34px;font-size:17px;height:33px;position:relative;">
                         <label style="font-weight:400;">체크리스트</label>
-                        <button class="custom-button" style="position:absolute;right:0px;top:1px;line-height:1.1;"><i class="fas fa-save"></i> 저장</button>
-                    </div>
+                        @if ((ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED) && (ViewBag.lGateViewDetail.BPolicy.Name != Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED))
+                        {
+                            <button class="custom-button" id="dlggateViewCheckList_saveBtn" style="position:absolute;right:0px;top:1px;line-height:1.1;"><i class="fas fa-save"></i> 저장</button>
+                        }
+                        </div>
                 </div>
                 <div id="dlggateViewCheckList_@ViewBag.ProcessOID"></div>
             </div>
@@ -41,7 +45,7 @@
     $(function () {
         var grdCheckList$ = $("#dlggateViewCheckList_@ViewBag.ProcessOID");
         var gateBox = document.querySelector(".dlggateview_@ViewBag.ProjectOID");
-
+        var editRow = [];
         var checkListSource = {
             datatype: 'json',
             datafields: [
@@ -59,6 +63,7 @@
                 //Object Mandatory
                 { name: 'ObjName', type: 'string' },
                 { name: 'ObjType', type: 'string' },
+                { name: 'Count', type: 'string' },
                 { name: 'Id', type: 'number' },
                 { name: 'Dependency', type: 'string' },
                 { name: 'ObjSt', type: 'number' },
@@ -77,25 +82,31 @@
                 //Object Optional
                 { name: 'Description', type: 'string' },
             ],
+            updaterow: function (rowid, rowdata, commit) {
+                editRow.push(rowdata);
+            }
         }
 
         grdCheckList$.jqxGrid({
-            width: 1178,
-            height: 542,
+            width: 1130,
+            height: 558,
             rowsheight: 28,
             columnsheight: 40,
             sortable: false,
             pageable: false,
+            editable: true,
+            selectionmode: 'singlerow',
             columnsresize: true,
             showtoolbar: false,
             rendertoolbar: function (statusbar) {
             },
             columns: [
-                { text: 'NO', dataField: 'No', width: "8%", cellsalign: 'left', align: 'center', },
-                { text: 'TASK/산출물', dataField: 'ObjName', width: '32%', cellsalign:'center', align:'center',},
+                { text: 'NO', dataField: 'No', width: "8%", cellsalign: 'left', align: 'center',editable:false },
+                { text: 'TASK/산출물', dataField: 'ObjName', width: '32%', cellsalign: 'center', align: 'center', editable: false },
                 {
-                    text: 'Responsibility', dataField: 'Members', width: '10%', cellsalign: 'center', align: 'center',
+                    text: 'Responsibility', dataField: 'Members', width: '10%', cellsalign: 'center', align: 'center', editable: false,
                     cellsrenderer: function (row, column, value) {
+
                         if (value != null && value != undefined) {
                             if (value.length > 0) {
                                 var tmpTag = "<div style='text-align: center;width:100%;padding-top:4.5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;padding-left:10px;'>";
@@ -112,10 +123,40 @@
                         }
                     },
                 },
-                { text: 'Yes/No', width:'10%', cellsalign:'center', align:'center',},
-                { text: 'Due Date', dataField: 'ActEndDt', width: '15%', cellsalign: 'center', align: 'center', cellsFormat: 'yyyy-MM-dd',},
-                { text: '비고', dataField: 'CheckListEtc', width:'25%', cellsalign:'left', align:'center',},
+                {
+                    text: 'Yes/No', width: '10%', dataField: 'Count', cellsalign: 'center', align: 'center', editable: false,
+                    cellsrenderer: function (row, column, value, rowData) {
+                        if (value != null && value != undefined && value != "") {
+                            if (parseInt(value) > 0) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>Y</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>N</div>";
+                            }
+                        } else if (value == "0") {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>N</div>";
+                        }
+                    }
+                },
+                { text: 'Due Date', dataField: 'ActEndDt', width: '15%', cellsalign: 'center', align: 'center', cellsFormat: 'yyyy-MM-dd', editable: false},
+                {text: '비고', dataField: 'CheckListEtc', width: '25%', cellsalign: 'left', align: 'center', editable: false, }
             ]
+        });
+        grdCheckList$.on('cellclick', function (event) {
+
+            var args = event.args;
+            var datafield = event.args.datafield;
+            var rowIndex = args.rowindex;
+            var data = grdCheckList$.jqxGrid('getrowdata', rowIndex);
+            console.log(datafield);
+            if (datafield == 'CheckListEtc') {
+                if (data.ObjType == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER') {
+                    console.log('active');
+                    grdCheckList$.jqxGrid('setcolumnproperty', 'CheckListEtc', 'editable', true);
+                } else {
+                    console.log('active');
+                   grdCheckList$.jqxGrid('setcolumnproperty', 'CheckListEtc', 'editable', false);
+                }
+            }
         });
 
         RequestData("/Pms/SelGateCheckList", { 'ProjectOID': '@ViewBag.ProjectOID', "ProcessOID": '@ViewBag.ProcessOID' }, function (res) {
@@ -138,7 +179,9 @@
 
             gateImg.innerHTML = "<img src='/Images/gate.png' alt='gate' style='border:0px;padding:12px 40px;'>";
             gateStatus.innerHTML = "<span>" + params.BPolicy.StatusNm + "</span><div class='level' style='width:" + params.Complete + "%;'></div>";
-            gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) + '..' : params.Name);
+            gateType.innerHTML = params.Type;
+            gateName.innerHTML = params.Name;
+            //gateName.innerHTML = "<span>" + params.Type + "</span>" + (params.Name.length > 9 ? params.Name.substring(0, 9) + '..' : params.Name);
             gateESdate.innerHTML = params.EstStartDt != null ? moment(params.EstStartDt).format('YYYY-MM-DD') : '<br/>';
             gateEFdate.innerHTML = params.EstEndDt != null ? moment(params.EstEndDt).format('YYYY-MM-DD') : '<br/>';
             gateASdate.innerHTML = params.ActStartDt != null ? moment(params.ActStartDt).format('YYYY-MM-DD') : '<br/>';
@@ -154,13 +197,12 @@
             project.appendChild(gateASdate);
             project.appendChild(gateAFdate);
 
-            $(document).ready(function () {
-                $(".gatebox").addClass("gates");
-                $(".gatebox > h3").addClass("gateName");
-                $(".gatestatus").addClass("status");
-                $(".gatebox > p").addClass("gateDates");
-                $(".gatestatus > span").addClass("progress");
-            });
+            $(".gatebox").addClass("gates");
+            $(".gatebox > span").addClass("gateType");
+            $(".gatebox > h3").addClass("gateName");
+            $(".gatestatus").addClass("status");
+            $(".gatebox > p").addClass("gateDates");
+            $(".gatestatus > span").addClass("progress");
         }
 
         @{
@@ -172,6 +214,22 @@
         for (var index = 0; index < gateArr.length; index++) {
             addGateDetail(gateArr[index]);
         }
+        $('#dlggateViewCheckList_saveBtn').on('click', function () {
+            if (confirm('저장하시겠습니까?')) {
+                console.log(editRow);
+                RequestData('/Pms/UdtGateCheckListEtc', editRow, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("수정 되었습니다.");
+                    editRow = null;
+                    RequestData("/Pms/SelGateCheckList", { 'ProjectOID': '@ViewBag.ProjectOID', "ProcessOID": '@ViewBag.ProcessOID' }, function (res) {
+                        PrintJqxGrid(checkListSource, grdCheckList$, res);
+                    });
+                });
+            }
+        });
     });
 
 

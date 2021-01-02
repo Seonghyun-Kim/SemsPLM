@@ -22,23 +22,6 @@
                         <input type="text" class="txtBox" id="txtTmpContent" />
                     </div>
                 </div>
-                <div class="searchData">
-                    <div>고객사</div>
-                    <div>
-                        <input type="text" class="txtBox" id="txtTmpCustomer" />
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>제품(검색)</div>
-                    <input type="text" class="txtBox" id="txtTmpProduct" />
-                    &nbsp;<button id="schTmpProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
-                </div>
-                <div class="searchData">
-                    <div>작성자</div>
-                    <div>
-                        <input type="text" class="txtBox" id="txtTmpCuser" />
-                    </div>
-                </div>
                 <div class="searchButton">
                     <button id="btnTmpSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
                 </div>
@@ -166,6 +149,17 @@
         });
 
         TmpGrd$.jqxGrid('pagerrenderer');
+
+        $('#btnTmpSearch').on('click', function () {
+            var searchParam = {};
+            searchParam.Name = $('#txtTmpProjName').val();
+            searchParam.Description = $('#txtTmpContent').val();
+            searchParam.Type = '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP';
+            searchParam.IsTemplate = '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP';
+            RequestData("/Pms/SelProjects", searchParam, function (res) {
+                PrintJqxGrid(TmpProjectSource, TmpGrd$, res);
+            });
+        });
     });
 
 </script>

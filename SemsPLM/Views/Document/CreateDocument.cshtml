@@ -23,7 +23,7 @@
             <th class="reqVal"><i class="fa fa-caret-right"></i> 문서 분류</th>
             <td>
                 <input type="hidden" id="CreateDocument_DocClassOID" autocomplete="off" />
-                <input type="text" id="CreateDocument_DocClassName" autocomplete="off" />
+                <input type="text" id="CreateDocument_DocClassName" autocomplete="off"  class="readonly _r" readonly="readonly" />
             </td>
             <td colspan="2">
             <button id="CreateDocument_selDocClass" class="custom-button"><i class="fas fa-plus-square"></i> 문서분류체계 선택</button></td>
@@ -34,7 +34,7 @@
                 <input type="text" id="CreateDocument_Title" autocomplete="off" />
             </td>
             <th><i class="fa fa-caret-right"></i> 작성자</th>
-            <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off"></td>
+            <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off" value="@Session["UserNm"]"></td>
 
         </tr>
         <tr>
@@ -43,7 +43,7 @@
                 <input type="text" id="CreateDocument_Name" autocomplete="off" class="readonly _r" readonly="readonly" value="자동 발번" />
             </td>
             <th><i class="fa fa-caret-right"></i> 작성일</th>
-            <td><input type="text" id="CreateDocument_CreateDt" class="readonly" readonly="readonly" autocomplete="off" /></td>
+            <td><input type="text" id="CreateDocument_CreateDt" class="readonly" readonly="readonly" autocomplete="off" value="@Convert.ToString(DateTime.Now.ToString("yyyy-MM-dd"))" /></td>
         </tr>
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 리비전</th>
@@ -58,7 +58,7 @@
             </td>
         </tr>
         <tr>
-            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 첨부파일</th>
             <td colspan="3">
                 <div id="CreateDocument_Files" style="width:100%;">
                 </div>

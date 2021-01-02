@@ -172,73 +172,10 @@ function OpenNewAddDocClassification(_CallBackFunction, _Wrap, _Param, _Url, _Ti
     $(popLayer).jqxWindow({
         width: 750, maxWidth: 750, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
-            var DocClassRowKey = null;
-            var DocClassRowData = null;
-            $(document).on('click', '#dlgDocClassInsertBtn', function () {
-                var Insparam = {};
-                Insparam.RootOID = _Param.RootOID;
-                Insparam.FromOID = _Param.FromOID;
-                Insparam.ToOID = DocClassRowKey;
-
-                if (Insparam.ToOID == null || Insparam.ToOID == "") {
-                    alert("문서가 선택이 되지 않았습니다");
-                    return;
-                }
-
-                RequestData("/Pms/InsProjectDocumentClassification", Insparam, function (res) {
-                    _CallBackFunction();
-                    $(popLayer).jqxWindow('modalDestory');
-                });
-            });
-            $(document).on('click', '#dlgDocClassSelectBtn', function () {
-                if (DocClassRowKey == null || DocClassRowKey == "") {
-                    alert("문서가 선택이 되지 않았습니다");
-                    return;
-                }
-                parent.docClassOID.val(DocClassRowKey);
-                parent.docClassName.val(DocClassRowData[0].Name);
-                $(popLayer).jqxWindow('modalDestory');
-            });
-
-            dlgDocClassSearchGrid$.on('rowSelect', function (event) {
-                if (DocClassRowKey == event.args.key) {
-                    dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
-                    DocClassRowKey = null;
-                    return;
-                }
-                else {
-
-                    if (event.args.boundIndex == 0 && event.args.row.FromOID ==null) {
-                        dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
-                        DocClassRowKey = null;
-                        return;
-                    }
-                    DocClassRowKey = event.args.key;
-                    if (_Param.Type != TypeDocument) {
-                        var ParentData = _Parent.jqxTreeGrid('getRows');
-                        for (var i = 0; i < ParentData.length; i++) {
-                            if (ParentData[i].RootOID == ParentData[i].FromOID) {
-                                if (DocClassRowKey == ParentData[i].ToOID) {
-                                    dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
-                                    DocClassRowKey = null;
-                                    return;
-                                }
-                            } else {
-                                if (_Param.Type == TypeTask) {
-                                    if (DocClassRowKey == ParentData[i].ToOID) {
-                                        dlgDocClassSearchGrid$.jqxTreeGrid('unselectRow', null);
-                                        DocClassRowKey = null;
-                                        return;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    DocClassRowKey = event.args.key;
-                    DocClassRowData = dlgDocClassSearchGrid$.jqxTreeGrid('getSelection');
-                }
-            });
+          
+            selDocClassDialog = this;
+            selDocClassDialog.CallBackFunction = _CallBackFunction;
+            selDocClassDialog.Data = _Param;
         }
     });
 

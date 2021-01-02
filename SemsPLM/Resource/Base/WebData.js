@@ -11,7 +11,6 @@ var renderWord = function (row, columnfield, value, defaulthtml, columnpropertie
 
 function RequestData(_Url, _Args, _CallBackFunc) {
     const loading = $('#loading');
-    console.log(loading);
     var retData = null;
     var param = _Args;
     loading.css('display', 'block');
@@ -171,7 +170,7 @@ function PrintJqxTreeGrid(_Source, _GridObject, _JsonResult) {
 }
 
 function PrintJqxKanban(_Source, _GridObject, _JsonResult) {
-    _Source.localdata = _JsonResult;
+    _Source.localData = _JsonResult;
 
     var Adapter = new $.jqx.dataAdapter(_Source);
     //Adapter.dataBind();

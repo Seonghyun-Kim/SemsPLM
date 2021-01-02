@@ -19,14 +19,14 @@
 </div>
 <table class="createtable">
     <colgroup>
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
-        <col style="width: 12.5%" />
+        <col style="width: 10%" />
+        <col style="width: 15%" />
+        <col style="width: 10%" />
+        <col style="width: 15%" />
+        <col style="width: 10%" />
+        <col style="width: 15%" />
+        <col style="width: 10%" />
+        <col style="width: 15%" />
     </colgroup>
     <tr>
         <th><i class="fa fa-caret-right"></i> 고객사</th>
@@ -64,18 +64,18 @@
         <td colspan="7"></td>
     </tr>
     <tr>
-        <th><i class="fa fa-caret-right"></i> Issues(문제점)</th>
+        <th style="vertical-align:text-top;"><i class="fa fa-caret-right"></i> Issues<br />(문제점)</th>
         <td colspan="3">
-            <textarea id="CreateProblemIssues"></textarea>
+            <textarea id="CreateProblemIssues" style="height:150px;"></textarea>
             <div>
                 <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
                 <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
                 <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
             </div>
         </td>
-        <th><i class="fa fa-caret-right"></i> Cause(원인)</th>
+        <th style="vertical-align:text-top;"><i class="fa fa-caret-right"></i> Cause<br />(원인)</th>
         <td colspan="3">
-            <textarea id="CreateProblemCause"></textarea>
+            <textarea id="CreateProblemCause" style="height:150px;"></textarea>
             <div>
                 <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
                 <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
@@ -84,9 +84,9 @@
         </td>
     </tr>
     <tr>
-        <th><i class="fa fa-caret-right"></i> Countermeasures<br />(대책)</th>
+        <th style="vertical-align:text-top;"><i class="fa fa-caret-right"></i> Counter-<br />measures (대책)</th>
         <td colspan="7">
-            <textarea id="CreateProblemCountermeasures"></textarea>
+            <textarea id="CreateProblemCountermeasures" style="height:150px;"></textarea>
             <div>
                 <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
                 <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
@@ -117,10 +117,10 @@
                 ]
         };
         var CreateProblemsDefaultOEM = new $.jqx.dataAdapter(CreateProblemsOemSource);
-        CreateProblemsLibraryOEM$.jqxComboBox({ source: CreateProblemsDefaultOEM, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        CreateProblemsLibraryOEM$.jqxComboBox({ source: CreateProblemsDefaultOEM, displayMember: "KorNm", valueMember: "OID", width:'100%' ,height: 32, });
 
         var  CreateProblemsDefaultCar = [{ KorNm: '등록 차종 없음', OID: null }];
-        CreateProblemsLibraryCAR$.jqxComboBox({ source: CreateProblemsDefaultCar, displayMember: "KorNm", valueMember: "OID", height: 32, });
+        CreateProblemsLibraryCAR$.jqxComboBox({ source: CreateProblemsDefaultCar, displayMember: "KorNm", valueMember: "OID", width:'100%', height: 32, });
         CreateProblemsLibraryCAR$.jqxComboBox({ selectedIndex: 0 });
 
         CreateProblemsLibraryOEM$.on('change', function (event) {

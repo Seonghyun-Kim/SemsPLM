@@ -94,12 +94,12 @@
 
         SearchDocumentTree$.jqxTree({
             width: '100%',
-            height: 740,
+            height: 757,
         });
 
         RequestData("/Document/SelDocClassTree", {}, function (res) {
             SearchDocumentTree$.jqxTree({ source: res });
-   Common    });
+       });
 
         SearchDocumentTree$.on('select', function (event) {
             var args = event.args;
@@ -114,11 +114,6 @@
                 DocGrd$.jqxGrid('clearselection');
             }
         });
-
-
-
-
-
 
         var DocumentSource = {
             datatype: 'json',
@@ -143,12 +138,12 @@
         DocGrd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 680,
+            height: 675,
             rowsheight: 28,
             columnsheight: 30,
             //source: ProjectSource,
             sortable: false,
-            pageable: false,
+            pageable: true,
             columns: [
                 {
                     text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
@@ -228,7 +223,6 @@
         });
 
         getSearchDocList(DocumentSource, DocGrd$,param);
-
 
 
         searchBtn$.on('click', function () {

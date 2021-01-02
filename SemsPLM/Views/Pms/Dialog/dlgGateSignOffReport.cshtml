@@ -2,198 +2,396 @@
     Layout = null;
 }
 
-    <div class="dlgGateReportTab">
-        <input type="radio" name="gateReportRadio" value="gateReport" id="gateReportTab" checked />
-        <label for="gateReportTab">보고서</label>
-        <input type="radio" name="gateReportRadio" value="gateIssueList" id="gateIssueListTab" />
-        <label for="gateIssueListTab">이슈리스트</label>
-    </div>
-    <div class="dlgGateReportContent">
-        <div>
-            <div class="dlgTopInfo">
-                <label><i class="fas fa-stamp"></i> 프로젝트 등급</label>
-                <span id=""><!--system-->@ViewBag.InfoProj.ProjectGrade</span>
-                <label><i class="fas fa-hourglass-half"></i> Gate 단계</label>
-                <span id=""><!--system-->@ViewBag.InfoProc.Name</span>
-                <button class="custom-button" id=""><i class="fas fa-save"></i> 저장</button>
+<div class="dlgGateReportTab">
+    <input type="radio" name="gateReportRadio" value="gateReport" id="gateReportTab" checked />
+    <label for="gateReportTab">보고서</label>
+    <input type="radio" name="gateReportRadio" value="gateIssueList" id="gateIssueListTab" />
+    <label for="gateIssueListTab">이슈리스트</label>
+</div>
+<div class="dlgGateReportContent">
+    <div>
+        <div class="dlgTopInfo">
+            <label><i class="fas fa-stamp"></i> 프로젝트 등급</label>
+            <span id=""><!--system-->@ViewBag.InfoProj.ProjectGrade</span>
+            <label><i class="fas fa-hourglass-half"></i> Gate 단계</label>
+            <span id=""><!--system-->@ViewBag.InfoProc.Name</span>
+            @if ((ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED) && (ViewBag.InfoProc.BPolicy.Name != Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED))
+            {
+                <button class="custom-button" id="dlgGateSaveBtn_@ViewBag.InfoProc.OID"><i class="fas fa-save"></i> 저장</button>
+            }
             </div>
-            <h4>1. 개발개요</h4>
-            <table class="dlgGateReportTable">
-                <colgroup>
-                    <col style="width:15%;" />
-                    <col style="width:20%;" />
-                    <col style="width:15%;" />
-                    <col style="width:15%;" />
-                    <col style="width:15%;" />
-                    <col style="width:20%;" />
-                </colgroup>
+        <h4>1. 개발개요</h4>
+        <table class="dlgGateReportTable">
+            <colgroup>
+                <col style="width:15%;" />
+                <col style="width:20%;" />
+                <col style="width:15%;" />
+                <col style="width:15%;" />
+                <col style="width:15%;" />
+                <col style="width:20%;" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <td>차종</td>
+                    <td>제품사양</td>
+                    <td>Forecast</td>
+                    <td>OEM</td>
+                    <td>고객사</td>
+                    <td>WR생산처</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@ViewBag.InfoProj.Car_Lib_Nm</td>
+                    <td>@ViewBag.InfoProj.ITEM_NoNm @ViewBag.InfoProj.ITEM_MiddleNm</td>
+                    <td><input type="text" id="txtForecast_@ViewBag.InfoProc.OID" value="@ViewBag.signOff.Forecast" /></td>
+                    <td>@ViewBag.InfoProj.Oem_Lib_Nm</td>
+                    <td></td>
+                    <td><input type="text" id="txtWrCreateStore_@ViewBag.InfoProc.OID" value="@ViewBag.signOff.WrCreateStore" /></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>2. OEM 일정</h4>
+        @if (ViewBag.OemSchedule.Count < 1)
+        {
+            <h4 style="margin-bottom:20px;font-size:16px;color:#888;text-align:center;">OEM 일정이 없습니다.</h4>
+        }
+        else
+        {
+            <table class="dlgGateReportTable oemSchedule">
                 <thead>
                     <tr>
-                        <td>차종</td>
-                        <td>제품사양</td>
-                        <td>Forecast</td>
-                        <td>OEM</td>
-                        <td>고객사</td>
-                        <td>WR생산처</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@ViewBag.InfoProj.Car_Lib_Nm</td>
-                        <td>@ViewBag.InfoProj.ITEM_NoNm @ViewBag.InfoProj.ITEM_MiddleNm</td>
-                        <td><input type="text" id="txtForecast_@ViewBag.InfoProc.OID" value="" /></td>
-                        <td></td>
-                        <td></td>
-                        <td><input type="text" id="txtWrCreateStore_@ViewBag.InfoProc.OID" value="" /></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4>2. OEM 일정</h4>
-            @if (ViewBag.OemSchedule.Count < 1)
-            {
-                <h4 style="margin-bottom:20px;font-size:16px;color:#888;text-align:center;">OEM 일정이 없습니다.</h4>
-            }
-            else
-            {
-                <table class="dlgGateReportTable oemSchedule">
-                    <thead>
-                        <tr>
-                            @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
-                            {
-                                <td>@Html.Raw(ViewBag.OemSchedule[index].Name)</td>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
-                            {
-                                <td>@Html.Raw((ViewBag.OemSchedule[index].StartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.OemSchedule[index].StartDt) : ""))</td>
-                            }
-                        </tr>
-                    </tbody>
-                </table>
-            }
-
-            <h4>3. Gate Review 일정</h4>
-            <table class="dlgGateReportTable grSchedule">
-                <thead>
-                    <tr>
-                        <td>G/R #1</td>
-                        <td>G/R #2</td>
-                        <td>G/R #3</td>
-                        <td>G/R #4</td>
-                        <td>G/R #5</td>
-                        <td>G/R #6</td>
-                        <td class="remark">비고</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        @{
-                            int iGw = ViewBag.InfoGate.Count;
-                            int iGwTotal = 6;
-                        }
-                        @for (int index = 0; index < iGwTotal; index++)
+                        @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
                         {
-                            if (index < iGw)
-                            {
-                                <td>@Html.Raw((ViewBag.InfoGate[index].ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.InfoGate[index].ActEndDt) : ""))</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
+                            <td>@Html.Raw(ViewBag.OemSchedule[index].Name)</td>
                         }
-                        <td><input type="text" id="txtCalendarEtc_@ViewBag.InfoProc.OID" value="" /></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4>4. 단계별 Gate Open Issue Summary</h4>
-            <table class="dlgGateReportTable" style="height:90px;">
-                <colgroup>
-                    <col style="width:16%;" />
-                    <col style="width:10%;" />
-                    <col style="width:10%;" />
-                    <col style="width:10%;" />
-                    <col style="width:28%;" />
-                    <col style="width:28%;" />
-                </colgroup>
-                <thead>
-                    <tr>
-                        <td rowspan="2">Open Issue 총 건수</td>
-                        <td colspan="3">실적</td>
-                        <td rowspan="2">미완료 주요 Issue</td>
-                        <td rowspan="2">비고</td>
-                    </tr>
-                    <tr>
-                        <td>완료</td>
-                        <td>미완료</td>
-                        <td>완료율</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><input type="text" id="txtNonCompleteIssue_@ViewBag.InfoProc.OID" value="" /></td>
-                        <td><input type="text" id="txtSummaryEtc_@ViewBag.InfoProc.OID" value="" /></td>
+                        @for (int index = 0, size = ViewBag.OemSchedule.Count; index < size; index++)
+                        {
+                            <td>@Html.Raw((ViewBag.OemSchedule[index].StartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.OemSchedule[index].StartDt) : ""))</td>
+                        }
                     </tr>
                 </tbody>
             </table>
+        }
 
-            <h4>5. 단계별 Gate Open Issue Summary</h4>
-            <div id="issueSumGradeGrid"></div>
-        </div>
+        <h4>3. Gate Review 일정</h4>
+        <table class="dlgGateReportTable grSchedule">
+            <thead>
+                <tr>
+                    <td>G/R #1</td>
+                    <td>G/R #2</td>
+                    <td>G/R #3</td>
+                    <td>G/R #4</td>
+                    <td>G/R #5</td>
+                    <td>G/R #6</td>
+                    <td class="remark">비고</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @{
+                        int iGw = ViewBag.InfoGate.Count;
+                        int iGwTotal = 6;
+                    }
+                    @for (int index = 0; index < iGwTotal; index++)
+                    {
+                        if (index < iGw)
+                        {
+                            <td>@Html.Raw((ViewBag.InfoGate[index].ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.InfoGate[index].ActEndDt) : ""))</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    }
+                    <td><input type="text" id="txtCalendarEtc_@ViewBag.InfoProc.OID" value="@ViewBag.signOff.CalendarEtc" /></td>
+                </tr>
+            </tbody>
+        </table>
 
-        <div style="padding-top:10px;">
-            <div id="issueListGrid"></div>
-        </div>
+        <h4>4. 단계별 Gate Open Issue Summary</h4>
+        <table class="dlgGateReportTable" style="height:90px;">
+            <colgroup>
+                <col style="width:16%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:28%;" />
+                <col style="width:28%;" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <td rowspan="2">Open Issue 총 건수</td>
+                    <td colspan="3">실적</td>
+                    <td rowspan="2">미완료 주요 Issue</td>
+                    <td rowspan="2">비고</td>
+                </tr>
+                <tr>
+                    <td>완료</td>
+                    <td>미완료</td>
+                    <td>완료율</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@ViewBag.TotIssueCnt 건</td>
+                    <td>@ViewBag.CompIssueCnt 건</td>
+                    <td>@ViewBag.NonCompIssueCnt 건</td>
+                    <td>@((ViewBag.TotIssueCnt>0)? (float)ViewBag.CompIssueCnt/ (float)ViewBag.TotIssueCnt*100:0)%</td>
+                    <td><input type="text" id="txtNonCompleteIssue_@ViewBag.InfoProc.OID" value="@ViewBag.signOff.NonCompleteIssue" /></td>
+                    <td><input type="text" id="txtSummaryEtc_@ViewBag.InfoProc.OID" value="@ViewBag.signOff.SummaryEtc" /></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>5. 단계별 Gate Open Issue Summary</h4>
+        <div id="issueSumGradeGrid"></div>
     </div>
 
-    <script type="text/javascript">
-        $(function () {
+    <div style="padding-top:10px;">
+        <div id="issueListGrid"></div>
+    </div>
+</div>
 
+<script type="text/javascript">
+        $(function () {
+            var InfoProj = @Html.Raw(Json.Encode(ViewBag.InfoProj));
+            var sHoliday = '@ViewBag.Holiday';
+            var IssueList = @Html.Raw(Json.Encode(ViewBag.InfoIssue));
+            var today = new Date();
+            var IssueListSource =
+            {
+                datatype: 'json',
+                datafields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'ProjectNm', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'Description', type: 'string' },
+                    { name: 'CreateUs', type: 'number' },
+                    { name: 'CreateUsNm', type: 'string' },
+                    { name: 'TaskNm', type: 'string' },
+                    { name: 'IssueType', type: 'string' },
+                    { name: 'IssueTypeNm', type: 'string' },
+                    { name: 'IssueTypeList', type: 'array' },
+                    { name: 'CreateDt', type: 'date' },
+                    { name: 'EstFinDt', type: 'date' },
+                    { name: 'FinDt', type: 'date' },
+                    { name: 'Importance', type: 'number' },
+                    { name: 'ImportanceNm', type: 'string' },
+                    { name: 'Contents', type: 'string' },
+                    { name: 'BPolicy', type: 'Array' },
+                ],
+            };
             $('#issueSumGradeGrid').jqxTreeGrid({
                 width: 1238,
                 height: 250,
-                columnsHeight:30,
+                columnsHeight: 30,
+                columnsResize: true,
                 columns: [
-                    {text:'Issue No', width:'5%', align:'center',},
-                    {text:'구분', width:'8%', align:'center',},
-                    {text:'Task', width:'20%', align:'center',},
-                    {text:'Open Issue', width:'20%', align:'center',},
-                    {text:'추진계획', width:'20%', align:'center',},
-                    {text:'계획', width:'9%', align:'center',columnGroup: 'status',},
-                    {text:'지연', width:'9%', align:'center',columnGroup: 'status',},
-                    {text:'완료', width:'9%', align:'center',columnGroup: 'status',},
+                    {
+                        text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '구분', datafield: "IssueTypeNm", width: '8%', align: 'center', },
+                    { text: 'Task', datafield: "TaskNm", width: '20%', align: 'center', },
+                    { text: 'Open Issue', datafield: "Name", width: '20%', align: 'center', },
+                    { text: '추진계획', datafield: "Description", width: '20%', align: 'center', },
+                    {
+                        text: '계획', width: '9%', align: 'center', columnGroup: 'status',
+                        cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            var data = rowData;
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                                var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
+                                if (today.getTime() <= data.EstFinDt.getTime()) {
+                                    if (dateGap < 7) {
+                                        return '<div style="width:100%;text-align: center;"></div>';
+                                    }
+                                } else {
+                                    if (dateGap > 7) {
+                                        return '<div style="width:100%;text-align: center;"></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>'; //흰색
+                                    }
+                                }
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                                return '<div style="width:100%;text-align: center;"></div>';
+                            }
+
+                        }
+                    },
+                    {
+                        text: '지연', width: '9%', align: 'center', columnGroup: 'status', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            var data = rowData;
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                                var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
+                                if (today.getTime() <= data.EstFinDt.getTime()) {
+                                    if (dateGap < 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    }
+                                } else {
+                                    if (dateGap > 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"></div>'; //흰색
+                                    }
+                                }
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                                return '<div style="width:100%;text-align: center;"></div>';
+                            }
+
+                        }
+                    },
+                    {   text: '완료', width: '9%', align: 'center', columnGroup: 'status',
+                    cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            var data = rowData;
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                                var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
+                                if (today.getTime() <= data.EstFinDt.getTime()) {
+                                    if (dateGap < 7) {
+                                        return '<div style="width:100%;text-align: center;"></div>';
+                                    }
+                                } else {
+                                    if (dateGap > 7) {
+                                        return '<div style="width:100%;text-align: center;"></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"></div>'; //흰색
+                                    }
+                                }
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                                return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>'; 녹색
+                            }
+
+                        }
+                    },
                 ],
-                columnGroups: [{ text: 'Status', name: 'status', align:'center' }],
+                columnGroups: [{ text: 'Status', name: 'status', align: 'center' }],
             });
+
+            PrintJqxTreeGrid(IssueListSource, $('#issueSumGradeGrid'), IssueList);
 
             $('#issueListGrid').jqxGrid({
                 width: 1238,
                 height: 750,
+                columnsresize: true,
                 columns: [
-                    {text:'Issue NO', width:'5%',align:'center',},
-                    {text:'사양', width:'8%',align:'center',},
-                    {text:'4M', width:'8%',align:'center',},
-                    {text:'품질', width:'8%',align:'center',},
-                    {text:'기타', width:'8%',align:'left',},
-                    {text:'Open Issue', width:'13%',align:'left',},
-                    {text:'추진계획', width:'14%',align:'left',},
-                    {text:'Start Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
-                    {text:'Due Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
-                    {text:'Close Date', width:'10%',align:'center', cellsFormat:'yyyy-MM-dd'},
-                    {text:'Status', width:'6%',align:'center',},
-                    {text:'비고', width:'10%',align:'left',},
+                    {
+                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    {
+                        text: '사양', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#issueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_SPEC') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    {
+                        text: '4M', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#issueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_4M') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+
+                    },
+                    {
+                        text: '품질', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#issueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_QUALITY') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    {
+                        text: '기타', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#issueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_ETC') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    { text: 'Open Issue', datafield: "Name", width: '14%', align: 'center', },
+                    { text: '추진계획', datafield: "Description", width: '15%', align: 'center', },
+                    { text: 'Start Date', datafield: "CreateDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    { text: 'Due Date', datafield: "EstFinDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    { text: 'Close Date', datafield: "FinDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    {
+                        text: 'Status', width: '6%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#issueListGrid').jqxGrid('getrowdata', row);
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                                var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
+                                if (today.getTime() <= data.EstFinDt.getTime()) {
+                                    if (dateGap < 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    }
+                                } else {
+                                    if (dateGap > 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>';
+                                    }
+                                }
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                                return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                            }
+                        }
+                    },
+                    { text: '비고', datafield: "Contents", width: '12%', align: 'center', },
                 ],
             });
-
+            PrintJqxGrid(IssueListSource, $('#issueListGrid'), IssueList);
             //Tab Hide&Show
             const gateReportContent$ = $(".dlgGateReportContent > div");
             gateReportContent$.last().hide();
@@ -202,5 +400,25 @@
                 gateReportContent$.eq($("input[name=gateReportRadio]").index(this)).show();
             });
 
+            $('#dlgGateSaveBtn_@ViewBag.InfoProc.OID').on('click', function () {
+                var param = {};
+                param.OID = '@ViewBag.InfoProc.OID';
+                param.Forecast = $('#txtForecast_@ViewBag.InfoProc.OID').val();
+                param.WrCreateStore = $('#txtWrCreateStore_@ViewBag.InfoProc.OID').val();
+                param.CalendarEtc = $('#txtCalendarEtc_@ViewBag.InfoProc.OID').val();
+                param.NonCompleteIssue = $('#txtNonCompleteIssue_@ViewBag.InfoProc.OID').val();
+                param.SummaryEtc = $('#txtSummaryEtc_@ViewBag.InfoProc.OID').val();
+
+                console.log(param);
+                if (confirm("저장하시겠습니까?")) {
+                    RequestData('/Pms/InsGateSignOff',param, function (response) {
+                        if (response.isError) {
+                            alert(response.resultMessage);
+                            return;
+                        }
+                        alert("저장되었습니다.");
+                    });
+                }
+            });
         });
-    </script>
+</script>

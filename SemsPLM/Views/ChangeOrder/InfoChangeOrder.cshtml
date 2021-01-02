@@ -6,12 +6,12 @@
     <div class="info_menubar" style="width:250px;">
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
-            <li class="tab" info="approvHistory"><i class="fas fa-stream"></i> 결재이력</li>
-            <li class="tab" info="downloadHistory"><i class="fas fa-stream"></i> 다운로드이력</li>
+
             <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
             <li class="tab" info="ECRRelation"><i class="fas fa-file"></i> 연관 변경요청</li>
             <li class="tab" info="ebomList"><i class="fas fa-list"></i> 설계변경리스트 <small>(EBOM)</small></li>
             <li class="tab" info="ebomStatement"><i class="fas fa-file"></i> 설계변경내역서 <small>(EBOM)</small></li>
+            <li class="tab" info="approvHistory"><i class="fas fa-stream"></i> 결재이력</li>
         </ul>
     </div>
 
@@ -43,22 +43,22 @@
                 <tbody>
                     <tr>
                         <td style="text-align: right;" id="InfoChangeOrder_defaultBtn_@ViewBag.ECODetail.OID">
-                            @if (ViewBag.ECODetail.BPolicyOID == 34 || ViewBag.ECODetail.BPolicyOID ==37)
+                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
                             {
-                            <button id="InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                            <button id="InfoChangeOrder_CancelBtn_@ViewBag.ECODetail.OID" class="custom-button"  hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
-                            <button id="InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID" class="custom-button"  hidden="hidden"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
                             }
-                            else
+                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
                             {
+                                <button id="InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            }
+                            <button id="InfoChangeOrder_CancelBtn_@ViewBag.ECODetail.OID" class="custom-button" hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
+                            <button id="InfoChangeOrder_SaveBtn_@ViewBag.ECODetail.OID" class="custom-button" hidden="hidden"><i class="fas fa-save"></i> 저장</button>
 
-                            }
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div style="overflow-y:scroll;height:625px;">
+            <div class="scrollY" style="height:625px;">
                 <table class="infoTable">
                     <colgroup>
                         <col width="10%" />
@@ -217,17 +217,20 @@
             </div>
         </div>
         <div id="ECOEffectAssess" class="basic_grid dective">
-            <div style="height:668px;overflow-x:hidden;overflow-y:scroll;padding-top:44px;box-sizing:border-box;">
-                <table class="tableTopButtonBox infoTopFix" style="left:270px;width:1623px;">
-                    <tr>
-                        <td>
+            <table class="tableTopButtonBox">
+                <tr>
+                    <td>
+                        @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+                        {
                             <button class="custom-button" id="InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID"><i class="fas fa-pen"></i> 수정</button>
-                            <button class="custom-button" id="InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
-                            <button class="custom-button" id="InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 저장</button>
-                            <button class="custom-button" id="InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 최신 평가표 불러오기</button>
-                        </td>
-                    </tr>
-                </table>
+                        }
+                        <button class="custom-button" id="InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
+                        <button class="custom-button" id="InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 저장</button>
+                        <button class="custom-button" id="InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 최신 평가표 불러오기</button>
+                    </td>
+                </tr>
+            </table>
+            <div style="width:100%;height:623px;" class="scrollY">
                 <table class="effectAssessList effectAssessList_@ViewBag.ECODetail.OID">
                 </table>
                 <table class="effectAssessList effectAssessListNew_@ViewBag.ECODetail.OID" hidden="hidden">
@@ -252,9 +255,11 @@
 
         </div>
         <div id="mbomStatement" class="basic_grid">
-
             <div id="InfoChangeOrder_mbomStatement_@ViewBag.ECODetail.OID"></div>
-
+        </div>
+        <div id="approvHistory" class="basic_grid dective">
+            <div id="InfoChangeOrder_ApphisInfo_@ViewBag.ECODetail.OID">
+            </div>
         </div>
     </div>
 </div>
@@ -279,6 +284,7 @@
     var ECOListData = [];
     var loadAssessData;
     var ECRRelationData = [];
+     var modifyAuth = @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1);
     var InFoFiles = $('#InfoChangeOrder_File_@ViewBag.ECODetail.OID').FileUpload({ OID : '@ViewBag.ECODetail.OID'});
     $(function () {
         InFoFiles.ReadOnlyMode();
@@ -410,20 +416,20 @@
                 nametag.innerHTML = InfoOriginList$[i].Name;
                 var div$ = document.createElement("div");
                 div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
-                td.append(nametag);
-                td.append(div$);
-                tr.append(td);
+                td.appendChild(nametag);
+                td.appendChild(div$);
+                tr.appendChild(td);
             } else {
                 var td = document.createElement("td");
                 var nametag = document.createElement("h4");
                 nametag.innerHTML = InfoOriginList$[i].Name;
                 var div$ = document.createElement("div");
                 div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
-                td.append(nametag);
-                td.append(div$);
-                tr.append(td);
+                td.appendChild(nametag);
+                td.appendChild(div$);
+                tr.appendChild(td);
             }
-            InfoAssess$.append(tr);
+            $(InfoAssess$).append(tr);
 
 
             var source = {
@@ -716,20 +722,20 @@
                                     nametag.innerHTML = response[i].Name;
                                     var div$ = document.createElement("div");
                                     div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
-                                    td.append(nametag);
-                                    td.append(div$);
-                                    tr.append(td);
+                                    td.appendChild(nametag);
+                                    td.appendChild(div$);
+                                    tr.appendChild(td);
                                 } else {
                                     var td = document.createElement("td");
                                     var nametag = document.createElement("h4");
                                     nametag.innerHTML = response[i].Name;
                                     var div$ = document.createElement("div");
                                     div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
-                                    td.append(nametag);
-                                    td.append(div$);
-                                    tr.append(td);
+                                    td.appendChild(nametag);
+                                    td.appendChild(div$);
+                                    tr.appendChild(td);
                                 }
-                                newList.append(tr);
+                                $(newList).append(tr);
 
 
                                 var source = {
@@ -742,7 +748,7 @@
                                     ],
                                 }
                                 var dataAdapter = new $.jqx.dataAdapter(source);
-                                $("#assessListNew_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 800, checkboxes: true });
+                                $("#assessListNew_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
                             }
                         });
                     }
@@ -760,7 +766,7 @@
                         { name: 'OID' },
                         { name: 'Name' },
                         { name: 'Title' },
-                        { name: 'DesignChangeDt',type:'date' },
+                        { name: 'DesignChangeDt', type: 'date' },
                         { name: 'CreateUs' },
                         { name: 'BPolicy' },
                         { name: 'BPolicyOID' },
@@ -784,11 +790,11 @@
                             }
                         },
                         { text: 'ECR_NO', datafield: 'Name', width: '30%', },
-                        { text: '제목', datafield: 'Title', width: '23%', },
-                        { text: 'ECR_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '변경요청일자', cellsFormat: 'yyyy-MM-dd' },
+                        { text: '제목', datafield: 'Title', width: '24.2%', },
+                        { text: '변경요청일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
                         { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
                         {
-                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            text: '상태', datafield: 'BPolicy', width: '14%', align: 'center', cellsalign: 'center', 
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                             },
@@ -801,9 +807,10 @@
                         var container$ = $('<div class="lGridComponent"></div>');
                         var ECRRelationAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
                         var ECRRelationdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-
-                        container$.append(ECRRelationAddBtn$);
-                        container$.append(ECRRelationdelBtn$);
+                        if (modifyAuth) {
+                            container$.append(ECRRelationAddBtn$);
+                            container$.append(ECRRelationdelBtn$);
+                        }
                         statusbar.append(container$);
                         //행 추가
                         ECRRelationAddBtn$.on('click', function (e) {
@@ -816,7 +823,7 @@
                         ECRRelationdelBtn$.on('click', function (e) {
                             var rowindex = ECRRelationGrid$.jqxGrid('selectedrowindexes');
                             var selectedRecords = new Array();
-                            if (rowindex == null || rowindex == undefined || rowindex.length <=0) {
+                            if (rowindex == null || rowindex == undefined || rowindex.length <= 0) {
                                 alert('삭제할 행을 선택하여 주세요');
                             } else {
                                 if (confirm('삭제하시겠습니까?')) {
@@ -901,7 +908,7 @@
                         { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
                         { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
                         {
-                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            text: '상태', datafield: 'BPolicy', width: '13.2%', align: 'center', cellsalign: 'center',
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                             },
@@ -919,19 +926,21 @@
                         var ebomListDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
                         var ebomOrdSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i> 순서 적용</button>').jqxButton();
 
-                        container$.append(ebomListAddBtn$);
-                        container$.append(ebomListAddChildBtn$);
-                        container$.append(ebomListdelBtn$);
-                        container$.append(ebomListUpBtn$);
-                        container$.append(ebomListDownBtn$);
-                        container$.append(ebomOrdSaveBtn$);
+                        if (modifyAuth) {
+                            container$.append(ebomListAddBtn$);
+                            container$.append(ebomListAddChildBtn$);
+                            container$.append(ebomListdelBtn$);
+                            container$.append(ebomListUpBtn$);
+                            container$.append(ebomListDownBtn$);
+                            container$.append(ebomOrdSaveBtn$);
+                        }
                         statusbar.append(container$);
                         //행 추가
                         ebomListAddBtn$.on('click', function (e) {
                             var datarow = {};
                             OpenSearchEPartDialog(function (res) {
                                 getBomList(ebomListSource, ebomListGrid$, param);
-                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart','Edit');
+                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Edit');
 
                         });
                         ebomListAddChildBtn$.on('click', function (e) {
@@ -939,7 +948,6 @@
                             var datarowIdx = ebomListGrid$.jqxGrid('getselectedrowindexes');
                             if (datarowIdx.length == 1) {
                                 var datarow = ebomListGrid$.jqxGrid('getrowdata', datarowIdx);
-                                console.log(datarow);
                                 param.FromOID = datarow.OID;
                                 OpenSearchEPartDialog(function (res) {
                                     getBomList(ebomListSource, ebomListGrid$, param);
@@ -1150,10 +1158,11 @@
                         var ebomStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
                         var ebomStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
                         var ebomStatementSaveBtn$ = $('<button class="custom-button"><i class="fas fa-save"></i> 저장</button>').jqxButton();
-
-                        container$.append(ebomStatementAddBtn$);
-                        container$.append(ebomStatementDelBtn$);
-                        container$.append(ebomStatementSaveBtn$);
+                        if (modifyAuth) {
+                            container$.append(ebomStatementAddBtn$);
+                            container$.append(ebomStatementDelBtn$);
+                            container$.append(ebomStatementSaveBtn$);
+                        }
                         statusbar.append(container$);
                         //행 추가
                         ebomStatementAddBtn$.on('click', function (e) {
@@ -1169,7 +1178,6 @@
                             var data = ebomStatementGrid$.jqxGrid('getrows');
                             for (var i = 0; i < data.length; i++) {
                                 var cellData = ebomStatementGrid$.jqxGrid('getcelltext', i, 'PNo');
-                                console.log(cellData);
                                 if (cellData == null || cellData == undefined || cellData == '') {
                                     alert('P/NO를 입력해주세요');
                                     return false;
@@ -1216,6 +1224,10 @@
                     }
                 });
                 getBomList(ebomStatementSource, ebomStatementGrid$, param);
+            } else if (infoValue == 'approvHistory') {
+                RequestHtml('/Common/ApprovalHistory', { OID: ECOOID }, function (res) {
+                    $('#InfoChangeOrder_ApphisInfo_' + ECOOID).html(res);
+                });
             }
         });
     });

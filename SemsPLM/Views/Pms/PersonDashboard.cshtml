@@ -36,8 +36,11 @@
     <div class="dashboardGraphs clearfix">
         <div class="piechart">
             <div class="graphH">
-                프로젝트별 진행상태
+                프로젝트별 작업진행 상태
                 <div class="dashboardSelBox"></div>
+            </div>
+            <div class="chartTotal">작업 총
+                <div id="totalTaskForChart"></div>
             </div>
             <div id="personalTaskRate"></div>
         </div>
@@ -45,6 +48,9 @@
             <div class="graphH">
                 이슈/DV현황/PV현황 작업 상태
                 <div class="dashboardSelBox"></div>
+            </div>
+            <div class="chartTotal">이슈 총
+                <div id="totalIssueForChart"></div>    
             </div>
             <div id="personalIssueRate"></div>
         </div>
@@ -180,6 +186,31 @@
             };
 
             $('#personalIssueRate').jqxChart(issuePersonDonutSetting);
+
+
+            function showTotalTaskAmount() {
+                const totalTaskBox$ = $('#totalTaskForChart');
+                const totalIssueForChart$ = $('#totalIssueForChart');
+                for (i = 0; i < taskRatePersonSample.length; i++) {
+                    var taskTotalSum = 0;
+                    taskRatePersonSample.forEach(function (e) {
+                        taskTotalSum += e.amount;
+                    });
+                };
+                totalTaskBox$.append(taskTotalSum);
+
+                for (i = 0; i < issuePersonSample.length; i++) {
+                    var issueTotalSum = 0;
+                    issuePersonSample.forEach(function (e) {
+                        issueTotalSum += e.amount;
+                    });
+                };
+                totalIssueForChart$.append(issueTotalSum);
+
+            };
+
+            showTotalTaskAmount();
+
 
             var dsbdPersonTaskChartSample = [
                 { data: 'task1', finish: 18, delay: 10, ready: 20, onprocess: 30 },

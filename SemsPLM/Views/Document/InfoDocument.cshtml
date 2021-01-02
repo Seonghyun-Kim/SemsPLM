@@ -7,7 +7,6 @@
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
             <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
-            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
         </ul>
     </div>
     <div class="doc_content">
@@ -68,7 +67,7 @@
                         <th class="reqVal">문서 구분</th>
                         <td colspan="5" style="position:relative;">
                             <input type="hidden" readonly="readonly" id="InfoDocument_DocTypeOID_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType" />
-                            <input type="text" readonly="readonly" id="InfoDocument_DocTypeName_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType_KorNm" />
+                            <input type="text" readonly="readonly" id="InfoDocument_DocTypeName_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType_KorNm" style="width:300px;"/>
                             <div class="ModifiableEditCustomBox_@ViewBag.docDetail.OID" style="position:absolute;left:325px;top:3px;">
                                 <button id="InfoDocument_selDocClass_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-plus-square"></i> 문서분류체계 선택</button>
                             </div>
@@ -113,10 +112,6 @@
         <div id="Apphis" class="basic_grid dective">
             <div id="ApphisInfo_@ViewBag.docDetail.OID">
             </div>
-        </div>
-
-        <div id="Downhis" class="basic_grid dective">
-            <div id="DownhisInfo_@ViewBag.docDetail.OID"></div>
         </div>
 
     </div>
@@ -216,9 +211,7 @@
                 RequestHtml('/Common/ApprovalHistory', { OID: DocOID }, function (res) {
                     $('#ApphisInfo_' + DocOID).html(res);
                 });
-            } else if (infoValue == 'Downhis') {
-
-            }
+            } 
         });
 
 

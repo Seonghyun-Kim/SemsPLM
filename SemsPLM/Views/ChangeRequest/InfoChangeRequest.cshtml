@@ -55,7 +55,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div style="overflow-y:scroll;height:625px;">
+            <div class="scrollY" style="height:625px;">
                 <table class="infoTable">
                     <colgroup>
                         <col width="10%" />
@@ -195,7 +195,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+                            <th style="vertical-align:text-top;line-height:32px;">첨부파일</th>
                             <td colspan="3">
                                 <div id="InfoEcrFile_@ViewBag.ECRDetail.OID" style="width:100%">
                                 </div>
@@ -605,8 +605,8 @@
 
                             }
                         },
-                        { text: '변경 내역', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
-                        { text: '비고', datafield: 'Description', width: "20%", align: 'center', cellsalign: 'center', },
+                        { text: '변경 내역', datafield: 'Statement', width: "18.2%", align: 'center', cellsalign: 'center', },
+                        { text: '비고', datafield: 'Description', width: "22%", align: 'center', },
 
                         { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center', hidden: true },
                         { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', hidden: true },
@@ -715,7 +715,7 @@
                     pageable: false,
                     columns: [
                         { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
-                        { text: 'ECO_NO', datafield: 'Name', width: '30%', },
+                        { text: 'ECO_NO', datafield: 'Name', width: '28.2%', },
                         { text: 'ECO_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd' },
                         { text: '작성자', datafield: 'CreateUs', width: '10%', },
                         { text: '상태', datafield: 'BPolicyOID', width: '40%', },

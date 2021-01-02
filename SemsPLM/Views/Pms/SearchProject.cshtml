@@ -33,31 +33,7 @@
                     <div>
                         <input type="text" class="txtBox" id="txtContent" />
                     </div>
-                </div>
-                <div class="searchData">
-                    <div>고객사</div>
-                    <div>
-                        <input type="text" class="txtBox" id="txtCustomer" />
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>제품(검색)</div>
-                    <input type="text" class="txtBox" id="txtProduct" />
-                    &nbsp;<button id="schProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
-                </div>
-                <div class="searchData predecessorData" style="display:none;">
-                    <div>선행 프로젝트</div>
-                    <div>
-                        <input type="text" class="txtBox" id="txtProdecessorProject" />
-                        &nbsp;<button id="schProdecessorProject"><i class='fas fa-search-plus'></i></button>
-                    </div>
-                </div>
-                <div class="searchData">
-                    <div>작성자</div>
-                    <div>
-                        <input type="text" class="txtBox" id="txtCuser" />
-                    </div>
-                </div>
+                </div>             
                 <div class="searchButton">
                     <button id="btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
                 </div>
@@ -73,6 +49,7 @@
     var selOemOID = null;
     var selOemText = "";
     var selProjOID = null;
+    var param = {};
     $(function () {
 
         var ProjectSource = {
@@ -100,7 +77,7 @@
         //var ProjOemCarSource = @Html.Raw(Json.Encode(ViewBag.ProjOemCarSource));
         ProjOemCarTree$.jqxTree({
             width: '100%',
-            height: 740,
+            height: 757,
             //source: ProjOemCarSource,
         });
 
@@ -111,9 +88,12 @@
         ProjOemCarTree$.on('select', function (event) {
             var args = event.args;
             var item = ProjOemCarTree$.jqxTree('getItem', args.element);
-            var param = {};
+          
             if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_OEM") {
                 param.Oem_Lib_OID = item.id;
+                param.Car_Lib_OID = null;
+                selOemOID = item.id;
+                selCarOID = null;
                 getPmsProjectList(ProjectSource, Grd$, param);
                 Grd$.jqxGrid('clearselection');
                 selProjOID = null;
@@ -137,11 +117,11 @@
         Grd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 610,
+            height: 675,
             rowsheight: 28,
             columnsheight: 30,
             sortable: false,
-            pageable: false,
+            pageable: true,
             selectionmode: 'singlerow',
             columnsresize: true,
             columns: [
@@ -189,7 +169,7 @@
                         return;
                     }
                     OpenPmsCreateDialog(function () {
-                        getPmsProjectList(ProjectSource, Grd$);
+                        getPmsProjectList(ProjectSource, Grd$, param);
                     }, null, null, '/Pms/CreateProject', '프로젝트 등록');
                 });
 
@@ -199,7 +179,7 @@
                         return;
                     }
                     OpenPmsCreateDialog(function () {
-                        getPmsProjectList(ProjectSource, Grd$);
+                        getPmsProjectList(ProjectSource, Grd$, param);
                     }, null, { ProjectOID: selProjOID }, '/Pms/ModifyProject?OID=' + selProjOID, '프로젝트 수정');
                 });
             },
@@ -247,7 +227,17 @@
         });
 
         $('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 32, });
-        getPmsProjectList(ProjectSource, Grd$,null);
+        getPmsProjectList(ProjectSource, Grd$, null);
+
+        $('#btnSearch').on('click', function () {
+            var searchParam = {};
+            searchParam.ProjectType = $('#projType').val();
+            searchParam.Name = $('#txtProjName').val();
+            searchParam.Description = $('#txtContent').val();
+            searchParam.Car_Lib_OID = selCarOID;
+            searchParam.Oem_Lib_OID = selOemOID;
+            getPmsProjectList(ProjectSource, Grd$, searchParam);
+        });
     });
 
     function getPmsProjectList(_Source, _Grid$,_Param) {
