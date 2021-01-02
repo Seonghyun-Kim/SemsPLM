@@ -455,11 +455,11 @@ namespace SemsPLM.Controllers
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
 
 
-                int SetQuickModule(string Type)
+                int SetQuickModule(string Type, string Name)
                 {
                     DObject dobjModule = new DObject();
                     dobjModule.Type = Type;
-                    dobjModule.Name = Type;
+                    dobjModule.Name = Name;
                     int ModuleOID = DObjectRepository.InsDObject(Session, dobjModule);
                     QuickResponseModuleRepository.InsQuickResponseModule(new QuickResponseModule() { QuickOID = result, OID = ModuleOID });
 
@@ -489,7 +489,7 @@ namespace SemsPLM.Controllers
                 }
 
                 // 봉쇄조치
-                int blockadeOID = SetQuickModule(QmsConstant.TYPE_BLOCKADE);
+                int blockadeOID = SetQuickModule(QmsConstant.TYPE_BLOCKADE, QmsConstant.TYPE_BLOCKADE_NAME);
 
                 if (_param.BlockadeMaterialFl == true)
                 {
@@ -522,22 +522,22 @@ namespace SemsPLM.Controllers
                 }
 
                 // 원인분석
-                SetQuickModule(QmsConstant.TYPE_OCCURRENCE_CAUSE);
+                SetQuickModule(QmsConstant.TYPE_OCCURRENCE_CAUSE, QmsConstant.TYPE_OCCURRENCE_CAUSE_NAME);
 
                 // 개선대책등록
-                SetQuickModule(QmsConstant.TYPE_IMPROVE_COUNTERMEASURE);
+                SetQuickModule(QmsConstant.TYPE_IMPROVE_COUNTERMEASURE, QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_NAME);
 
                 // ERROR PROOF
-                int ErrorProofOID = SetQuickModule(QmsConstant.TYPE_ERROR_PRROF);
+                int ErrorProofOID = SetQuickModule(QmsConstant.TYPE_ERROR_PRROF, QmsConstant.TYPE_ERROR_PRROF_NAME);
 
                 ErrorProofRepository.InsErrorProof(new ErrorProof() { ModuleOID = ErrorProofOID });
 
                 // LPA 부적합 등록
-                int LpaUnfitOID = SetQuickModule(QmsConstant.TYPE_LPA_UNFIT);
+                int LpaUnfitOID = SetQuickModule(QmsConstant.TYPE_LPA_UNFIT, QmsConstant.TYPE_LPA_UNFIT_NAME);
                 LpaUnfitRepository.InsLpaUnfit(new LpaUnfit() { ModuleOID = LpaUnfitOID });
 
                 // LPA 부적합 대책서 
-                int LpaUnMeasureOID = SetQuickModule(QmsConstant.TYPE_LPA_MEASURE);
+                int LpaUnMeasureOID = SetQuickModule(QmsConstant.TYPE_LPA_MEASURE, QmsConstant.TYPE_LPA_MEASURE_NAME);
                 LpaMeasureRepository.InsLpaMeasure(new LpaMeasure() { ModuleOID = LpaUnMeasureOID });
 
                 DRelationship dRelLpa = new DRelationship();
@@ -547,13 +547,13 @@ namespace SemsPLM.Controllers
                 DRelationshipRepository.InsDRelationshipNotOrd(Session, dRelLpa);
 
                 // 유효성 체크
-                SetQuickModule(QmsConstant.TYPE_QUICK_RESPONSE_CHECK);
+                SetQuickModule(QmsConstant.TYPE_QUICK_RESPONSE_CHECK, QmsConstant.TYPE_QUICK_RESPONSE_CHECK_NAME);
 
                 // 표준화&Follow-Up 조치 등록
-                SetQuickModule(QmsConstant.TYPE_STANDARD);
+                SetQuickModule(QmsConstant.TYPE_STANDARD, QmsConstant.TYPE_STANDARD_NAME);
 
                 // 사용자 교육
-                int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU);
+                int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU, QmsConstant.TYPE_WORKER_EDU_NAME);
                 WorkerEduRepository.InsWorkerEdu(new WorkerEdu() { ModuleOID = WorkerEduOID });
                 DaoFactory.Commit();
             }
@@ -770,6 +770,16 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoMiniBlockade(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.Blockade = Module;
+            ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
+            return PartialView("InfoBlockade");
+        }
+
         public ActionResult EditQuickBlockade(QuickResponseModule _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
@@ -840,6 +850,30 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoMiniOccurrenceCause(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.OccurrenceCause = Module;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+
+            Library occurrenceCauseKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_CAUSE" });
+            List<Library> occurrenceCauseList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceCauseKey.OID });  // 검사유형
+            ViewBag.OccurrenceCauseLibList = occurrenceCauseList;
+
+            List<OccurrenceCauseItem> OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = OID });
+            OccurrenceCauseItems.ForEach(v =>
+            {
+                v.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = v.OID });
+            });
+            ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
+
+            DetectCounterMeasure detectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = OID });
+            ViewBag.DetectCounterMeasure = detectCounterMeasure == null ? new DetectCounterMeasure() { ModuleOID = OID } : detectCounterMeasure;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OCCURRENCE_CAUSE });
+
+            return PartialView("InfoOccurrenceCause");
+        }
+
         public ActionResult EditQuickOccurrenceCause(QuickResponseModule _param)
         {
             ViewBag.QuickOID = _param.QuickOID;
@@ -885,34 +919,38 @@ namespace SemsPLM.Controllers
                         OccurrenceCauseItemRepository.UdtOccurrenceCauseItem(v);
                     }
 
-                    //int WhyCnt = 1;
-                    v.OccurrenceWhys.ForEach(w =>
-                    {
-                        if (w.OID == null)
+                    if(v.OccurrenceWhys != null) { 
+                        v.OccurrenceWhys.ForEach(w =>
                         {
-                            DObject dobj = new DObject();
-                            dobj.Type = QmsConstant.TYPE_WHY;
-                            dobj.Name = "WHY";
-                            w.OID = DObjectRepository.InsDObject(Session, dobj);
-                            w.CauseOID = v.OID;
-
-                            OccurrenceWhyRepository.InsOccurrenceWhy(w);
-                        }
-                        else
-                        {
-                            if (w.IsRemove == "Y")
+                            if (w.OID == null)
                             {
-                                w.DeleteUs = 73;
-                                DObjectRepository.DelDObject(Session, w);
+                                if (w.IsRemove == "Y")
+                                {
+                                    return;
+                                }
+
+                                DObject dobj = new DObject();
+                                dobj.Type = QmsConstant.TYPE_WHY;
+                                dobj.Name = "WHY";
+                                w.OID = DObjectRepository.InsDObject(Session, dobj);
+                                w.CauseOID = v.OID;
+
+                                OccurrenceWhyRepository.InsOccurrenceWhy(w);
                             }
                             else
                             {
-                                w.ModifyUs = 73;
-                                OccurrenceWhyRepository.UdtOccurrenceWhy(w);
-                                DObjectRepository.UdtDObject(Session, w);
+                                if (w.IsRemove == "Y")
+                                {
+                                    DObjectRepository.DelDObject(Session, w);
+                                }
+                                else
+                                {
+                                    OccurrenceWhyRepository.UdtOccurrenceWhy(w);
+                                    DObjectRepository.UdtDObject(Session, w);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 });
 
                 DetectCounterMeasureRepository.UdtDetectCounterMeasure(param.DetectCounterMeasure);
@@ -950,6 +988,16 @@ namespace SemsPLM.Controllers
             ViewBag.ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE });
             return View();
+        }
+
+        public ActionResult InfoMiniImproveCounterMeasure(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.ImproveCounterMeasure = Module;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = OID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE });
+            return PartialView("InfoImproveCounterMeasure");
         }
 
         public ActionResult EditQuickImproveCounterMeasure(QuickResponseModule _param)
@@ -1037,6 +1085,23 @@ namespace SemsPLM.Controllers
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_ERROR_PRROF });
             return View();
         }
+
+        public ActionResult InfoMiniErrorProof(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
+            if (errorproof == null)
+            {
+                errorproof = new ErrorProof();
+                errorproof.OID = OID;
+                errorproof.ModuleOID = OID;
+            }
+            ViewBag.ErrorProof = errorproof;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_ERROR_PRROF });
+            return PartialView("InfoErrorProof");
+        }
+
         /// <summary>
         /// 2020.11.15
         /// 작업자 교육 등록
@@ -1384,6 +1449,35 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoMiniLpaMeasure(int OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            LpaMeasure lpaMeasure = LpaMeasureRepository.SelLpaMeasure(new LpaMeasure() { ModuleOID = OID });
+            if (lpaMeasure == null)
+            {
+                lpaMeasure = new LpaMeasure();
+                lpaMeasure.OID = OID;
+                lpaMeasure.ModuleOID = OID;
+            }
+
+            List<DRelationship> relLpa = DRelationshipRepository.SelRelationship(Session, new DRelationship() { Type = QmsConstant.RELATIONSHIP_LPA, ToOID = OID });
+
+            int? LpaUnfitOID = null;
+            relLpa.ForEach(v => { LpaUnfitOID = v.FromOID; });
+            LpaUnfit lpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = LpaUnfitOID });
+            List<LpaUnfitCheck> lpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = LpaUnfitOID });
+
+            ViewBag.lpaMeasure = lpaMeasure;
+            ViewBag.LpaUnfitCheck = lpaUnfitCheck;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_MEASURE });
+            ViewBag.CurrentSt = Module.BPolicyNm;
+            ViewBag.LpaUnfitOID = LpaUnfitOID;
+            ViewBag.MeasureUserOID = lpaUnfit.MeasureUserOID;
+
+            return PartialView("InfoLpaMeasure");
+        }
+
         public JsonResult SaveQuickLpaMeasure(LpaMeasure param)
         {
             try
@@ -1506,6 +1600,23 @@ namespace SemsPLM.Controllers
             
             return View();
         }
+
+        public ActionResult InfoMiniQuickValidation(int? OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            ViewBag.QmsCheck = Module;
+
+            ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK });
+            List<Approval> approvals = ApprovalRepository.SelApprovals(Session, new Approval() { TargetOID = Module.OID });
+            if (approvals != null && approvals.Count > 0)
+            {
+                ViewBag.ApprovalCnt = approvals.Count();
+            }
+
+            return PartialView("InfoQuickValidation");
+        }
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
@@ -1606,6 +1717,29 @@ namespace SemsPLM.Controllers
 
             return View();
         }
+        public ActionResult InfoMiniStandardFollowUp(int? OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            StandardDoc standardDoc = StandardDocRepository.SelStandardDoc(new StandardDoc() { ModuleOID = OID });
+            if (standardDoc == null)
+            {
+                standardDoc = new StandardDoc();
+                standardDoc.OID = OID;
+                standardDoc.ModuleOID = OID;
+            }
+
+            /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
+            // TEST
+            // Module은 모듈로 
+            // ITEM 은 따로 뺴야함
+            // 김성현.
+            ViewBag.StandardDoc = Module;
+            ViewBag.StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });
+
+            return PartialView("InfoMiniStandardFollowUp");
+        }
         #endregion
 
         #region -- 등록, 수정, 삭제, 조회
@@ -1700,6 +1834,24 @@ namespace SemsPLM.Controllers
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
             ViewBag.CurrentSt = Module.BPolicyNm;
             return View();
+        }
+
+        public ActionResult InfoMiniWorkerEducation(int? OID)
+        {
+            QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            WorkerEdu workerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = OID });
+            if (workerEdu == null)
+            {
+                workerEdu = new WorkerEdu();
+                workerEdu.OID = Module.OID;
+                workerEdu.ModuleOID = Module.OID;
+            }
+
+            ViewBag.WorkerEdu = workerEdu;
+            ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
+            ViewBag.CurrentSt = Module.BPolicyNm;
+            return PartialView("InfoWorkerEducation");
         }
         #endregion
 

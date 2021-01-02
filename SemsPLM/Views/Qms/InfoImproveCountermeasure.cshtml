@@ -133,6 +133,8 @@
             var trImproveCounterMeasure$ = $("#tbImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID tr[Data='Y']");
             var errMsg = "";
 
+            var SaveCnt = 0;
+
             trImproveCounterMeasure$.each(function (i, v) {
                 var data = {};
                 data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
@@ -144,17 +146,20 @@
                 if ($(v).attr("Remove") === "Y") {
                     data.IsRemove = "Y";
                 }
+                else {
+                    SaveCnt++;
 
-                if (WebUtils.isBlank(data.RootCause)) {
-                    errMsg += "[" + (i + 1).toString() + "] 행의 근본원인이 입력되지 않았습니다.\n";
-                }
+                    if (WebUtils.isBlank(data.RootCause)) {
+                        errMsg += "[" + (i + 1).toString() + "] 행의 근본원인이 입력되지 않았습니다.\n";
+                    }
 
-                if (WebUtils.isBlank(data.ImproveCountermeasure)) {
-                    errMsg += "[" + (i + 1).toString() + "] 행의 개선대책이 입력되지 않았습니다.\n";
-                }
+                    if (WebUtils.isBlank(data.ImproveCountermeasure)) {
+                        errMsg += "[" + (i + 1).toString() + "] 행의 개선대책이 입력되지 않았습니다.\n";
+                    }
 
-                if (WebUtils.isBlank(data.ProcessDt)) {
-                    errMsg += "[" + (i + 1).toString() + "] 행의 처리일자가 입력되지 않았습니다.\n";
+                    if (WebUtils.isBlank(data.ProcessDt)) {
+                        errMsg += "[" + (i + 1).toString() + "] 행의 처리일자가 입력되지 않았습니다.\n";
+                    }
                 }
 
                 param.ImproveCounterMeasureItems.push(data);
@@ -162,6 +167,10 @@
 
             if (errMsg.length != 0) {
                 alert(errMsg); return;
+            }
+
+            if (SaveCnt <= 0) {
+                alert("원인이 최소한 한 건은 입력되어야합니다."); return;
             }
 
             var Files = fileUpload.Files();
