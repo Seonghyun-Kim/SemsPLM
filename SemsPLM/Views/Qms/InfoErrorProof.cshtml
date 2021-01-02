@@ -150,6 +150,30 @@
             var param = {};
             param.OID = ErrorProofOID;
             param.ModuleOID = ErrorProofOID;
+            param.EstDt = $("#dtDlgEditErrorProofEstDt_" + ErrorProofOID).val();
+            param.ActDt = $("#dtDlgEditErrorProofActDt_" + ErrorProofOID).val();
+            param.CheckDetail = $("#txtDlgEditErrorProofCheck_" + ErrorProofOID).val();
+            param.CheckUserOID = $("#txtDlgEditErrorProofCheckUser_" + ErrorProofOID).attr("CheckUserOID");
+
+            if (WebUtils.isEmpty(param.EstDt)) {
+                alert("예정일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.ActDt)) {
+                alert("처리일자가 입력되지 않았습니다.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.CheckDetail)) {
+                alert("처리내용을 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.CheckUserOID)) {
+                alert("점검담당자를 선택 해주세요.");
+                return;
+            }
 
             var Files = fileUpload.Files();
 
@@ -188,12 +212,12 @@
             }
 
             if (WebUtils.isEmpty(CheckDetail)) {
-                alert("예정일자가 입력되지 않았습니다.");
+                alert("처리내용을 입력 해주세요.");
                 return;
             }
             
             if (WebUtils.isEmpty(CheckUserOID)) {
-                alert("예정일자가 입력되지 않았습니다.");
+                alert("점검담당자를 선택 해주세요.");
                 return;
             }
 

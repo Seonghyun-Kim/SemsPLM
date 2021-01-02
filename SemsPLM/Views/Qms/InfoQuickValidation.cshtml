@@ -102,10 +102,33 @@
 </div>
 <script type="text/javascript">
     var QmsCheckList = @Html.Raw(Json.Encode(ViewBag.QmsCheckItems));
+
+    @if (ViewBag.ApprovalCnt == null)
+    {
+        <text>
+        // 결재 진행 한적이 없으면 1차 유효성 검증만 활성화
+        var CheckCnt = 1;
+        </text>
+    }
+    else if(ViewBag.QmsCheck.BPolicyOID == 90)
+    {
+        <text>
+        // 2차, 3차 유효성 검증 차례대로 활성화 
+        var CheckCnt = @(ViewBag.ApprovalCnt + 1);
+        </text>
+    }
+    else
+    {
+        <text>
+        // 완료 되면 활성화 된 유효성 숫자 만큼 활성화
+        var CheckCnt = QmsCheckList.length;
+        </text>
+    }
+
     $(document).ready(function () {
         const QmsCheckOID = '@ViewBag.QmsCheck.OID';
-        PrintQmsCheck();
-   
+        PrintQmsCheck(CheckCnt);
+
         // 수정
         $('#InfoQuickValidation_EditBtn_' + QmsCheckOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + QmsCheckOID);
@@ -147,7 +170,7 @@
             var param = {};
             param.QmsCheckList = [];
 
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < CheckCnt; i++) {
                 var item = $("[Data-Cnt=" + @ViewBag.QmsCheck.OID + "_" + i + "]");
                 var data = {};
 
@@ -192,16 +215,22 @@
         });
     });
 
-    function PrintQmsCheck() {
-        var CheckCnt = 3;
-        if (!WebUtils.isEmpty(QmsCheckList)) {
-            CheckCnt = QmsCheckList.length;
+    function PrintQmsCheck(CheckCnt) {
+        if (CheckCnt > 3) {
+            CheckCnt = 3;
         }
 
         for (var i = 0; i < CheckCnt; i++) {
             var item = QmsCheckList[i];
             var OID = WebUtils.isEmpty(item) === true ? "" : item.OID;
-            var Cnt = WebUtils.isEmpty(item) === true ? (i+1) : item.Cnt;
+            var Cnt = WebUtils.isEmpty(item) === true ? (i + 1) : item.Cnt;
+
+            var ModifyClassName = "";
+
+            if (i === (CheckCnt - 1)) {
+                ModifyClassName = "Modifiable_@ViewBag.QmsCheck.OID";
+            }
+
             @*// 검증시작일
             var tdConfirmSt$ = document.createElement("td");
 
@@ -239,7 +268,7 @@
             dtConfirmEt$.setAttribute("Cnt", Cnt);
             dtConfirmEt$.setAttribute("AttrType", "DATE");
             dtConfirmEt$.setAttribute("name", "ConfirmSt");
-            dtConfirmEt$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            dtConfirmEt$.className = ModifyClassName;
 
             $(dtConfirmEt$).jqxDateTimeInput(DateFormat);
             $(dtConfirmEt$).jqxDateTimeInput({
@@ -280,7 +309,7 @@
 
             var btnSearchUser$ = document.createElement("button");
             btnSearchUser$.setAttribute("AttrType", "BUTTON");
-            btnSearchUser$.className = "Modifiable_@ViewBag.QmsCheck.OID custom-button";
+            btnSearchUser$.className = ModifyClassName+" custom-button";
             $(btnSearchUser$).css("display", "none");
             btnSearchUser$.setAttribute("onclick", "InfoQmsCheckSelectUser(" + i +")");
 
@@ -302,7 +331,7 @@
             dtConfirmBaseDt$.setAttribute("Cnt", Cnt);
             dtConfirmBaseDt$.setAttribute("AttrType", "DATE");
             dtConfirmBaseDt$.setAttribute("name", "ConfirmSt");
-            dtConfirmBaseDt$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            dtConfirmBaseDt$.className = ModifyClassName;
 
             $(dtConfirmBaseDt$).jqxDateTimeInput(DateFormat);
             $(dtConfirmBaseDt$).jqxDateTimeInput({
@@ -330,7 +359,7 @@
             btnJudgment$.setAttribute("OID", OID);
             btnJudgment$.setAttribute("Cnt", Cnt);
             btnJudgment$.setAttribute("AttrType", "SWITCH");
-            btnJudgment$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            btnJudgment$.className = ModifyClassName;
             $(btnJudgment$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
             if (!WebUtils.isEmpty(item)) {
                 $(btnJudgment$).jqxSwitchButton({ checked: (item.CheckFl === 1 ? true : false) });
@@ -349,7 +378,7 @@
             txtConfirmDesc$.setAttribute("AttrType", "TEXT");
             txtConfirmDesc$.setAttribute("readonly", "readonly");
             txtConfirmDesc$.style.width = "100%";
-            txtConfirmDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            txtConfirmDesc$.className = ModifyClassName;
 
             if (!WebUtils.isEmpty(item)) {
                 txtConfirmDesc$.value = WebUtils.isEmpty(item.CheckDetail) === true ? "" : item.CheckDetail;
@@ -365,7 +394,7 @@
             btnContFl$.setAttribute("OID", OID);
             btnContFl$.setAttribute("Cnt", Cnt);
             btnContFl$.setAttribute("AttrType", "SWITCH");
-            btnContFl$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            btnContFl$.className = ModifyClassName;
             $(btnContFl$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
             if (!WebUtils.isEmpty(item)) {
                 $(btnContFl$).jqxSwitchButton({ checked: (item.FinishFl === 1 ? true : false) });
@@ -384,7 +413,7 @@
             txtEndDesc$.setAttribute("AttrType", "TEXT");
             txtEndDesc$.setAttribute("readonly", "readonly");
             txtEndDesc$.style.width = "100%";
-            txtEndDesc$.className = "Modifiable_@ViewBag.QmsCheck.OID";
+            txtEndDesc$.className = ModifyClassName;
 
             if (!WebUtils.isEmpty(item)) {
                 txtEndDesc$.value = WebUtils.isEmpty(item.FinishDetail) === true ? "" : item.FinishDetail;
