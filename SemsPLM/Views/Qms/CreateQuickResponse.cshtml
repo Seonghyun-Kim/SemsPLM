@@ -1,186 +1,201 @@
-﻿@{
+﻿@using Common.Constant;
+@{
     Layout = null;
+    string StoragePath = System.Configuration.ConfigurationManager.AppSettings["FileStorage"];
+    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+    string FullImgPath = StoragePath + "/" + imgTempPath + "/" + TempPath;
 }
-    <div style="padding:5px;">
-        <table width="100%">
-            <tbody>
-                <tr>
-                    <td>
-                        <h2><i class="fas fa-edit"></i> 신속대응 등록</h2>
-                    </td>
-                    <td style="text-align: right;">
-                        <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
-                        <button id="btnDlgCancle" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="qmsDlgTable">
-        <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th><label class="lbText">공장 구분</label></th>
-                    <td><div id="cbDlgPlant"></div></td>
-                    <th><label class="lbText">검사유형</label></th>
-                    <td><div id="cbDlgOccurrence"></div></td>
-                    <th><label class="lbText">고객사</label></th>
-                    <td><div id="cbDlgOem"></div></td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">품번</label></th>
-                    <td><input type="text" id="txtDlgPartNo" value="" /></td>
-                    <th><label class="lbText">LOT번호</label></th>
-                    <td><input type="text" id="txtDlgLotNo" value="" /></td>
-                    <th><label class="lbText">품질담당자</label></th>
-                    <td>
-                        <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" />
-                        <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">작성일시</label></th>
-                    <td><input type="text" id="txtDlgWriteDt" value="" /></td>
-                    <th><label class="lbText">불량수량</label></th>
-                    <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
-                    <td colspan="2"></td>
-                </tr>
-            </tbody>
+<input type="hidden" id="hidImgFileNameDlgPoorPicture" value="" />
 
-        </table>
+<div style="padding:5px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h2><i class="fas fa-edit"></i> 신속대응 등록</h2>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnDlgCancle" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="qmsDlgTable">
+    <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">공장 구분</label></th>
+                <td><div id="cbDlgPlant"></div></td>
+                <th><label class="lbText">검사유형</label></th>
+                <td><div id="cbDlgOccurrence"></div></td>
+                <th><label class="lbText">고객사</label></th>
+                <td><div id="cbDlgOem"></div></td>
+            </tr>
+            <tr>
+                <th><label class="lbText">품번</label></th>
+                <td><input type="text" id="txtDlgPartNo" value="" /></td>
+                <th><label class="lbText">LOT번호</label></th>
+                <td><input type="text" id="txtDlgLotNo" value="" /></td>
+                <th><label class="lbText">품질담당자</label></th>
+                <td>
+                    <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" />
+                    <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </td>
+            </tr>
+            <tr>
+                <th><label class="lbText">작성일시</label></th>
+                <td><input type="text" id="txtDlgWriteDt" value="" /></td>
+                <th><label class="lbText">불량수량</label></th>
+                <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
 
-        <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th><label class="lbText">제목</label></th>
-                    <td colspan="5">
-                        <input type="text" id="txtDlgTitle" style="width:98%;" />
-                    </td>
-                <tr>
-                    <th><label class="lbText">발생처</label></th>
-                    <td><div id="cbDlgOccurrenceArea"></div></td>
-                    <th><label class="lbText">유발공정</label></th>
-                    <td><div id="cbDlgInduce"></div></td>
-                    <th><label class="lbText">귀책구분</label></th>
-                    <td>
-                        <div style="display:flex;flex-direction:row;">
-                            <div id="cbDlgImpute"></div>
-                            <div id="cbDlgImputeDepartment" style="display:none;"></div>
-                            <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;width:140px;height:30px;" readonly="readonly" />
-                            <button id="btnImputeSaerchSupplier" class="custom-button" style="display:none;height:30px;" ><i class="fas fa-search"></i> 검색</button>
-                        </div>                      
-                    </td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">발생장소</label></th>
-                    <td><input type="text" id="txtDlgOccurrencePlace" value="" /></td>
-                    <th><label class="lbText">발생일자</label></th>
-                    <td><input type="text" id="txtDlgOccurrenceDt" value="" /></td>
-                    <th><label class="lbText">결함정도</label></th>
-                    <td><div id="cbDlgDefectDegree"></div></td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">재발여부 </label></th>
-                    <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
-                    <th><label class="lbText">시정판정</label></th>
-                    <td><div id="cbDlgCorrectDecision"></div></td>
-                    <th><label class="lbText">대책서회신요구일자</label></th>
-                    <td><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">불량내용상세</label></th>
-                    <td colspan="5">
-                        <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">QA</label></th>
-                    <td colspan="5">
-                        <textarea id="txtDlgQa" style="width:98%;"></textarea>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    </table>
 
-        <label><i class="fas fa-caret-square-down"></i> 고품사진</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th><label class="lbText">고품사진</label></th>
-                    <td colspan="5">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">제목</label></th>
+                <td colspan="5">
+                    <input type="text" id="txtDlgTitle" style="width:98%;" />
+                </td>
+            <tr>
+                <th><label class="lbText">발생처</label></th>
+                <td><div id="cbDlgOccurrenceArea"></div></td>
+                <th><label class="lbText">유발공정</label></th>
+                <td><div id="cbDlgInduce"></div></td>
+                <th><label class="lbText">귀책구분</label></th>
+                <td>
+                    <div style="display:flex;flex-direction:row;">
+                        <div id="cbDlgImpute"></div>
+                        <div id="cbDlgImputeDepartment" style="display:none;"></div>
+                        <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;width:140px;height:30px;" readonly="readonly" />
+                        <button id="btnImputeSaerchSupplier" class="custom-button" style="display:none;height:30px;"><i class="fas fa-search"></i> 검색</button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><label class="lbText">발생장소</label></th>
+                <td><input type="text" id="txtDlgOccurrencePlace" value="" /></td>
+                <th><label class="lbText">발생일자</label></th>
+                <td><input type="text" id="txtDlgOccurrenceDt" value="" /></td>
+                <th><label class="lbText">결함정도</label></th>
+                <td><div id="cbDlgDefectDegree"></div></td>
+            </tr>
+            <tr>
+                <th><label class="lbText">재발여부 </label></th>
+                <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
+                <th><label class="lbText">시정판정</label></th>
+                <td><div id="cbDlgCorrectDecision"></div></td>
+                <th><label class="lbText">대책서회신요구일자</label></th>
+                <td><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
+            </tr>
+            <tr>
+                <th><label class="lbText">불량내용상세</label></th>
+                <td colspan="5">
+                    <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th><label class="lbText">QA</label></th>
+                <td colspan="5">
+                    <textarea id="txtDlgQa" style="width:98%;"></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-        <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-                <col style="width:190px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th><label class="lbText">봉쇄조치 </label></th>
-                    <td colspan="3">
-                        <div style="display:flex;flex-direction:row;">
-                            <div id="chkDlgBlockadeMaterial">원재료</div>
-                            <div id="chkDlgBlockadeOutProduct">외주품</div>
-                            <div id="chkDlgBlockadeProcessProduct">공정품</div>
-                            <div id="chkDlgBlockadeFinishProduct">완성품</div>
-                            <div id="chkDlgBlockadeStorageProduct">창고재고</div>
-                            <div id="chkDlgBlockadeShipProduct">고객출하</div>
+    <label><i class="fas fa-caret-square-down"></i> 고품사진</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">고품사진</label></th>
+                <td colspan="5">
+                    <div style="width:200px; height:240px; position:relative;">
+                        <input type="file" multiple="true" id="imgDlgPoorPicture" style="display:none;">
+                        <div class="inputImg" style="z-index:100" id="imgZoneDlgPoorPicture">
+                            <span id="imghereDlgPoorPicture">고품 사진</span>
                         </div>
+                        <div class="showImg" id="imgResultDlgPoorPicture">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-                    </td>
-                    <th><label class="lbText">일정계획담당자</label></th>
-                    <td>
-                        <input type="text" id="txtPlanUserNm" style="width:60%;" value="" />
-                        <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">봉쇄조치 </label></th>
+                <td colspan="3">
+                    <div style="display:flex;flex-direction:row;">
+                        <div id="chkDlgBlockadeMaterial">원재료</div>
+                        <div id="chkDlgBlockadeOutProduct">외주품</div>
+                        <div id="chkDlgBlockadeProcessProduct">공정품</div>
+                        <div id="chkDlgBlockadeFinishProduct">완성품</div>
+                        <div id="chkDlgBlockadeStorageProduct">창고재고</div>
+                        <div id="chkDlgBlockadeShipProduct">고객출하</div>
+                    </div>
 
-    </div>
+                </td>
+                <th><label class="lbText">일정계획담당자</label></th>
+                <td>
+                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" />
+                    <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });        
+        $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });        
+        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgDefectDegree").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
@@ -222,7 +237,7 @@
             height: 30,
             theme: "Light"
         });
-        
+
         $("#chkDlgRecurrenceFl").jqxCheckBox({ width: 130, checked: true });
         $("#chkDlgBlockadeMaterial").jqxCheckBox({ width: 130, checked: true });
         $("#chkDlgBlockadeOutProduct").jqxCheckBox({ width: 130, checked: true });
@@ -241,7 +256,7 @@
 
                 $("#txtPlanUserNm").val(res[0].Name);
                 $("#txtPlanUserNm").attr("PlanUserOID", res[0].OID);
-                
+
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
@@ -255,10 +270,41 @@
 
                 $("#txtDlgWorkUserNm").val(res[0].Name);
                 $("#txtDlgWorkUserNm").attr("WorkUserOID", res[0].OID);
-                
+
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
-        
+
+        // 고품사진
+        if ($('.showImg').children().length == 1) {
+            $('#imghereDlgPoorPicture').hide();
+        }
+
+        $("#imgDlgPoorPicture").simpleUpload({
+            url: '/Qms/ImgUploadFile',
+            params: {},
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+            dropZone: '#imgZoneDlgPoorPicture',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            var imgPictureResult$ = $('#imgResultDlgPoorPicture');
+            imgPictureResult$.empty();
+            imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/")' + data +'" />');
+            $('#hidImgFileNameDlgPoorPicture').val(data);
+            $('#imghereDlgPoorPicture').hide();
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+
         var btnDlgSave$ = $("#btnDlgSave").jqxButton();
         btnDlgSave$.on("click", function () {
             var param = {};
@@ -302,7 +348,7 @@
             param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeStorageProduct");
             param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeShipProduct");
             param.PlanUserOID = $("#txtPlanUserNm").attr("PlanUserOID");
-            param.PoorPicture = "";
+            param.PoorPicture = $("#hidImgFileNameDlgPoorPicture").val();
 
             $.post('/Qms/InsQuickResponse', param, function (response) {
                   if (response.isError) {

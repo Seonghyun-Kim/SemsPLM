@@ -43,7 +43,7 @@
         </div>
         <div class="scrollY" style="height:668px;">
             <div id="properties" class="basic_grid">
-                @if ((ViewBag.Blockade.BPolicyOID == 58 || ViewBag.Blockade.BPolicyOID == 60) && ViewBag.Blockade.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+                @if ((ViewBag.Blockade.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.Blockade.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.Blockade.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
                 <table class="tableTopButtonBox infoTopFix" style="width:1673px;padding-top:45px;">
                     <tbody>
