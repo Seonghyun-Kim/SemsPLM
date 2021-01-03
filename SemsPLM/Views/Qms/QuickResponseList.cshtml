@@ -332,49 +332,6 @@
         });
     });
 
-    var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
-        var retJson = {};
-        var BackgroundColor = "white";
-        var ChargeUserText = ModuleFl ? ChargeUserNm : "N/A";
-        var milli = EstEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
-        var EstDate = new Date(parseInt(milli));
-        var CompareEstDate = addDays(EstDate, 1);
-        var nowDate = new Date();
-
-        if (!ModuleFl) {
-            BackgroundColor = "lightgreen";
-        } else if (BPolicyNm === "Completed") {
-            BackgroundColor = "lightgreen";
-            ChargeUserText = "(완료) " + ChargeUserText;
-        } else if (BPolicyNm === "Started" && CompareEstDate >= nowDate) {
-            BackgroundColor = "Yellow";
-            ChargeUserText = "(실행전) " + ChargeUserText;
-        } else if (BPolicyNm === "Prepare" && CompareEstDate >= nowDate) {
-            BackgroundColor = "white";
-        } else if (BPolicyNm === "Confirm" && CompareEstDate >= nowDate) {
-            BackgroundColor = "Yellow";
-        }  else if (BPolicyNm === "Review" && CompareEstDate >= nowDate) {
-            BackgroundColor = "Yellow";
-            ChargeUserText = "(결재중) " + ChargeUserText;
-        } else {
-            BackgroundColor = "red";
-            ChargeUserText = "(실행전) " + ChargeUserText;
-        }
-
-        //else if (BPolicyNm === "Started" && EstDate <= nowDate) {
-        //    BackgroundColor = "yellow";
-        //    ChargeUserText = "(실행전) " + ChargeUserText;
-        //} 
-        
-        retJson.BackgroundColor = BackgroundColor;
-        retJson.ChargeUserText = ChargeUserText;
-        var sYear = EstDate.getFullYear();
-        var sMonth = (EstDate.getMonth() + 1) <= 9 ? "0" + (EstDate.getMonth() + 1).toString() : (EstDate.getMonth() + 1).toString();
-        var sDate = EstDate.getDate() <= 9 ? "0" + EstDate.getDate().toString() : EstDate.getDate().toString();
-        retJson.EstDt = sYear + "-" + sMonth + "-" + sDate;
-        return retJson;
-    }
-
     function OpenQuickResonse(uid) {
         var rowData = $('#SearchQuickResponse_Grid').jqxGrid("getrowdata", uid);
         var linkName = rowData.Title;

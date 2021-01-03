@@ -51,6 +51,7 @@
     <Compile Include="Trigger\Pms\ProcessTrigger.cs" />
     <Compile Include="Trigger\Pms\ProjectTrigger.cs" />
     <Compile Include="Trigger\Qms\ApprovalTrigger.cs" />
+    <Compile Include="Trigger\Qms\OpenIssueTrigger.cs" />
     <Compile Include="Utils\TriggerUtil.cs" />
   </ItemGroup>
   <ItemGroup>

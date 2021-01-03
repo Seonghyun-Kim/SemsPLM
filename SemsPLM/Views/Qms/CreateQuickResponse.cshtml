@@ -263,7 +263,8 @@
         btnDlgSave$.on("click", function () {
             var param = {};
             
-            param.OID = null;     
+            param.OID = null;    
+            param.ProjectOID = "@ViewBag.ProjectOID";
             param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
             param.OccurrenceLibOID =WebUtils.GetComboValue("cbDlgOccurrence");
             param.PartOID = 156;

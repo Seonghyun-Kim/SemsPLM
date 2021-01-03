@@ -8,6 +8,8 @@ namespace Common.Constant
 {
     public class QmsConstant
     {
+        public static string RELATIONSHIP_QUICK_RESPONSE { get { return "QUICK_RESPONSE"; } }
+
         public static string TYPE_OPEN_ISSUE { get { return "OPEN_ISSUE"; } }
 
         public static string TYPE_QUICK_RESPONSE { get { return "QUICK_RESPONSE"; } }
@@ -113,5 +115,14 @@ namespace Common.Constant
         public static string POLICY_QMS_MODULE_REVIEW = "Review";
         public static string POLICY_QMS_MODULE_COMPLETED = "Completed";
         public static string POLICY_QMS_MODULE_REJECTED = "Rejected";
+
+
+        public static string POLICY_OPENISSUE_STARTED = "Started";
+        public static string POLICY_OPENISSUE_COMPLETED = "Completed";
+
+        public static string POLICY_OPENISSUE_ITEM_SUSPENSE = "Suspense";
+        public static string POLICY_OPENISSUE_ITEM_UNCOMMITTED = "Uncommitted";
+        public static string POLICY_OPENISSUE_ITEM_COMPLETED = "Compleated";
+
     }
 }

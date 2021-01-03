@@ -1,0 +1,638 @@
+﻿@{
+    Layout = null;
+}
+
+    <div id="InfoOpenIssue_@ViewBag.OpenIssue.OID" class="info_project clearfix">
+        <div class="info_menubar">
+            <ul>
+                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+            </ul>
+        </div>
+        <div class="doc_content">
+            <div class="project_basic clearfix">
+                <div class="basic_info">
+                    <h3>오픈이슈</h3>
+                    <p>프로젝트 : <span>@ViewBag.OpenIssue.ProjectNm</span></p>
+                </div>
+                <div class="basic_image">
+                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+                </div>
+                <div class="basic_status">
+                    <div class="pointer_wrap">
+                        @for (int i = 0; i < ViewBag.Status.Count; i++)
+                        {
+                            if (ViewBag.OpenIssue.BPolicyOID == ViewBag.Status[i].StatusOID)
+                            {
+                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <p>설명 : <span></span></p>
+                </div>
+            </div>
+            <div id="properties" class="basic_grid scrollY" style="height:668px;">
+                @if (ViewBag.OpenIssue.BPolicyNm == Common.Constant.QmsConstant.POLICY_OPENISSUE_STARTED)
+                {
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoOpenIssue_defaultBtn_@ViewBag.OpenIssue.OID">
+                                    <button id="InfoOpenIssue_SaveBtn_@ViewBag.OpenIssue.OID" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <table width="100%" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:180px;" />
+                        <col style="width:auto;" />
+                        <col style="width:180px;" />
+                        <col style="width:auto;" />
+                    </colgroup>
+                    <tr>
+                        <th>프로젝트</th>
+                        <td>
+                            <input type="text" class="txtBox" id="txtOpenIssueProjectNm_@ViewBag.OpenIssue.OID" readonly="readonly" value="@ViewBag.OpenIssue.ProjectNm" />
+                        </td>
+                        <th>OEM</th>
+                        <td>
+                            <input type="text" class="txtBox" id="txtOpenIssueOemLibNm_@ViewBag.OpenIssue.OID" readonly="readonly" value="@ViewBag.OpenIssue.OemLibNm" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>고객사</th>
+                        <td>
+                            <input type="text" class="txtBox" id="txtOpenIssueCustomerLibNm_@ViewBag.OpenIssue.OID" readonly="readonly" value="@ViewBag.OpenIssue.CustomerLibNm" />
+                        </td>
+                        <th>차종</th>
+                        <td>
+                            <input type="text" class="txtBox" id="txtOpenIssueCarLibNm_@ViewBag.OpenIssue.OID" readonly="readonly" value="@ViewBag.OpenIssue.CarLibNm" />
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="margin:10px 0px;">
+                    <div style="padding-right:20px;">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h3><i class="fas fa-caret-square-down"></i> Issue 현황</h3>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <table width="100%" class="infoTable" style="table-layout:fixed;">
+                        <tr>
+                            <th>ISSUE</th>
+                            <th>완료</th>
+                            <th>관망</th>
+                            <th>미결</th>
+                            <th>진행률</th>
+                        </tr>
+                        <tr>
+                            <td>47</td>
+                            <td>29</td>
+                            <td>3</td>
+                            <td style="color:red;">15</td>
+                            <td>62%</td>
+                        </tr>
+                    </table>
+
+                    <div id="grdOpenIssueList_@ViewBag.OpenIssue.OID"></div>
+                </div>
+
+                <div style="margin:10px 0px;">
+                    <div style="padding-right:20px;">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h3><i class="fas fa-caret-square-down"></i> 신속대응 리스트</h3>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="grdQuickResponseList_@ViewBag.OpenIssue.OID"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    
+
+    $(document).ready(function () {
+
+        $("#InfoOpenIssue_SaveBtn_@ViewBag.OpenIssue.OID").on("click", function () {
+            var param = {};
+            param.OID = "@ViewBag.OpenIssue.OID";
+            param.OpenIssueItems = [];
+
+            var openIssueRows = $('#grdOpenIssueList_@ViewBag.OpenIssue.OID').jqxGrid("getrows");
+            openIssueRows.forEach(function (v, i) {
+                var data = {};
+                data.OID = v.OID;
+                data.BPolicyOID = v.BPolicyOID;
+                data.Name = v.Name;
+                data.OpenIssueTitle = v.OpenIssueTitle;
+                data.RelapseInsideFl = v.RelapseInsideFl === true ? "Y" : "N";
+                data.RelapseHanonFl = v.RelapseHanonFl === true ? "Y" : "N";
+                data.RelapseCarFl = v.RelapseCarFl === true ? "Y" : "N";
+                data.OpenIssueDetailDesc = v.OpenIssueDetailDesc;
+                data.OpenIssueOccurrenceDt = v.OpenIssueOccurrenceDt;
+                data.OpenIssueExpectedDt = v.OpenIssueExpectedDt;
+                data.OpenIssueCompleteDt = v.OpenIssueCompleteDt;
+                data.OpenIssueCloseFl = v.OpenIssueCloseFl === "Y" ? "Y" : "N";
+                data.Description = v.Description;
+                data.IsDel = v.IsDel;
+                param.OpenIssueItems.push(data);
+            });
+            
+            $.post('/Qms/SaveOpenIssueItem', { _param: param}, function (response) {
+                if (response.isError) {
+                    alert(response.resultMessage);
+                    return;
+                }
+
+                alert("저장되었습니다.");
+                PageReload();
+            }).fail(function (err) {
+                alert(err.responseText);
+            });
+        });
+
+        InitGrdOpenIssueItem();
+        InitGrdQuickResponseList();
+    });
+
+    function InitGrdOpenIssueItem() {
+        var ItemStatusList = @Html.Raw(Json.Encode(ViewBag.ItemStatus));
+
+
+        var itemStatus = {
+            localdata: ItemStatusList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'StatusNm', type: 'string' },
+                    { name: 'OID', type: 'int', label: 'StatusNm' },
+                ],
+        };
+        var itemStatusAdapter = new $.jqx.dataAdapter(itemStatus, { contentType: 'application/json' });
+
+        var sourceOpenIssueItems =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'RelapseInsideFl', type: 'string' },
+                { name: 'RelapseHanonFl', type: 'string' },
+                { name: 'RelapseCarFl', type: 'string' },
+                { name: 'OpenIssueTitle', type: 'string' },
+                { name: 'OpenIssueDetailDesc', type: 'string' },
+                { name: 'OpenIssueOccurrenceDt', type: 'string' },
+                { name: 'OpenIssueExpectedDt', type: 'string' },
+                { name: 'OpenIssueCompleteDt', type: 'string' },
+                { name: 'BPolicyOID', type: 'number' },
+                { name: 'BPolicyNm', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'OpenIssueCloseFl', type: 'string' },
+                { name: 'CreateUs', type: 'number' },
+                { name: 'CreateUsNm', type: 'string' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'IsDel', type: "string" }
+            ],
+            type: "POST",
+            addrow: function (rowid, rowdata, position, commit) {
+                commit(true);
+            },
+            deleterow: function (rowid, commit) {
+                commit(true);
+            },
+            updaterow: function (rowid, newdata, commit) {
+                commit(true);
+            },
+            type: "POST",
+            url: "/Qms/SelOpenIssueItems",
+            data: {
+                OpenIssueOID : "@ViewBag.OpenIssue.OID"
+            }
+        };
+
+        const grdOpenIssueItem$ = $('#grdOpenIssueList_@ViewBag.OpenIssue.OID');
+        grdOpenIssueItem$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: 320,
+            rowsheight: 50,
+            columnsheight: 30,
+            source: new $.jqx.dataAdapter(sourceOpenIssueItems),
+            sortable: false,
+            pageable: false,
+            editable: true,
+            selectionmode: 'checkbox',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', width: '3%', cellsalign: 'center', columntype: 'number', align: 'center', pinned: true,
+                     cellsrenderer: function (row, column, value) {
+                        return "<div style='display:flex;justify-content:center;align-items:center;width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: 'OPEN ISSUE', dataField: 'OpenIssueTitle', width: '20%', align: 'center', cellsalign: 'left', pinned: true },
+                { text: '주요추진내용', dataField: 'OpenIssueDetailDesc', width: '20%', align: 'center', cellsalign: 'left', pinned: true },
+                {
+                    text: '사내', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseInsideFl', width: '4%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                {
+                    text: '한온', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseHanonFl', width: '4%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                {
+                    text: '자동차', columngroup: 'OpenIssueRelapseGroup', dataField: 'RelapseCarFl', width: '4%', align: 'center', cellsalign: 'center', columntype: "checkbox",
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (cellValue === "Y") {
+                            cellValue = true;
+                        } else {
+                            cellValue = false;
+                        }
+                    }
+                },
+                { text: '발생일', dataField: 'OpenIssueOccurrenceDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype:'datetimeinput' },
+                { text: '계획일', dataField: 'OpenIssueExpectedDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
+                { text: '완료일', dataField: 'OpenIssueCompleteDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
+                { text: '상태', dataField: 'BPolicyNm', width: '6%', align: 'center', cellsalign: 'center', columntype: 'combobox',createeditor: function (row, column, editor) {
+                        editor.jqxComboBox({
+                            autoOpen: true,
+                            searchMode: 'none',
+                            animationType: 'none',
+                            source: itemStatusAdapter,
+                            valueMember: 'OID',
+                            displayMember: 'StatusNm'
+                        });
+                    },
+                    cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
+                        for (var i = 0; i < ItemStatusList.length; i++) {
+                            if (newvalue == ItemStatusList[i].OID) {
+                                grdOpenIssueItem$.jqxGrid('setcellvalue', row, "BPolicyOID", ItemStatusList[i].OID);
+                                grdOpenIssueItem$.jqxGrid('setcellvalue', row, "BPolicyNm", ItemStatusList[i].StatusNm);
+                                
+                                return ItemStatusList[i].StatusNm;
+                            }
+                        }
+                        if (newvalue == "") return oldvalue;
+                    }
+                },
+                { text: '', datafield: 'BPolicyOID', width: "10%", align: 'center', cellsalign: 'center',hidden:true },
+                { text: '비고', dataField: 'Description', width: '20%', align: 'center', cellsalign: 'left', },
+                {
+                    text: 'CLOSE 결과', dataField: 'OpenIssueCloseFl', width: '10%', align: 'center', cellsalign: 'center',
+                },
+            ],
+            columngroups:
+            [
+                { text: '재발여부', align: 'center', name: 'OpenIssueRelapseGroup', pinned: true},
+            ],
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var btnDel = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+
+                container.append(btnAdd);
+                container.append(btnDel);
+
+                btnAdd.on('click', function () {
+                    var datarow = {};
+                    datarow["RelapseInsideFl"] = false;
+                    datarow["RelapseHanonFl"] = false;
+                    datarow["RelapseCarFl"] = false;
+                    datarow["OpenIssueOccurrenceDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueExpectedDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueCompleteDt"] = WebUtils.GetDate(-1, "m", "-");
+                    datarow["OpenIssueStNm"] = null;
+                    datarow["Description"] = "";
+                    datarow["OpenIssueCloseFl"] = "N";
+                    var commit = grdOpenIssueItem$.jqxGrid('addrow', null, datarow);
+                });
+
+                btnDel.on('click', function () {
+                  var selection = $(grdOpenIssueItem$).jqxGrid('getselectedrowindexes');
+                    if (WebUtils.isEmpty(selection)) {
+                        alert("선택된 항목이 없습니다");
+                        return;
+                    } else {
+                        if (!confirm("저장시 삭제가 완료됩니다. 삭제하시겠습니까?")) {
+                            return;
+                        }
+
+                        selection.forEach(function (v) {
+                            var rowData = $(grdOpenIssueItem$).jqxGrid('getrowdata', v);
+                            rowData.IsDel = "Y";
+                            $(grdOpenIssueItem$).jqxGrid('updaterow', rowData.uid, rowData);
+                            $(grdOpenIssueItem$).jqxGrid("hiderow", rowData.visibleindex);
+                        });
+                    }
+                });
+
+                toolBar.append(container);
+            }
+        });
+    }
+
+    function InitGrdQuickResponseList() {
+        var SourceResponseSource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'Title', type: 'string' },
+                { name: 'OccurrenceDt', type: 'date' },
+                { name: 'OccurrenceNm', type: 'string' },
+                { name: 'PartNo', type: 'string' },
+                { name: 'PartNm', type: 'string' },
+                { name: 'CarCode', type: 'string' },
+                { name: 'PartGrpNm', type: 'string' },
+                { name: 'Summary', type: 'string' },
+                { name: 'CreateUsNm', type: 'string' },
+                { name: 'PlanUserNm', type: 'string' },
+                { name: 'StatusNm', type: 'string' },
+                { name: 'FinishDt', type: 'date' },
+            
+                { name: 'ModuleBlockadeOID', type: 'number' },
+                { name: 'ModuleBlockadeStatusNm', type: 'string' },
+                { name: 'ModuleBlockadeFl', type: 'bool' },
+                { name: 'ModuleBlockadeChargeUserOID', type: 'number' },
+                { name: 'ModuleBlockadeChargeUserNm', type: 'string' },
+                { name: 'ModuleBlockadeEstEndDt', type: 'string' },
+            
+                { name: 'ModuleOccurrenceCauseOID', type: 'number' },
+                { name: 'ModuleOccurrenceCauseStatusNm', type: 'string' },
+                { name: 'ModuleOccurrenceCauseFl', type: 'bool' },
+                { name: 'ModuleOccurrenceCauseChargeUserOID', type: 'number' },
+                { name: 'ModuleOccurrenceCauseChargeUserNm', type: 'string' },
+                { name: 'ModuleOccurrenceCauseEstEndDt', type: 'string' },
+            
+                { name: 'ModuleImproveCountermeasureOID', type: 'number' },
+                { name: 'ModuleImproveCountermeasureStatusNm', type: 'string' },
+                { name: 'ModuleImproveCountermeasureFl', type: 'bool' },
+                { name: 'ModuleImproveCountermeasureChargeUserOID', type: 'number' },
+                { name: 'ModuleImproveCountermeasureChargeUserNm', type: 'string' },
+                { name: 'ModuleImproveCountermeasureEstEndDt', type: 'string' },
+            
+                { name: 'ModuleErrorProofOID', type: 'number' },
+                { name: 'ModuleErrorProofStatusNm', type: 'string' },
+                { name: 'ModuleErrorProofFl', type: 'bool' },
+                { name: 'ModuleErrorProofChargeUserOID', type: 'number' },
+                { name: 'ModuleErrorProofChargeUserNm', type: 'string' },
+                { name: 'ModuleErrorProofEstEndDt', type: 'string' },
+            
+                { name: 'ModuleLpaOID', type: 'number' },
+                { name: 'ModuleLpaStatusNm', type: 'string' },
+                { name: 'ModuleLpaFl', type: 'bool' },
+                { name: 'ModuleLpaChargeUserOID', type: 'number' },
+                { name: 'ModuleLpaChargeUserNm', type: 'string' },
+                { name: 'ModuleLpaEstEndDt', type: 'string' },
+            
+                { name: 'ModuleCheckOID', type: 'number' },
+                { name: 'ModuleCheckStatusNm', type: 'string' },
+                { name: 'ModuleCheckFl', type: 'bool' },
+                { name: 'ModuleCheckChargeUserOID', type: 'number' },
+                { name: 'ModuleCheckChargeUserNm', type: 'string' },
+                { name: 'ModuleCheckEstEndDt', type: 'string' },
+            
+                { name: 'ModuleStandardOID', type: 'number' },
+                { name: 'ModuleStandardStatusNm', type: 'string' },
+                { name: 'ModuleStandardFl', type: 'bool' },
+                { name: 'ModuleStandardChargeUserOID', type: 'number' },
+                { name: 'ModuleStandardChargeUserNm', type: 'string' },
+                { name: 'ModuleStandardEstEndDt', type: 'string' },
+            
+                { name: 'ModuleWorkerEduOID', type: 'number' },
+                { name: 'ModuleWorkerEduStatusNm', type: 'string' },
+                { name: 'ModuleWorkerEduFl', type: 'bool' },
+                { name: 'ModuleWorkerEduChargeUserOID', type: 'number' },
+                { name: 'ModuleWorkerEduChargeUserNm', type: 'string' },
+                { name: 'ModuleWorkerEduEstEndDt', type: 'string' }
+          
+            ],
+            type: "POST",
+            url: "/Qms/SelQuickResponseGridList",
+            data: {
+                ProjectOID : "@ViewBag.OpenIssue.ProjectOID"
+            }
+        };
+
+        var quickResponseList$ = $('#grdQuickResponseList_@ViewBag.OpenIssue.OID');
+        quickResponseList$.jqxGrid({
+            theme: "kdnc",
+            width: '100%',
+            height: 675,
+            rowsheight: 40,
+            columnsheight: 30,
+            source :  new $.jqx.dataAdapter(SourceResponseSource),
+            sortable: false,
+            pageable: false,
+            selectionmode: 'singlerow',
+            showtoolbar: true,
+            toolbarheight: 45,
+            columns: [
+                {
+                    text: 'NO', dataField: 'NO', width: '2.5%', cellsalign: 'center', columntype: 'number', align: 'center', pinned:true,
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='display:flex;justify-content:center;align-items:center;width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                {
+                    text: '신속대응NO', dataField: 'Name', width: '11%', align: 'center', cellsalign: 'center', pinned: true,
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
+                        return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OpenQuickResonse(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ")'>" + (value) + "</a></div></div>";
+                    }
+                },
+                { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', pinned:true },
+                { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center', pinned:true },
+                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned:true },                
+                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned:true },
+                { text: '차종', dataField: 'CarCode', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '문제내용', dataField: 'Summary', width: '15%', align: 'center', cellsalign: 'center' },
+                { text: '신속대응등록자', dataField: 'CreateUsNm', width: '7%', align: 'center', cellsalign: 'center' },          
+                { text: '일정계획담당자', dataField: 'PlanUserNm', width: '7%', align: 'center', cellsalign: 'center' },  ,                       
+                { text: '상태', dataField: 'StatusNm', width: '5%', align: 'center', cellsalign: 'center' },
+                { text: '종결일자', dataField: 'FinishDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },                  
+                {
+                    text: '', dataField: '', width: '80px', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        var btnHistory = "<div><button id='btnPlanDate' class='btnGridBtn' style='width:77px;height:38px;text-align:center;line-height:0.5;padding:4px 5px;' title='일정관리' onclick='javascript:OpenDlgQuickResponsePlan(" + rowData.OID + ");'>일정관리</button></div>";
+                      
+                        return "<div style='width:auto;display:flex;flex-direction:column;justify-content:center;align-content:center;padding:0px;margin-top:1px;margin-left:2px;'>" + btnHistory + "</div>";
+                    }
+                },
+                {
+                    text: '봉쇄조치(24H)', dataField: 'Blockade', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
+                        if (rowData.ModuleBlockadeOID === null || rowData.ModuleBlockadeEstEndDt === null) {
+                           return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleBlockadeFl, rowData.ModuleBlockadeStatusNm, rowData.ModuleBlockadeEstEndDt, rowData.ModuleBlockadeChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenBlockade(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: '원인분석(7D)', dataField: 'OccurrenceCause', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                       if (rowData.ModuleOccurrenceCauseOID === null || rowData.ModuleOccurrenceCauseEstEndDt === null) {
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleOccurrenceCauseFl, rowData.ModuleOccurrenceCauseStatusNm, rowData.ModuleOccurrenceCauseEstEndDt, rowData.ModuleOccurrenceCauseChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenOccurrenceCause(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: '개선대책(14D)', dataField: 'ImproveCountermeasure', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        if (rowData.ModuleImproveCountermeasureOID === null || rowData.ModuleImproveCountermeasureEstEndDt === null) {
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleImproveCountermeasureFl, rowData.ModuleImproveCountermeasureStatusNm, rowData.ModuleImproveCountermeasureEstEndDt, rowData.ModuleImproveCountermeasureChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenImproveCountermeasure(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: 'Error Proof', dataField: 'ErrorProof', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        if (rowData.ModuleErrorProofOID === null || rowData.ModuleErrorProofEstEndDt === null) {
+                           return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleErrorProofFl, rowData.ModuleErrorProofStatusNm, rowData.ModuleErrorProofEstEndDt, rowData.ModuleErrorProofChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenErrorProof(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: 'LPA 감사', dataField: 'LpaUnfit', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        if (rowData.ModuleLpaOID === null || rowData.ModuleLpaEstEndDt === null) {
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleLpaFl, rowData.ModuleLpaStatusNm, rowData.ModuleLpaEstEndDt, rowData.ModuleLpaChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenLpaUnfit(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: '유효성 검증(34D)', dataField: 'Check', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                       if (rowData.ModuleCheckOID === null || rowData.ModuleCheckEstEndDt === null) {
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleCheckFl, rowData.ModuleCheckStatusNm, rowData.ModuleCheckEstEndDt, rowData.ModuleCheckChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenQuickValidation(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: '표준F/U(35D)', dataField: 'Standard', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        if (rowData.ModuleStandardOID === null || rowData.ModuleStandardEstEndDt === null) {
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleStandardFl, rowData.ModuleStandardStatusNm, rowData.ModuleStandardEstEndDt, rowData.ModuleStandardChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenStandardFollowUp(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                },
+                {
+                    text: '작업자교육(40D)', dataField: 'WorkerEdu', width: '8%', align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {                 
+                        if (rowData.ModuleWorkerEduOID === null || rowData.ModuleWorkerEduEstEndDt === null) {                            
+                            return "<div></div>";
+                        }
+
+                        var status = GridStatus(rowData.ModuleWorkerEduFl, rowData.ModuleWorkerEduStatusNm, rowData.ModuleWorkerEduEstEndDt, rowData.ModuleWorkerEduChargeUserNm);
+
+                        var wrapPlanDate = "<div style='width:100%;text-align:center;border-bottom:1px dotted #9D9292;background-color:" + status.BackgroundColor + "'><a href='javascript:OpenWorkerEducation(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ");'>"+ status.EstDt + "</a></div>";
+                        var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
+                        return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
+                    }
+                }
+            ],
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var addButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+                container.append(addButton);
+                container.append(deleteButton);
+
+                addButton.on('click', function () {
+                    var linkName = "[@ViewBag.OpenIssue.ProjectNm] 신속대응 등록";
+                    var linkUrl = '/Qms/CreateQuickResponse?ProjectOID=@ViewBag.OpenIssue.ProjectOID';
+
+                    TabPageLoad(linkUrl, linkName);
+                });
+
+                deleteButton.on('click', function () {
+                   
+                });
+
+                toolBar.append(container);
+            }
+        });
+    }
+    
+</script>

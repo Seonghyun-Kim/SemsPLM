@@ -14,17 +14,29 @@ namespace Qms.Models
         // 고객사 
         public int? CustomerLibOID { get; set; }
 
+        public string CustomerLibNm { get; set; }
+
+        public int? OemLibOID { get; set; }
+
+        public string OemLibNm { get; set; }
+
         // 차종 
         public int? CarLibOID { get; set; }
 
-        // 제품 
-        public int? ProductOID { get; set; }
+        public string CarLibNm { get; set; }
 
         // 프로젝트 
         public int? ProjectOID { get; set; }
 
+        public string ProjectNm { get; set; }
+
+        public List<OpenIssueItem> OpenIssueItems { get; set; }
+
+        // 제품 
+        //public int? ProductOID { get; set; }
+
         // 프로젝트 단계 
-        public int? ProcessOID { get; set; }
+        //public int? ProcessOID { get; set; }
     }
 
     public static class OpenIssueRepository
@@ -41,19 +53,26 @@ namespace Qms.Models
 
         public static int InsOpenIssue(OpenIssue _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsOpenIssue", _param);
         }
 
-        public static int UdtOpenIssue(OpenIssue _param)
+        public static int UdtOpenIssueSuspenseCnt(OpenIssue _param)
         {
-            _param.ModifyUs = 1;
-            return DaoFactory.SetUpdate("Qms.UdtOpenIssue", _param);
+            return DaoFactory.SetUpdate("Qms.UdtOpenIssueSuspenseCnt", _param);
+        }
+
+        public static int UdtOpenIssueDelSuspenseCnt(OpenIssue _param)
+        {
+            return DaoFactory.SetUpdate("Qms.UdtOpenIssueDelSuspenseCnt", _param);
         }
     }
 
     public class OpenIssueItem : DObject, IDObject
     {
+        public int? OpenIssueOID { get; set; }
+
+        public string OpenIssueTitle { get; set; }
+
         // 재발여부 사내 
         public string RelapseInsideFl { get; set; }
 
@@ -67,16 +86,18 @@ namespace Qms.Models
         public string OpenIssueDetailDesc { get; set; }
 
         // 발생일 
-        public DateTime? OpenIssueOccurrenceDt { get; set; }
+        public string OpenIssueOccurrenceDt { get; set; }
 
         // 계획일 
-        public DateTime? OpenIssueExpectedDt { get; set; }
+        public string OpenIssueExpectedDt { get; set; }
 
         // 완료일 
-        public DateTime? OpenIssueCompleteDt { get; set; }
+        public string OpenIssueCompleteDt { get; set; }
 
         // CLOSE 결과 
         public string OpenIssueCloseFl { get; set; }
+
+        public string IsDel { get; set; }
     }
 
     public static class OpenIssueItemRepository

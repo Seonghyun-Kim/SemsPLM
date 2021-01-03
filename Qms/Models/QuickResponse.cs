@@ -17,6 +17,8 @@ namespace Qms.Models
 
         public string PlantNm { get; set; }
 
+        public int? ProjectOID { get; set; }
+
         // 발생유형 
         public int? OccurrenceLibOID { get; set; }
 
