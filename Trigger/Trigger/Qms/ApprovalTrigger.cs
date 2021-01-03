@@ -87,7 +87,7 @@ namespace Qms.Trigger
             {
                 if (action == CommonConstant.ACTION_PROMOTE)
                 {
-                    BPolicy reviewSt = BPolicyRepository.SelBPolicy(new BPolicy { Type = type, Name = "Review" }).First();
+                    BPolicy reviewSt = BPolicyRepository.SelBPolicy(new BPolicy { Type = type, Name = QmsConstant.POLICY_QMS_MODULE_REVIEW }).First();
                     DObjectRepository.UdtDObject(Context, new DObject() { OID = Convert.ToInt32(oid), BPolicyOID = reviewSt.OID });
                 }
             }

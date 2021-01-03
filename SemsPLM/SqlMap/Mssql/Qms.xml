@@ -587,14 +587,16 @@
       ,B.OID
       ,B.Name
       ,B.BPolicyOID
+      ,E.Name AS BPolicyNm
       ,B.Description
       ,C.Name AS EduUserNm
       ,C.Description
-      , D.ChargeUserOID
+      ,D.ChargeUserOID
       FROM T_DQMS_WORKER_EDU A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.EduUserOID = C.OID
       LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = D.OID
+      LEFT JOIN T_BPOLICY E ON B.BPolicyOID = E.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
         B.OID = #OID#
@@ -740,11 +742,12 @@
 
     <!-- Error Proof SQL ModuleOID == OID-->
     <select id="SelErrorProof" parameterClass="ErrorProof" resultClass="ErrorProof">
-      SELECT A.*, B.OID, B.BPolicyOID, B.Name, B.Description, C.Name AS CheckUserNm, D.ChargeUserOID
+      SELECT A.*, B.OID, B.BPolicyOID, E.Name AS BPolicyNm, B.Name, B.Description, C.Name AS CheckUserNm, D.ChargeUserOID
       FROM T_DQMS_ERROR_PRROF A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.CheckUserOID = C.OID
       LEFT JOIN T_DQMS_QUICK_MODULE D ON A.ModuleOID = D.OID
+      LEFT JOIN T_BPOLICY E ON B.BPolicyOID = E.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -786,6 +789,7 @@
       A.*
       , B.OID
       , B.BPolicyOID
+      , H.Name AS BPolicyNm
       , B.Name
       , B.Description
       , C.Name AS LpaCheckUserNm
@@ -800,6 +804,7 @@
       LEFT JOIN T_DOBJECT E ON A.LpaUserOID = E.OID
       LEFT JOIN T_DOBJECT F ON A.MeasureUserOID = F.OID
       LEFT JOIN T_DQMS_QUICK_MODULE G ON A.ModuleOID = G.OID
+      LEFT JOIN T_BPOLICY H ON B.BPolicyOID = H.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#
@@ -914,10 +919,12 @@
       SELECT A.ModuleOID, A.CauseAnalysis, A.ImproveCountermeasure
       , B.OID
       , B.BPolicyOID
+      , C.Name AS BPolicyNm
       , B.Name
       , B.Description
       FROM T_DQMS_LPA_MEASURE A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
+      LEFT JOIN T_BPOLICY C ON B.BPolicyOID = C.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#

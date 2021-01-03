@@ -5,8 +5,15 @@
     string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
     string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + ViewBag.QuickDetail.OID.ToString();
 
-    string FullImgPath = Path.Combine(StoragePath, imgVaulePath, SavePath);
+    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+    string FullImgPath = StoragePath + "/" + imgVaulePath + "/" + SavePath;
+
+    string TempImgPath = StoragePath + "/" + imgTempPath + "/" + TempPath;
 }
+<input type="hidden" id="hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PoorPicture" />
+
 <div id="InfoQuickResponse_@ViewBag.QuickDetail.OID" class="info_project clearfix">
     <div class="info_menubar">
         <ul>
@@ -177,8 +184,8 @@
                             <td colspan="5">
                                 <div style="width:200px; height:240px; position:relative;">
                                     <input type="file" multiple="true" id="InfoQuickResponse_imgPoorPicture_@ViewBag.QuickDetail.OID" style="display:none;">
-                                    <div class="inputImg" style="z-index:100" id="InfoQuickResponse_imgZone_@ViewBag.QuickDetail.OID">
-                                        <span id="InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID">고품 사진</span>
+                                    <div class="Modifiable_@ViewBag.QuickDetail.OID inputImg" AttrType="IMGDROPZONE" style="z-index:100; display:none;" id="InfoQuickResponse_imgZone_@ViewBag.QuickDetail.OID">
+                                        <span id="InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID"></span>
                                     </div>
                                     <div class="showImg" id="InfoQuickResponse_imgResult_@ViewBag.QuickDetail.OID">
                                         @if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.PoorPicture != null)
@@ -292,7 +299,7 @@
 
         $("#InfoQuickResponse_imgPoorPicture_@ViewBag.QuickDetail.OID").simpleUpload({
             url: '/Qms/ImgUploadFile',
-            params: { OID : "@ViewBag.QuickDetail.OID"},
+            params: {},
             method: 'post',
             maxFileNum: 1,
             maxFileSize: 1000000,
@@ -307,8 +314,8 @@
         }).on('upload:done', function (e, file, index, data, xhr) {
             var imgPictureResult$ = $('#InfoQuickResponse_imgResult_@ViewBag.QuickDetail.OID');
             imgPictureResult$.empty();
-            imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />');
-            @*$('#hidPoorPictureImage_@ViewBag.QuickDetail.OID').val(data);*@
+            imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(TempImgPath) + "/")' + data +'" />');
+            $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val(data);
             $('#InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID').hide();
             $('.img-thumbnail').next().on('click', function () {
                 $(this).parent('li').remove();
@@ -361,6 +368,7 @@
             $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "none");
             $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "inline-block");
             $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "inline-block");
+            $("#InfoQuickResponse_imgZone_" + QuickDetailOID).css("display", "inline-block");
         });
 
         $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).jqxButton();
@@ -375,6 +383,22 @@
             $("#InfoQuickResponse_EditBtn_" + QuickDetailOID).css("display", "inline-block");
             $("#InfoQuickResponse_SaveBtn_" + QuickDetailOID).css("display", "none");
             $("#InfoQuickResponse_EditCancleBtn_" + QuickDetailOID).css("display", "none");
+            $("#InfoQuickResponse_imgZone_" + QuickDetailOID).css("display", "none");
+            $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val(null);
+
+            // 저장 안하고 취소 시 이전 고품사진 보여주도록 설정
+            @if (ViewBag.QuickDetail.PoorPicture != null)
+            {
+                <text>
+                var imgPictureResult$ = $('#InfoQuickResponse_imgResult_@ViewBag.QuickDetail.OID');
+                imgPictureResult$.empty();
+                imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />');
+                $('#InfoQuickResponse_imghere_@ViewBag.QuickDetail.OID').hide();
+                $('.img-thumbnail').next().on('click', function () {
+                    $(this).parent('li').remove();
+                });
+                </text>
+            }
         });
 
 
@@ -413,7 +437,7 @@
             param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID");
             param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID");
             param.PlanUserOID = $("#InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID").attr("PlanUserOID");
-            param.PoorPicture = "";
+            param.PoorPicture = $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val();
 
             $.post('/Qms/UdtQuickResponse', param, function (response) {
                   if (response.isError) {

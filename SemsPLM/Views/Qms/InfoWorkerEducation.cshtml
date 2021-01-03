@@ -42,7 +42,7 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            @if ((ViewBag.WorkerEdu.BPolicyOID == 98 || ViewBag.WorkerEdu.BPolicyOID == 100) && ViewBag.WorkerEdu.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+            @if ((ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.WorkerEdu.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
             {
                 <table class="tableTopButtonBox">
                     <tbody>
@@ -127,7 +127,7 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
-        @if (ViewBag.WorkerEdu.BPolicyOID == 98)
+        @if ((ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.WorkerEdu.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
         {
             <text>
             // 수정

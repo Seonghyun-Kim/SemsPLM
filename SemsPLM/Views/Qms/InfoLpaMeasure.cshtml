@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid">
-                @if ((ViewBag.LpaMeasure.BPolicyOID == 83 || ViewBag.LpaMeasure.BPolicyOID == 85) && ViewBag.MeasureUserOID == Convert.ToInt32(Session["UserOID"]))
+                @if ((ViewBag.LpaMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.LpaMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.MeasureUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
                 <table class="tableTopButtonBox">
                     <tbody>

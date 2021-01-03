@@ -42,7 +42,7 @@
             </div>
         </div>
         <div id="properties" class="basic_grid">
-            @if ((ViewBag.QmsCheck.BPolicyOID == 88 || ViewBag.QmsCheck.BPolicyOID == 90) && ViewBag.QmsCheck.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+            @if ((ViewBag.QmsCheck.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.QmsCheck.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.QmsCheck.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
             { 
             <table class="tableTopButtonBox">
                 <tbody>
@@ -102,31 +102,27 @@
 </div>
 <script type="text/javascript">
     var QmsCheckList = @Html.Raw(Json.Encode(ViewBag.QmsCheckItems));
-
-    @if (ViewBag.ApprovalCnt == null)
-    {
-        <text>
-        // 결재 진행 한적이 없으면 1차 유효성 검증만 활성화
-        var CheckCnt = 1;
-        </text>
-    }
-    else if(ViewBag.QmsCheck.BPolicyOID == 90)
-    {
-        <text>
-        // 2차, 3차 유효성 검증 차례대로 활성화 
-        var CheckCnt = @(ViewBag.ApprovalCnt + 1);
-        </text>
-    }
-    else
-    {
-        <text>
-        // 완료 되면 활성화 된 유효성 숫자 만큼 활성화
-        var CheckCnt = QmsCheckList.length;
-        </text>
-    }
+    var CheckCnt = WebUtils.isEmpty(QmsCheckList) === true ? 1 : QmsCheckList.length;
 
     $(document).ready(function () {
         const QmsCheckOID = '@ViewBag.QmsCheck.OID';
+
+        // 1차, 2차, 3차 종료여부와 판정 비교해서 NG가 있으면 다음 검증 활성화
+        @if (ViewBag.QmsCheck.BPolicyNm != Common.Constant.QmsConstant.POLICY_QMS_MODULE_COMPLETED)
+        {
+            <text>
+            if (!WebUtils.isEmpty(QmsCheckList)) {
+                for (var i = QmsCheckList.length - 1; i < QmsCheckList.length; i++) {
+                    var data = QmsCheckList[i];
+                    if (data.FinishFl === 0 || data.CheckFl === 0) {
+                        CheckCnt = CheckCnt + 1;
+                        break;
+                    }
+                }
+            }
+            </text>
+        }
+
         PrintQmsCheck(CheckCnt);
 
         // 수정
@@ -215,7 +211,7 @@
         });
     });
 
-    function PrintQmsCheck(CheckCnt) {
+    function PrintQmsCheck() {
         if (CheckCnt > 3) {
             CheckCnt = 3;
         }
@@ -360,10 +356,10 @@
             btnJudgment$.setAttribute("Cnt", Cnt);
             btnJudgment$.setAttribute("AttrType", "SWITCH");
             btnJudgment$.className = ModifyClassName;
-            $(btnJudgment$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
-            if (!WebUtils.isEmpty(item)) {
-                $(btnJudgment$).jqxSwitchButton({ checked: (item.CheckFl === 1 ? true : false) });
-            }
+            $(btnJudgment$).jqxSwitchButton({
+                height: 30, width: 80, onLabel: "OK", offLabel: "NG", disabled: true,
+                checked: WebUtils.isEmpty(item) === true ? false : item.CheckFl === 1 ? true : false
+            });
 
             tdJudgment$.appendChild(btnJudgment$);
 
@@ -395,10 +391,10 @@
             btnContFl$.setAttribute("Cnt", Cnt);
             btnContFl$.setAttribute("AttrType", "SWITCH");
             btnContFl$.className = ModifyClassName;
-            $(btnContFl$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "OK", offLabel: "NG", disabled: true });
-            if (!WebUtils.isEmpty(item)) {
-                $(btnContFl$).jqxSwitchButton({ checked: (item.FinishFl === 1 ? true : false) });
-            }
+            $(btnContFl$).jqxSwitchButton({
+                height: 30, width: 80, onLabel: "OK", offLabel: "NG", disabled: true,
+                checked: WebUtils.isEmpty(item) === true ? false : item.FinishFl === 1 ? true : false
+            });
 
             tdContFl$.appendChild(btnContFl$);
 

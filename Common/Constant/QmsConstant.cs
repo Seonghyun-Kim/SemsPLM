@@ -113,5 +113,8 @@ namespace Common.Constant
         public static string POLICY_QMS_MODULE_REVIEW = "Review";
         public static string POLICY_QMS_MODULE_COMPLETED = "Completed";
         public static string POLICY_QMS_MODULE_REJECTED = "Rejected";
+
+        // LPA Unfit 확정
+        public static string POLICY_QMS_MODULE_CONFIRM = "Confirm";
     }
 }

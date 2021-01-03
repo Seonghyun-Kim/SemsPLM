@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div id="properties" class="basic_grid scrollY" style="height:668px;">
-                @if ((ViewBag.LpaUnfit.BPolicyOID == 78 || ViewBag.LpaUnfit.BPolicyOID == 80) && ViewBag.LpaUnfit.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+                @if ((ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.LpaUnfit.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 { 
                 <table class="tableTopButtonBox">
                     <tbody>
@@ -57,7 +57,7 @@
                     </tbody>
                 </table>
                 }
-                else if(ViewBag.LpaUnfit.BPolicyOID != 81 )
+                else if(ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM)
                 {
                 <table class="tableTopButtonBox">
                     <tbody>
@@ -69,6 +69,7 @@
                     </tbody>
                 </table>
                 }
+
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
                     <colgroup>
                         <col style="width:180px;" />
@@ -370,7 +371,7 @@
             });
         });
 
-        @if (ViewBag.LpaUnfit.BPolicyOID != 81)
+        @if (ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM)
         {
             <text>
             $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {
@@ -506,11 +507,15 @@
 
         var btnDlgPart$ = $("#btnDlgEditLPAIncongruityPart_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgPart$.on("click", function () {
+            $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val("테스트");
+            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val("PART-12345");
+            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", "12345");
+            @*var param = {};
             OpenSearchEPartDialog(function (res) {
                 $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", res.OID);
-            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');
+            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');*@
         });
 
         $("#btnLpaUnfitCheckAdd_" + LpaUnfitOID).jqxButton({ disabled: true });

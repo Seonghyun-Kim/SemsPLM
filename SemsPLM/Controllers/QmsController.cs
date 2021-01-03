@@ -441,6 +441,7 @@ namespace SemsPLM.Controllers
         public JsonResult InsQuickResponse(QuickResponse _param)
         {
             int result = 0;
+            DirectoryInfo di = null;
             try
             {
                 DaoFactory.BeginTransaction();
@@ -555,11 +556,37 @@ namespace SemsPLM.Controllers
                 // 사용자 교육
                 int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU, QmsConstant.TYPE_WORKER_EDU_NAME);
                 WorkerEduRepository.InsWorkerEdu(new WorkerEdu() { ModuleOID = WorkerEduOID });
+
                 DaoFactory.Commit();
+
+                // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
+                if (!string.IsNullOrEmpty(_param.PoorPicture))
+                {
+                    string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+                    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+                    string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                    string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
+
+                    di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
+
+                    if (!di.Exists)
+                    {
+                        di.Create();
+                    }
+
+                    FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
+                    FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                }
             }
             catch (Exception ex)
             {
                 DaoFactory.Rollback();
+                if (di != null && !di.Exists)
+                {
+                    di.Delete();
+                }
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
             return Json(result);
@@ -568,6 +595,7 @@ namespace SemsPLM.Controllers
         public JsonResult UdtQuickResponse(QuickResponse _param)
         {
             int result = 0;
+            DirectoryInfo di = null;
             try
             {
                 DaoFactory.BeginTransaction();
@@ -579,10 +607,38 @@ namespace SemsPLM.Controllers
 
                 QuickResponseRepository.UdtQuickResponse(_param);
                 DaoFactory.Commit();
+
+                // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
+                if (!string.IsNullOrEmpty(_param.PoorPicture))
+                {
+                    string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+                    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+                    string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                    string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
+
+                    di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
+
+                    if (!di.Exists)
+                    {
+                        di.Create();
+                    }
+
+                    FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
+                    FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                }
             }
             catch (Exception ex)
             {
                 DaoFactory.Rollback();
+
+                // 폴더안에 아무 고픔사진도 없다면(생성 당시에 고품사진 없이 생성함) 폴더 삭제
+                if (di != null && !di.Exists && di.GetFiles().Length > 0)
+                {
+                    di.Delete();
+                }
+
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
             return Json(result);
@@ -593,9 +649,18 @@ namespace SemsPLM.Controllers
         public JsonResult ImgUploadFile(int? OID)
         {
             string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
-            string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
 
-            string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID.ToString();
+            string imgVaulePath = "";
+            string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/";
+            if (OID == null)
+            {
+                imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+            }
+            else
+            {
+                imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                SavePath += OID.ToString();
+            }
 
             var fileName = "";
             if (Request.Files.Count > 0)
@@ -625,11 +690,7 @@ namespace SemsPLM.Controllers
                     fs.Close();
                     File.InputStream.Close();
 
-                    if (OID == null)
-                    {
-                        throw new Exception("잘못된 호출");
-                    }
-                    else
+                    if (OID != null)
                     {
                         QuickResponse quickResponse = new QuickResponse()
                         {
@@ -1076,9 +1137,12 @@ namespace SemsPLM.Controllers
             ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
             if (errorproof == null)
             {
-                errorproof = new ErrorProof();
-                errorproof.OID = OID;
-                errorproof.ModuleOID = OID;
+                errorproof = new ErrorProof() {
+                    OID = OID,
+                    ModuleOID = OID,
+                    BPolicyOID = Module.BPolicyOID,
+                    BPolicyNm = Module.BPolicyNm
+                };
             }
             ViewBag.ErrorProof = errorproof;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
@@ -1207,7 +1271,7 @@ namespace SemsPLM.Controllers
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_UNFIT });
-            ViewBag.CurrentSt = Module.BPolicyNm;
+
             relLpa.ForEach(v => { ViewBag.LpaMeasureOID = v.ToOID; });
 
             // 콤보박스용
@@ -1442,7 +1506,6 @@ namespace SemsPLM.Controllers
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_MEASURE });
-            ViewBag.CurrentSt = Module.BPolicyNm;
             ViewBag.LpaUnfitOID = LpaUnfitOID;
             ViewBag.MeasureUserOID = lpaUnfit.MeasureUserOID;
 
@@ -1471,7 +1534,6 @@ namespace SemsPLM.Controllers
             ViewBag.LpaUnfitCheck = lpaUnfitCheck;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_LPA_MEASURE });
-            ViewBag.CurrentSt = Module.BPolicyNm;
             ViewBag.LpaUnfitOID = LpaUnfitOID;
             ViewBag.MeasureUserOID = lpaUnfit.MeasureUserOID;
 
@@ -1700,9 +1762,13 @@ namespace SemsPLM.Controllers
             StandardDoc standardDoc = StandardDocRepository.SelStandardDoc(new StandardDoc() { ModuleOID = OID });
             if (standardDoc == null)
             {
-                standardDoc = new StandardDoc();
-                standardDoc.OID = OID;
-                standardDoc.ModuleOID = OID;
+                standardDoc = new StandardDoc()
+                {
+                    OID = OID,
+                    ModuleOID = OID,
+                    BPolicyOID = Module.BPolicyOID,
+                    BPolicyNm = Module.BPolicyNm
+                };
             }
 
             /*ViewBag.StandardDocDetail = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = OID });*/
@@ -1824,15 +1890,19 @@ namespace SemsPLM.Controllers
             WorkerEdu workerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = OID });
             if (workerEdu == null)
             {
-                workerEdu = new WorkerEdu();
-                workerEdu.OID = Module.OID;
-                workerEdu.ModuleOID = Module.OID;
+                workerEdu = new WorkerEdu()
+                {
+                    OID = Module.OID,
+                    ModuleOID = Module.OID,
+                    BPolicyOID = Module.BPolicyOID,
+                    BPolicyNm = Module.BPolicyNm
+                };
             }
 
             ViewBag.WorkerEdu = workerEdu;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
-            ViewBag.CurrentSt = Module.BPolicyNm;
+
             return View();
         }
 
@@ -1850,7 +1920,7 @@ namespace SemsPLM.Controllers
             ViewBag.WorkerEdu = workerEdu;
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_WORKER_EDU });
-            ViewBag.CurrentSt = Module.BPolicyNm;
+
             return PartialView("InfoWorkerEducation");
         }
         #endregion
