@@ -33,7 +33,8 @@ namespace Qms.Trigger
                     return "";
                 }
 
-                PmsProject pmsProject = DaoFactory.GetData<PmsProject>("Pms.SelPmsProject", new PmsProject() { OID = Convert.ToInt32(oid), Type = type });
+                //PmsProject pmsProject = DaoFactory.GetData<PmsProject>("Pms.SelPmsProject", new PmsProject() { OID = Convert.ToInt32(oid), Type = type });
+                PmsProject pmsProject = PmsProjectRepository.SelPmsObject(Context, new PmsProject() { OID = Convert.ToInt32(oid), Type = type });
 
                 OpenIssue openIssue = new OpenIssue();
 
@@ -55,5 +56,61 @@ namespace Qms.Trigger
             }
             return "";
         }
+
+        public string OpenIssueItemCntPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iAdmin = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+
+            try
+            {
+
+                OpenIssue _openIssue = OpenIssueRepository.SelOpenIssue(new OpenIssue() { ProjectOID = Convert.ToInt32(oid) });
+
+                List<OpenIssueItem> openIssueItems = OpenIssueItemRepository.SelOpenIssueItems(new OpenIssueItem() { OpenIssueOID = _openIssue.OID });
+
+                if(openIssueItems == null && openIssueItems.Count() <= 0)
+                {
+                    return "";
+                }
+
+                int SuspenseCnt = 0;
+                int UncommittedCnt = 0;
+                int CompleatedCnt = 0;
+
+                openIssueItems.ForEach(v =>
+                {
+                    if(v.BPolicyNm == QmsConstant.POLICY_OPENISSUE_ITEM_COMPLETED)
+                    {
+                        CompleatedCnt++;
+                    }
+                    else if (v.BPolicyNm == QmsConstant.POLICY_OPENISSUE_ITEM_UNCOMMITTED)
+                    {
+                        UncommittedCnt++;
+                    }
+                    else if (v.BPolicyNm == QmsConstant.POLICY_OPENISSUE_ITEM_SUSPENSE)
+                    {
+                        SuspenseCnt++;
+                    }
+                });
+
+                _openIssue.CompleatedCnt = CompleatedCnt;
+                _openIssue.UncommittedCnt = UncommittedCnt;
+                _openIssue.SuspenseCnt = SuspenseCnt;
+
+                DaoFactory.SetUpdate("Qms.UdtOpenIssueCnt", _openIssue);
+
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
     }
 }

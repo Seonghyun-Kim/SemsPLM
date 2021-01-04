@@ -42,6 +42,18 @@
 
         <div id="properties" class="basic_grid">
             <div class="propertiesInfo">
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="">
+                                @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
+                                {
+                                    <button id="" class="custom-button"><i class="fas fa-pen"></i> 결재</button>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 <table class="infoTable">
                     <colgroup>
                         <col style="width:8%;" />
@@ -89,7 +101,7 @@
                         <td>
                             @ViewBag.Detail.CustomerNm
                         </td>
-                        
+
                         <th>생성자</th>
                         <td>
                             @ViewBag.Detail.CreateUsNm
@@ -329,7 +341,7 @@
         productGrd$.jqxGrid({
             theme: "kdnc",
             width: "100%",
-            height: 278,
+            height: 234,
             rowsheight: 28,
             columnsheight: 30,
             source: ProjectEPartAdapter,

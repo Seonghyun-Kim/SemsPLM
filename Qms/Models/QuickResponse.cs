@@ -309,19 +309,16 @@ namespace Qms.Models
 
         public static int InsQuickResponse(QuickResponse _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsQuickResponse", _param);
         }
 
         public static int UdtQuickResponse(QuickResponse _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtQuickResponse", _param);
         }
 
         public static int DelQuickResponse(QuickResponse _param)
         {
-            _param.DeleteUs = 1;
             return DaoFactory.SetUpdate("Qms.DelQuickResponse", _param);
         }
 
@@ -360,13 +357,11 @@ namespace Qms.Models
 
         public static int InsQuickResponseModule(QuickResponseModule _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsQuickResponseModule", _param);
         }
 
         public static int UdtQuickResponseModule(QuickResponseModule _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtQuickResponseModule", _param);
         }
     }

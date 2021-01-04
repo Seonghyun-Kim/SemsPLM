@@ -72,13 +72,11 @@ namespace Qms.Models
 
         public static int InsBlockadeItem(BlockadeItem _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsBlockadeItem", _param);
         }
 
         public static int UdtBlockadeItem(BlockadeItem _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtBlockadeItem", _param);
         }
     }

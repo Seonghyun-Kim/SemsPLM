@@ -606,14 +606,16 @@
       ,EstFinDt
       ,Manager_OID
       ,IssueType
-      ,FinDt)
+      ,FinDt
+      ,IsApprovalRequired)
       VALUES
       (#OID#
       ,#Importance#
       ,#EstFinDt#
       ,#Manager_OID#
       ,#IssueType#
-      ,#FinDt#);
+      ,#FinDt#
+      ,#IsApprovalRequired#);
     </insert>
 
     <select id="SelIssue" parameterClass="PmsIssue" resultClass="PmsIssue">
@@ -634,6 +636,9 @@
         </isNotNull>
         <isNotNull prepend="and" property="Description">
           A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="," property="IsApprovalRequired">
+          B.IsApprovalRequired = #IsApprovalRequired#
         </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
@@ -659,6 +664,9 @@
         </isNotEmpty>
         <isNotNull prepend="," property="FinDt">
           FinDt = #FinDt#
+        </isNotNull>
+        <isNotNull prepend="," property="IsApprovalRequired">
+          IsApprovalRequired = #IsApprovalRequired#
         </isNotNull>
         WHERE OID = #OID#
       </dynamic>

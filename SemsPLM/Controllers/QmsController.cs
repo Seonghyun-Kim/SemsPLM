@@ -27,15 +27,30 @@ namespace SemsPLM.Controllers
         {
             return View();
         }
-       
+
         public ActionResult InfoOpenIssue(int? OID)
         {
-            if(OID == null) { throw new Exception(""); }
+            if (OID == null) { throw new Exception(""); }
 
             OpenIssue _OpenIssue = OpenIssueRepository.SelOpenIssue(new OpenIssue() { OID = OID });
             ViewBag.OpenIssue = _OpenIssue;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE });
             ViewBag.ItemStatus = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM });
+
+            var items = OpenIssueItemRepository.SelOpenIssueItems(new OpenIssueItem() { OpenIssueOID = OID });
+            ViewBag.OpenIssueItemCnt = items == null ? 0 : items.Count();
+
+            if (items == null)
+            {
+                ViewBag.ItemRatio = null;
+            }
+            else
+            {
+                int FinishCnt = _OpenIssue.CompleatedCnt;
+
+                ViewBag.ItemRatio = (FinishCnt / items.Count() * 100).ToString() + "%";
+            }
+
             return View();
         }
 
@@ -170,11 +185,11 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-         
+
                 // OpenIssue 리스트 항목 추가
                 if (_param.OpenIssueItems != null && _param.OpenIssueItems.Count > 0)
                 {
-                    
+
                     _param.OpenIssueItems.ForEach(item =>
                     {
                         int? ItemOID = null;
@@ -222,7 +237,7 @@ namespace SemsPLM.Controllers
                         }
                         else
                         {
-                            if(item.IsDel == "Y")
+                            if (item.IsDel == "Y")
                             {
                                 var policys = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM });
 
@@ -230,13 +245,13 @@ namespace SemsPLM.Controllers
                                 {
                                     if (item.BPolicyOID == v.OID)
                                     {
-                                        if(v.Name != QmsConstant.POLICY_OPENISSUE_ITEM_SUSPENSE)
+                                        if (v.Name != QmsConstant.POLICY_OPENISSUE_ITEM_SUSPENSE)
                                         {
                                             throw new Exception("OPEN ISSUE 항목은 미결일 경우에만 삭제 할 수 있습니다.");
                                         }
                                     }
                                 });
-                                
+
                                 DObjectRepository.DelDObject(Session, item);
                                 OpenIssueRepository.UdtOpenIssueDelSuspenseCnt(_param);
                             }
@@ -244,7 +259,7 @@ namespace SemsPLM.Controllers
                             {
                                 DObjectRepository.UdtDObject(Session, item);
                                 OpenIssueItemRepository.UdtOpenIssueItem(item);
-                            }                            
+                            }
                         }
                     });
                 }
@@ -402,7 +417,7 @@ namespace SemsPLM.Controllers
         {
             List<QuickResponse> list = QuickResponseRepository.SelQuickResponses(_param);
 
-            if(_param.ProjectOID != null)
+            if (_param.ProjectOID != null)
             {
                 List<DRelationship> relationships = DRelationshipRepository.SelRelationship(Session, new DRelationship() { FromOID = _param.ProjectOID });
 
@@ -583,10 +598,7 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
-                if(_param.ProjectOID == null)
-                {
-                    throw new Exception("잘못된 호출입니다.");
-                }
+
 
                 DObject dobj = new DObject();
                 dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
@@ -597,11 +609,14 @@ namespace SemsPLM.Controllers
                 _param.OID = result;
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
 
-                DRelationship dQuickProject = new DRelationship();
-                dQuickProject.Type = QmsConstant.RELATIONSHIP_QUICK_RESPONSE;
-                dQuickProject.FromOID = _param.ProjectOID;
-                dQuickProject.ToOID = _param.OID;
-                DRelationshipRepository.InsDRelationshipNotOrd(Session, dQuickProject);
+                if (_param.ProjectOID == null)
+                {
+                    DRelationship dQuickProject = new DRelationship();
+                    dQuickProject.Type = QmsConstant.RELATIONSHIP_QUICK_RESPONSE;
+                    dQuickProject.FromOID = _param.ProjectOID;
+                    dQuickProject.ToOID = _param.OID;
+                    DRelationshipRepository.InsDRelationshipNotOrd(Session, dQuickProject);
+                }
 
                 int SetQuickModule(string Type, string Name)
                 {
@@ -1127,7 +1142,8 @@ namespace SemsPLM.Controllers
                         OccurrenceCauseItemRepository.UdtOccurrenceCauseItem(v);
                     }
 
-                    if(v.OccurrenceWhys != null) { 
+                    if (v.OccurrenceWhys != null)
+                    {
                         v.OccurrenceWhys.ForEach(w =>
                         {
                             if (w.OID == null)
@@ -1284,7 +1300,8 @@ namespace SemsPLM.Controllers
             ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
             if (errorproof == null)
             {
-                errorproof = new ErrorProof() {
+                errorproof = new ErrorProof()
+                {
                     OID = OID,
                     ModuleOID = OID,
                     BPolicyOID = Module.BPolicyOID,
@@ -1801,12 +1818,12 @@ namespace SemsPLM.Controllers
             ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK });
-            List<Approval> approvals = ApprovalRepository.SelApprovals(Session, new Approval() { TargetOID = Module.OID});
-            if(approvals != null && approvals.Count > 0)
+            List<Approval> approvals = ApprovalRepository.SelApprovals(Session, new Approval() { TargetOID = Module.OID });
+            if (approvals != null && approvals.Count > 0)
             {
                 ViewBag.ApprovalCnt = approvals.Count();
             }
-            
+
             return View();
         }
 

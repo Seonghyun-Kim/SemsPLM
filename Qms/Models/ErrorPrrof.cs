@@ -42,13 +42,11 @@ namespace Qms.Models
 
         public static int InsErrorPrrof(ErrorPrrof _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsErrorPrrof", _param);
         }
 
         public static int UdtErrorPrrof(ErrorPrrof _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtErrorPrrof", _param);
         }
 

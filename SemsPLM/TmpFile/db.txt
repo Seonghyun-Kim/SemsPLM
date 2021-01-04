@@ -8,19 +8,14 @@ T_BPOLICY_AUTH 권한추가
 79	3	1	ROLE	Relation	연결	SYSTEM	NULL
 
 
-2021.01.03 
-김성현
-#1 T_BDEFINE 추가
 
-9	BLOCKADE	TYPE	COMMON	6	봉쇄조치	/Qms/InfoMiniBlockade
-10	OCCURRENCE_CAUSE	TYPE	COMMON	7	원인분석	/Qms/InfoMiniOccurrenceCause
-11	IMPROVE_COUNTERMEASURE	TYPE	COMMON	8	개선대책	/Qms/InfoMiniImproveCountermeasure
-12	ERROR_PRROF	TYPE	COMMON	8	Error Prrof	/Qms/InfoMiniErrorProof
-13	LPA_MEASURE	TYPE	COMMON	8	LPA 대책서	/Qms/InfoMiniLpaMeasure
-14	QUICK_RESPONSE_CHECK	TYPE	COMMON	9	유효성 검증	/Qms/InfoMiniQuickValidation
-15	STANDARD_FOLLOW	TYPE	COMMON	9	표준 F/U	/Qms/InfoMiniStandardFollowUp
-16	WORKER_EDU	TYPE	COMMON	10	작업자 교육	/Qms/InfoMiniWorkerEducation
+2021-01-04
 
-#2 T_BPOLICY 수정ActionProgram
-1	PROJECT	Prepare	1	준비중	Pms.Trigger.ProjectTrigger:CheckStartedProjectPromote,Pms.Trigger.ProjectTrigger:CheckCompleteProjectPromote	Pms.Trigger.ProjectTrigger:ActionStartedProjectPromote;Qms.Trigger.OpenIssueTrigger:OpenIssueCreatePromote	1	NULL	NULL	P:2
+shkim
 
+T_DPMS_ISSUE
+IsApprovalRequired 컬럼추가
+IsApprovalRequired	nvarchar(50)	Checked
+
+PmsIssue.cs 데이터타입추가
+public string IsApprovalRequired { get; set; } 추가 

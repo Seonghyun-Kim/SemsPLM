@@ -88,13 +88,11 @@ namespace Qms.Models
 
         public static int InsLpaUnfit(LpaUnfit _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsLpaUnfit", _param);
         }
 
         public static int UdtLpaUnfit(LpaUnfit _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtLpaUnfit", _param);
         }
 
@@ -132,19 +130,16 @@ namespace Qms.Models
 
         public static int InsLpaUnfitCheck(LpaUnfitCheck _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsLpaUnfitCheck", _param);
         }
 
         public static int UdtLpaUnfitCheck(LpaUnfitCheck _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtLpaUnfitCheck", _param);
         }
 
         public static int DelLpaUnfitCheck(LpaUnfitCheck _param)
         {
-            _param.DeleteUs = 1;
             return DaoFactory.SetUpdate("Qms.DelLpaUnfitCheck", _param);
         }
     }

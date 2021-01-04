@@ -103,10 +103,14 @@
         </tr>
         <tr class="TaskVal">
             <th><i class="fa fa-caret-right"></i> 처리자</th>
-            <td colspan="3">
+            <td>
                 <input type="hidden" id="dlgMangerOID" value="@ViewBag.Detail.Manager_OID" />
                 <input type="text" id="dlgManager" value="@ViewBag.Detail.ManagerNm" style="width:150px;" readonly />
                 <button class="custom-button ModifiableEditCustomBox" id="dlgSelManager"><i class="fas fa-search"></i> 검색</button>
+            </td>
+            <th><i class="fa fa-caret-right"></i> 필수 결재 여부</th>
+            <td>
+                <div id="IsApprovalRequired" name="IsApprovalRequired" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_ETC" class="issueCheckBox"></div>
             </td>
         </tr>
         <tr>
@@ -145,7 +149,8 @@
 
 <script>
     var divIdDetail
-    var fileUpload = $("#dlgFile_FileList_@ViewBag.Detail.OID").FileUpload({ OID : '@ViewBag.Detail.OID'});
+    var fileUpload = $("#dlgFile_FileList_@ViewBag.Detail.OID").FileUpload({ OID: '@ViewBag.Detail.OID' });
+    var ApprovRequired = "@ViewBag.Detail.IsApprovalRequired";
     $(function () {
         fileUpload.ReadOnlyMode();
         $('.issueRadioBtn').jqxRadioButton({ width: 100, height: 32 });
@@ -187,7 +192,11 @@
             $('.Prepare').attr('hidden', true);
             $('#dlgContents').attr('readonly', 'readonly');
         }
+        if ('@ViewBag.Detail.IsApprovalRequired' == '@Common.Constant.CommonConstant.ACTION_YES') {
+            $('#IsApprovalRequired').jqxCheckBox('check');
+        }
 
+        $('.issueCheckBox').jqxCheckBox({ locked: true });
         $('.issueRadioBtn').jqxRadioButton('disable');
 
         $('#dlgEditIssue').on('click', function () {
@@ -195,22 +204,31 @@
             $('.ModifiableCustomBox').attr('hidden', true);
             $('.ModifiableEditCustomBox').attr('hidden', false);
             $('.issueRadioBtn').jqxRadioButton('enable');
-
+            $('.issueCheckBox').jqxCheckBox({ locked: false });
             var IssueType = "@ViewBag.Detail.IssueType";
-        _.each($('div[name="IssueType"]'), function (item) {
-            if (IssueType.indexOf(',') > -1) {
-                _.each(IssueType.split(','), function (Changes) {
-                    if ($(item).data('value') == Changes) {
+            _.each($('div[name="IssueType"]'), function (item) {
+                if (IssueType.indexOf(',') > -1) {
+                    _.each(IssueType.split(','), function (Changes) {
+                        if ($(item).data('value') == Changes) {
+                            $(item).jqxCheckBox('check');
+                        }
+                    });
+                } else {
+                    if ($(item).data('value') == IssueType) {
                         $(item).jqxCheckBox('check');
                     }
-                });
-            } else {
-                if ($(item).data('value') == IssueType) {
-                    $(item).jqxCheckBox('check');
                 }
-            }
+            });
         });
 
+         $('#IsApprovalRequired').on('change', function (e) {
+            var checked = e.args.checked;
+
+            if (checked) {
+                ApprovRequired = "@Common.Constant.CommonConstant.ACTION_YES";
+            } else {
+                ApprovRequired = "@Common.Constant.CommonConstant.ACTION_NO";
+            }
         });
 
         $('#dlgCancelIssue').on('click', function () {
@@ -218,7 +236,7 @@
             $('.ModifiableCustomBox').attr('hidden', false);
             $('.ModifiableEditCustomBox').attr('hidden', true);
             $('.issueRadioBtn').jqxRadioButton('disable');
-
+            $('.issueCheckBox').jqxCheckBox({ locked: true });
             $('#dlgIssueNm').val('@ViewBag.Detail.Name');
             var description = @Html.Raw(Json.Encode(@ViewBag.Detail.Description));
             $('#dlgDescription').html(description);
@@ -232,6 +250,10 @@
             $('.issueCheckBox').jqxCheckBox('uncheck');
             $('#dlgManager').val('@ViewBag.Detail.ManagerNm');
             $('#dlgMangerOID').val('@ViewBag.Detail.Manager_OID');
+
+            if ('@ViewBag.Detail.IsApprovalRequired' == '@Common.Constant.CommonConstant.ACTION_YES') {
+                $('#IsApprovalRequired').jqxCheckBox('check');
+            }
         });
 
         $('#dlgSelManager').on('click', function () {

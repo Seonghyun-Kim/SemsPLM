@@ -21,24 +21,12 @@
             </div>
             <div class="searchContent">
                 <div class="searchData">
-                    <div>회사명</div>
-                    <div><input type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
                     <div>부서명</div>
-                    <div><input type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div>직급</div>
-                    <div><input type="text" class="txtBox" value="" /></div>
+                    <div><input type="text" class="txtBox" value="" id="DepartmentNm" /></div>
                 </div>
                 <div class="searchData">
                     <div>이름</div>
-                    <div><input type="text" class="txtBox" value="" /></div>
-                </div>
-                <div class="searchData">
-                    <div>연락처</div>
-                    <div><input type="text" class="txtBox" value="" /></div>
+                    <div><input type="text" class="txtBox" value="" id="PersonNm" /></div>
                 </div>
                 <div class="searchButton">
                     <button id="btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
@@ -51,6 +39,7 @@
 
 
 <script type="text/javascript">
+    var selDepartmentOID;
     $(function () {
 
         var organizationSource = @Html.Raw(Json.Encode(ViewBag.Organization));
@@ -109,9 +98,21 @@
         userTree$.on('select', function (event) {
             var args = event.args;
             var item = userTree$.jqxTree('getItem', args.element);
+            selDepartmentOID = item.id;
             getPersonList(UserListSource, userList$, { DepartmentOID: item.id });
         });
-
+        $('#btnSearch').on('click', function () {
+            var param = {};
+            param.DepartmentNm = $('#DepartmentNm').val();
+            param.Name = $('#PersonNm').val();
+            param.DepartmentOID = selDepartmentOID;
+            getPersonList(UserListSource, userList$, param);
+        });
+        $('#DepartmentNm, #PersonNm').keydown(function (key) {
+            if (key.keyCode == 13) {
+                $('#btnSearch').trigger('click');
+            }
+        });
         var UserListSource =
             {
                 dataType: "json",

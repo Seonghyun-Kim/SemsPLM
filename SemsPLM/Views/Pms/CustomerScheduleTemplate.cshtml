@@ -10,6 +10,8 @@
     var Data;
     var mkey; //메인idx
     var subkey; //서브idx
+    var rowKey = null;
+    var rowDataField = null;
     $(function () {
         var ScheduleTemplateParentsource =
         {
@@ -23,7 +25,7 @@
                 { name: 'Cdata', type: 'array' },
                 { name: 'isChange', type: 'string' },
                 { name: 'isParentMove', type: 'string' },
-                ],
+            ],
             addrow: function (rowid, rowdata, position, commit) {
                 // synchronize with the server - send insert command
                 // call commit with parameter true if the synchronization with the server is successful
@@ -97,88 +99,88 @@
                 showToolbar: true,
                 toolbarHeight: 45,
 
-                 renderToolbar: function (statusbar) {
+                renderToolbar: function (statusbar) {
 
                     var container$ = $('<div class="lGridComponent"></div>');
-                    var  AssessListParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                 //    var AssessListParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                     var AssessListParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                     var AssessListParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                    var AssessListParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    //    var AssessListParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    var AssessListParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    var AssessListParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
 
-                     container$.append(AssessListParentAddBtn$);
-                 //    container$.append(AssessListParentdelBtn$);
-                     container$.append(AssessListParentUpBtn$);
-                     container$.append(AssessListParentDownBtn$);
+                    container$.append(AssessListParentAddBtn$);
+                    //    container$.append(AssessListParentdelBtn$);
+                    container$.append(AssessListParentUpBtn$);
+                    container$.append(AssessListParentDownBtn$);
                     statusbar.append(container$);
                     //행 추가
                     AssessListParentAddBtn$.on('click', function (e) {
                         ScheduleTemplateParentGrd$.jqxGrid('addrow', null, {
-                            'Name' : null,
-                            'KorNm' : null,
-                            'Ord' : null,
+                            'Name': null,
+                            'KorNm': null,
+                            'Ord': null,
                             'isMove': null,
-                            'Cdata' : [],
+                            'Cdata': [],
                             'isChange': "Y",
-                            'isParentMove':null
+                            'isParentMove': null
 
                         });
                     });
-                     //AssessListParentdelBtn$.on('click', function (e) {
-                     //    var rowindex = ScheduleTemplateParentGrd$.jqxGrid('selectedrowindexes');
-                     //    var selectedRecords = new Array();
-                     //    if (rowindex == null || rowindex == undefined) {
-                     //        alert('삭제할 행을 선택하여 주세요');
-                     //    } else {
-                     //        if (confirm('삭제하시겠습니까?')) {
-                     //            for (var i = rowindex.length - 1; i >= 0; i--) {
-                     //                var id = ScheduleTemplateParentGrd$.jqxGrid('getrowid', rowindex[i]);
-                     //                ScheduleTemplateParentGrd$.jqxGrid('deleterow', id);
-                     //            }
-                     //        }
+                    //AssessListParentdelBtn$.on('click', function (e) {
+                    //    var rowindex = ScheduleTemplateParentGrd$.jqxGrid('selectedrowindexes');
+                    //    var selectedRecords = new Array();
+                    //    if (rowindex == null || rowindex == undefined) {
+                    //        alert('삭제할 행을 선택하여 주세요');
+                    //    } else {
+                    //        if (confirm('삭제하시겠습니까?')) {
+                    //            for (var i = rowindex.length - 1; i >= 0; i--) {
+                    //                var id = ScheduleTemplateParentGrd$.jqxGrid('getrowid', rowindex[i]);
+                    //                ScheduleTemplateParentGrd$.jqxGrid('deleterow', id);
+                    //            }
+                    //        }
 
-                     //    }
-                     //});
-                     AssessListParentUpBtn$.on('click', function (e) {
-                         //var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindex');
+                    //    }
+                    //});
+                    AssessListParentUpBtn$.on('click', function (e) {
+                        //var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindex');
 
-                         var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
-                         var idx = row.boundindex - 1;
-                         if (row.uid == 1) {
-                             return;
-                         }
-                         const parentDataSource = ScheduleTemplateParentGrd$.jqxGrid("source").loadedData;
-                         fMoveGridRecusive(parentDataSource, row.OID, 'UP');
-                         ScheduleTemplateParentGrd$.jqxGrid('updatebounddata');
-                         //ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
-                         Data[0].isParentMove = "Y";
-                         ScheduleTemplateParentGrd$.jqxGrid('clearselection');
-                         if (idx >= 0) {
-                             ScheduleTemplateParentGrd$.jqxGrid('selectrow', idx);
-                         } else {
-                             ScheduleTemplateParentGrd$.jqxGrid('selectrow', 0);
-                         }
-                     });
-                     AssessListParentDownBtn$.on('click', function (e) {
-                         //  var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindexes');
-                         var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
-                         var idx = row.boundindex + 1;
-                         var maxLength = ScheduleTemplateParentGrd$.jqxGrid('getrows').length;
-                         if (row.uid == maxLength) {
-                             return;
-                         }
-                         const parentDataSource = ScheduleTemplateParentGrd$.jqxGrid("source").loadedData;
-                         var midx = parentDataSource.length - 1;
-                         fMoveGridRecusive(parentDataSource, row.OID, 'DOWN');
-                         ScheduleTemplateParentGrd$.jqxGrid('updatebounddata');
-                         // ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
-                         Data[0].isParentMove = "Y";
-                         ScheduleTemplateParentGrd$.jqxGrid('clearselection');
-                         if (idx <= midx) {
-                             ScheduleTemplateParentGrd$.jqxGrid('selectrow', idx);
-                         } else {
-                             ScheduleTemplateParentGrd$.jqxGrid('selectrow', midx);
-                         }
-                     });
+                        var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
+                        var idx = row.boundindex - 1;
+                        if (row.uid == 1) {
+                            return;
+                        }
+                        const parentDataSource = ScheduleTemplateParentGrd$.jqxGrid("source").loadedData;
+                        fMoveGridRecusive(parentDataSource, row.OID, 'UP');
+                        ScheduleTemplateParentGrd$.jqxGrid('updatebounddata');
+                        //ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        Data[0].isParentMove = "Y";
+                        ScheduleTemplateParentGrd$.jqxGrid('clearselection');
+                        if (idx >= 0) {
+                            ScheduleTemplateParentGrd$.jqxGrid('selectrow', idx);
+                        } else {
+                            ScheduleTemplateParentGrd$.jqxGrid('selectrow', 0);
+                        }
+                    });
+                    AssessListParentDownBtn$.on('click', function (e) {
+                        //  var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindexes');
+                        var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
+                        var idx = row.boundindex + 1;
+                        var maxLength = ScheduleTemplateParentGrd$.jqxGrid('getrows').length;
+                        if (row.uid == maxLength) {
+                            return;
+                        }
+                        const parentDataSource = ScheduleTemplateParentGrd$.jqxGrid("source").loadedData;
+                        var midx = parentDataSource.length - 1;
+                        fMoveGridRecusive(parentDataSource, row.OID, 'DOWN');
+                        ScheduleTemplateParentGrd$.jqxGrid('updatebounddata');
+                        // ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        Data[0].isParentMove = "Y";
+                        ScheduleTemplateParentGrd$.jqxGrid('clearselection');
+                        if (idx <= midx) {
+                            ScheduleTemplateParentGrd$.jqxGrid('selectrow', idx);
+                        } else {
+                            ScheduleTemplateParentGrd$.jqxGrid('selectrow', midx);
+                        }
+                    });
                 }
             });
         getScheduleTemplateList(ScheduleTemplateParentsource, ScheduleTemplateParentGrd$, param);
@@ -217,7 +219,7 @@
                 commit(true);
             },
             deleterow: function (rowid, commit) {
-                Data[mkey].Cdata.splice(rowid,1);
+                Data[mkey].Cdata.splice(rowid, 1);
                 ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isChange", "Y");
                 commit(true);
             }
@@ -335,7 +337,7 @@
                         var midx = childDataSource.length - 1;
                         fMoveGridRecusive(childDataSource, row.OID, 'DOWN');
                         ScheduleTemplateChildGrd$.jqxGrid('updatebounddata');
-                       // ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        // ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
                         Data[mkey].isMove = "Y";
                         ScheduleTemplateChildGrd$.jqxGrid('clearselection');
                         if (idx <= midx) {
@@ -346,8 +348,9 @@
                     });
 
                     AssessListChildSaveBtn$.on('click', function (e) {
+                        ScheduleTemplateChildGrd$.jqxGrid('endcelledit', rowKey, rowDataField, false);
                         if (confirm("저장하시겠습니까?")) {
-                            RequestData('/Pms/updatCustomerScheduleTemplate',{ _param: Data }, function (response) {
+                            RequestData('/Pms/updatCustomerScheduleTemplate', { _param: Data }, function (response) {
                                 if (response.isError) {
                                     alert(response.resultMessage);
                                     return;
@@ -382,7 +385,9 @@
             var args = event.args;
             subkey = args.rowindex;
             var item = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', args.rowindex);
-           // console.log(Data[args.rowindex].Cdata);
+            // console.log(Data[args.rowindex].Cdata);
+            rowKey = args.rowindex;
+            rowDataField = args.datafield;
         });
     });
     function getScheduleTemplateList(_Source, _Grid$, _param) {

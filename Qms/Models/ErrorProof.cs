@@ -50,13 +50,11 @@ namespace Qms.Models
 
         public static int InsErrorProof(ErrorProof _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsErrorProof", _param);
         }
 
         public static int UdtErrorProof(ErrorProof _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtErrorProof", _param);
         }
 

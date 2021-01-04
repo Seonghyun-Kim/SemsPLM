@@ -81,6 +81,36 @@
                             <input type="text" class="txtBox" id="txtOpenIssueCarLibNm_@ViewBag.OpenIssue.OID" readonly="readonly" value="@ViewBag.OpenIssue.CarLibNm" />
                         </td>
                     </tr>
+                    <tr>
+                        <th>ISSUE</th>
+                        <td>@ViewBag.OpenIssueItemCnt</td>
+                        <th>진행률</th>
+                        <td>@ViewBag.ItemRatio</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding:0px;">
+                            <table width="100%" class="infoTable" style="table-layout:fixed;margin:0px;border:0px;">
+                                <colgroup>
+                                    <col style="width:180px;" />
+                                    <col style="width:auto;" />
+                                    <col style="width:180px;" />
+                                    <col style="width:auto;" />
+                                    <col style="width:180px;" />
+                                    <col style="width:auto;" />
+                                </colgroup>
+                                <tr>
+                                    <th>완료</th>
+                                    <td>@ViewBag.OpenIssue.CompleatedCnt</td>
+                                    <th>관망</th>
+                                    <td>@ViewBag.OpenIssue.UncommittedCnt</td>
+                                    <th>미결</th>
+                                    <td>@ViewBag.OpenIssue.SuspenseCnt</td>
+                                </tr>
+                            </table>
+                        </td>
+                        
+                     
+                    </tr>
                 </table>
 
                 <div style="margin:10px 0px;">
@@ -95,24 +125,7 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <table width="100%" class="infoTable" style="table-layout:fixed;">
-                        <tr>
-                            <th>ISSUE</th>
-                            <th>완료</th>
-                            <th>관망</th>
-                            <th>미결</th>
-                            <th>진행률</th>
-                        </tr>
-                        <tr>
-                            <td>47</td>
-                            <td>29</td>
-                            <td>3</td>
-                            <td style="color:red;">15</td>
-                            <td>62%</td>
-                        </tr>
-                    </table>
-
+                  
                     <div id="grdOpenIssueList_@ViewBag.OpenIssue.OID"></div>
                 </div>
 
@@ -212,7 +225,7 @@
                 { name: 'OpenIssueExpectedDt', type: 'string' },
                 { name: 'OpenIssueCompleteDt', type: 'string' },
                 { name: 'BPolicyOID', type: 'number' },
-                { name: 'BPolicyNm', type: 'string' },
+                { name: 'StatusNm', type: 'string' },
                 { name: 'Description', type: 'string' },
                 { name: 'OpenIssueCloseFl', type: 'string' },
                 { name: 'CreateUs', type: 'number' },
@@ -293,7 +306,7 @@
                 { text: '발생일', dataField: 'OpenIssueOccurrenceDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype:'datetimeinput' },
                 { text: '계획일', dataField: 'OpenIssueExpectedDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
                 { text: '완료일', dataField: 'OpenIssueCompleteDt', width: '7%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', columntype: 'datetimeinput'  },
-                { text: '상태', dataField: 'BPolicyNm', width: '6%', align: 'center', cellsalign: 'center', columntype: 'combobox',createeditor: function (row, column, editor) {
+                { text: '상태', dataField: 'StatusNm', width: '6%', align: 'center', cellsalign: 'center', columntype: 'combobox',createeditor: function (row, column, editor) {
                         editor.jqxComboBox({
                             autoOpen: true,
                             searchMode: 'none',
@@ -307,7 +320,7 @@
                         for (var i = 0; i < ItemStatusList.length; i++) {
                             if (newvalue == ItemStatusList[i].OID) {
                                 grdOpenIssueItem$.jqxGrid('setcellvalue', row, "BPolicyOID", ItemStatusList[i].OID);
-                                grdOpenIssueItem$.jqxGrid('setcellvalue', row, "BPolicyNm", ItemStatusList[i].StatusNm);
+                                grdOpenIssueItem$.jqxGrid('setcellvalue', row, "StatusNm", ItemStatusList[i].StatusNm);
                                 
                                 return ItemStatusList[i].StatusNm;
                             }

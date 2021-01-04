@@ -274,7 +274,7 @@
 
         <isNotNull prepend="and" property="PartNo">
           B.Name = #PartNo#
-        </isNotNull>  
+        </isNotNull>
       </dynamic>
     </select>
 
@@ -949,7 +949,10 @@
       F.Name AS ProjectNm,
       B.Name, B.Description,
       B.CreateDt,
-      G.Name AS BPolicyNm
+      G.Name AS BPolicyNm,
+      A.CompleatedCnt,
+      A.UncommittedCnt,
+      A.SuspenseCnt
       FROM T_DQMS_OPENISSUE A
       INNER JOIN V_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DCODELIBRARY C ON A.OemLibOID = C.OID
@@ -959,7 +962,7 @@
       LEFT JOIN T_BPOLICY G ON B.BPolicyOID = G.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
-        A.OID = #OID# 
+        A.OID = #OID#
       </isNotNull>
       <isNotNull prepend="and" property="ProjectOID">
         A.ProjectOID = #ProjectOID#
@@ -984,7 +987,7 @@
     <update id="UdtOpenIssueSuspenseCnt" parameterClass="OpenIssue">
       UPDATE T_DQMS_OPENISSUE
       SET
-      SuspenseCnt = SuspenseCnt + 1   
+      SuspenseCnt = SuspenseCnt + 1
       WHERE OID = #OID#
     </update>
 
@@ -995,9 +998,18 @@
       WHERE OID = #OID#
     </update>
 
+    <update id="UdtOpenIssueCnt" parameterClass="OpenIssue">
+      UPDATE T_DQMS_OPENISSUE
+      SET
+      SuspenseCnt = #SuspenseCnt#
+      , UncommittedCnt = #UncommittedCnt#
+      , CompleatedCnt = #CompleatedCnt#
+      WHERE OID = #OID#
+    </update>
+
     <!-- OpenIssueItem SQL -->
     <select id="SelOpenIssueItem" parameterClass="OpenIssueItem" resultClass="OpenIssueItem">
-      SELECT A.*, B.Name, B.BPolicyOID, C.StatusNm AS BPolicyNm, B.Description
+      SELECT A.*, B.Name, B.BPolicyOID, C.Name AS BPolicyNm, C.StatusNm, B.Description
       FROM T_DQMS_OPENISSUE_ITEM A
       LEFT JOIN V_DOBJECT B ON A.OID = B.OID
       INNER JOIN T_BPOLICY C ON B.BPolicyOID = C.OID

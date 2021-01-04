@@ -32,6 +32,11 @@ namespace Qms.Models
 
         public List<OpenIssueItem> OpenIssueItems { get; set; }
 
+        public int CompleatedCnt { get; set; }
+
+        public int UncommittedCnt { get; set; }
+
+        public int SuspenseCnt { get; set; }
         // 제품 
         //public int? ProductOID { get; set; }
 
@@ -70,6 +75,8 @@ namespace Qms.Models
     public class OpenIssueItem : DObject, IDObject
     {
         public int? OpenIssueOID { get; set; }
+
+        public string StatusNm { get; set; }
 
         public string OpenIssueTitle { get; set; }
 
@@ -114,13 +121,11 @@ namespace Qms.Models
 
         public static int InsOpenIssueItem(OpenIssueItem _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsOpenIssueItem", _param);
         }
 
         public static int UdtOpenIssueItem(OpenIssueItem _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtOpenIssueItem", _param);
         }
     }
@@ -157,7 +162,6 @@ namespace Qms.Models
 
         public static int InsOpenIssueRelationship(OpenIssueRelationship _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsOpenIssueRelationship", _param);
         }
 

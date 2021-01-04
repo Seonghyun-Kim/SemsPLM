@@ -54,6 +54,9 @@ namespace Common.Constant
         public static int MAX_NUMBER = 1155;
         public static string REVISION_PREFIX = "";
 
+        public static string ACTION_YES = "Y";
+        public static string ACTION_NO = "N";
+
         //Library
         public static string TYPE_LIBRARY = "LIBRARY";
         public static string TABLE_LIBRARY = "T_DLIBRARY";

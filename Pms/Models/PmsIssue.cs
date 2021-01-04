@@ -23,6 +23,7 @@ namespace Pms.Models
         public string ManagerNm { get; set; }
         public string Contents { get; set; }
         public DateTime? FinDt { get; set; }
+        public string IsApprovalRequired { get; set; }
         public string IssueType { get; set; }
 
         public string IssueTypeNm
