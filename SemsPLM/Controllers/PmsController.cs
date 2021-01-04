@@ -476,6 +476,20 @@ namespace SemsPLM.Controllers
             ViewBag.Holiday = string.Join(",", CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = Convert.ToInt32(ViewBag.ProjectDetail.CalendarOID) }).Select(value => value.FullDate.ToString()).ToArray());
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = ViewBag.Detail.ProcessType });
             ViewBag.Role = BDefineRepository.SelDefines(new BDefine { Type = CommonConstant.DEFINE_ROLE, Module = PmsConstant.MODULE_PMS });
+            ViewBag.isApproval = CommonConstant.ACTION_YES;
+            PmsIssue tmpIssue = new PmsIssue();
+            List<PmsRelationship> IssueRelationship = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, FromOID = Convert.ToInt32(OID) });
+            if (IssueRelationship.Count > 0)
+            {
+                IssueRelationship.ForEach(issue =>
+                {
+                    tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = issue.ToOID });
+                    if(tmpIssue.IsApprovalRequired == CommonConstant.ACTION_YES && tmpIssue.BPolicy.StatusNm != PmsConstant.POLICY_ISSUE_TASK_COMPLETED)
+                    {
+                        ViewBag.isApproval = CommonConstant.ACTION_NO;
+                    }
+                });
+            }
             Approval approv = ApprovalRepository.SelApprovalNonStep(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
             if (approv != null)
             {

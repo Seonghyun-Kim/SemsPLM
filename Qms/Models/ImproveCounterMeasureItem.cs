@@ -40,19 +40,16 @@ namespace Qms.Models
 
         public static int InsImproveCounterMeasureItem(ImproveCounterMeasureItem _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsImproveCounterMeasureItem", _param);
         }
 
         public static int UdtImproveCounterMeasureItem(ImproveCounterMeasureItem _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtImproveCounterMeasureItem", _param);
         }
 
         public static int DelImproveCounterMeasureItem(ImproveCounterMeasureItem _param)
         {
-            _param.DeleteUs = 1;
             return DaoFactory.SetUpdate("Qms.DelImproveCounterMeasure", _param);
         }
 

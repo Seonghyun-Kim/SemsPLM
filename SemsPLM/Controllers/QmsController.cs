@@ -28,12 +28,51 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoOpenIssue(int? OID)
+        {
+            if (OID == null) { throw new Exception(""); }
+
+            OpenIssue _OpenIssue = OpenIssueRepository.SelOpenIssue(new OpenIssue() { OID = OID });
+            ViewBag.OpenIssue = _OpenIssue;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE });
+            ViewBag.ItemStatus = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM });
+
+            var items = OpenIssueItemRepository.SelOpenIssueItems(new OpenIssueItem() { OpenIssueOID = OID });
+            ViewBag.OpenIssueItemCnt = items == null ? 0 : items.Count();
+
+            if (items == null)
+            {
+                ViewBag.ItemRatio = null;
+            }
+            else
+            {
+                int FinishCnt = _OpenIssue.CompleatedCnt;
+
+                ViewBag.ItemRatio = (FinishCnt / items.Count() * 100).ToString() + "%";
+            }
+
+            return View();
+        }
+
         public ActionResult EditOpenIssue(OpenIssue _param)
         {
-            ViewBag.ProjectOID = _param.ProjectOID;
-            ViewBag.ProcessOID = _param.ProcessOID;
             ViewBag.OpenIssueOID = _param.OID;
             return View("Dialog/dlgEditOpenIssue", _param);
+        }
+
+        public JsonResult SelOpenIssue(OpenIssue _param)
+        {
+            return Json(OpenIssueRepository.SelOpenIssue(_param));
+        }
+
+        public JsonResult SelOpenIssues(OpenIssue _param)
+        {
+            return Json(OpenIssueRepository.SelOpenIssues(_param));
+        }
+
+        public JsonResult SelOpenIssueItems(OpenIssueItem _param)
+        {
+            return Json(OpenIssueItemRepository.SelOpenIssueItems(_param));
         }
 
         public JsonResult InsOpenIssue(OpenIssue _param, List<OpenIssueItem> openIssueItems, List<QuickResponse> quickResponses)
@@ -47,9 +86,7 @@ namespace SemsPLM.Controllers
                 {
                     CustomerLibOID = _param.CustomerLibOID,
                     CarLibOID = _param.CarLibOID,
-                    ProductOID = _param.ProductOID,
                     ProjectOID = _param.ProjectOID,
-                    ProcessOID = _param.ProcessOID,
                 };
 
                 // OpenIssue 신규작성 일 경우 OpenIssue OID 생성
@@ -86,6 +123,7 @@ namespace SemsPLM.Controllers
                             DObject dobj = new DObject();
                             dobj.Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM;
                             dobj.Name = QmsConstant.TYPE_OPEN_ISSUE_ITEM + "_" + openIssue.OID;
+                            dobj.BPolicyOID = _param.BPolicyOID;
                             openIssueItem.OID = DObjectRepository.InsDObject(Session, dobj);
 
                             resultValue = OpenIssueItemRepository.InsOpenIssueItem(openIssueItem);
@@ -142,6 +180,100 @@ namespace SemsPLM.Controllers
             }
         }
 
+        public JsonResult SaveOpenIssueItem(OpenIssue _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                // OpenIssue 리스트 항목 추가
+                if (_param.OpenIssueItems != null && _param.OpenIssueItems.Count > 0)
+                {
+
+                    _param.OpenIssueItems.ForEach(item =>
+                    {
+                        int? ItemOID = null;
+                        OpenIssueItem openIssueItem = new OpenIssueItem()
+                        {
+                            OpenIssueTitle = item.OpenIssueTitle,
+                            RelapseInsideFl = item.RelapseInsideFl,
+                            RelapseHanonFl = item.RelapseHanonFl,
+                            RelapseCarFl = item.RelapseCarFl,
+                            OpenIssueDetailDesc = item.OpenIssueDetailDesc,
+                            OpenIssueOccurrenceDt = item.OpenIssueOccurrenceDt,
+                            OpenIssueExpectedDt = item.OpenIssueExpectedDt,
+                            OpenIssueCompleteDt = item.OpenIssueCompleteDt,
+                            OpenIssueCloseFl = item.OpenIssueCloseFl
+                        };
+
+                        if (item.OID == null)
+                        {
+                            if (item.IsDel == "Y")
+                            {
+                                return;
+                            }
+
+                            _param.BPolicyOID = null;
+
+                            DObject dobj = new DObject();
+                            dobj.Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM;
+                            dobj.Name = QmsConstant.TYPE_OPEN_ISSUE_ITEM + "_" + _param.OID;
+                            dobj.Description = _param.Description;
+                            ItemOID = DObjectRepository.InsDObject(Session, dobj);
+                            openIssueItem.OID = ItemOID;
+                            OpenIssueItemRepository.InsOpenIssueItem(openIssueItem);
+
+                            OpenIssueRelationship openIssueRelationship = new OpenIssueRelationship()
+                            {
+                                FromOID = _param.OID,
+                                ToOID = ItemOID,
+                                type = QmsConstant.TYPE_OPEN_ISSUE_ITEM,
+                                CreateUs = Convert.ToInt32(Session["UserOID"])
+                            };
+
+                            OpenIssueRelationshipRepository.InsOpenIssueRelationship(openIssueRelationship);
+
+                            OpenIssueRepository.UdtOpenIssueSuspenseCnt(_param);
+                        }
+                        else
+                        {
+                            if (item.IsDel == "Y")
+                            {
+                                var policys = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_OPEN_ISSUE_ITEM });
+
+                                policys.ForEach(v =>
+                                {
+                                    if (item.BPolicyOID == v.OID)
+                                    {
+                                        if (v.Name != QmsConstant.POLICY_OPENISSUE_ITEM_SUSPENSE)
+                                        {
+                                            throw new Exception("OPEN ISSUE 항목은 미결일 경우에만 삭제 할 수 있습니다.");
+                                        }
+                                    }
+                                });
+
+                                DObjectRepository.DelDObject(Session, item);
+                                OpenIssueRepository.UdtOpenIssueDelSuspenseCnt(_param);
+                            }
+                            else
+                            {
+                                DObjectRepository.UdtDObject(Session, item);
+                                OpenIssueItemRepository.UdtOpenIssueItem(item);
+                            }
+                        }
+                    });
+                }
+
+                DaoFactory.Commit();
+                return Json(1);
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
+
         #endregion
 
         #region -- 신속대응 등록 & 조회 
@@ -159,7 +291,7 @@ namespace SemsPLM.Controllers
             return PartialView("Partitial/QuickResponseSummary", QuickResponseRepository.SelQuickResponse(quickResponse));
         }
 
-        public ActionResult CreateQuickResponse()
+        public ActionResult CreateQuickResponse(int? ProjectOID)
         {
             //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
@@ -194,6 +326,7 @@ namespace SemsPLM.Controllers
             Library correctDecisionKey = LibraryRepository.SelLibraryObject(new Library { Name = "CORRECT_DECISION" });
             List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
             ViewBag.correctDecisionList = correctDecisionList;
+            ViewBag.ProjectOID = ProjectOID;
 
             return View();
         }
@@ -283,6 +416,25 @@ namespace SemsPLM.Controllers
         public JsonResult SelQuickResponseGridList(QuickResponse _param)
         {
             List<QuickResponse> list = QuickResponseRepository.SelQuickResponses(_param);
+
+            if (_param.ProjectOID != null)
+            {
+                List<DRelationship> relationships = DRelationshipRepository.SelRelationship(Session, new DRelationship() { FromOID = _param.ProjectOID });
+
+                List<QuickResponse> _list = new List<QuickResponse>();
+
+                relationships.ForEach(v =>
+                {
+                    QuickResponse data = list.Find(q => q.OID == v.ToOID);
+
+                    if (data != null)
+                    {
+                        _list.Add(data);
+                    }
+                });
+
+                list = _list;
+            }
 
             List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule());
 
@@ -446,6 +598,8 @@ namespace SemsPLM.Controllers
             {
                 DaoFactory.BeginTransaction();
 
+
+
                 DObject dobj = new DObject();
                 dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
                 _param.Name = DateTime.Now.Ticks.ToString(); // 채번필요
@@ -455,6 +609,14 @@ namespace SemsPLM.Controllers
                 _param.OID = result;
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
 
+                if (_param.ProjectOID == null)
+                {
+                    DRelationship dQuickProject = new DRelationship();
+                    dQuickProject.Type = QmsConstant.RELATIONSHIP_QUICK_RESPONSE;
+                    dQuickProject.FromOID = _param.ProjectOID;
+                    dQuickProject.ToOID = _param.OID;
+                    DRelationshipRepository.InsDRelationshipNotOrd(Session, dQuickProject);
+                }
 
                 int SetQuickModule(string Type, string Name)
                 {
@@ -980,7 +1142,8 @@ namespace SemsPLM.Controllers
                         OccurrenceCauseItemRepository.UdtOccurrenceCauseItem(v);
                     }
 
-                    if(v.OccurrenceWhys != null) { 
+                    if (v.OccurrenceWhys != null)
+                    {
                         v.OccurrenceWhys.ForEach(w =>
                         {
                             if (w.OID == null)
@@ -1137,7 +1300,8 @@ namespace SemsPLM.Controllers
             ErrorProof errorproof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = OID });
             if (errorproof == null)
             {
-                errorproof = new ErrorProof() {
+                errorproof = new ErrorProof()
+                {
                     OID = OID,
                     ModuleOID = OID,
                     BPolicyOID = Module.BPolicyOID,
@@ -1654,12 +1818,12 @@ namespace SemsPLM.Controllers
             ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE_CHECK });
-            List<Approval> approvals = ApprovalRepository.SelApprovals(Session, new Approval() { TargetOID = Module.OID});
-            if(approvals != null && approvals.Count > 0)
+            List<Approval> approvals = ApprovalRepository.SelApprovals(Session, new Approval() { TargetOID = Module.OID });
+            if (approvals != null && approvals.Count > 0)
             {
                 ViewBag.ApprovalCnt = approvals.Count();
             }
-            
+
             return View();
         }
 

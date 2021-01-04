@@ -691,6 +691,7 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.EstFinDt = $('#issueEstimatedFinDate').val();
                 param.Description = $('#dlgDescription').val();
                 param.Manager_OID = $('#dlgMangerOID').val();
+                param.IsApprovalRequired = ApprovRequired;
                 var chkIssueType = [];
                 for (var i = 0; i < $('input[name="IssueType"]').length; i++) {
                     if ($('input[name="IssueType"]')[i].value == "true") {
@@ -755,6 +756,7 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.Manager_OID = $('#dlgMangerOID').val();
                 param.BPolicyNm = $('#dlgStatus').val();
                 param.Contents = null;
+                param.IsApprovalRequired = ApprovRequired;
                 var chkIssueType = [];
                 for (var i = 0; i < $('input[name="IssueType"]').length; i++) {
                     if ($('input[name="IssueType"]')[i].value == "true") {

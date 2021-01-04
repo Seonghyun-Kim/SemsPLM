@@ -66,13 +66,11 @@ namespace Qms.Models
 
         public static int InsQmsCheck(QmsCheck _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsQmsCheck", _param);
         }
 
         public static int UdtQmsCheck(QmsCheck _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtQmsCheck", _param);
         }
 

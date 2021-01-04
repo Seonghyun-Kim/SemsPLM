@@ -194,6 +194,9 @@
         }
 
         $('#procApprovalBtn_' + OID).on('click', function () {
+            if ('@ViewBag.isApproval' == '@Common.Constant.CommonConstant.ACTION_NO') {
+                alert('결재가 필요한 이슈가 남아있습니다.');
+            }
             RequestData('/Pms/ApprovProcess', { 'OID': OID }, function (res) {
                 setTimeout(function () {
                     OpenApprovalDialog(function () {
@@ -324,7 +327,7 @@
                                 var targetDelay = @Common.Constant.PmsConstant.DELAY;
                                 var iCellText = parseInt(cellText);
                                 if (iCellText >= 1 && iCellText <= targetDelay) {
-                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-bViewBagock;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
                                 } else if (iCellText > targetDelay) {
                                     return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
                                 } else {

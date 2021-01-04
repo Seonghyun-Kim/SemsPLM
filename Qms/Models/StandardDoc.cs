@@ -50,13 +50,11 @@ namespace Qms.Models
 
         public static int InsStandardDoc(StandardDoc _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsStandardDoc", _param);
         }
 
         public static int UdtStandardDoc(StandardDoc _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtStandardDoc", _param);
         }
     }
@@ -87,13 +85,11 @@ namespace Qms.Models
 
         public static int InsHorizontalDeployment(HorizontalDeployment _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsHorizontalDeployment", _param);
         }
 
         public static int UdtHorizontalDeployment(HorizontalDeployment _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtHorizontalDeployment", _param);
         }
     }

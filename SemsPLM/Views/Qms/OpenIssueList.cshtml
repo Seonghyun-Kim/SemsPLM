@@ -79,20 +79,19 @@
             { name: 'Name', type: 'string' },
             { name: 'ProjectOID', type: 'number' },
             { name: 'ProjectNm', type: 'string' },
-            { name: 'ProcessOID', type: 'number' },
-            { name: 'ProcessNm', type: 'string' },
-            { name: 'CustomerOID', type: 'number' },
-            { name: 'CustomerNm', type: 'string' },
-            { name: 'CarTypeOID', type: 'number' },
-            { name: 'CarTypeNm', type: 'string' },
-            { name: 'ProductOID', type: 'number' },
-            { name: 'ProductNm', type: 'string' },
-            { name: 'CreateUs', type: 'number' },
-            { name: 'CreateUsNm', type: 'string' },
+            { name: 'OemLibOID', type: 'number' },
+            { name: 'OemLibNm', type: 'string' },
+            { name: 'CustomerLibOID', type: 'number' },
+            { name: 'CustomerLibNm', type: 'string' },
+            { name: 'CarLibOID', type: 'number' },
+            { name: 'CarLibNm', type: 'string' },
             { name: 'CreateDt', type: 'date' }
         ],
         type: "POST",
-        @* url: "/Qms/SelOpenIssueListGridList" *@
+        url: "/Qms/SelOpenIssues",
+        data: {
+
+        }
     };
 
     $(function () {
@@ -206,13 +205,11 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '고객사', dataField: 'CustomerNm', width: '15%', align: 'center', cellsalign: 'center', },
-                { text: '차종', dataField: 'CarTypeNm', width: '15%', align: 'center', cellsalign: 'center', },
-                { text: '제품', dataField: 'DocumentType', width: '13%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '프로젝트', dataField: 'ProductNm', width: '22%', align: 'center', cellsalign: 'center', },
-                { text: '프로젝트 단계', dataField: 'ProcessNm', width: '20%', align: 'center', cellsalign: 'center', },
-                { text: '작성자', dataField: 'CreateUsNm', width: '10%', align: 'center', cellsalign: 'center', },
-                @*{ text: '작성일', dataField: 'CreateDt', columnsresize:true, align: 'center', cellsalign: 'center', }*@
+                { text: 'OEM', dataField: 'OemLibNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '차종', dataField: 'CarLibNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '고객사', dataField: 'CustomerLibNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '프로젝트', dataField: 'ProjectNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '작성일', dataField: 'CreateDt', width: '15%',align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' }
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");
@@ -235,6 +232,14 @@
 
                 toolBar.append(container);
             }
+        });
+
+        openIssueList$.on("rowdoubleclick", function (event) {
+            var clickData = event.args.row.bounddata;
+            var linkName = "[" + clickData.ProjectNm + "] 오픈이슈";
+            var linkUrl = '/Qms/InfoOpenIssue?OID=' + clickData.OID;
+
+            TabPageLoad(linkUrl, linkName);
         });
     });
 </script>

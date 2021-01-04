@@ -43,13 +43,11 @@ namespace Qms.Models
 
         public static int InsLpaMeasure(LpaMeasure _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsLpaMeasure", _param);
         }
 
         public static int UdtLpaMeasure(LpaMeasure _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtLpaMeasure", _param);
         }
     }

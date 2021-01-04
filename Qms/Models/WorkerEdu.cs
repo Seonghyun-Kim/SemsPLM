@@ -56,13 +56,11 @@ namespace Qms.Models
 
         public static int InsWorkerEdu(WorkerEdu _param)
         {
-            _param.CreateUs = 1;
             return DaoFactory.SetInsert("Qms.InsWorkerEdu", _param);
         }
 
         public static int UdtWorkerEdu(WorkerEdu _param)
         {
-            _param.ModifyUs = 1;
             return DaoFactory.SetUpdate("Qms.UdtWorkerEdu", _param);
         }
     }

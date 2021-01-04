@@ -6,3 +6,16 @@ T_BPOLICY_AUTH 권한추가
 77	16	1	ROLE	Relation	연결	SYSTEM	NULL
 78	2	2	ROLE	Relation	연결	SYSTEM	NULL
 79	3	1	ROLE	Relation	연결	SYSTEM	NULL
+
+
+
+2021-01-04
+
+shkim
+
+T_DPMS_ISSUE
+IsApprovalRequired 컬럼추가
+IsApprovalRequired	nvarchar(50)	Checked
+
+PmsIssue.cs 데이터타입추가
+public string IsApprovalRequired { get; set; } 추가 
