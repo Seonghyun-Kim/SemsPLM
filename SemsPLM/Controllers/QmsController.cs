@@ -44,7 +44,7 @@ namespace SemsPLM.Controllers
             {
                 ViewBag.ItemRatio = null;
             }
-            else
+            else if(items.Count() > 0)
             {
                 int FinishCnt = _OpenIssue.CompleatedCnt;
 
@@ -609,7 +609,7 @@ namespace SemsPLM.Controllers
                 _param.OID = result;
                 int returnValue = QuickResponseRepository.InsQuickResponse(_param);
 
-                if (_param.ProjectOID == null)
+                if (_param.ProjectOID != null)
                 {
                     DRelationship dQuickProject = new DRelationship();
                     dQuickProject.Type = QmsConstant.RELATIONSHIP_QUICK_RESPONSE;
