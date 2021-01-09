@@ -158,6 +158,8 @@ namespace Qms.Models
         public string SearchPartNo { get; set; }
 
         public string SearchCreateUsNm { get; set; }
+
+        public string SearchPlanUsNm { get; set; }
         #endregion
     }
 

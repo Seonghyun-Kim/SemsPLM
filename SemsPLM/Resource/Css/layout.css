@@ -68,6 +68,10 @@ input[readonly] {
     background-color: #ddd !important;
 }
 
+input[readonly='readonly'] {
+    background-color: #ddd !important;
+}
+
 .floatL{
     float:left;
 }

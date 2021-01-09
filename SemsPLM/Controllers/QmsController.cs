@@ -2,6 +2,7 @@
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using Pms.Models;
 using Qms.Models;
 using SemsPLM.Filter;
 using System;
@@ -279,6 +280,14 @@ namespace SemsPLM.Controllers
         #region -- 신속대응 등록 & 조회 
         public ActionResult QuickResponseList()
         {
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
+            ViewBag.oemList = oemList;
+
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            ViewBag.occurrenceList = occurrenceList;
+
             return View();
         }
 
@@ -304,7 +313,7 @@ namespace SemsPLM.Controllers
             //ViewBag.plantList = plantList;
 
             Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 검사유형
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
 
             Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
@@ -344,7 +353,7 @@ namespace SemsPLM.Controllers
             //ViewBag.plantList = plantList;
 
             Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 검사유형
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
 
             Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
@@ -419,6 +428,8 @@ namespace SemsPLM.Controllers
 
             if (_param.ProjectOID != null)
             {
+                PmsProject pmsProject = PmsProjectRepository.SelPmsObject(Session, new PmsProject() { OID = _param.ProjectOID });
+
                 List<DRelationship> relationships = DRelationshipRepository.SelRelationship(Session, new DRelationship() { FromOID = _param.ProjectOID });
 
                 List<QuickResponse> _list = new List<QuickResponse>();
@@ -426,14 +437,46 @@ namespace SemsPLM.Controllers
                 relationships.ForEach(v =>
                 {
                     QuickResponse data = list.Find(q => q.OID == v.ToOID);
-
+                   
                     if (data != null)
                     {
+                        data.CarCode = pmsProject.Car_Lib_Nm;
                         _list.Add(data);
                     }
                 });
 
                 list = _list;
+            }
+            else
+            {
+                List<PmsProject> lPmses = PmsProjectRepository.SelPmsObjects(Session, new PmsProject());
+                List<DRelationship> QuickResponseRelation = DRelationshipRepository.SelRelationship(Session, new DRelationship() { Type = QmsConstant.RELATIONSHIP_QUICK_RESPONSE });
+
+                List<QuickResponse> _list = new List<QuickResponse>();
+
+                list.ForEach(v =>
+                {
+                    DRelationship rel = QuickResponseRelation.Find(r => r.ToOID == v.OID);
+                    if (rel == null) return;
+
+                    PmsProject pms = lPmses.Find(p => p.OID == rel.FromOID);
+
+                    if(pms != null)
+                    {
+                        v.CarCode = pms.Car_Lib_Nm;
+
+                        if (_param.SearchCarCode != null)
+                        {
+                            if (v.CarCode.IndexOf(_param.SearchCarCode.Trim()) > -1)
+                            {
+                                _list.Add(v);
+                            }
+                        }
+                    }
+                });
+
+                if (_param.SearchCarCode != null) { list = _list; }
+
             }
 
             List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule());
@@ -461,7 +504,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleBlockadeChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleBlockadeChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_BLOCKADE_NAME;
                         }
@@ -475,7 +518,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleOccurrenceCauseChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleOccurrenceCauseChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_OCCURRENCE_CAUSE_NAME;
                         }
@@ -489,7 +532,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleImproveCountermeasureChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleImproveCountermeasureChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_NAME;
                         }
@@ -503,7 +546,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleErrorProofChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleErrorProofChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_ERROR_PRROF_NAME;
                         }
@@ -517,14 +560,14 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleLpaChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleLpaChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_LPA_UNFIT_NAME;
                         }
                     }
                     else if (m.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
                     {
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_LPA_MEASURE_NAME;
                         }
@@ -538,7 +581,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleCheckChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleCheckChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_QUICK_RESPONSE_CHECK_NAME;
                         }
@@ -552,7 +595,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleStandardChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleStandardChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_STANDARD_NAME;
                         }
@@ -566,7 +609,7 @@ namespace SemsPLM.Controllers
                         quickResponseView.ModuleWorkerEduChargeUserOID = m.ChargeUserOID;
                         quickResponseView.ModuleWorkerEduChargeUserNm = m.ChargeUserNm;
 
-                        if (m.BPolicyNm == "Started")
+                        if (m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REVIEW || m.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_REJECTED)
                         {
                             QuickResponseStatus = QmsConstant.TYPE_WORKER_EDU_NAME;
                         }
@@ -1487,6 +1530,10 @@ namespace SemsPLM.Controllers
                 {
                     if (v.OID == null)
                     {
+                        if (v.IsRemove == "Y")
+                        {
+                            return;
+                        }
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
                         dobj.Name = QmsConstant.TYPE_LPA_UNFIT_CHECK_ITEM;
