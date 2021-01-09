@@ -978,7 +978,9 @@
       G.Name AS BPolicyNm,
       A.CompleatedCnt,
       A.UncommittedCnt,
-      A.SuspenseCnt
+      A.SuspenseCnt,
+      B.CreateUs,
+      H.Name AS CreateUsNm
       FROM T_DQMS_OPENISSUE A
       INNER JOIN V_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DCODELIBRARY C ON A.OemLibOID = C.OID
@@ -986,12 +988,34 @@
       LEFT JOIN T_DCODELIBRARY E ON A.CarLibOID = E.OID
       LEFT JOIN T_DOBJECT F ON A.ProjectOID = F.OID
       LEFT JOIN T_BPOLICY G ON B.BPolicyOID = G.OID
+      LEFT JOIN V_DOBJECT H ON B.CreateUs = H.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="OID">
         A.OID = #OID#
       </isNotNull>
       <isNotNull prepend="and" property="ProjectOID">
         A.ProjectOID = #ProjectOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="ProjectNm">
+        F.Name LIKE '%' + #ProjectNm# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="OemLibNm">
+        C.KorNm LIKE '%' + #OemLibNm# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="CustomerLibNm">
+        D.KorNm LIKE '%' + #CustomerLibNm# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="CarLibNm">
+        E.KorNm LIKE '%' + #CarLibNm# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateUs">
+        B.CreateUs = #CreateUs#
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateUsNm">
+        H.Name LIKE '%' + #CreateUsNm# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="CreateSDt">
+        B.CreateDt between #CreateSDt# and  DATEADD(dd, 1, #CreateEDt#)
       </isNotNull>
     </select>
 
