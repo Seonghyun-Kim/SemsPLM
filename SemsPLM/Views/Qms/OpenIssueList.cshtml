@@ -12,31 +12,31 @@
                 <div class="searchData">
                     <div>프로젝트</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Project" style="width:150px;"/>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Project" style="width:150px;" />
                     </div>
                 </div>
                 <div class="searchData">
-                    <div>프로젝트 단계</div>
+                    <div>OEM</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Process" style="width:150px;"/>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_OEM" style="width:150px;" />
                     </div>
                 </div>
                 <div class="searchData">
                     <div>고객사</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Customer" style="width:150px;"/>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Customer" style="width:150px;" />
                     </div>
                 </div>
                 <div class="searchData">
                     <div>차종</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_CarType" style="width:150px;"/>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_CarType" style="width:150px;" />
                     </div>
                 </div>
                 <div class="searchData">
                     <div>제품</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Product" style="width:150px;"/>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Product" style="width:150px;" />
                     </div>
                 </div>
                 <div class="searchData">
@@ -45,7 +45,7 @@
                         <input type="text" class="txtBox" id="SearchOpenIssueList_User" style="width:150px;" />
                     </div>
                 </div>
-                @*<div class="searchData">
+                <div class="searchData">
                     <div>작성일</div>
                     <div>
                         <div style="display:flex;">
@@ -54,10 +54,10 @@
                             <div id="dtOpenIssueCreateEDt"></div>
                         </div>
                     </div>
-                </div>*@
+                </div>
                 <div class="searchButton">
                     <button id="SearchOpenIssueList_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
-                    <button id="SearchOpenIssueList_btnRefresh" class="searchBtn custom-button" onclick=""> 초기화</button>
+                    @*<button id="SearchOpenIssueList_btnRefresh" class="searchBtn custom-button" onclick=""> 초기화</button>*@
                 </div>
             </div>
         </div>
@@ -79,23 +79,18 @@
             { name: 'CustomerLibNm', type: 'string' },
             { name: 'CarLibOID', type: 'number' },
             { name: 'CarLibNm', type: 'string' },
+            { name: 'CreateUs', type: 'number' },
+            { name: 'CreateUsNm', type: 'string' },
             { name: 'CreateDt', type: 'date' }
         ],
         type: "POST",
-        url: "/Qms/SelOpenIssues",
-        data: {
-
-        }
+        @*url: "/Qms/SelOpenIssues",*@
+        
     };
 
     $(function () {       
-        const btnSearch$ = $("#SearchOpenIssueList_btnSearch").jqxButton();
-        btnSearch$.on("click", function () {
-            // 검색
-        });
-
         // 초기화
-        const btnRefresh$ = $("#SearchOpenIssueList_btnRefresh").jqxButton();
+        @*const btnRefresh$ = $("#SearchOpenIssueList_btnRefresh").jqxButton();
         btnRefresh$.on("click", function () {
             var RefreshFunc = function (inputType, nodeId, removeAttrs) {
                 const node$ = $("#" + nodeId);
@@ -121,18 +116,18 @@
             removeAttrs.push("UserOID");
 
             RefreshFunc("txt", "SearchOpenIssueList_User", removeAttrs);
-        });
+        });*@
 
-        @*// 작성일
+        // 작성일
         const dtOpenIssueCreateSDt$ = $("#dtOpenIssueCreateSDt")
         dtOpenIssueCreateSDt$.jqxDateTimeInput(DateFormat);
         dtOpenIssueCreateSDt$.val(WebUtils.GetDate(-1, "m", "-"));
-        dtOpenIssueCreateSDt$.jqxDateTimeInput({ width: 150, height: 33, allowNullDate: true });
+        dtOpenIssueCreateSDt$.jqxDateTimeInput({ width: 130, height: 33, allowNullDate: true });
 
         const dtOpenIssueCreateEDt$ = $("#dtOpenIssueCreateEDt")
         dtOpenIssueCreateEDt$.jqxDateTimeInput(DateFormat);
-        dtOpenIssueCreateEDt$.val(WebUtils.GetDate(+1, "m", "-"));
-        dtOpenIssueCreateEDt$.jqxDateTimeInput({ width: 150, height: 33, allowNullDate: true });*@
+        dtOpenIssueCreateEDt$.val(WebUtils.GetDate("m", "-"));
+        dtOpenIssueCreateEDt$.jqxDateTimeInput({ width: 130, height: 33, allowNullDate: true });
 
         // OpenIssue List
         const openIssueList$ = $('#SearchOpenIssue_Grid');
@@ -142,7 +137,7 @@
             height: 675,
             rowsheight: 28,
             columnsheight: 30,
-            source: new $.jqx.dataAdapter(OpenIssueSource),
+            source: OpenIssueSource,
             sortable: false,
             pageable: false,
             selectionmode: 'singlerow',
@@ -157,8 +152,9 @@
                 },
                 { text: 'OEM', dataField: 'OemLibNm', width: '20%', align: 'center', cellsalign: 'center', },
                 { text: '차종', dataField: 'CarLibNm', width: '20%', align: 'center', cellsalign: 'center', },
-                { text: '고객사', dataField: 'CustomerLibNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '고객사', dataField: 'CustomerLibNm', width: '13%', align: 'center', cellsalign: 'center', },
                 { text: '프로젝트', dataField: 'ProjectNm', width: '20%', align: 'center', cellsalign: 'center', },
+                { text: '작성자', dataField: 'CreateUsNm', width: '7%', align: 'center', cellsalign: 'center', },
                 { text: '작성일', dataField: 'CreateDt', width: '15%',align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' }
             ],
             rendertoolbar: function (toolBar) {
@@ -190,6 +186,33 @@
             var linkUrl = '/Qms/InfoOpenIssue?OID=' + clickData.OID;
 
             TabPageLoad(linkUrl, linkName);
+        });
+
+        var param = {};
+        param.CreateSDt = $("#dtOpenIssueCreateSDt").jqxDateTimeInput("val");
+        param.CreateEDt = $("#dtOpenIssueCreateEDt").jqxDateTimeInput("val");
+
+        RequestData('/Qms/SelOpenIssues', param, function (res) {
+            PrintJqxGrid(OpenIssueSource, openIssueList$, res);
+        });
+
+        const btnSearch$ = $("#SearchOpenIssueList_btnSearch").jqxButton();
+        btnSearch$.on("click", function () {
+            var param = {};
+
+            param.ProjectNm = $("#SearchOpenIssueList_Project").val();
+            param.OemLibNm = $("#SearchOpenIssueList_OEM").val();
+            param.CustomerLibNm = $("#SearchOpenIssueList_Customer").val();
+            param.CarLibNm = $("#SearchOpenIssueList_CarType").val();
+            //param.ProjectNm = $("#SearchOpenIssueList_Product").val();
+            param.CreateUsNm = $("#SearchOpenIssueList_User").val();
+
+            param.CreateSDt = $("#dtOpenIssueCreateSDt").jqxDateTimeInput("val");
+            param.CreateEDt = $("#dtOpenIssueCreateEDt").jqxDateTimeInput("val");
+
+            RequestData('/Qms/SelOpenIssues', param, function (res) {
+                PrintJqxGrid(OpenIssueSource, openIssueList$, res);
+            });
         });
     });
 </script>

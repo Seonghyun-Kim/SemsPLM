@@ -38,10 +38,15 @@ namespace Qms.Models
 
         public int SuspenseCnt { get; set; }
         // 제품 
-        //public int? ProductOID { get; set; }
+        public int? PartOID { get; set; }
 
-        // 프로젝트 단계 
-        //public int? ProcessOID { get; set; }
+        #region -- Search & View
+        public string PartNm { get; set; }
+
+        public string CreateSDt { get; set; }
+
+        public string CreateEDt { get; set; }
+        #endregion
     }
 
     public static class OpenIssueRepository

@@ -719,8 +719,6 @@ namespace SemsPLM.Controllers
                 int WorkerEduOID = SetQuickModule(QmsConstant.TYPE_WORKER_EDU, QmsConstant.TYPE_WORKER_EDU_NAME);
                 WorkerEduRepository.InsWorkerEdu(new WorkerEdu() { ModuleOID = WorkerEduOID });
 
-                DaoFactory.Commit();
-
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
                 {
@@ -739,8 +737,14 @@ namespace SemsPLM.Controllers
                     }
 
                     FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
-                    FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+
+                    if (FileInfo.Exists)
+                    {
+                        FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                    }
                 }
+
+                DaoFactory.Commit();
             }
             catch (Exception ex)
             {
@@ -768,7 +772,6 @@ namespace SemsPLM.Controllers
                 DObjectRepository.UdtDObject(Session, dobj);
 
                 QuickResponseRepository.UdtQuickResponse(_param);
-                DaoFactory.Commit();
 
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
@@ -788,8 +791,14 @@ namespace SemsPLM.Controllers
                     }
 
                     FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
-                    FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+
+                    if (FileInfo.Exists)
+                    {
+                        FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                    }
                 }
+
+                DaoFactory.Commit();
             }
             catch (Exception ex)
             {

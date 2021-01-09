@@ -89,7 +89,12 @@
                         </tr>
                         <tr>
                             <th><label class="lbText">품번</label></th>
-                            <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" /></td>
+                            <td>
+                                <div style="display:flex;">
+                                    <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" style="width:120px; margin-right:5px;" />
+                                    <button class="Modifiable_@ViewBag.QuickDetail.OID custom-button" AttrType="BUTTON" id="InfoQuickResponse_btnPartSearch_@ViewBag.QuickDetail.OID" style="display:none;"><i class="fas fa-search"></i> 검색</button>
+                                </div>
+                             </td>
                             <th><label class="lbText">LOT번호</label></th>
                             <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtLotNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.LotNo" /></td>
                             <th><label class="lbText">품질담당자</label></th>
@@ -322,6 +327,15 @@
             });
         });
 
+        // 제품 검색
+        var btnDlgPartSearch$ = $("#InfoQuickResponse_btnPartSearch_@ViewBag.QuickDetail.OID").jqxButton();
+        btnDlgPartSearch$.on("click", function () {
+            OpenSearchEPartAssyDialog(function (res) {
+                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").val(res[0].Name);
+                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").attr("PartOID", res[0].OID);
+            }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
+        });
+
         var btnDlgPlanUserSearch$ = $("#InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID").jqxButton({disabled: true});
         btnDlgPlanUserSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
@@ -422,6 +436,7 @@
             param.ImputeLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID");
             param.ImputeDepartmentOID = null;
             param.ImputeSupplierOID = null;
+            param.PartOID = $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").attr("PartOID");
             //param.Summary = $("#txtDlgSummary").val();
             param.PoorDetail = $("#InfoQuickResponse_txtPoorDetail_@ViewBag.QuickDetail.OID").val();
             param.RecurrenceFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkRecurrenceFl_@ViewBag.QuickDetail.OID");

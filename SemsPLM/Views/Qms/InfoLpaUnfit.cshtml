@@ -507,15 +507,11 @@
 
         var btnDlgPart$ = $("#btnDlgEditLPAIncongruityPart_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgPart$.on("click", function () {
-            $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val("테스트");
-            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val("PART-12345");
-            $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", "12345");
-            @*var param = {};
-            OpenSearchEPartDialog(function (res) {
+            OpenSearchEPartAssyDialog(function (res) {
                 $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", res.OID);
-            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');*@
+            }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
         });
 
         $("#btnLpaUnfitCheckAdd_" + LpaUnfitOID).jqxButton({ disabled: true });

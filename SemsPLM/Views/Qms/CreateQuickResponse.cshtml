@@ -46,12 +46,15 @@
             </tr>
             <tr>
                 <th><label class="lbText">품번</label></th>
-                <td><input type="text" id="txtDlgPartNo" value="" /></td>
+                <td>
+                    <input type="text" id="txtDlgPartNo" style="width:150px;" value="" readonly="readonly"/>
+                    <button id="btnEditPartSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </td>
                 <th><label class="lbText">LOT번호</label></th>
                 <td><input type="text" id="txtDlgLotNo" value="" /></td>
                 <th><label class="lbText">품질담당자</label></th>
                 <td>
-                    <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" />
+                    <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" readonly="readonly"/>
                     <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </td>
             </tr>
@@ -181,7 +184,7 @@
                 </td>
                 <th><label class="lbText">일정계획담당자</label></th>
                 <td>
-                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" />
+                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" readonly="readonly"/>
                     <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </td>
             </tr>
@@ -260,6 +263,15 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
+        // 제품 검색
+        var btnDlgPartSearch$ = $("#btnEditPartSearch").jqxButton();
+        btnDlgPartSearch$.on("click", function () {
+            OpenSearchEPartAssyDialog(function (res) {
+                $("#txtDlgPartNo").val(res[0].Name);
+                $("#txtDlgPartNo").attr("PartOID", res[0].OID);
+            }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
+        });
+
         var btnDlgWorkerUserSearch$ = $("#btnEditWorkUserSearch").jqxButton();
         btnDlgWorkerUserSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
@@ -308,12 +320,12 @@
         var btnDlgSave$ = $("#btnDlgSave").jqxButton();
         btnDlgSave$.on("click", function () {
             var param = {};
-            
-            param.OID = null;    
+
+            param.OID = null;
             param.ProjectOID = "@ViewBag.ProjectOID";
             param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
             param.OccurrenceLibOID =WebUtils.GetComboValue("cbDlgOccurrence");
-            param.PartOID = 156;
+            param.PartOID = WebUtils.isEmpty($("#txtDlgPartNo").attr("PartOID")) === true ? 156 : $("#txtDlgPartNo").attr("PartOID");
             param.LotNo = "ABC";
             param.OemLibOID = WebUtils.GetComboValue("cbDlgOem");
             param.WorkUserOID = $("#txtDlgWorkUserNm").attr("WorkUserOID");
