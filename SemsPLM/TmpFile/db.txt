@@ -19,3 +19,8 @@ IsApprovalRequired	nvarchar(50)	Checked
 
 PmsIssue.cs 데이터타입추가
 public string IsApprovalRequired { get; set; } 추가 
+
+
+2021-01-09
+김성현
+신속대응 등록 메뉴 없애기
