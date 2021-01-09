@@ -140,6 +140,25 @@ namespace Qms.Models
         public string PoorPicture { get; set; }
 
         public DateTime? FinishDt { get; set; }
+
+        #region -- Search용
+        //발생유형
+        public string SearchOccurrenceLibOID { get; set; }
+
+        //발생일자
+        public string SearchOccurrenceSDt { get; set; }
+
+        public string SearchOccurrenceEDt { get; set; }
+
+        public string SearchOemNm { get; set; }
+
+        //차종 코드
+        public string SearchCarCode { get; set; }
+
+        public string SearchPartNo { get; set; }
+
+        public string SearchCreateUsNm { get; set; }
+        #endregion
     }
 
     public class QuickResponseView

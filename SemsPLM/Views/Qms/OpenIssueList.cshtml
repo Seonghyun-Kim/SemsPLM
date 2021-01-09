@@ -12,43 +12,37 @@
                 <div class="searchData">
                     <div>프로젝트</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Project" style="width:130px;" readonly/>
-                        <button id="SearchOpenIssueList_btnProject" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Project" style="width:150px;"/>
                     </div>
                 </div>
                 <div class="searchData">
                     <div>프로젝트 단계</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Process" style="width:130px;" readonly/>
-                        <button id="SearchOpenIssueList_btnProcess" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Process" style="width:150px;"/>
                     </div>
                 </div>
                 <div class="searchData">
                     <div>고객사</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Customer" style="width:130px;" readonly/>
-                        <button id="SearchOpenIssueList_btnCustomer" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Customer" style="width:150px;"/>
                     </div>
                 </div>
                 <div class="searchData">
                     <div>차종</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_CarType" style="width:130px;" readonly/>
-                        <button id="SearchOpenIssueList_btnCarType" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_CarType" style="width:150px;"/>
                     </div>
                 </div>
                 <div class="searchData">
                     <div>제품</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_Product" style="width:130px;" readonly/>
-                        <button id="SearchOpenIssueList_btnProduct" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_Product" style="width:150px;"/>
                     </div>
                 </div>
                 <div class="searchData">
                     <div>작성자</div>
                     <div>
-                        <input type="text" class="txtBox" id="SearchOpenIssueList_User" style="width:130px;" readonly />
-                        <button id="SearchOpenIssueList_btnUser" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i></button>
+                        <input type="text" class="txtBox" id="SearchOpenIssueList_User" style="width:150px;" />
                     </div>
                 </div>
                 @*<div class="searchData">
@@ -94,51 +88,7 @@
         }
     };
 
-    $(function () {
-        // 프로젝트 검색
-        const btnSearchProject$ = $("#SearchOpenIssueList_btnProject").jqxButton();
-        btnSearchProject$.on("click", function () {
-            // 검색
-        });
-
-        // 프로젝트 단계 검색
-        const btnSearchProcess$ = $("#SearchOpenIssueList_btnProcess").jqxButton();
-        btnSearchProcess$.on("click", function () {
-            // 검색
-        });
-
-        // 고객사 검색
-        const btnSearchCustomer$ = $("#SearchOpenIssueList_btnCustomer").jqxButton();
-        btnSearchCustomer$.on("click", function () {
-            // 검색
-        });
-
-        // 차종 검색
-        const btnSearchCarType$ = $("#SearchOpenIssueList_btnCarType").jqxButton();
-        btnSearchCarType$.on("click", function () {
-            // 검색
-        });
-
-        // 제품 검색
-        const btnSearchProduct$ = $("#SearchOpenIssueList_btnProduct").jqxButton();
-        btnSearchProduct$.on("click", function () {
-            // 검색
-        });
-
-        // 작성자 검색
-        const btnSearchUser$ = $("#SearchOpenIssueList_btnUser").jqxButton();
-        btnSearchUser$.on("click", function () {
-            OpenApprovalPersonDialog(function (res) {
-                if (res.length > 1) {
-                    alert("작성자는 한명만 지정 할 수 있습니다.");
-                    return;
-                }
-
-                $("#SearchOpenIssueList_User").val(res[0].Name);
-                $("#SearchOpenIssueList_User").attr("UserOID", res[0].OID);
-            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
-        });
-
+    $(function () {       
         const btnSearch$ = $("#SearchOpenIssueList_btnSearch").jqxButton();
         btnSearch$.on("click", function () {
             // 검색
@@ -196,7 +146,7 @@
             sortable: false,
             pageable: false,
             selectionmode: 'singlerow',
-            showtoolbar: true,
+            showtoolbar: false,
             toolbarheight: 45,
             columns: [
                 {
