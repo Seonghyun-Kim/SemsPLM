@@ -292,7 +292,7 @@
                     data.IsRemove = "Y";
                 }
 
-                if (WebUtils.isBlank(data.CheckPoin)) {
+                if (WebUtils.isBlank(data.CheckPoin) && data.IsRemove != "Y") {
                     errMsg += "[" + (i + 1).toString() + "] 행의 지적사항 내용이 입력되지 않았습니다..\n";
                 }
 

@@ -233,7 +233,8 @@
     </update>
 
     <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
-      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm, A.WriteDt, A.PoorCnt
+      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm
+      , A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
@@ -274,6 +275,30 @@
 
         <isNotNull prepend="and" property="PartNo">
           B.Name = #PartNo#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchOccurrenceLibOID">
+          A.OccurrenceLibOID = #SearchOccurrenceLibOID#
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchOccurrenceSDt">
+          A.OccurrenceDt BETWEEN CONVERT(DATETIME, #SearchOccurrenceSDt# + ' 00:00:00') AND CONVERT(DATETIME, #SearchOccurrenceEDt#+ ' 23:59:59')
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchOemNm">
+          E.KorNm LIKE '%' + #SearchOemNm# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchPartNo">
+          B.Name  LIKE '%' + #SearchPartNo# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchCreateUsNm">
+          AO.CreateUsNm LIKE '%' + #SearchCreateUsNm# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchPlanUsNm">
+          O.Name LIKE '%' + #SearchPlanUsNm# + '%'
         </isNotNull>
       </dynamic>
     </select>
@@ -364,12 +389,13 @@
     </update>
 
     <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
-      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, A.ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
+      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, E.OID AS ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
       , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
       FROM T_DQMS_BLOCKADE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
-      LEFT JOIN T_DOBJECT C ON A.ActDepartmentOID = C.OID
       LEFT JOIN T_DOBJECT D ON A.ActUserOID = D.OID
+      LEFT JOIN T_DPERSON E ON  A.ActUserOID = E.OID
+      LEFT JOIN T_DOBJECT C ON E.DepartmentOID = C.OID
 
       <dynamic prepend="where">
         <isNotNull prepend="AND" property="OID">
