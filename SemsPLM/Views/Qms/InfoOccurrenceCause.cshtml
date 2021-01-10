@@ -41,115 +41,121 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div id="properties" class="basic_grid scrollY" style="height:668px;">
-            @if (ViewBag.OccurrenceCause.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED)
-            {
-            <table class="tableTopButtonBox">
-                <tbody>
+        <div class="scrollY" style="height:668px;">
+            <div id="properties" class="basic_grid">
+                @if (ViewBag.OccurrenceCause.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.OccurrenceCause.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED)
+                {
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoOccurrenceCause_defaultBtn_@ViewBag.OccurrenceCause.OID">
+                                    <button id="InfoOccurrenceCause_EditBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                    @*<button id="InfoOccurrenceCause_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                                    <button id="InfoOccurrenceCause_EditCancleBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                    <button id="InfoOccurrenceCause_SaveBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                    <button id="InfoOccurrenceCause_ApprovalBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+
+                <label><i class="fas fa-search-plus"></i> 원인분석</label>
+                <table id="tbOccurrenceCause_@ViewBag.OccurrenceCause.OID" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:15%" />
+                        <col style="width:78%" />
+                        <col style="width:7%" />
+                    </colgroup>
                     <tr>
-                        <td style="text-align: right;" id="InfoOccurrenceCause_defaultBtn_@ViewBag.OccurrenceCause.OID">
-                            <button id="InfoOccurrenceCause_EditBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            @*<button id="InfoOccurrenceCause_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                            <button id="InfoOccurrenceCause_EditCancleBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoOccurrenceCause_SaveBtn_@ViewBag.OccurrenceCause.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                            <button id="InfoOccurrenceCause_ApprovalBtn_@ViewBag.OccurrenceCause.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                        <th>발생원인</th>
+                        <th>발생원인 내역</th>
+                        <th><button id="btnCauseAdd_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="BUTTON">원인추가</button></th>
+                    </tr>
+                </table>
+
+                <label><i class="fas fa-tools"></i> 검출대책</label>
+                <table id="tbDetectCounterMeasure_@ViewBag.OccurrenceCause.OID" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:15%" />
+                        <col style="width:10%" />
+                        <col style="width:25%" />
+                        <col style="width:15%" />
+                        <col style="width:35%" />
+                    </colgroup>
+                    <tr>
+                        <th>검출장소</th>
+                        <th>Yes/No</th>
+                        <th colspan="3">해당공정 내용(상세위치, 작업자, 검사원 등)</th>
+                    </tr>
+                    <tr>
+                        <th>제조공정</th>
+                        <td><div id="btnDetectMFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                        <td colspan="3">
+                            <input type="text" id="txtDetectMDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectMDetail" />
                         </td>
                     </tr>
-                </tbody>
-            </table>
-            }
+                    <tr>
+                        <th>품질</th>
+                        <td><div id="btnDetectSFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                        <td colspan="3">
+                            <input type="text" id="txtDetectSDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectSDetail" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>출하단계</th>
+                        <td><div id="btnDetectQFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                        <td colspan="3">
+                            <input type="text" id="txtDetectQDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectQDetail" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>기타</th>
+                        <td><div id="btnDetectEFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
+                        <td colspan="3">
+                            <input type="text" id="txtDetectEDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectEDetail" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>유출원인1</th>
+                        <td colspan="4">
+                            <input type="text" id="txtLeakCause1_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause1" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>유출원인2</th>
+                        <td colspan="4">
+                            <input type="text" id="txtLeakCause2_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause2" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>유출원인3</th>
+                        <td colspan="4">
+                            <input type="text" id="txtLeakCause3_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause3" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>검출일</th>
+                        <td colspan="4">
+                            <div id="dtDetectDt_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="DATE"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>검출대책</th>
+                        <td colspan="4">
+                            <input type="text" id="txtmeasure_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.Measure" />
+                        </td>
+                    </tr>
+                </table>
 
-            <label><i class="fas fa-search-plus"></i> 원인분석</label>
-            <table id="tbOccurrenceCause_@ViewBag.OccurrenceCause.OID" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:15%" />
-                    <col style="width:78%" />
-                    <col style="width:7%" />
-                </colgroup>
-                <tr>
-                    <th>발생원인</th>
-                    <th>발생원인 내역</th>
-                    <th><button id="btnCauseAdd_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="BUTTON">원인추가</button></th>
-                </tr>
-            </table>
+                <label style="margin-top:20px;"><i class="fas fa-save"></i> 첨부파일</label>
+                <div id="InfoOccurrenceCause_FileList_@ViewBag.OccurrenceCause.OID">
 
-            <label><i class="fas fa-tools"></i> 검출대책</label>
-            <table id="tbDetectCounterMeasure_@ViewBag.OccurrenceCause.OID" class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:15%" />
-                    <col style="width:10%" />
-                    <col style="width:25%" />
-                    <col style="width:15%" />
-                    <col style="width:35%" />
-                </colgroup>
-                <tr>
-                    <th>검출장소</th>
-                    <th>Yes/No</th>
-                    <th colspan="3">해당공정 내용(상세위치, 작업자, 검사원 등)</th>
-                </tr>
-                <tr>
-                    <th>제조공정</th>
-                    <td><div id="btnDetectMFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
-                    <td colspan="3">
-                        <input type="text" id="txtDetectMDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectMDetail" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>품질</th>
-                    <td><div id="btnDetectSFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
-                    <td colspan="3">
-                        <input type="text" id="txtDetectSDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectSDetail" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>출하단계</th>
-                    <td><div id="btnDetectQFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
-                    <td colspan="3">
-                        <input type="text" id="txtDetectQDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectQDetail" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>기타</th>
-                    <td><div id="btnDetectEFl_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="SWITCH"></div></td>
-                    <td colspan="3">
-                        <input type="text" id="txtDetectEDetail_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.DetectEDetail" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>유출원인1</th>
-                    <td colspan="4">
-                        <input type="text" id="txtLeakCause1_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause1" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>유출원인2</th>
-                    <td colspan="4">
-                        <input type="text" id="txtLeakCause2_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause2" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>유출원인3</th>
-                    <td colspan="4">
-                        <input type="text" id="txtLeakCause3_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.LeakCause3" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>검출일</th>
-                    <td colspan="4">
-                        <div id="dtDetectDt_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="DATE"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <th>검출대책</th>
-                    <td colspan="4">
-                        <input type="text" id="txtmeasure_@ViewBag.OccurrenceCause.OID" class="Modifiable_@ViewBag.OccurrenceCause.OID" AttrType="TEXT" readonly="readonly" style="width:100%" value="@ViewBag.DetectCounterMeasure.Measure" />
-                    </td>
-                </tr>
-            </table>
-
-            <label style="margin-top:20px;"><i class="fas fa-save"></i> 첨부파일</label>
-            <div id="InfoOccurrenceCause_FileList_@ViewBag.OccurrenceCause.OID">
-
+                </div>
+            </div>
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.OccurrenceCause.OID">
+                </div>
             </div>
         </div>
     </div>
@@ -186,6 +192,25 @@
         $("#dtDetectDt_@ViewBag.OccurrenceCause.OID").val("@ViewBag.DetectCounterMeasure.DetectDt.ToString("yyyy-MM-dd")");
         </text>
         }
+
+        const OccurrenceCauseDiv$ = $('#InfoOccurrenceCause_' + OccurrenceCauseOID);
+        $('#InfoOccurrenceCause_' + OccurrenceCauseOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            OccurrenceCauseDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            OccurrenceCauseDiv$.find('[class="basic_grid"]').addClass('dective');
+            OccurrenceCauseDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: OccurrenceCauseOID }, function (res) {
+                    $('#ApphisInfo_' + OccurrenceCauseOID).html(res);
+                });
+            }
+        });
 
         $('#InfoOccurrenceCause_EditBtn_' + OccurrenceCauseOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + OccurrenceCauseOID);

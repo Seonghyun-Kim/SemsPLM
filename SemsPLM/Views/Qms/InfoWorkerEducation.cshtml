@@ -75,8 +75,8 @@
                         <th><label class="lbText">담당자</label></th>
                         <td>
                             <div style="display:flex">
-                                <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEdu.OID" EduUserOID="@ViewBag.WorkerEdu.EduUserOID" value="@ViewBag.WorkerEdu.EduUserNm" />
-                                <button id="InfoWorkerEducation_btnEduUser_@ViewBag.WorkerEdu.OID" class="searchBtn custom-button" style="display:none;"><i class="fas fa-search"></i></button>
+                                <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEdu.OID" style="width:120px;" EduUserOID="@ViewBag.WorkerEdu.EduUserOID" value="@ViewBag.WorkerEdu.EduUserNm" />
+                                <button id="InfoWorkerEducation_btnEduUser_@ViewBag.WorkerEdu.OID" class="Modifiable_@ViewBag.WorkerEdu.OID" AttrType="BUTTON" style="display:none;"><i class="fas fa-search"></i>검색</button>
                             </div>
                         </td>
                     </tr>
@@ -94,6 +94,10 @@
             <label><i class="fas fa-caret-square-down"></i> 교육자료</label>
             <div id="InfoWorkerEducation_FileList_@ViewBag.WorkerEdu.OID">
 
+            </div>
+        </div>
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.WorkerEdu.OID">
             </div>
         </div>
     </div>
@@ -127,6 +131,25 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
+        const WorkerEduDiv$ = $('#InfoWorkerEducation_' + WorkerEduOID);
+        $('#InfoWorkerEducation_' + WorkerEduOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            WorkerEduDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            WorkerEduDiv$.find('[class="basic_grid"]').addClass('dective');
+            WorkerEduDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: WorkerEduOID }, function (res) {
+                    $('#ApphisInfo_' + WorkerEduOID).html(res);
+                });
+            }
+        });
+
         @if ((ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.WorkerEdu.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.WorkerEdu.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
         {
             <text>
@@ -149,7 +172,6 @@
                 $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "none");
                 $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "inline-block");
                 $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "inline-block");
-                $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "inline-block");
 
                 fileUpload.EditMode();
             });
@@ -167,7 +189,6 @@
                 $("#InfoWorkerEducation_EditBtn_" + WorkerEduOID).css("display", "inline-block");
                 $("#InfoWorkerEducation_SaveBtn_" + WorkerEduOID).css("display", "none");
                 $("#InfoWorkerEducation_EditCancleBtn_" + WorkerEduOID).css("display", "none");
-                $("#InfoWorkerEducation_btnEduUser_" + WorkerEduOID).css("display", "none");
 
                 fileUpload.ReadOnlyMode();
             });
