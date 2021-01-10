@@ -1,0 +1,1066 @@
+﻿@using Common.Constant;
+@{
+    Layout = null;
+    string StoragePath = System.Configuration.ConfigurationManager.AppSettings["FileStorage"];
+    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+    string FullImgPath = StoragePath + "/" + imgTempPath + "/" + TempPath;
+}
+<input type="hidden" id="hidImgFileNameDlgPoorPicture" value="" />
+
+<div style="padding:5px;">
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td>
+                    <h3>신속대응현황 상세정보</h3>
+                </td>
+                <td style="text-align: right;">
+                    <button id="btnDlgRemove" onclick="" class="custom-button"><i class="fas fa-remove"></i> 삭제</button>
+                    <button id="btnDlgExcel" onclick="" class="custom-button"><i class="fas fa-file-excel"></i> EXCEL</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="qmsDlgTable">
+    <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">신속대응 No</label></th>
+                <td>@ViewBag.QuickResponse.Name</td>
+                <th><label class="lbText">공장 구분</label></th>
+                <td>@ViewBag.QuickResponse.PlantNm</td>
+                <th><label class="lbText">발생유형</label></th>
+                <td>@ViewBag.QuickResponse.OccurrenceNm</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">고객사</label></th>
+                <td>@ViewBag.QuickResponse.OemNm</td>
+                <th><label class="lbText">품번/품명</label></th>
+                <td>@ViewBag.QuickResponse.PartNo / @ViewBag.QuickResponse.PartNm</td>
+                <th><label class="lbText">LOT번호</label></th>
+                <td>@ViewBag.QuickResponse.LotNo</td>
+
+            </tr>
+            <tr>
+                <th><label class="lbText">품질담당자</label></th>
+                <td>@ViewBag.QuickResponse.WorkUserNm</td>
+                <th><label class="lbText">작성일시</label></th>
+                <td>@(ViewBag.QuickResponse.WriteDt == null ? "" : ViewBag.QuickResponse.WriteDt.ToString("yyyy-MM-dd"))</td>
+                <th><label class="lbText">불량수량</label></th>
+                <td>@ViewBag.QuickResponse.PoorCnt</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+    <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+            <col style="width:190px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">제목</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.Title</td>
+            <tr>
+                <th><label class="lbText">발생처</label></th>
+                <td>@ViewBag.QuickResponse.OccurrenceAreaNm</td>
+                <th><label class="lbText">결함정도</label></th>
+                <td>@ViewBag.QuickResponse.DefectDegreeNm</td>
+                <th><label class="lbText">유발공정</label></th>
+                <td>@ViewBag.QuickResponse.InduceNm</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">귀책구분</label></th>
+                <td>@ViewBag.QuickResponse.ImputeNm</td>
+                <th><label class="lbText">귀책처</label></th>
+                <td>@(ViewBag.QuickResponse.ImputeDepartmentOID != null ? ViewBag.QuickResponse.ImputeDepartmentNm : ViewBag.QuickResponse.ImputeSupplierNm)</td>
+                <th><label class="lbText">재발여부 </label></th>
+                <td>@(ViewBag.QuickResponse.RecurrenceFl == true ? "Y" : "N")</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">불량내용상세</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.PoorDetail</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">발생장소</label></th>
+                <td>@ViewBag.QuickResponse.OccurrencePlace</td>
+                <th><label class="lbText">발생일자</label></th>
+                <td>@(ViewBag.QuickResponse.OccurrenceDt == null ? "" : ViewBag.QuickResponse.OccurrenceDt.ToString("yyyy-MM-dd"))</td>
+                <th><label class="lbText">시정판정</label></th>
+                <td>@ViewBag.QuickResponse.CorrectDecisionNm</td>
+            </tr>
+
+            <tr>
+                <th><label class="lbText">QA</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.Qa</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+        <div style="width:100%;">
+            <table class="infoTable" style="width:800px;float:right;">
+                <colgroup>
+                    <col style="width:100px;">
+                    <col style="width:50px;">
+                    <col style="width:80px;">
+                    <col style="width:570px;">
+                </colgroup>
+                <tbody id="BlockadeApprovalLine_@Model">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+    <table id="tbDetailBlockadeList_@Model" class="infoTable">
+        <colgroup>
+            <col style="width:9%" />
+            <col style="width:22%" />
+            <col style="width:22%" />
+            <col style="width:8%" />
+            <col style="width:9%" />
+            <col style="width:11%" />
+            <col style="width:19%" />
+        </colgroup>
+        <tr>
+            <th>범위</th>
+            <th>대상범위</th>
+            <th>조치방법</th>
+            <th>대상수량</th>
+            <th>조치부서</th>
+            <th>담당자</th>
+            <th>기한</th>
+        </tr>
+    </table>
+
+    <label><i class="fas fa-caret-square-down"></i> 시정결과</label>
+    <table id="tbDetailCorrectiveAction_@Model" class="infoTable">
+        <colgroup>
+            <col style="width:9%" />
+            <col style="width:11%" />
+            <col style="width:11%" />
+            <col style="width:11%" />
+            <col style="width:11%" />
+            <col style="width:11%" />
+            <col style="width:11%" />
+            <col style="width:25%" />
+        </colgroup>
+        <tr>
+            <th rowspan="2">범위</th>
+            <th colspan="2">선별</th>
+            <th rowspan="2">재작업</th>
+            <th rowspan="2">폐기</th>
+            <th rowspan="2">특채</th>
+            <th rowspan="2">기타</th>
+            <th rowspan="2">비고</th>
+        </tr>
+        <tr>
+            <th>적합</th>
+            <th>부적합</th>
+        </tr>
+    </table>
+
+    <div id="fileBlockade_@Model">
+
+    </div>
+
+    <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+        <div style="width:100%;">
+            <table class="infoTable" style="width:800px;float:right;">
+                <colgroup>
+                    <col style="width:100px;">
+                    <col style="width:50px;">
+                    <col style="width:80px;">
+                    <col style="width:570px;">
+                </colgroup>
+                <tbody id="OccurrenceCauseApprovalLine_@Model">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <label><i class="fas fa-caret-square-down"></i> 원인분석</label>
+    <table id="tbDetailOccurrenceCause_@Model" TableType="OccurenceCause" class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:20%" />
+            <col style="width:80%" />
+        </colgroup>
+        <tr>
+            <th>발생원인</th>
+            <th>발생원인 내역</th>
+        </tr>
+    </table>
+
+
+    <label><i class="fas fa-caret-square-down"></i> 검출대책</label>
+    <table id="tbDetectCounterMeasure_@Model" class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:15%" />
+            <col style="width:10%" />
+            <col style="width:25%" />
+            <col style="width:15%" />
+            <col style="width:35%" />
+        </colgroup>
+        <tr>
+            <th>검출장소</th>
+            <th>Yes/No</th>
+            <th colspan="3">해당공정 내용(상세위치, 작업자, 검사원 등)</th>
+        </tr>
+        <tr>
+            <th>제조공정</th>
+            <td>@(ViewBag.DetectCounterMeasure.DetectM == true ? "Yes" : "No")</td>
+            <td colspan="3">@ViewBag.DetectCounterMeasure.DetectMDetail</td>
+        </tr>
+        <tr>
+            <th>품질</th>
+            <td>@(ViewBag.DetectCounterMeasure.DetectS == true ? "Yes" : "No")</td>
+            <td colspan="3">@ViewBag.DetectCounterMeasure.DetectSDetail</td>
+        </tr>
+        <tr>
+            <th>출하단계</th>
+            <td>@(ViewBag.DetectCounterMeasure.DetectQ == true ? "Yes" : "No")</td>
+            <td colspan="3">@ViewBag.DetectCounterMeasure.DetectQDetail</td>
+        </tr>
+        <tr>
+            <th>기타</th>
+            <td>@(ViewBag.DetectCounterMeasure.DetectE == true ? "Yes" : "No")</td>
+            <td colspan="3">@ViewBag.DetectCounterMeasure.DetectEDetail</td>
+        </tr>
+        <tr>
+            <th>유출원인1</th>
+            <td colspan="4">@ViewBag.DetectCounterMeasure.LeakCause1</td>
+        </tr>
+        <tr>
+            <th>유출원인2</th>
+            <td colspan="4">@ViewBag.DetectCounterMeasure.LeakCause2</td>
+        </tr>
+        <tr>
+            <th>유출원인3</th>
+            <td colspan="4">@ViewBag.DetectCounterMeasure.LeakCause3</td>
+        </tr>
+        <tr>
+            <th>검출일</th>
+            <td colspan="4">@(ViewBag.DetectCounterMeasure.DetectDt == null ? "" : ViewBag.DetectCounterMeasure.DetectDt.ToString("yyyy-MM-dd"))</td>
+        </tr>
+        <tr>
+            <th>검출대책</th>
+            <td colspan="4">@ViewBag.DetectCounterMeasure.Measure</td>
+        </tr>
+    </table>
+
+    <div id="fileOccurrenceCause_@Model">
+
+    </div>
+
+    <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+        <div style="width:100%;">
+            <table class="infoTable" style="width:800px;float:right;">
+                <colgroup>
+                    <col style="width:100px;">
+                    <col style="width:50px;">
+                    <col style="width:80px;">
+                    <col style="width:570px;">
+                </colgroup>
+                <tbody id="ImproveCountermeasureApprovalLine_@Model">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <label><i class="fas fa-caret-square-down"></i> 개선대책</label>
+    <table id="tbDetailImproveCounterMeasure_@Model" class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:45%" />
+            <col style="width:45%" />
+            <col style="width:10%" />
+        </colgroup>
+        <tr>
+            <th>근본원인</th>
+            <th>개선대책</th>
+            <th>처리일자</th>
+        </tr>
+    </table>
+
+    <div id="fileImproveCountermeasure_@Model">
+
+    </div>
+
+
+
+    @if (ViewBag.ErrorProofFl == 1)
+    {
+        <div>
+            <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+                <div style="width:100%;">
+                    <table class="infoTable" style="width:800px;float:right;">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50px;">
+                            <col style="width:80px;">
+                            <col style="width:570px;">
+                        </colgroup>
+                        <tbody id="ErrorPrrofApprovalLine_@Model">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> Error Proof</label>
+            <table width="100%" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:180px;" />
+                    <col style="width:auto;" />
+                    <col style="width:180px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tr>
+                    <th>예정일자</th>
+                    <td>@(ViewBag.ErrorProof.EstDt == null ? "" : ViewBag.ErrorProof.EstDt.ToString("yyyy-MM-dd"))</td>
+                    <th>처리일자</th>
+                    <td>@(ViewBag.ErrorProof.ActDt == null ? "" : ViewBag.ErrorProof.ActDt.ToString("yyyy-MM-dd"))</td>
+                </tr>
+                <tr>
+                    <th>점검내용</th>
+                    <td colspan="3">@ViewBag.ErrorProof.CheckDetail</td>
+                </tr>
+                <tr>
+                    <th>점검 담당자</th>
+                    <td colspan="3">
+                        <div style="display:flex;">@ViewBag.ErrorProof.CheckUserNm</div>
+                    </td>
+                </tr>
+            </table>
+
+            <div id="fileErrorProof_@Model">
+
+            </div>
+        </div>
+    }
+
+    @if (ViewBag.LpaUnfitFl == 1)
+    {
+        <div>
+            <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+                <div style="width:100%;">
+                    <table class="infoTable" style="width:800px;float:right;">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50px;">
+                            <col style="width:80px;">
+                            <col style="width:570px;">
+                        </colgroup>
+                        <tbody id="LpaApprovalLine_@Model">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> LPA 부적합현황</label>
+            <table width="100%" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:180px;" />
+                    <col style="width:auto;" />
+                    <col style="width:180px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th>Layer</th>
+                        <td>@ViewBag.LpaUnfit.LayerLibNm</td>
+                        <th>감사주기</th>
+                        <td>@ViewBag.LpaUnfit.AuditLibNm</td>
+                    </tr>
+                    <tr>
+                        <th>그룹군</th>
+                        <td>@ViewBag.LpaUnfit.LpaGrpLibNm</td>
+                        <th>사용구분</th>
+                        <td>@ViewBag.LpaUnfit.LpaUseLibNm</td>
+                    </tr>
+                    <tr>
+                        <th>심사자</th>
+                        <td>@ViewBag.LpaUnfit.LpaCheckUserNm</td>
+                        <th>확인공정</th>
+                        <td>@ViewBag.LpaUnfit.LpaCheckProcessLibNm</td>
+                    </tr>
+                    <tr>
+                        <th>심사일자</th>
+                        <td>@(ViewBag.LpaUnfit.LpaCheckDt == null ? "" : ViewBag.LpaUnfit.LpaCheckDt.ToString("yyyy-MM-dd"))</td>
+                        <th>설비명</th>
+                        <td>@ViewBag.LpaUnfit.EquipmentNm</td>
+                    </tr>
+                    <tr>
+                        <th>품번/품명</th>
+                        <td colspan="3">@(ViewBag.LpaUnfit.PartCd + "/" + ViewBag.LpaUnfit.PartNm)</td>
+                    </tr>
+                    <tr>
+                        <th>지적사항</th>
+                        <td colspan="3" style="margin:0px;padding:0px;">
+                            <table id="tbLpaUnfitCheck_@Model" class="infoTable" style="table-layout:fixed;">
+                                <colgroup>
+                                    <col style="width:4%" />
+                                    <col style="width:96%" />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>지적사항</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>LPA 담당자</th>
+                        <td>@ViewBag.LpaUnfit.LpaUserNm</td>
+                        <th>대책서 담당자</th>
+                        <td>@ViewBag.LpaUnfit.MeasureUserNm</td>
+                    </tr>
+                    <tr>
+                        <th>완료예정일</th>
+                        <td colspan="3">@(ViewBag.LpaUnfit.LpaCheckDt == null ? "" : ViewBag.LpaUnfit.LpaCheckDt.ToString("yyyy-MM-dd"))</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div id="fileLpaUnfit_@Model"></div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> LPA 대책서작성</label>
+            <table width="100%" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:180px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tr>
+                    <th>지적사항</th>
+                    <td style="margin:0px;padding:0px;">
+                        <table id="tbLpaMeasure_@Model" class="infoTable" style="table-layout:fixed;">
+                            <colgroup>
+                                <col style="width:4%" />
+                                <col style="width:22%" />
+                                <col style="width:37%" />
+                                <col style="width:37%" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>지적사항</th>
+                                    <th>원인분석</th>
+                                    <th>개선대책</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th>검토원인상세</th>
+                    <td>@ViewBag.LpaMeasure.CauseAnalysis</td>
+                </tr>
+                <tr>
+                    <th>재발방지대책</th>
+                    <td>@ViewBag.LpaMeasure.ImproveCountermeasure </td>
+                </tr>
+            </table>
+
+            <div id="fileLpaMesure_@Model"></div>
+        </div>
+    }
+
+    @if (ViewBag.QmsCheckFl == 1)
+    {
+        <div>
+            <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+                <div style="width:100%;">
+                    <table class="infoTable" style="width:800px;float:right;">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50px;">
+                            <col style="width:80px;">
+                            <col style="width:570px;">
+                        </colgroup>
+                        <tbody id="QmsCheckApprovalLine_@Model">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> 유효성 검증</label>
+            <table id="tbQmsCheckList_@Model" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:10%" />
+                    <col style="width:30%" />
+                    <col style="width:30%" />
+                    <col style="width:30%" />
+                </colgroup>
+                <tr>
+                    <th>구분</th>
+                    <th>1차 유효성검증</th>
+                    <th>2차 유효성검증</th>
+                    <th>3차 유효성검증</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmEt_@Model">
+                    <th>검증완료일</th>
+                </tr>
+                <tr id="tbQmsCheckListUser_@Model">
+                    <th>담당자</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmBaseDt_@Model">
+                    <th>검증일</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmJudgment_@Model">
+                    <th>판정</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmDesc_@Model">
+                    <th>검증내용요약</th>
+                </tr>
+                <tr id="tbQmsCheckListConfirmEnd_@Model">
+                    <th>종료여부</th>
+                </tr>
+                <tr id="tbQmsCheckListEndDesc_@Model">
+                    <th>종료사유</th>
+                </tr>
+            </table>
+        </div>
+    }
+
+    @if (ViewBag.StandardDocFl == 1)
+    {
+        <div>
+            <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+                <div style="width:100%;">
+                    <table class="infoTable" style="width:800px;float:right;">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50px;">
+                            <col style="width:80px;">
+                            <col style="width:570px;">
+                        </colgroup>
+                        <tbody id="StandardDocApprovalLine_@Model">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> 표준화 F/U</label>
+            <table id="tblInfoStandardFollowUp_@Model" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:300px;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">문서타입</label></th>
+                        <th><label class="lbText">기술표준문서</label></th>
+                        <th><label class="lbText">완료일</label></th>
+                        <th><label class="lbText">반영내용</label></th>
+                        <th><label class="lbText">첨부파일</label></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (ViewBag.WorkerEduFl == 1)
+    {
+        <div>
+            <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
+                <div style="width:100%;">
+                    <table class="infoTable" style="width:800px;float:right;">
+                        <colgroup>
+                            <col style="width:100px;">
+                            <col style="width:50px;">
+                            <col style="width:80px;">
+                            <col style="width:570px;">
+                        </colgroup>
+                        <tbody id="WorkerEduApprovalLine_@Model">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> 사용자교육</label>
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                    <col style="width:190px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">교육일자</label></th>
+                        <td>@(ViewBag.WorkerEdu.EduDt == null ? "" : ViewBag.WorkerEdu.EduDt.ToString("yyyy-MM-dd"))</td>
+                        <th><label class="lbText">담당자</label></th>
+                        <td>@ViewBag.WorkerEdu.EduUserNm</td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">교육내용</label></th>
+                        <td colspan="3">@ViewBag.WorkerEdu.EduDetail</td>
+                    </tr>
+                    <tr>
+                        <th><label class="lbText">교육계획</label></th>
+                        <td colspan="3">@ViewBag.WorkerEdu.EduPlan</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div id="fileWorkerEdu_@Model">
+
+            </div>
+        </div>
+    }
+
+</div>
+
+<script type="text/javascript">
+    var fileBlockade_@Model = $("#fileBlockade_@Model").FileUpload({ OID : '@ViewBag.Blockade.OID'});
+    var fileOccurrenceCause_@Model = $("#fileOccurrenceCause_@Model").FileUpload({ OID : '@ViewBag.OccurrenceCause.OID'});
+    var fileImproveCountermeasure_@Model = $("#fileImproveCountermeasure_@Model").FileUpload({ OID: '@ViewBag.ImproveCountermeasure.OID' });
+    @if (ViewBag.ErrorProofFl == 1)
+    {
+        <text>var fileErrorProof_@Model = $("#fileErrorProof_@Model").FileUpload({ OID: '@ViewBag.ErrorProof.OID' });</text>
+    }
+
+    @if (ViewBag.LpaUnfitFl == 1)
+    {
+        <text>
+        var fileLpaUnfit_@Model = $("#fileLpaUnfit_@Model").FileUpload({ OID: '@ViewBag.LpaUnfit.OID' });
+        var fileLpaMesure_@Model = $("#fileLpaMesure_@Model").FileUpload({ OID: '@ViewBag.LpaMeasure.OID' });
+        </text>
+    }
+
+    @if (ViewBag.WorkerEduFl == 1)
+    {
+        <text>var fileWorkerEdu_@Model = $("#fileWorkerEdu_@Model").FileUpload({ OID: '@ViewBag.WorkerEdu.OID' });</text>
+    }
+
+    $(document).ready(function () {
+        loadApprovDetail($("#BlockadeApprovalLine_@Model"), "봉쇄조치", @Html.Raw(Json.Encode(ViewBag.BlockadeApprvalData)));
+        loadApprovDetail($("#OccurrenceCauseApprovalLine_@Model"), "원인분석", @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseApprvalData)));
+        loadApprovDetail($("#ImproveCountermeasureApprovalLine_@Model"), "개선대책", @Html.Raw(Json.Encode(ViewBag.ImproveCountermeasureApprvalData)));
+        @if (ViewBag.ErrorProofFl == 1)
+        {
+            <text>loadApprovDetail($("#ErrorPrrofApprovalLine_@Model"), "Error Proof", @Html.Raw(Json.Encode(ViewBag.ErrorProofApprvalData)));</text>
+        }
+
+        @if (ViewBag.LpaUnfitFl == 1)
+        {
+            <text>
+            loadApprovDetail($("#LpaApprovalLine_@Model"), "LPA", @Html.Raw(Json.Encode(ViewBag.LpaMeasureApprvalData)));
+            var LpaUnfitCheck = @Html.Raw(Json.Encode(ViewBag.LpaUnfitCheck));
+            LpaUnfitCheck.forEach(function (v, i) {
+                DetailLpaUnfitCheck(v);
+                DetailLpaUnfitCheckMeasure(v);
+            });
+            </text>
+        }
+
+        @if (ViewBag.QmsCheckFl == 1)
+        {
+            <text>
+            loadApprovDetail($("#QmsCheckApprovalLine_@Model"), "유효성검증", @Html.Raw(Json.Encode(ViewBag.QmsCheckApprvalData)));        
+            var QmsCheckList = @Html.Raw(Json.Encode(ViewBag.QmsCheckItems));
+            DetailPrintQmsCheck(QmsCheckList);
+            </text>
+        }
+
+        @if (ViewBag.StandardDocFl == 1)
+        {
+            <text>loadApprovDetail($("#StandardDocApprovalLine_@Model"), "표준 F/U", @Html.Raw(Json.Encode(ViewBag.StandardDocApprvalData)));</text>
+        }
+
+        @if (ViewBag.WorkerEduFl == 1)
+        {
+            <text>loadApprovDetail($("#WorkerEduApprovalLine_@Model"), "작업자 교육", @Html.Raw(Json.Encode(ViewBag.WorkerEduApprvalData)));</text>
+        }
+
+        var BlockadeList = @Html.Raw(Json.Encode(ViewBag.BlockadeItems));
+
+        BlockadeList.forEach(function (v, i) {
+            DetailPrintBlockade(v);
+            DetailPrintCorrectiveAction(v);
+        });
+
+        var OccurrenceCauseItems = @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseItems));
+        OccurrenceCauseItems.forEach(function (v, i) {
+            DetailPrintOccurrenceCause(v);
+        });
+
+        var ImproveCounterMeasureItems = @Html.Raw(Json.Encode(ViewBag.ImproveCounterMeasureItems));
+        ImproveCounterMeasureItems.forEach(function (v, i) {
+            DetailImproveCounterMeasure(v);
+        });
+    });
+
+    function loadApprovDetail(objTable, title, ApprovDatas) {
+        var sampleArray = ApprovDatas.InboxStep;
+        var listLength = sampleArray.length;
+        for (var i = 0; i < listLength; i++) {
+            var type = sampleArray[i].ApprovalType;
+
+            if (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_DIST') {
+                var TaskData = sampleArray[i].InboxTask;
+                _.each(TaskData, function (item, index) {
+                    var newSpan = '<span>';
+                    newSpan += '<span class="approver">' + item.PersonObj.Name + ' <small>' + item.PersonObj.DepartmentNm + '</small></span>';
+                    receivedList$.append(newSpan);
+                });
+                return;
+            }
+
+            var newTr = '<tr>';
+            newTr += '<th style="text-align:center;">' + title + '</th><th style="text-align:center;">' + (i + 1) + '</th><td style="text-align:center;">' + (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV' ? '결재' : (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_AGREE' ? '합의' : '수신')) + '</td><td>';
+            var person = '<div class="approverInfo">';
+            if (type == '@Common.Constant.CommonConstant.TYPE_APPROVAL_APPROV') {
+                var TaskData = sampleArray[i].InboxTask[0];
+                person += '<div>' + TaskData.PersonObj.Name + '</div>';
+                if (TaskData.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED') {
+                    person += '<div>' + (TaskData.PersonObj.ImgSign == null ? '승인' : '<img src="' + TaskData.PersonObj.ImgSign + '">') + '</div>';
+                    person += '<div>' + moment(TaskData.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                } else if (TaskData.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED') {
+                    person += '<div>반려</div>';
+                    person += '<div>' + moment(TaskData.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                } else {
+                    person += '<div>-</div>';
+                    person += '<div>-</div>';
+                }
+                newTr += person + '</td>';
+            } else {
+                var TaskData = sampleArray[i].InboxTask;
+                _.each(TaskData, function (item, index) {
+                    var person = '<div class="approverInfo">';
+                    person += '<div>' + item.PersonObj.Name + '</div>';
+                    if (item.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED') {
+                        person += '<div>' + (item.PersonObj.ImgSign == null ? '승인' : '<img src="' + item.PersonObj.ImgSign + '">') + '</div>';
+                        person += '<div>' + moment(item.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                    } else if (item.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED') {
+                        person += '<div>반려</div>';
+                        person += '<div>' + moment(item.ApprovalDt).format('YYYY-MM-DD') + '</div>';
+                    } else {
+                        person += '<div>-</div>';
+                        person += '<div>-</div>';
+                    }
+                    person += '</div>';
+                    newTr += person;
+                });
+                newTr += '</td>';
+            }
+            newTr += '</tr>'
+            objTable.append(newTr);
+        }
+    };
+
+    function DetailPrintBlockade(v) {
+        var tr$ = document.createElement("tr");
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+
+        var tdTargetScope$ = document.createElement("td");
+        tdTargetScope$.innerText = v.TargetScope;
+
+        var tdAct$ = document.createElement("td");
+        tdAct$.innerText = v.Act;
+
+        var tdTargetCnt$ = document.createElement("td");
+        tdTargetCnt$.innerText = v.TargetCnt;
+
+        var tdActDepartmentOID$ = document.createElement("td");
+        tdActDepartmentOID$.innerText = v.ActDepartmentNm;
+
+        var tdActUserOID$ = document.createElement("td");
+        tdActUserOID$.innerText = v.ActUserNm;
+
+        var tdActDt$ = document.createElement("td");
+
+        var ActSDt = "";
+        var ActEDt = "";
+        if (v.ActStartDt === null) {
+            ActSDt = "";
+        } else {
+            var milli = v.ActStartDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            ActSDt = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+
+        if (v.ActEndDt === null) {
+            ActEDt = "";
+        } else {
+            var milli = v.ActEndDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            ActEDt = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+
+        tdActDt$.innerText = ActSDt + "~" + ActEDt;
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdTargetScope$);
+        tr$.appendChild(tdAct$);
+        tr$.appendChild(tdTargetCnt$);
+        tr$.appendChild(tdActDepartmentOID$);
+        tr$.appendChild(tdActUserOID$);
+        tr$.appendChild(tdActDt$);
+
+        document.getElementById("tbDetailBlockadeList_@Model").appendChild(tr$);
+    }
+
+    function DetailPrintCorrectiveAction(v) {
+        var tr$ = document.createElement("tr");
+
+        var tdType$ = document.createElement("td");
+        var lbType$ = document.createElement("label");
+        lbType$.innerText = v.Name;
+        tdType$.appendChild(lbType$);
+
+        var tdSortSuitableCnt$ = document.createElement("td");
+        tdSortSuitableCnt$.innerText = v.SortSuitableCnt;
+
+        var tdSortIncongruityCnt$ = document.createElement("td");
+        tdSortIncongruityCnt$.innerText = v.SortIncongruityCnt;
+
+        var tdReworkCnt$ = document.createElement("td");
+        tdReworkCnt$.innerText = v.ReworkCnt;
+
+        var tdDisuseCnt$ = document.createElement("td");
+        tdDisuseCnt$.innerText = v.DisuseCnt;
+
+        var tdSpecialCnt$ = document.createElement("td");
+        tdSpecialCnt$.innerText = v.SpecialCnt;
+
+        var tdEtcCnt$ = document.createElement("td");
+        tdEtcCnt$.innerText = v.EtcCnt;
+
+        var tdDesc$ = document.createElement("td");
+        tdDesc$.innerText = v.Description;
+
+        tr$.appendChild(tdType$);
+        tr$.appendChild(tdSortSuitableCnt$);
+        tr$.appendChild(tdSortIncongruityCnt$);
+        tr$.appendChild(tdReworkCnt$);
+        tr$.appendChild(tdDisuseCnt$);
+        tr$.appendChild(tdSpecialCnt$);
+        tr$.appendChild(tdEtcCnt$);
+        tr$.appendChild(tdDesc$);
+
+        document.getElementById("tbDetailCorrectiveAction_@Model").appendChild(tr$);
+    }
+
+    function DetailPrintOccurrenceCause(data) {
+        var OID = data == null ? null : data.OID;
+        var table$ = $("#tbDetailOccurrenceCause_@Model tbody");
+
+        var tr$ = document.createElement("tr");
+
+        var tdOccurrenceCause$ = document.createElement("td");
+        tdOccurrenceCause$.innerText = data.OccurrenceCauseLibText;
+
+        var tdOccurrenceCauseDetail$ = document.createElement("td");
+        tdOccurrenceCauseDetail$.style.padding = "0px";
+
+        var divOccurrenceCauseDetail$ = document.createElement("div");
+
+        var tbWhy$ = document.createElement("table");
+        tbWhy$.style.width = "100%";
+        tbWhy$.setAttribute("TableType", "Why");
+        tbWhy$.setAttribute("CauseOID", OID);
+        tbWhy$.className = "infoTable";
+
+        if (data != null) {
+            data.OccurrenceWhys.forEach(function (v, i) {
+                DetailWhy(tbWhy$, v);
+            })
+        } else {
+            for (var i = 0; i < 5; i++) {
+                DetailWhy(tbWhy$, null);
+            }
+        }
+
+        divOccurrenceCauseDetail$.appendChild(tbWhy$);
+        tdOccurrenceCauseDetail$.appendChild(divOccurrenceCauseDetail$);
+
+        tr$.appendChild(tdOccurrenceCause$);
+        tr$.appendChild(tdOccurrenceCauseDetail$);
+
+        table$.append(tr$);
+    }
+
+    function DetailWhy(tbWhy$, data) {
+        var trWhy$ = document.createElement("tr");
+        var tdWhy$ = document.createElement("th");
+        tdWhy$.style.textAlign = "center";
+        tdWhy$.style.width = "7%";
+        tdWhy$.style.border = "1px solid #a2dfsd";
+        tdWhy$.innerText = "why" + ($(tbWhy$).children().length + 1).toString();
+
+        var tdWhyDetail$ = document.createElement("td");
+        tdWhyDetail$.style.width = "calc(100% - 7%)";
+        tdWhyDetail$.innerText = data.OccurrenceCauseDetail;
+
+        trWhy$.appendChild(tdWhy$);
+        trWhy$.appendChild(tdWhyDetail$);
+
+        tbWhy$.appendChild(trWhy$);
+    }
+
+    function DetailImproveCounterMeasure(data) {
+        var table$ = document.getElementById("tbDetailImproveCounterMeasure_@Model");
+
+        var tr$ = document.createElement("tr");
+
+        var tdRootCause$ = document.createElement("td");
+        tdRootCause$.innerText = data.RootCause;
+
+        var tdImproveCountermeasure$ = document.createElement("td");
+        tdImproveCountermeasure$.innerText = data.ImproveCountermeasure;
+
+        var tdProcessDt$ = document.createElement("td");
+
+        if (data === null) {
+            tdProcessDt$.innerText = "";
+        } else {
+            var milli = data.ProcessDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            tdProcessDt$.innerText = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+
+        tr$.appendChild(tdRootCause$);
+        tr$.appendChild(tdImproveCountermeasure$);
+        tr$.appendChild(tdProcessDt$);
+
+        table$.appendChild(tr$);
+    }
+
+    function DetailLpaUnfitCheck(data) {
+        var table$ = $("#tbLpaUnfitCheck_@Model tbody");
+        var trCnt$ = $("#tbLpaUnfitCheck_@Model tbody tr");
+        var tr$ = document.createElement("tr");
+
+        var tdNo = document.createElement("td");
+        tdNo.style.textAlign = "center";
+        tdNo.innerText = (trCnt$.length + 1);
+
+        var tdCheckPoin$ = document.createElement("td");
+        tdCheckPoin$.innerText = data.CheckPoin;
+
+        tr$.appendChild(tdNo);
+        tr$.appendChild(tdCheckPoin$);
+
+        table$.append(tr$);
+    }
+
+    function DetailLpaUnfitCheckMeasure(data) {
+        var table$ = $("#tbLpaMeasure_@Model tbody");
+        var trCnt$ = $("#tbLpaMeasure_@Model tbody tr");
+        var tr$ = document.createElement("tr");
+
+        var tdNo = document.createElement("td");
+        tdNo.style.textAlign = "center";
+        tdNo.innerText = (trCnt$.length + 1);
+
+        var tdCheckPoin$ = document.createElement("td");
+        tdCheckPoin$.innerText = data.CheckPoin;
+
+        var tdCauseAnalysisPoin$ = document.createElement("td");
+        tdCauseAnalysisPoin$.innerText = data.CauseAnalysis;
+
+        var tdImproveCountermeasurePoin$ = document.createElement("td");
+        tdImproveCountermeasurePoin$.innerText = data.ImproveCountermeasure;
+
+        tr$.appendChild(tdNo);
+        tr$.appendChild(tdCheckPoin$);
+        tr$.appendChild(tdCauseAnalysisPoin$);
+        tr$.appendChild(tdImproveCountermeasurePoin$);
+
+        table$.append(tr$);
+    }
+
+    function DetailPrintQmsCheck(QmsCheckList) {
+        var CheckCnt = WebUtils.isEmpty(QmsCheckList) === true ? 1 : QmsCheckList.length;
+        if (CheckCnt > 3) {
+            CheckCnt = 3;
+        }
+
+        for (var i = 0; i < CheckCnt; i++) {
+            var item = QmsCheckList[i];
+            // 검증 완료일
+            var tdConfirmEt$ = document.createElement("td");
+
+            if (WebUtils.isEmpty(item) || item.CheckEt === null) {
+                tdConfirmEt$.innerText = "";
+            } else {
+                var milli = item.CheckEt.replace(/\/Date\((-?\d+)\)\//, '$1');
+                var d = new Date(parseInt(milli));
+                tdConfirmEt$.innerText = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+            }
+
+            // 담당자
+            var tdUser$ = document.createElement("td");
+
+            var divUser$ = document.createElement("div");
+            divUser$.innerText = item.CheckUserNm;
+
+            // 검증일
+            var tdConfirmBaseDt$ = document.createElement("td");
+            if (WebUtils.isEmpty(item) || item.CheckDt === null) {
+                tdConfirmBaseDt$.innerText = "";
+            } else {
+                var milli = item.CheckDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+                var d = new Date(parseInt(milli));
+                tdConfirmBaseDt$.innerText = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+            }
+
+            // 판정
+            var tdJudgment$ = document.createElement("td");
+            tdJudgment$.innerText = WebUtils.isEmpty(item) === "Yes" ? "No" : item.CheckFl === 1 ? "Yes" :  "No";
+
+            // 검증내용요약
+            var tdConfirmDesc$ = document.createElement("td");
+            tdConfirmDesc$.innerText = WebUtils.isEmpty(item.CheckDetail) === true ? "" : item.CheckDetail;
+
+            // 종료여부
+            var tdContFl$ = document.createElement("td");
+            tdContFl$.innerText = WebUtils.isEmpty(item) === "Yes" ? "No" : item.FinishFl === 1 ? "Yes" : "No";
+
+            // 종료사유
+            var tdEndDesc$ = document.createElement("td");
+            tdEndDesc$.innerText = WebUtils.isEmpty(item.FinishDetail) === true ? "" : item.FinishDetail;
+
+            @*$("#tbQmsCheckList_@ModelConfirmSt").append(tdConfirmSt$);*@
+            $("#tbQmsCheckListConfirmEt_@Model").append(tdConfirmEt$);
+            $("#tbQmsCheckListUser_@Model").append(tdUser$);
+            $("#tbQmsCheckListConfirmBaseDt_@Model").append(tdConfirmBaseDt$);
+            $("#tbQmsCheckListConfirmJudgment_@Model").append(tdJudgment$);
+            $("#tbQmsCheckListConfirmDesc_@Model").append(tdConfirmDesc$);
+            $("#tbQmsCheckListConfirmEnd_@Model").append(tdContFl$);
+            $("#tbQmsCheckListEndDesc_@Model").append(tdEndDesc$);
+        }
+
+    }
+</script>

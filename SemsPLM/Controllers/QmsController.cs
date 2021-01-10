@@ -381,6 +381,82 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoQuickResponseDetail(int OID)
+        {
+            ViewBag.QuickResponse = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
+
+            List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = OID });
+
+            Modulelist.ForEach(v =>
+            {
+                if (v.ModuleType == QmsConstant.TYPE_BLOCKADE)
+                {
+                    ViewBag.Blockade = v;
+                    ViewBag.BlockadeFl = v.ModuleFl;
+                    ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = v.OID });
+                    ViewBag.BlockadeApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
+                {
+                    ViewBag.OccurrenceCause = v;
+                    ViewBag.OccurrenceCauseFl = v.ModuleFl;
+                    List<OccurrenceCauseItem> OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = v.OID });
+                    OccurrenceCauseItems.ForEach(i =>
+                    {
+                        i.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = i.OID });
+                    });
+                    ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
+                    ViewBag.DetectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = v.OID });
+                    ViewBag.OccurrenceCauseApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
+                {
+                    ViewBag.ImproveCountermeasure = v;
+                    ViewBag.ImproveCountermeasureFl = v.ModuleFl;
+                    ViewBag.ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = v.OID });
+                    ViewBag.ImproveCountermeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
+                {
+                    ViewBag.ErrorProof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = v.OID });
+                    ViewBag.ErrorProofFl = v.ModuleFl;
+                    ViewBag.ErrorProofApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
+                {      
+                    ViewBag.LpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = v.OID });
+                    ViewBag.LpaUnfitFl = v.ModuleFl;
+                    ViewBag.LpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                {
+                    ViewBag.LpaMeasure = LpaMeasureRepository.SelLpaMeasure(new LpaMeasure() { ModuleOID = v.OID });
+                    ViewBag.LpaMeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
+                {
+                    ViewBag.QmsCheck = v;
+                    ViewBag.QmsCheckFl = v.ModuleFl;
+                    ViewBag.QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = v.OID });
+                    ViewBag.QmsCheckApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_STANDARD)
+                {
+                    ViewBag.StandardDoc = v;
+                    ViewBag.StandardDocFl = v.ModuleFl;
+                    ViewBag.StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = v.OID });
+                    ViewBag.StandardDocApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_WORKER_EDU)
+                {
+                    ViewBag.WorkerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = v.OID });
+                    ViewBag.WorkerEduFl = v.ModuleFl;
+                    ViewBag.WorkerEduApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+            });
+
+            return View(OID);
+        }
         /*
         public ActionResult CreateQuickResponse(QuickResponse quickResponse)
         {

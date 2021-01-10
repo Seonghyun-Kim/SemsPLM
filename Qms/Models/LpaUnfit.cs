@@ -17,17 +17,22 @@ namespace Qms.Models
         // 레이어 
         public int LayerLibOID { get; set; }
 
+        public string LayerLibNm { get; set; }
         // 감사주기 
         public int AuditLibOID { get; set; }
 
+        public string AuditLibNm { get; set; }
         // 그룹군 
         public int LpaGrpLibOID { get; set; }
 
+        public string LpaGrpLibNm { get; set; }
         // 사용구분 
         public int LpaUseLibOID { get; set; }
+        public string LpaUseLibNm { get; set; }
 
         // 확인공정 
         public int LpaCheckProcessLibOID { get; set; }
+        public string LpaCheckProcessLibNm { get; set; }
 
         // 심사자(LPA 담당자) 
         public int? LpaCheckUserOID { get; set; }
@@ -42,6 +47,8 @@ namespace Qms.Models
 
         // 품번/품명 
         public int? PartOID { get; set; }
+
+        public string PartCd { get; set; }
 
         public string PartNm { get; set; }
 

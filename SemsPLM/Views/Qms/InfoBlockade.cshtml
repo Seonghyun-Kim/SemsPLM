@@ -125,7 +125,6 @@
     var fileUpload = $("#InfoBlockade_FileList_@ViewBag.Blockade.OID").FileUpload({ OID : '@ViewBag.Blockade.OID'});
 
     $(document).ready(function () {
-        debugger;
         const BlockadeOID = '@ViewBag.Blockade.OID';
         var BlockadeList = @Html.Raw(Json.Encode(ViewBag.BlockadeItems));
 
