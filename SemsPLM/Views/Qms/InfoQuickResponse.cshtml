@@ -94,7 +94,7 @@
                                     <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" style="width:120px; margin-right:5px;" />
                                     <button class="Modifiable_@ViewBag.QuickDetail.OID custom-button" AttrType="BUTTON" id="InfoQuickResponse_btnPartSearch_@ViewBag.QuickDetail.OID" style="display:none;"><i class="fas fa-search"></i> 검색</button>
                                 </div>
-                             </td>
+                            </td>
                             <th><label class="lbText">LOT번호</label></th>
                             <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtLotNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.LotNo" /></td>
                             <th><label class="lbText">품질담당자</label></th>
@@ -238,6 +238,10 @@
                     </tbody>
                 </table>
             </div>
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.QuickDetail.OID">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -362,6 +366,24 @@
                 $("#InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID").attr("WorkUserOID", res[0].OID);
 
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        $('#InfoQuickResponse_' + QuickDetailOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            QuickDetailDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            QuickDetailDiv$.find('[class="basic_grid"]').addClass('dective');
+            QuickDetailDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: QuickDetailOID }, function (res) {
+                    $('#ApphisInfo_' + QuickDetailOID).html(res);
+                });
+            }
         });
 
         $('#InfoQuickResponse_EditBtn_' + QuickDetailOID).on('click', function () {

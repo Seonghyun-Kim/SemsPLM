@@ -44,19 +44,19 @@
             <div id="properties" class="basic_grid">
                 @if ((ViewBag.ErrorProof.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.ErrorProof.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.ErrorProof.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
                 {
-                <table class="tableTopButtonBox">
-                    <tbody>
-                        <tr>
-                            <td style="text-align: right;" id="InfoErrorProof_defaultBtn_@ViewBag.ErrorProof.OID">
-                                <button id="InfoErrorProof_EditBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                @*<button id="InfoErrorProof_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-                                <button id="InfoErrorProof_EditCancleBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoErrorProof_SaveBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoErrorProof_ApprovalBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoErrorProof_defaultBtn_@ViewBag.ErrorProof.OID">
+                                    <button id="InfoErrorProof_EditBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                    @*<button id="InfoErrorProof_AppDrwEditBtn_@ViewBag.QuickDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
+                                    <button id="InfoErrorProof_EditCancleBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                    <button id="InfoErrorProof_SaveBtn_@ViewBag.ErrorProof.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                    <button id="InfoErrorProof_ApprovalBtn_@ViewBag.ErrorProof.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 }
 
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
@@ -99,6 +99,10 @@
 
                 </div>
             </div>
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.ErrorProof.OID">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -106,6 +110,25 @@
     $(document).ready(function () {
         const ErrorProofOID = '@ViewBag.ErrorProof.OID';
         var fileUpload = $("#InfoErrorProof_FileList_" + ErrorProofOID).FileUpload({ OID: ErrorProofOID });
+
+        const ErrorProofDiv$ = $('#InfoErrorProof_' + ErrorProofOID);
+        $('#InfoErrorProof_' + ErrorProofOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            ErrorProofDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            ErrorProofDiv$.find('[class="basic_grid"]').addClass('dective');
+            ErrorProofDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: ErrorProofOID }, function (res) {
+                    $('#ApphisInfo_' + ErrorProofOID).html(res);
+                });
+            }
+        });
 
         $('#InfoErrorProof_EditBtn_' + ErrorProofOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + ErrorProofOID);

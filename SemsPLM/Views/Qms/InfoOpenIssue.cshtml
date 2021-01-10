@@ -2,46 +2,47 @@
     Layout = null;
 }
 
-    <div id="InfoOpenIssue_@ViewBag.OpenIssue.OID" class="info_project clearfix">
-        <div class="info_menubar">
-            <ul>
-                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
-                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
-                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
-            </ul>
-        </div>
-        <div class="doc_content">
-            <div class="project_basic clearfix">
-                <div class="basic_info">
-                    <h3>오픈이슈</h3>
-                    <p>프로젝트 : <span>@ViewBag.OpenIssue.ProjectNm</span></p>
-                </div>
-                <div class="basic_image">
-                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
-                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
-                </div>
-                <div class="basic_status">
-                    <div class="pointer_wrap">
-                        @for (int i = 0; i < ViewBag.Status.Count; i++)
-                        {
-                            if (ViewBag.OpenIssue.BPolicyOID == ViewBag.Status[i].StatusOID)
-                            {
-                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                        }
-                    </div>
-                    <p>설명 : <span></span></p>
-                </div>
+<div id="InfoOpenIssue_@ViewBag.OpenIssue.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>오픈이슈</h3>
+                <p>프로젝트 : <span>@ViewBag.OpenIssue.ProjectNm</span></p>
             </div>
-            <div id="properties" class="basic_grid scrollY" style="height:668px;">
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.OpenIssue.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div class="scrollY" style="height:668px;">
+            <div id="properties" class="basic_grid">
                 @if (ViewBag.OpenIssue.BPolicyNm == Common.Constant.QmsConstant.POLICY_OPENISSUE_STARTED)
                 {
                     <table class="tableTopButtonBox">
@@ -108,8 +109,8 @@
                                 </tr>
                             </table>
                         </td>
-                        
-                     
+
+
                     </tr>
                 </table>
 
@@ -125,7 +126,7 @@
                             </tbody>
                         </table>
                     </div>
-                  
+
                     <div id="grdOpenIssueList_@ViewBag.OpenIssue.OID"></div>
                 </div>
 
@@ -145,13 +146,36 @@
                     <div id="grdQuickResponseList_@ViewBag.OpenIssue.OID"></div>
                 </div>
             </div>
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.OpenIssue.OID">
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
 <script type="text/javascript">
-
-
     $(document).ready(function () {
+        var OpenIssueOID = "@ViewBag.OpenIssue.OID";
+
+        const OpenIssueDiv$ = $('#InfoOpenIssue_' + OpenIssueOID);
+        $('#InfoOpenIssue_' + OpenIssueOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            OpenIssueDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            OpenIssueDiv$.find('[class="basic_grid"]').addClass('dective');
+            OpenIssueDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: OpenIssueOID }, function (res) {
+                    $('#ApphisInfo_' + OpenIssueOID).html(res);
+                });
+            }
+        });
 
         $("#InfoOpenIssue_SaveBtn_@ViewBag.OpenIssue.OID").on("click", function () {
             var param = {};
@@ -347,7 +371,7 @@
                 { text: '', datafield: 'BPolicyOID', width: "10%", align: 'center', cellsalign: 'center',hidden:true },
                 { text: '비고', dataField: 'Description', width: '20%', align: 'center', cellsalign: 'left', },
                 {
-                    text: 'CLOSE 결과', dataField: 'OpenIssueCloseFl', width: '10%', align: 'center', cellsalign: 'center', 
+                    text: 'CLOSE 결과', dataField: 'OpenIssueCloseFl', width: '10%', align: 'center', cellsalign: 'center',
                 },
             ],
             columngroups:

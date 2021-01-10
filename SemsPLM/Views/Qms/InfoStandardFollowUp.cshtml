@@ -74,31 +74,12 @@
                         <th><label class="lbText">반영내용</label></th>
                         <th><label class="lbText">첨부파일</label></th>
                     </tr>
-                    @*<tr>
-                    <th><label class="lbText">기술표준문서</label></th>
-                    <td>
-                        <div style="display:flex">
-                            <input type="text" readonly="readonly" id="InfoStandardFollowUp_txtDoc_@ViewBag.StandardDocDetail[i].OID" DocType="@ViewBag.StandardDocDetail[i].DocType" DocOID="@ViewBag.StandardDocDetail[i].DocOID" value="@ViewBag.StandardDocDetail[i].DocNm" />
-                            <button id="InfoStandardFollowUp_btnSearchDoc_@ViewBag.StandardDocDetail[i].OID" class="searchBtn custom-button" style="display:none;"><i class="fas fa-search"></i></button>
-                        </div>
-                    </td>
-                    <th><label class="lbText">완료일</label></th>
-                    <td>
-                        <div class="Modifiable_@ViewBag.StandardDoc.OID" AttrType="DATE" id="InfoStandardFollowUp_txtDocCompleteDt_@ViewBag.StandardDocDetail[i].OID" value="@(ViewBag.StandardDocDetail[i].DocCompleteDt == null ? "" : ViewBag.StandardDocDetail[i].DocCompleteDt.ToString("yyyy-MM-dd"))"></div>
-                    </td>
-                    <th><label class="lbText">첨부파일</label></th>
-                    <td>
-                        <input class="Modifiable_@ViewBag.StandardDoc.OID" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocFIle_@ViewBag.StandardDocDetail[i].OID" value="첨부파일.txt" />
-                    </td>
-                </tr>
-                <tr>
-                    <th><label class="lbText">반영내용</label></th>
-                    <td colspan="5">
-                        <input class="Modifiable_@ViewBag.StandardDoc.OID" AttrType="TEXT" type="text" readonly="readonly" id="InfoStandardFollowUp_txtDocSummary_@ViewBag.StandardDocDetail[i].OID" value="@ViewBag.StandardDocDetail[i].DocSummary" />
-                    </td>
-                </tr>*@
                 </tbody>
             </table>
+        </div>
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.StandardDoc.OID">
+            </div>
         </div>
     </div>
 </div>
@@ -111,7 +92,27 @@
         PrintStandardFollowUp({ DocTypeNm: "관리계획서" });
         PrintStandardFollowUp({ DocTypeNm: "작업표준서" });
         PrintStandardFollowUp({ DocTypeNm: "검사기준서" });
-     
+
+
+        const StandardDocDiv$ = $('#InfoStandardFollowUp_' + StandardDocOID);
+        $('#InfoStandardFollowUp_' + StandardDocOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            StandardDocDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            StandardDocDiv$.find('[class="basic_grid"]').addClass('dective');
+            StandardDocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: StandardDocOID }, function (res) {
+                    $('#ApphisInfo_' + StandardDocOID).html(res);
+                });
+            }
+        });
+
         // 수정
         $('#InfoStandardFollowUp_EditBtn_' + StandardDocOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + StandardDocOID);

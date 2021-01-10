@@ -2,48 +2,48 @@
     Layout = null;
 }
 
-    <div id="InfoImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID" class="info_project clearfix">
-        <div class="info_menubar">
-            <ul>
-                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
-                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
-                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
-            </ul>
-        </div>
-        <div class="doc_content">
-            <div class="project_basic clearfix">
-                <div class="basic_info">
-                    <h3>개선대책</h3>
-                    <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
-                </div>
-                <div class="basic_image">
-                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
-                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
-                </div>
-                <div class="basic_status">
-                    <div class="pointer_wrap">
-                        @for (int i = 0; i < ViewBag.Status.Count; i++)
-                        {
-                            if (ViewBag.ImproveCounterMeasure.BPolicyOID == ViewBag.Status[i].StatusOID)
-                            {
-                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                        }
-                    </div>
-                    <p>설명 : <span></span></p>
-                </div>
+<div id="InfoImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>개선대책</h3>
+                <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
             </div>
-            <div id="properties" class="basic_grid">
-                @if ((ViewBag.ImproveCounterMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.ImproveCounterMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.ImproveCounterMeasure.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
-                {
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.ImproveCounterMeasure.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div id="properties" class="basic_grid">
+            @if ((ViewBag.ImproveCounterMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.ImproveCounterMeasure.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.ImproveCounterMeasure.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+            {
                 <table class="tableTopButtonBox">
                     <tbody>
                         <tr>
@@ -57,35 +57,58 @@
                         </tr>
                     </tbody>
                 </table>
-                }
+            }
 
-                <table id="tbImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID" class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:41.5%" />
-                        <col style="width:41.5%" />
-                        <col style="width:10%" />
-                        <col style="width:7%;text-align:center;" />
-                    </colgroup>
-                    <tr>
-                        <th>근본원인</th>
-                        <th>개선대책</th>
-                        <th>처리일자</th>
-                        <th style="text-align:center;"><button id="btnImproveCounterMeasureAdd_@ViewBag.ImproveCounterMeasure.OID" class="Modifiable_@ViewBag.ImproveCounterMeasure.OID" AttrType="BUTTON">원인추가</button></th>
-                    </tr>
-                </table>
+            <table id="tbImproveCounterMeasure_@ViewBag.ImproveCounterMeasure.OID" class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:41.5%" />
+                    <col style="width:41.5%" />
+                    <col style="width:10%" />
+                    <col style="width:7%;text-align:center;" />
+                </colgroup>
+                <tr>
+                    <th>근본원인</th>
+                    <th>개선대책</th>
+                    <th>처리일자</th>
+                    <th style="text-align:center;"><button id="btnImproveCounterMeasureAdd_@ViewBag.ImproveCounterMeasure.OID" class="Modifiable_@ViewBag.ImproveCounterMeasure.OID" AttrType="BUTTON">원인추가</button></th>
+                </tr>
+            </table>
 
-                <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
-                <div id="InfoImproveCounterMeasure_FileList_@ViewBag.ImproveCounterMeasure.OID">
+            <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+            <div id="InfoImproveCounterMeasure_FileList_@ViewBag.ImproveCounterMeasure.OID">
 
-                </div>
+            </div>
+        </div>
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.ImproveCounterMeasure.OID">
             </div>
         </div>
     </div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
         const ImproveCounterMeasureOID = '@ViewBag.ImproveCounterMeasure.OID';
         var fileUpload = $("#InfoImproveCounterMeasure_FileList_" + ImproveCounterMeasureOID).FileUpload({ OID: ImproveCounterMeasureOID });
+
+        const ImproveCounterMeasureDiv$ = $('#InfoImproveCounterMeasure_' + ImproveCounterMeasureOID);
+        $('#InfoImproveCounterMeasure_' + ImproveCounterMeasureOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            ImproveCounterMeasureDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            ImproveCounterMeasureDiv$.find('[class="basic_grid"]').addClass('dective');
+            ImproveCounterMeasureDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: ImproveCounterMeasureOID }, function (res) {
+                    $('#ApphisInfo_' + ImproveCounterMeasureOID).html(res);
+                });
+            }
+        });
 
         $('#InfoImproveCounterMeasure_EditBtn_' + ImproveCounterMeasureOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + ImproveCounterMeasureOID);
@@ -160,9 +183,9 @@
                     if (WebUtils.isBlank(data.ProcessDt)) {
                         errMsg += "[" + (i + 1).toString() + "] 행의 처리일자가 입력되지 않았습니다.\n";
                     }
-                }
 
-                param.ImproveCounterMeasureItems.push(data);
+                    param.ImproveCounterMeasureItems.push(data);
+                }
             });
 
             if (errMsg.length != 0) {

@@ -43,21 +43,21 @@
         </div>
         <div id="properties" class="basic_grid">
             @if ((ViewBag.QmsCheck.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.QmsCheck.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.QmsCheck.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
-            { 
-            <table class="tableTopButtonBox">
-                <tbody>
-                    <tr>
-                        <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
-                            <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                            <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                            <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                            <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            {
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoQuickValidation_defaultBtn_@ViewBag.QmsCheck.OID">
+                                <button id="InfoQuickValidation_EditBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoQuickValidation_EditCancleBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoQuickValidation_SaveBtn_@ViewBag.QmsCheck.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoQuickValidation_ApprovalBtn_@ViewBag.QmsCheck.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             }
-            
+
             <label><i class="fas fa-caret-square-down"></i> 유효성검증</label>
             <table id="tbQmsCheckList_@ViewBag.QmsCheck.OID" class="infoTable" style="table-layout:fixed;">
                 <colgroup>
@@ -98,6 +98,10 @@
                 </tr>
             </table>
         </div>
+        <div id="Apphis" class="basic_grid dective">
+            <div id="ApphisInfo_@ViewBag.QmsCheck.OID">
+            </div>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
@@ -124,6 +128,25 @@
         }
 
         PrintQmsCheck(CheckCnt);
+
+        const QmsCheckDiv$ = $('#InfoQuickValidation_' + QmsCheckOID);
+        $('#InfoQuickValidation_' + QmsCheckOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            QmsCheckDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            QmsCheckDiv$.find('[class="basic_grid"]').addClass('dective');
+            QmsCheckDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'properties') {
+
+            } else if (infoValue == 'Apphis') {
+                RequestHtml('/Common/ApprovalHistory', { OID: QmsCheckOID }, function (res) {
+                    $('#ApphisInfo_' + QmsCheckOID).html(res);
+                });
+            }
+        });
 
         // 수정
         $('#InfoQuickValidation_EditBtn_' + QmsCheckOID).on('click', function () {

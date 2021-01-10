@@ -2,72 +2,73 @@
     Layout = null;
 }
 
-    <div id="InfoLpaUnfit_@ViewBag.LpaUnfit.OID" class="info_project clearfix">
-        <div class="info_menubar">
-            <ul>
-                <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
-                <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
-                <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
-            </ul>
-        </div>
-        <div class="doc_content">
-            <div class="project_basic clearfix">
-                <div class="basic_info">
-                    <h3>LPA 부적합현황</h3>
-                    <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
-                </div>
-                <div class="basic_image">
-                    <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
-                    <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
-                </div>
-                <div class="basic_status">
-                    <div class="pointer_wrap">
-                        @for (int i = 0; i < ViewBag.Status.Count; i++)
-                        {
-                            if (ViewBag.LpaUnfit.BPolicyOID == ViewBag.Status[i].StatusOID)
-                            {
-                                <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
-                                    <div class="project_status">@ViewBag.Status[i].StatusNm</div>
-                                </div>
-                            }
-                        }
-                    </div>
-                    <p>설명 : <span></span></p>
-                </div>
+<div id="InfoLpaUnfit_@ViewBag.LpaUnfit.OID" class="info_project clearfix">
+    <div class="info_menubar">
+        <ul>
+            <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
+            <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
+        </ul>
+    </div>
+    <div class="doc_content">
+        <div class="project_basic clearfix">
+            <div class="basic_info">
+                <h3>LPA 부적합현황</h3>
+                <p>제 목 : <span>@ViewBag.QuickDetail.Title</span></p>
             </div>
-            <div id="properties" class="basic_grid scrollY" style="height:668px;">
+            <div class="basic_image">
+                <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
+                <div class="image_thumbnail"><!--이미지 썸네일 영역--></div>
+            </div>
+            <div class="basic_status">
+                <div class="pointer_wrap">
+                    @for (int i = 0; i < ViewBag.Status.Count; i++)
+                    {
+                        if (ViewBag.LpaUnfit.BPolicyOID == ViewBag.Status[i].StatusOID)
+                        {
+                            <div class="pointer pointer_focus" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pointer" data-type="@ViewBag.Status[i].Type" data-Status="@ViewBag.Status[i].StatusOID" style="z-index: @(ViewBag.Status.Count - i);">
+                                <div class="project_status">@ViewBag.Status[i].StatusNm</div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p>설명 : <span></span></p>
+            </div>
+        </div>
+        <div class="scrollY" style="height:668px;">
+            <div id="properties" class="basic_grid">
                 @if ((ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.LpaUnfit.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
-                { 
-                <table class="tableTopButtonBox">
-                    <tbody>
-                        <tr>
-                            <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
-                                <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 확정</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                {
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
+                                    <button id="InfoLpaUnfit_EditBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                    <button id="InfoLpaUnfit_EditCancleBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                    <button id="InfoLpaUnfit_SaveBtn_@ViewBag.LpaUnfit.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                    <button id="InfoLpaUnfit_ConfirmBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 확정</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 }
                 else if(ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM || ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_COMPLETED)
                 {
-                <table class="tableTopButtonBox">
-                    <tbody>
-                        <tr>
-                            <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
-                                <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoLpaUnfit_defaultBtn_@ViewBag.LpaUnfit.OID">
+                                    <button id="InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID" class="custom-button"><i class="fas fa-pen-alt"></i>LPA 대책서 등록</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 }
 
                 <table width="100%" class="infoTable" style="table-layout:fixed;">
@@ -185,14 +186,41 @@
 
                 </div>
             </div>
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.LpaUnfit.OID">
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
     <script type="text/javascript">
     $(document).ready(function () {
         const LpaUnfitOID = '@ViewBag.LpaUnfit.OID';
+        const LpaMeasureOID = "@(ViewBag.LpaMeasureOID == null ? "" : ViewBag.LpaMeasureOID)";
         var fileUpload = $("#InfoLpaUnfit_FileList_" + LpaUnfitOID).FileUpload({ OID: LpaUnfitOID });
 
+        if (!WebUtils.isEmpty(LpaMeasureOID)) {
+            const LpaUnfitDiv$ = $('#InfoLpaUnfit_' + LpaUnfitOID);
+            $('#InfoLpaUnfit_' + LpaUnfitOID + ' .tab').on('click', function () {
+                const self$ = $(this);
+                const infoValue = self$.attr('info');
+                //control side menu
+                LpaUnfitDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+                self$.addClass('info_focus');
+                LpaUnfitDiv$.find('[class="basic_grid"]').addClass('dective');
+                LpaUnfitDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+                if (infoValue == 'properties') {
+
+                } else if (infoValue == 'Apphis') {
+                    RequestHtml('/Common/ApprovalHistory', { OID: LpaMeasureOID }, function (res) {
+                        $('#ApphisInfo_' + LpaUnfitOID).html(res);
+                    });
+                }
+            });
+        }
+        
         $('#InfoLpaUnfit_EditBtn_' + LpaUnfitOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + LpaUnfitOID);
 
