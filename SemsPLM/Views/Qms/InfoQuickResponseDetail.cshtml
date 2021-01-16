@@ -18,7 +18,7 @@
                 </td>
                 <td style="text-align: right;">
                     <button id="btnDlgRemove" onclick="" class="custom-button"><i class="fas fa-remove"></i> 삭제</button>
-                    <button id="btnDlgExcel" onclick="" class="custom-button"><i class="fas fa-file-excel"></i> EXCEL</button>
+                    <button id="btnDlgExcel_@ViewBag.QuickResponse.OID" onclick="" class="custom-button"><i class="fas fa-file-excel"></i> EXCEL</button>
                 </td>
             </tr>
         </tbody>
@@ -716,6 +716,11 @@
         ImproveCounterMeasureItems.forEach(function (v, i) {
             DetailImproveCounterMeasure(v);
         });
+
+        $("#btnDlgExcel_@ViewBag.QuickResponse.OID").on("click", function () {     
+            var url = "/Qms/ExcelExportQuickResponseDetail?OID=@ViewBag.QuickResponse.OID";      
+            window.location.href = url;
+        })
     });
 
     function loadApprovDetail(objTable, title, ApprovDatas) {

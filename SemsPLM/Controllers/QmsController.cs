@@ -2,6 +2,7 @@
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using OfficeOpenXml;
 using Pms.Models;
 using Qms.Models;
 using SemsPLM.Filter;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 
@@ -45,7 +47,7 @@ namespace SemsPLM.Controllers
             {
                 ViewBag.ItemRatio = null;
             }
-            else if(items.Count() > 0)
+            else if (items.Count() > 0)
             {
                 int FinishCnt = _OpenIssue.CompleatedCnt;
 
@@ -407,6 +409,10 @@ namespace SemsPLM.Controllers
                     });
                     ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
                     ViewBag.DetectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = v.OID });
+                    if (ViewBag.DetectCounterMeasure == null)
+                    {
+                        ViewBag.DetectCounterMeasure = new DetectCounterMeasure();
+                    }
                     ViewBag.OccurrenceCauseApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
@@ -423,7 +429,7 @@ namespace SemsPLM.Controllers
                     ViewBag.ErrorProofApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
-                {      
+                {
                     ViewBag.LpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = v.OID });
                     ViewBag.LpaUnfitFl = v.ModuleFl;
                     ViewBag.LpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = v.OID });
@@ -513,7 +519,7 @@ namespace SemsPLM.Controllers
                 relationships.ForEach(v =>
                 {
                     QuickResponse data = list.Find(q => q.OID == v.ToOID);
-                   
+
                     if (data != null)
                     {
                         data.CarCode = pmsProject.Car_Lib_Nm;
@@ -537,7 +543,7 @@ namespace SemsPLM.Controllers
 
                     PmsProject pms = lPmses.Find(p => p.OID == rel.FromOID);
 
-                    if(pms != null)
+                    if (pms != null)
                     {
                         v.CarCode = pms.Car_Lib_Nm;
 
@@ -934,7 +940,6 @@ namespace SemsPLM.Controllers
             return Json(result);
         }
 
-
         #region -- 고품사진
         public JsonResult ImgUploadFile(int? OID)
         {
@@ -999,7 +1004,426 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
+        [HttpGet]
+        public ActionResult ExcelExportQuickResponseDetail(int OID)
+        {
+            QuickResponse QuickResponse = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
 
+            List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = OID });
+
+            QuickResponseModule Blockade = null;
+            int? BlockadeFl = null;
+            List<BlockadeItem> BlockadeItems = null;
+            Approval BlockadeApprvalData = null;
+
+            QuickResponseModule OccurrenceCause = null;
+            int? OccurrenceCauseFl = null;
+            List<OccurrenceCauseItem> OccurrenceCauseItems = null;
+            DetectCounterMeasure DetectCounterMeasure = null;
+            Approval OccurrenceCauseApprvalData = null;
+
+            QuickResponseModule ImproveCountermeasure = null;
+            int? ImproveCountermeasureFl = null;
+            List<ImproveCounterMeasureItem> ImproveCounterMeasureItems = null;
+            Approval ImproveCountermeasureApprvalData = null;
+
+            ErrorProof ErrorProof = null;
+            int? ErrorProofFl = null;
+            Approval ErrorProofApprvalData = null;
+
+            LpaUnfit LpaUnfit = null;
+            int? LpaUnfitFl = null;
+            List<LpaUnfitCheck> LpaUnfitCheck = null;
+
+            LpaMeasure LpaMeasure = null;
+            Approval LpaMeasureApprvalData = null;
+
+            QuickResponseModule QmsCheck = null;
+            int? QmsCheckFl = null;
+            List<QmsCheck> QmsCheckItems = null;
+            Approval QmsCheckApprvalData = null;
+
+            QuickResponseModule StandardDoc = null;
+            int? StandardDocFl = null;
+            List<StandardDoc> StandardDocItem = null;
+            Approval StandardDocApprvalData = null;
+
+            WorkerEdu WorkerEdu = null;
+            int? WorkerEduFl = null;
+            Approval WorkerEduApprvalData = null;
+
+            Modulelist.ForEach(v =>
+            {
+                if (v.ModuleType == QmsConstant.TYPE_BLOCKADE)
+                {
+                    Blockade = v;
+                    BlockadeFl = v.ModuleFl;
+                    BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = v.OID });
+                    BlockadeApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
+                {
+                    OccurrenceCause = v;
+                    OccurrenceCauseFl = v.ModuleFl;
+                    List<OccurrenceCauseItem> _OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = v.OID });
+                    _OccurrenceCauseItems.ForEach(i =>
+                    {
+                        i.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = i.OID });
+                    });
+                    OccurrenceCauseItems = _OccurrenceCauseItems;
+                    DetectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = v.OID });
+                    if (DetectCounterMeasure == null)
+                    {
+                        DetectCounterMeasure = new DetectCounterMeasure();
+                    }
+                    OccurrenceCauseApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
+                {
+                    ImproveCountermeasure = v;
+                    ImproveCountermeasureFl = v.ModuleFl;
+                    ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = v.OID });
+                    ImproveCountermeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
+                {
+                    ErrorProof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = v.OID });
+                    ErrorProofFl = v.ModuleFl;
+                    ErrorProofApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
+                {
+                    LpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = v.OID });
+                    LpaUnfitFl = v.ModuleFl;
+                    LpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                {
+                    LpaMeasure = LpaMeasureRepository.SelLpaMeasure(new LpaMeasure() { ModuleOID = v.OID });
+                    LpaMeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
+                {
+                    QmsCheck = v;
+                    QmsCheckFl = v.ModuleFl;
+                    QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = v.OID });
+                    QmsCheckApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_STANDARD)
+                {
+                    StandardDoc = v;
+                    StandardDocFl = v.ModuleFl;
+                    StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = v.OID });
+                    StandardDocApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_WORKER_EDU)
+                {
+                    WorkerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = v.OID });
+                    WorkerEduFl = v.ModuleFl;
+                    WorkerEduApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+            });
+
+            Stream DownExcelStream = null;
+            string newTempFilePath = "";
+            string strNewFileName = DateTime.Now.Ticks.ToString() + ".xlsx";
+
+            //string FilePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ExcelTemplatePath"]) + "\\" + DateTime.Now.Ticks.ToString() + ".xlsx";
+            var file = new FileInfo(strNewFileName);
+
+            using (ExcelPackage excelPackage = new ExcelPackage(file))
+            {
+                excelPackage.Workbook.Worksheets.Add("sheet1");
+                ExcelWorksheet ws = excelPackage.Workbook.Worksheets.First();
+
+                ws.Column(1).Width = 0.6;
+                ws.Column(2).Width = 2;
+
+                for (int iCnt = 3; iCnt <= 24; iCnt++)
+                {
+                    if (iCnt == 13 || iCnt == 14)
+                    {
+                        ws.Column(iCnt).Width = 2;
+                    }
+                    else
+                    {
+                        ws.Column(iCnt).Width = 3.9;
+                    }
+                }
+
+                ws.Column(25).Width = 2;
+                ws.Column(26).Width = 0.6;
+
+                PrintExcelCell(ws.Cells[2, 3, 2, 5], "TITLE", "제목");
+                PrintExcelCell(ws.Cells[2, 6, 2, 24], "VALUE", QuickResponse.Title);
+
+                // 기본정보
+                PrintExcelCell(ws.Cells[4, 3, 4, 5], "TITLE", "기본정보");
+                PrintExcelCell(ws.Cells[5, 3, 5, 5], "TH", "신속대응NO");
+                PrintExcelCell(ws.Cells[5, 6, 5, 13], "TD", QuickResponse.Name);
+                PrintExcelCell(ws.Cells[5, 14, 5, 16], "TH", "공장구분");
+                PrintExcelCell(ws.Cells[5, 17, 5, 24], "TD", QuickResponse.PlantNm);
+
+                PrintExcelCell(ws.Cells[6, 3, 6, 5], "TH", "발생유형");
+                PrintExcelCell(ws.Cells[6, 6, 6, 13], "TD", QuickResponse.OccurrenceNm);
+                PrintExcelCell(ws.Cells[6, 14, 6, 16], "TH", "고객사");
+                PrintExcelCell(ws.Cells[6, 17, 6, 24], "TD", QuickResponse.OemNm);
+
+                PrintExcelCell(ws.Cells[7, 3, 7, 5], "TH", "품번/품명");
+                PrintExcelCell(ws.Cells[7, 6, 7, 13], "TD", QuickResponse.PartNo + "/" + QuickResponse.PartNm);
+                PrintExcelCell(ws.Cells[7, 14, 7, 16], "TH", "고객사");
+                PrintExcelCell(ws.Cells[7, 17, 7, 24], "TD", QuickResponse.OemNm);
+
+                PrintExcelCell(ws.Cells[8, 3, 8, 5], "TH", "품질담당자");
+                PrintExcelCell(ws.Cells[8, 6, 8, 13], "TD", QuickResponse.WorkUserNm);
+                PrintExcelCell(ws.Cells[8, 14, 8, 16], "TH", "작성일시");
+                PrintExcelCell(ws.Cells[8, 17, 8, 24], "TD", QuickResponse.WriteDt == null ? "" : ((DateTime)QuickResponse.WriteDt).ToString("yyyy-MM-dd"));
+
+                PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "불량수량");
+                PrintExcelCell(ws.Cells[9, 6, 9, 24], "TD", QuickResponse.PoorCnt.ToString());
+
+                ws.Cells[5, 3, 9, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                // 문제요약
+                PrintExcelCell(ws.Cells[11, 3, 11, 5], "TITLE", "문제요약");
+                PrintExcelCell(ws.Cells[12, 3, 12, 5], "TH", "발생처");
+                PrintExcelCell(ws.Cells[12, 6, 12, 13], "TD", QuickResponse.OccurrenceAreaNm);
+                PrintExcelCell(ws.Cells[12, 14, 12, 16], "TH", "결함정도");
+                PrintExcelCell(ws.Cells[12, 17, 12, 24], "TD", QuickResponse.DefectDegreeNm);
+
+                PrintExcelCell(ws.Cells[13, 3, 13, 5], "TH", "유발공정");
+                PrintExcelCell(ws.Cells[13, 6, 13, 13], "TD", QuickResponse.InduceNm);
+                PrintExcelCell(ws.Cells[13, 14, 13, 16], "TH", "귀책구분");
+                PrintExcelCell(ws.Cells[13, 17, 13, 24], "TD", QuickResponse.ImputeNm);
+
+                PrintExcelCell(ws.Cells[14, 3, 14, 5], "TH", "귀책처");
+                PrintExcelCell(ws.Cells[14, 6, 14, 13], "TD", QuickResponse.ImputeDepartmentOID != null ? QuickResponse.ImputeDepartmentNm : QuickResponse.ImputeSupplierNm);
+                PrintExcelCell(ws.Cells[14, 14, 14, 16], "TH", "재발여부");
+                PrintExcelCell(ws.Cells[14, 17, 14, 24], "TD", QuickResponse.RecurrenceFl == true ? "Y" : "N");
+
+                PrintExcelCell(ws.Cells[15, 3, 15, 5], "TH", "불량내용상세");
+                PrintExcelCell(ws.Cells[15, 6, 15, 24], "TD", QuickResponse.PoorDetail);
+
+                PrintExcelCell(ws.Cells[16, 3, 16, 5], "TH", "발생일자");
+                PrintExcelCell(ws.Cells[16, 6, 16, 13], "TD", QuickResponse.OccurrenceDt == null ? "" : ((DateTime)QuickResponse.OccurrenceDt).ToString("yyyy-MM-dd"));
+                PrintExcelCell(ws.Cells[16, 14, 16, 16], "TH", "시정판정");
+                PrintExcelCell(ws.Cells[16, 17, 16, 24], "TD", QuickResponse.CorrectDecisionNm);
+
+                PrintExcelCell(ws.Cells[17, 3, 17, 5], "TH", "발생장소");
+                PrintExcelCell(ws.Cells[17, 6, 17, 24], "TD", QuickResponse.OccurrencePlace);
+
+                PrintExcelCell(ws.Cells[18, 3, 18, 5], "TH", "QA");
+                PrintExcelCell(ws.Cells[18, 6, 18, 24], "TD", QuickResponse.Qa);
+
+                ws.Cells[12, 3, 18, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                int iRow = 21;
+                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "봉쇄조치");               
+                iRow = iRow + 2;
+
+                int iBlockApprovCol = 23;
+                ApprovPrint(ws, BlockadeApprvalData, iRow, iBlockApprovCol);
+
+                //List<ApprovalStep> approvalSteps = BlockadeApprvalData.InboxStep.OrderByDescending(d => d.OID).ToList<ApprovalStep>();
+
+                //approvalSteps.ForEach(v =>
+                //{
+                //    if (v.ApprovalType == Common.Constant.CommonConstant.TYPE_APPROVAL_DIST) { return; }
+
+                //    ApprovalTask TaskData = v.InboxTask[0];
+
+                //    PrintExcelCell(ws.Cells[iRow, iBlockApprovCol, iRow, iBlockApprovCol + 1], "TD", TaskData.PersonObj.Name);
+                //    if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED)
+                //    {
+                //        PrintExcelCell(ws.Cells[iRow + 1, iBlockApprovCol, iRow + 1, iBlockApprovCol + 1], "TD", "승인");
+                //        PrintExcelCell(ws.Cells[iRow + 2, iBlockApprovCol, iRow + 2, iBlockApprovCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                //    }
+                //    else if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED)
+                //    {
+                //        PrintExcelCell(ws.Cells[iRow + 1, iBlockApprovCol, iRow + 1, iBlockApprovCol + 1], "TD", "반려");
+                //        PrintExcelCell(ws.Cells[iRow + 2, iBlockApprovCol, iRow + 2, iBlockApprovCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                //    }
+                //    else
+                //    {
+                //        PrintExcelCell(ws.Cells[iRow + 1, iBlockApprovCol, iRow + 1, iBlockApprovCol + 1], "TD", "-");
+                //        PrintExcelCell(ws.Cells[iRow + 2, iBlockApprovCol, iRow + 2, iBlockApprovCol + 1], "APPV_DATE", "-");
+                //    }
+
+                //    iBlockApprovCol = iBlockApprovCol - 2;
+
+                //});
+
+                //PrintExcelCell(ws.Cells[iRow, iBlockApprovCol, iRow + 2, iBlockApprovCol + 1], "TD", "결재");
+
+
+
+
+
+
+                newTempFilePath = SaveTempExcelFile(excelPackage, strNewFileName);
+                excelPackage.Dispose();
+                ws.Dispose();
+            }
+
+
+            DownExcelStream = FileStream(Path.Combine(newTempFilePath));
+
+            if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
+            {
+                return File(DownExcelStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(string.Format("신속대응[{0}]_{1}.xlsx", QuickResponse.Title, DateTime.Now.ToString("yyyy-MM-dd")), System.Text.Encoding.UTF8));
+            }
+            else
+            {
+                return File(DownExcelStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(string.Format("신속대응[{0}]_{1}.xlsx", QuickResponse.Title, DateTime.Now.ToString("yyyy-MM-dd"))));
+            }
+        }
+
+        private void ApprovPrint (ExcelWorksheet ws, Approval approv, int iRow, int AppvCol)
+        {
+            ws.Row(iRow - 1).Height = 2.3;
+            List<ApprovalStep> approvalSteps = approv.InboxStep.OrderByDescending(d => d.OID).ToList<ApprovalStep>();
+
+            approvalSteps.ForEach(v =>
+            {
+                if (v.ApprovalType == Common.Constant.CommonConstant.TYPE_APPROVAL_DIST) { return; }
+
+                ApprovalTask TaskData = v.InboxTask[0];
+
+                PrintExcelCell(ws.Cells[iRow, AppvCol, iRow, AppvCol + 1], "APPV_TEXT", TaskData.PersonObj.Name);
+                if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED)
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "APPV_TEXT", "승인");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                }
+                else if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED)
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "APPV_TEXT", "반려");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "TD", "-");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", "-");
+                }
+
+                AppvCol = AppvCol - 2;
+
+            });
+
+            PrintExcelCell(ws.Cells[iRow, AppvCol, iRow + 2, AppvCol + 1], "APPV_TEXT", "결재");
+        }
+            
+
+        private void PrintExcelCell(ExcelRange range, string Type, string Text)
+        {
+            range.Merge = true;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+            if (Type == "TITLE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+            else if(Type == "VALUE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                //range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                //range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+            else if (Type == "TH")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightSteelBlue);
+            }
+            else if (Type == "TD")
+            {
+                range.Style.Font.Size = 8;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+            }
+            else if (Type == "MODULE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.PapayaWhip);
+            }
+            else if (Type == "APPV_TEXT")
+            {
+                range.Style.Font.Size = 7;
+                //range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            }
+            else if (Type == "APPV_DATE")
+            {
+                range.Style.Font.Size = 7;
+                //range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            }
+
+            range.Value = Text;
+        }
+
+        public static Stream FileStream(string fileFullPath)
+        {
+            try
+            {
+                var fs = new FileStream(fileFullPath, FileMode.Open);
+                return fs;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string SaveTempExcelFile(ExcelPackage excel, string fileName)
+        {
+            try
+            {
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string TempPath = System.Configuration.ConfigurationManager.AppSettings["TempPath"];
+
+                DirectoryInfo di = new DirectoryInfo(StoragePath + "/" + TempPath + "/");
+
+                if (!di.Exists) { di.Create(); }
+
+                FileInfo uploadFile = new FileInfo(Path.Combine(StoragePath, TempPath, "", fileName));
+
+                string ext = uploadFile.Extension;
+                string purefileName = uploadFile.Name.Substring(0, uploadFile.Name.Length - ext.Length);
+
+                FileInfo fi = new FileInfo(di.FullName + "/" + fileName);
+
+                if (fi.Exists)
+                {
+                    /*중복되지 않은 파일명 생성*/
+                    int cnt = 1;
+                    string newFileName = "";
+                    string pureName = purefileName;
+
+                    while (fi.Exists)
+                    {
+                        newFileName = pureName + " (" + (cnt++) + ")" + ext;
+                        fi = new FileInfo(StoragePath + "/" + TempPath + "/" + fileName);
+                    }
+                }
+
+                excel.SaveAs(fi);
+
+                return StoragePath + "/" + TempPath + "/" + fileName;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region -- 신속대응 일정관리 
