@@ -141,6 +141,11 @@ namespace Qms.Models
 
         public DateTime? FinishDt { get; set; }
 
+        // 등록구분
+        public int? EnrollmentLibOID { get; set; }
+
+        public string EnrollmentLibNm { get; set; }
+
         #region -- Search용
         //발생유형
         public string SearchOccurrenceLibOID { get; set; }
@@ -294,6 +299,11 @@ namespace Qms.Models
         public string StatusNm { get; set; }
 
         public DateTime? FinishDt { get; set; }
+
+        // 등록구분
+        public int? EnrollmentLibOID { get; set; }
+
+        public string EnrollmentLibNm { get; set; }
 
         public QuickResponseView(QuickResponse response)
         {

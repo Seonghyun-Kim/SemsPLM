@@ -304,7 +304,11 @@ namespace SemsPLM.Controllers
         {
             //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library factoryKey = LibraryRepository.SelLibraryObject(new Library { Name = "FACTORY_TYPE" });
+            List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
+            ViewBag.factoryList = factoryList;
+
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" }); // OEM
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
@@ -312,13 +316,13 @@ namespace SemsPLM.Controllers
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
 
-            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE"});
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
 
-            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
+            /*Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
             List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
-            ViewBag.occurrenceAreaList = occurrenceAreaList;
+            ViewBag.occurrenceAreaList = occurrenceAreaList;*/
 
             Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
             List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
@@ -337,6 +341,10 @@ namespace SemsPLM.Controllers
             ViewBag.correctDecisionList = correctDecisionList;
             ViewBag.ProjectOID = ProjectOID;
 
+            Library EnrollmentTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = "ENROLLMENT_TYPE" });
+            List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
+            ViewBag.EnrollmentTypeList = EnrollmentTypeList;
+
             return View();
         }
 
@@ -344,6 +352,10 @@ namespace SemsPLM.Controllers
         {
             //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            Library factoryKey = LibraryRepository.SelLibraryObject(new Library { Name = "FACTORY_TYPE" });
+            List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
+            ViewBag.factoryList = factoryList;
+
             Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
@@ -352,13 +364,9 @@ namespace SemsPLM.Controllers
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
 
-            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE" });
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
-
-            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
-            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
-            ViewBag.occurrenceAreaList = occurrenceAreaList;
 
             Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
             List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
@@ -376,8 +384,18 @@ namespace SemsPLM.Controllers
             List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
             ViewBag.correctDecisionList = correctDecisionList;
 
+            Library EnrollmentTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = "ENROLLMENT_TYPE" });
+            List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
+            ViewBag.EnrollmentTypeList = EnrollmentTypeList;
+
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE });
+
+            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = ViewBag.QuickDetail.OccurrenceNm == "사내" ? "OCCURRENCE_AREA_INSIDE" : "OCCURRENCE_AREA_OUT" });
+            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
+            ViewBag.occurrenceAreaList = occurrenceAreaList;
+
+
             return View();
         }
 

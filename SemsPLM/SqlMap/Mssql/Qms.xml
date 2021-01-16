@@ -60,7 +60,9 @@
       BlockadeStorageProductFl,
       BlockadeShipProductFl,
       PlanUserOID,
-      PoorPicture)
+      PoorPicture,
+      CarCode,
+      EnrollmentLibOID)
       VALUES
       (#OID#,
       #PlantLibOID#,
@@ -93,7 +95,9 @@
       #BlockadeStorageProductFl#,
       #BlockadeShipProductFl#,
       #PlanUserOID#,
-      #PoorPicture#)
+      #PoorPicture#,
+      #CarCode#,
+      #EnrollmentLibOID#)
 
     </insert>
 
@@ -229,6 +233,14 @@
         FinishDt = #FinishDt#
       </isNotNull>
 
+      <isNotNull prepend="," property="CarCode">
+        CarCode = #CarCode#
+      </isNotNull>
+
+      <isNotNull prepend="," property="EnrollmentLibOID">
+        EnrollmentLibOID = #EnrollmentLibOID#
+      </isNotNull>
+
       WHERE OID = #OID#
     </update>
 
@@ -239,6 +251,7 @@
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
       , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm
+      , A.EnrollmentLibOID, Q.KorNm AS EnrollmentLibNm, A.CarCode
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
@@ -256,6 +269,7 @@
       LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
       LEFT JOIN T_BPOLICY P ON AO.BPolicyOID = P.OID
+      LEFT JOIN T_DLIBRARY Q ON A.EnrollmentLibOID = Q.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
           A.OID = #OID#
