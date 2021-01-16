@@ -14,7 +14,7 @@
         <input type="hidden" id="hiddenDlgWorkerEduOID" value="@ViewBag.WorkerEdu.OID" />
     </div>
     <div class="qmsDlgTable">
-        @if (Model.PlanUserOID == Convert.ToInt32(Session["UserOID"]))
+        @if (Model.PlanUserOID == Convert.ToInt32(Session["UserOID"]) && (Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_PREPARE || Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_STARTED))
         {
             <div style="width:100%;text-align:right;position:relative;margin-bottom:10px;">
                 <button id="btnDlgSave" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
@@ -370,7 +370,7 @@
             <text>$("#txtDlgWorkerEduPlanDt").val("@ViewBag.WorkerEdu.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
 
-        @if (Model.PlanUserOID != Convert.ToInt32(Session["UserOID"]))
+        @if (Model.PlanUserOID != Convert.ToInt32(Session["UserOID"]) ||(Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_COMPLETED || Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_DISPOSAL))
         {
             <text>
             $("#btnDlgBlockAdePlanUserSearch").jqxButton({ disabled:true });

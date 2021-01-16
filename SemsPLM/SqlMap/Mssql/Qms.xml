@@ -823,6 +823,11 @@
       , E.Name AS LpaUserNm
       , F.Name AS MeasureUserNm
       , G.ChargeUserOID
+      , J.KorNm AS LayerLibNm
+      , K.KorNm AS AuditLibNm
+      , L.KorNm AS LpaGrpLibNm
+      , M.KorNm AS LpaUseLibNm
+      , N.KorNm AS LpaCheckProcessLibNm
       FROM T_DQMS_LPA_UNFIT A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.LpaCheckUserOID = C.OID
@@ -831,6 +836,12 @@
       LEFT JOIN T_DOBJECT F ON A.MeasureUserOID = F.OID
       LEFT JOIN T_DQMS_QUICK_MODULE G ON A.ModuleOID = G.OID
       LEFT JOIN T_BPOLICY H ON B.BPolicyOID = H.OID
+
+      LEFT JOIN T_DLIBRARY J ON A.LayerLibOID = J.OID
+      LEFT JOIN T_DLIBRARY K ON A.AuditLibOID = K.OID
+      LEFT JOIN T_DLIBRARY L ON A.LpaGrpLibOID = L.OID
+      LEFT JOIN T_DLIBRARY M ON A.LpaUseLibOID = M.OID
+      LEFT JOIN T_DLIBRARY N ON A.LpaCheckProcessLibOID = N.OID
       WHERE B.DeleteDt IS NULL
       <isNotNull prepend="and" property="ModuleOID">
         A.ModuleOID = #ModuleOID#

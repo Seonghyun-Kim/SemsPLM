@@ -58,7 +58,7 @@
                         </tbody>
                     </table>
                 }
-                else if (ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM)
+                else if(ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM || ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_COMPLETED)
                 {
                     <table class="tableTopButtonBox">
                         <tbody>
@@ -399,7 +399,7 @@
             });
         });
 
-        @if (ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM)
+        @if (ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_CONFIRM || ViewBag.LpaUnfit.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_COMPLETED)
         {
             <text>
             $("#InfoLpaMeasureBtn_@ViewBag.LpaUnfit.OID").on("click", function () {

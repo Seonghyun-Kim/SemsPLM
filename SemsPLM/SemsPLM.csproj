@@ -3861,6 +3861,7 @@
     <Content Include="Views\Pms\Dialog\dlgInfoReliabilityReport.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPartAssy.cshtml" />
     <Content Include="Views\Qms\InfoOpenIssue.cshtml" />
+    <Content Include="Views\Qms\InfoQuickResponseDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

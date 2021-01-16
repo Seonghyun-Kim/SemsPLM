@@ -109,6 +109,11 @@ namespace Common.Constant
 
         public static string TYPE_OPEN_ISSUE_ITEM { get { return "OPEN_ISSUE_ITEM"; } }
 
+        public static string POLICY_QMS_QUICK_RESPONSE_PREPARE = "Prepare";
+        public static string POLICY_QMS_QUICK_RESPONSE_STARTED = "Started";
+        public static string POLICY_QMS_QUICK_RESPONSE_COMPLETED = "Completed";
+        public static string POLICY_QMS_QUICK_RESPONSE_DISPOSAL = "Disposal";
+
 
         public static string POLICY_QMS_MODULE_PREPARE = "Prepare";
         public static string POLICY_QMS_MODULE_STARTED = "Started";

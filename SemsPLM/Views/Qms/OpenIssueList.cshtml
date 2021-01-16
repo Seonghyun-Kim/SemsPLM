@@ -182,7 +182,7 @@
 
         openIssueList$.on("rowdoubleclick", function (event) {
             var clickData = event.args.row.bounddata;
-            var linkName = "[" + clickData.ProjectNm + "] 오픈이슈";
+            var linkName = "[오픈이슈] " + clickData.ProjectNm;
             var linkUrl = '/Qms/InfoOpenIssue?OID=' + clickData.OID;
 
             TabPageLoad(linkUrl, linkName);

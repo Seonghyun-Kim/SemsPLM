@@ -82,7 +82,7 @@
                         <tr>
                             <th><label class="lbText">공장 구분</label></th>
                             <td><div id="InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID"></div></td>
-                            <th><label class="lbText">검사유형</label></th>
+                            <th><label class="lbText">발생유형</label></th>
                             <td><div id="InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID"></div></td>
                             <th><label class="lbText">고객사</label></th>
                             <td><div id="InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID"></div></td>
@@ -196,7 +196,7 @@
                                         @if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.PoorPicture != null)
                                         {
                                             @*<img class="img-thumbnail" src="@Url.Content("~/images/Qms/PoorPicture/")@ViewBag.QuickDetail.PoorPicture" />*@
-                                            <img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />
+                                            <img class="img-thumbnail" style="width:200px;height:240px;" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />
                                         }
                                     </div>
                                 </div>
