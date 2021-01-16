@@ -246,7 +246,7 @@ namespace Pms.Trigger
             }
             return "";
         }
-
+        
         public string ActionTaskRelationshipPromote(object[] args)
         {
             object[] oArgs = args;
@@ -256,10 +256,23 @@ namespace Pms.Trigger
             string status = Convert.ToString(oArgs[2]);
             string oid = Convert.ToString(oArgs[3]);
             string action = Convert.ToString(oArgs[5]);
+            string goStatus = "";
+            if (oArgs.Length > 7)
+            {
+                goStatus = Convert.ToString(oArgs[7]);
+            }
             try
             {
-                if (action.Equals(CommonConstant.ACTION_PROMOTE))
+                if (!action.Equals(CommonConstant.ACTION_REJECT))
                 {
+                    if (goStatus != null && goStatus.Length > 0)
+                    {
+                        BPolicy tmpPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = Convert.ToInt32(goStatus) }).First();
+                        if (tmpPolicy.Name.Equals(PmsConstant.POLICY_PROCESS_PAUSED))
+                        {
+                            return "";
+                        }
+                    }
                     List<BPolicy> bPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
                     int comIdx = bPolicies.FindIndex(x => x.Name == DocumentConstant.POLICY_DOCUMENT_COMPLETED);
                     List<PmsRelationship> lChildren = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { TaskOID = Convert.ToInt32(oid) });
@@ -271,9 +284,14 @@ namespace Pms.Trigger
                             dobj = null;
                         }
                         dobj = DObjectRepository.SelDObject(Context, new DObject { OID = child.ToOID });
-                        DObjectRepository.UdtDObject(Context, new DObject { OID = dobj.OID, BPolicyOID = Convert.ToInt32(bPolicies[comIdx].OID) });
-
-                        //TriggerUtil.StatusObjectPromote(Context, false, dobj.Type, Convert.ToString(dobj.BPolicyOID), null, Convert.ToInt32(dobj.OID), Convert.ToInt32(dobj.OID), action, "");
+                        if(dobj.Type == DocumentConstant.TYPE_DOCUMENT)
+                        {
+                            DObjectRepository.UdtDObject(Context, new DObject { OID = dobj.OID, BPolicyOID = Convert.ToInt32(bPolicies[comIdx].OID) });
+                        }
+                        else
+                        {
+                            TriggerUtil.StatusObjectPromote(Context, false, dobj.Type, Convert.ToString(dobj.BPolicyOID), null, Convert.ToInt32(dobj.OID), Convert.ToInt32(dobj.OID), CommonConstant.ACTION_PROMOTE, "");
+                        }
                     });
                 }
             }

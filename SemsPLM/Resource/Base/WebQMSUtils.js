@@ -78,18 +78,10 @@ var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
     return retJson;
 }
 
-function OpenQuickResponseDetail(gridid, uid) {
-    var rowData = $(gridid).jqxGrid("getrowdata", uid);
-    var linkName = "[신속대응상세] " + rowData.Title;
-    var linkUrl = '/Qms/InfoQuickResponseDetail?OID=' + rowData.OID;
-
-    TabPageLoad(linkUrl, linkName);
-}
-
 
 function OpenQuickResonse(gridid, uid) {
     var rowData = $(gridid).jqxGrid("getrowdata", uid);
-    var linkName = "[신속대응] " + rowData.Title;
+    var linkName = rowData.Title;
     var linkUrl = '/Qms/InfoQuickResponse?OID=' + rowData.OID;
 
     TabPageLoad(linkUrl, linkName);

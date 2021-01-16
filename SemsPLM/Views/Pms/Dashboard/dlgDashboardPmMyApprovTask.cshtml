@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <h4 class="cleanTitle"><i class="fas fa-clipboard-check"></i> 결재중 작업</h4>
+        <div id="pmMyApprovTaskGrid"></div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('#pmMyApprovTaskGrid').jqxGrid({
+                width: '100%',
+                height: 550,
+                editable: false,
+                columns: [
+                    { text: 'NO', width: '5%', align: 'center', cellsalign:'center' },
+                    { text: '프로젝트명', width: '10%', align: 'center', cellsalign: 'center', },
+                ],
+            });
+        });
+    </script>
+</body>
+</html>

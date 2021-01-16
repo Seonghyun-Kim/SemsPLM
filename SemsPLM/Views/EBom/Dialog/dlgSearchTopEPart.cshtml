@@ -1,0 +1,115 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "역전개 시 최상위 검색";
+}
+
+<div id="dlgSelTopEPartGrid"></div>
+
+<script>
+    $(function () {
+        var dlgSelTopEPartSource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+
+                { name: 'Title' },
+
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_Nm' },
+                { name: 'Sel_Revision' },
+                { name: 'Division' },
+                { name: 'Standard' },
+
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_Nm' },
+                { name: 'ITEM_No' },
+                { name: 'ITEM_NoNm' },
+                { name: 'Block_No' },
+                { name: 'Block_NoNm' },
+                { name: 'Material_OID' },
+                { name: 'Material_Nm' },
+                { name: 'EPartType' },
+                { name: 'Sel_Eo' },
+                { name: 'Sel_Eo_Dt', type: 'date' },
+                { name: 'Thumbnail' },
+                { name: 'Revision' },
+            ],
+            id: 'OID',
+        };
+        var dlgSelTopEPartAdapter = new $.jqx.dataAdapter(dlgSelTopEPartSource);
+        const dlgSelTopEPartGrid$ = $('#dlgSelTopEPartGrid');
+        dlgSelTopEPartGrid$.jqxGrid('render');
+        dlgSelTopEPartGrid$.jqxGrid({
+            width: "100%",
+            theme: "kdnc",
+            height: 720,
+            sortable: true,
+            showToolbar: true,
+            toolbarHeight: 44,
+            editable: false,
+            selectionmode: 'checkbox',
+            source: dlgSelTopEPartAdapter,
+            ready: function () {
+
+            },
+            columns: [
+                { text: 'OID', datafield: 'OID', width: "5%", align: 'center', cellsalign: 'center', hidden: true },
+                { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'Division', width: "7.8%", align: 'center', cellsalign: 'center', },
+                { text: '품번', datafield: 'Name', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '품명', datafield: 'Title', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '고객리비전', datafield: 'Sel_Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    }
+                },
+
+            ],
+            rendertoolbar: function (toolBar) {
+                toolBar.empty();
+                var container = $("<div class='lGridComponent' ></div>");
+                var SelRevButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 선택 개정</button>").jqxButton();
+                container.append(SelRevButton);
+                toolBar.append(container);
+
+                SelRevButton.click(function (event) {
+                    var rowindexes = dlgSelTopEPartGrid$.jqxGrid('getselectedrowindexes');
+                    var TopEPartList = [];
+
+                    for (var i = 0; i < rowindexes.length; i++) {
+                        var rowid = dlgSelTopEPartGrid$.jqxGrid('getrowid', rowindexes[i]);
+                        var data = dlgSelTopEPartGrid$.jqxGrid('getrowdatabyid', rowid);
+                        TopEPartList.push(data);
+                    }
+
+                    RequestData('/EBom/ReverseStructure', { _param: TopEPartList, RootOID : @ViewBag.OID }, function (res) {
+                        alert('개정 되었습니다.');
+                    });
+                });
+            },
+        });
+
+        var param = {};
+        param.ToOID = @ViewBag.OID;
+
+        RequestData('/EBom/SelChildTopParentList', param, function (res) {
+            PrintJqxGrid(dlgSelTopEPartSource, dlgSelTopEPartGrid$, res);
+        });
+    });
+</script>

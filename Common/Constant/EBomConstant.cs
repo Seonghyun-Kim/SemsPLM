@@ -26,6 +26,10 @@ namespace Common.Constant
         public static string DIV_SINGLE_NM = "단품도";
         public static string DIV_STANDARD_NM = "스탠다드";
 
+        public static string SEARCH_EPART_RELEASE = "RELEASE";
+        public static string SEARCH_EPART_WRITE = "WRITE";
+
+
         public static List<string> DISEDITABLE
         {
             get => new List<string> { 

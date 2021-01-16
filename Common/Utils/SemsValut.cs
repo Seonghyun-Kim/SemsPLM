@@ -138,5 +138,26 @@ namespace Common.Utils
                 throw ex;
             }
         }
+
+        public static string GetFileString(HttpFile fileModel)
+        {
+            try
+            {
+                //string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string StoragePath = "";
+                string ValutPath = System.Configuration.ConfigurationManager.AppSettings["ValutPath"];
+                string TempPath = System.Configuration.ConfigurationManager.AppSettings["TempPath"];
+
+                string SavePath = fileModel.Type + "/" + fileModel.OID.ToString();
+
+                string fileFullDirectory = Path.Combine(StoragePath, ValutPath, SavePath, fileModel.ConvNm);
+
+                return fileFullDirectory;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

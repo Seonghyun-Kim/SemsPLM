@@ -37,13 +37,25 @@
       <isNotNull property="ITEM_No">
         AND B.ITEM_No = #ITEM_No#
       </isNotNull>
-        <isNotNull property="StartCreateDt">
-          AND A.CreateDt &gt;= #StartCreateDt#
-        </isNotNull>
+      <isNotNull property="StartCreateDt">
+        AND A.CreateDt &gt;= #StartCreateDt#
+      </isNotNull>
       <isNotNull property="EndCreateDt">
         AND A.CreateDt &lt;= #EndCreateDt#
       </isNotNull>
-      
+      <isNotNull property="TdmxOID">
+        AND A.TdmxOID = #TdmxOID#
+      </isNotNull>
+      <isNotNull property="IsLatest">
+        AND A.IsLatest = #IsLatest#
+      </isNotNull>
+      <isNotNull property="IsReleasedLatest">
+        AND A.IsReleasedLatest = #IsReleasedLatest#
+      </isNotNull>
+      <isNotNull property="Title">
+        AND B.Title like '%' + #Title# + '%'
+      </isNotNull>
+      ORDER BY A.CreateDt DESC
     </select>
 
     <select id="ChkEPart" parameterClass="EPart" resultClass="EPart">
@@ -55,6 +67,17 @@
       WHERE A.DeleteDt IS NULL
       AND A.Type = 'PART'
       AND A.Name = #Name#
+    </select>
+
+    <select id="ChkEPartDivision" parameterClass="EPart" resultClass="EPart">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DEPART B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'PART'
+      AND A.Name like #Name# + '%'
     </select>
 
     <select id="SelEBom" parameterClass="EBom" resultClass="EBom">
@@ -77,6 +100,7 @@
     <insert id="InsEPart" parameterClass="EPart" >
       INSERT INTO T_DEPART
       ( OID
+      , Title
       , Oem_Lib_OID
       , Car_Lib_OID
       , Material_OID
@@ -88,9 +112,11 @@
       , Block_No
       , Serial
       , Sel_Revision
+      , Standard
       )
       VALUES
       (#OID#
+      , #Title#
       , #Oem_Lib_OID#
       , #Car_Lib_OID#
       , #Material_OID#
@@ -102,13 +128,15 @@
       , #Block_No#
       , #Serial#
       , #Sel_Revision#
+      , #Standard#
       )
     </insert>
 
     <update id="UpdateEPart" parameterClass="EPart">
       UPDATE T_DEPART
       SET
-      Oem_Lib_OID = #Oem_Lib_OID#
+      Title = #Title#
+      , Oem_Lib_OID = #Oem_Lib_OID#
       , Car_Lib_OID = #Car_Lib_OID#
       , Material_OID = #Material_OID#
       , Division = #Division#
@@ -119,6 +147,7 @@
       , Block_No = #Block_No#
       , Serial = #Serial#
       , Sel_Revision = #Sel_Revision#
+      , Standard = #Standard#
       WHERE OID = #OID#
     </update>
 
@@ -165,7 +194,7 @@
       , 'PART'
       , #Ord#
       , GETDATE()
-      , 1
+      , #CreateUs#
       )
     </insert>
 
@@ -219,6 +248,31 @@
       )
       SELECT *
       FROM RECURSIVE_QUERY
+    </select>
+
+    <select id="SelAllParentStructure" parameterClass="EBom" resultClass="EBom">
+      WITH RECURSIVE_QUERY(OID, FromOID, ToOID, Ord, Count) AS (
+      SELECT
+      OID
+      , FromOID
+      , ToOID
+      , Ord
+      , Count
+      FROM T_DEBOM_RELATIONSHIP
+      WHERE ToOID = #ToOID#
+      UNION ALL
+      SELECT
+      B.OID
+      , B.FromOID
+      , B.ToOID
+      , B.Ord
+      , B.Count
+      FROM T_DEBOM_RELATIONSHIP B, RECURSIVE_QUERY C
+      WHERE B.ToOID = C.FromOID
+      )
+      SELECT
+      D.*
+      FROM RECURSIVE_QUERY D
     </select>
 
 

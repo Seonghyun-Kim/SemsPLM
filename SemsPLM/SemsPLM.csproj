@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -196,8 +197,8 @@
     <Content Include="Resource\apexcharts-bundle\dist\apexcharts.js" />
     <Content Include="Resource\apexcharts-bundle\dist\apexcharts.min.js" />
     <Content Include="Resource\apexcharts-bundle\dist\locales\ko.js" />
-    <Content Include="Resource\apexcharts-bundle\loadUtils\findIndex.js" />
     <Content Include="Resource\apexcharts-bundle\loadUtils\classlist.min.js" />
+    <Content Include="Resource\apexcharts-bundle\loadUtils\findIndex.js" />
     <Content Include="Resource\apexcharts-bundle\loadUtils\promise-polyfill.min.js" />
     <Content Include="Resource\apexcharts-bundle\samples\assets\github-data.js" />
     <Content Include="Resource\apexcharts-bundle\samples\assets\images\-ico-snapchat.png" />
@@ -535,6 +536,9 @@
     <Content Include="Resource\apexcharts-bundle\samples\vue\treemap\color-scale.html" />
     <Content Include="Resource\apexcharts-bundle\samples\vue\treemap\distributed.html" />
     <Content Include="Resource\apexcharts-bundle\samples\vue\treemap\multi-dimensional.html" />
+    <Content Include="Resource\Base\d3-tip.min.js" />
+    <Content Include="Resource\Base\d3.min.js" />
+    <Content Include="Resource\Base\WebAutoVue.js" />
     <Content Include="Resource\Base\WebDocClassDialog.js" />
     <Content Include="Resource\Base\WebECO.js" />
     <Content Include="Resource\Base\WebEcontentsDialog.js" />
@@ -617,6 +621,17 @@
     <Content Include="Resource\Base\WebUtils.js" />
     <Content Include="images\depart.png" />
     <Content Include="Resource\Css\login.css" />
+    <Content Include="Resource\d3-timeline-master\dist\timeline-chart.css" />
+    <Content Include="Resource\d3-timeline-master\dist\timeline-chart.js" />
+    <Content Include="Resource\d3-timeline-master\dist\timeline-chart_custom.js" />
+    <Content Include="Resource\d3-timeline-master\example\index.html" />
+    <Content Include="Resource\d3-timeline-master\example\style.css" />
+    <Content Include="Resource\d3-timeline-master\gulpfile.js" />
+    <Content Include="Resource\d3-timeline-master\js\timeline-chart.js" />
+    <Content Include="Resource\d3-timeline-master\karma.conf.js" />
+    <Content Include="Resource\d3-timeline-master\LICENSE.txt" />
+    <Content Include="Resource\d3-timeline-master\spec\timeline-chart.js" />
+    <Content Include="Resource\d3-timeline-master\usage.gif" />
     <Content Include="Resource\Dropzone\basic.css" />
     <Content Include="Resource\Dropzone\dropzone.css" />
     <Content Include="Resource\Dropzone\dropzone.js" />
@@ -3703,6 +3718,16 @@
     <Content Include="Resource\bxslider-4-master\package.json" />
     <Content Include="Resource\bxslider-4-master\readme.md" />
     <Content Include="Resource\bxslider-4-master\_config.json" />
+    <Content Include="ExcelTmpFile\Wbs.xls" />
+    <Content Include="Resource\d3-timeline-master\.babelrc" />
+    <Content Include="Resource\d3-timeline-master\.editorconfig" />
+    <Content Include="Resource\d3-timeline-master\.eslintrc.json" />
+    <Content Include="Resource\d3-timeline-master\.gitignore" />
+    <Content Include="Resource\d3-timeline-master\.travis.yml" />
+    <Content Include="Resource\d3-timeline-master\dist\timeline-chart.js.map" />
+    <Content Include="Resource\d3-timeline-master\package.json" />
+    <Content Include="Resource\d3-timeline-master\readme.md" />
+    <Content Include="Resource\d3-timeline-master\scss\timeline-chart.scss" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3861,7 +3886,18 @@
     <Content Include="Views\Pms\Dialog\dlgInfoReliabilityReport.cshtml" />
     <Content Include="Views\EBom\Dialog\dlgSearchEPartAssy.cshtml" />
     <Content Include="Views\Qms\InfoOpenIssue.cshtml" />
+    <Content Include="Views\EBom\Dialog\dlgSearchTopEPart.cshtml" />
+    <Content Include="Views\Common\Dialog\dlgEditNotice.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgCreateProjectContentBase.cshtml" />
     <Content Include="Views\Qms\InfoQuickResponseDetail.cshtml" />
+    <Content Include="Views\ChangeOrder\Dialog\dlgSelectAssessManager.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyTask.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyProject.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyApprovTask.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyDelivery.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyIssue.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyDvStatus.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyPvStatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3945,7 +3981,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>7901</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44330/</IISUrl>
+          <IISUrl>http://localhost:44330/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

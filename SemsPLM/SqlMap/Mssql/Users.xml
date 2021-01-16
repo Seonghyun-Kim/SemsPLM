@@ -81,34 +81,35 @@
       SELECT *
       FROM T_DOBJECT A
       LEFT OUTER JOIN T_DPERSON B ON A.OID = B.OID
-      WHERE A.DeleteDt IS NULL
-      <isNotNull prepend="and" property="OID">
-        A.OID = #OID#
-      </isNotNull>
-      <isNotNull prepend="and" property="Name">
-        A.Name LIKE CONCAT('%',#Name#,'%')
-      </isNotNull>
-      <isNotNull prepend="and" property="Type">
-        A.Type = #Type#
-      </isNotNull>
-      <isNotNull prepend="and" property="ID">
-        B.ID = #ID#
-      </isNotNull>
-      <isNotNull prepend="and" property="Password">
-        B.Password = #Password#
-      </isNotNull>
-      <isNotNull prepend="and" property="Rank">
-        B.Rank = #Rank#
-      </isNotNull>
-      <isNotNull prepend="and" property="DepartmentOID">
-        B.DepartmentOID = #DepartmentOID#
-      </isNotNull>
-      <isNotNull prepend="and" property="DepartmentNm">
-        B.DepartmentNm LIKE CONCAT('%',#DepartmentNm#,'%')
-      </isNotNull>
-      <isNotNull prepend="and" property="IsUse">
-        B.IsUse = #IsUse#
-      </isNotNull>
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="ID">
+          B.ID = #ID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Password">
+          B.Password = #Password#
+        </isNotNull>
+        <isNotNull prepend="and" property="Rank">
+          B.Rank = #Rank#
+        </isNotNull>
+        <isNotNull prepend="and" property="DepartmentOID">
+          B.DepartmentOID = #DepartmentOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="DepartmentNm">
+          B.DepartmentNm LIKE CONCAT('%',#DepartmentNm#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="IsUse">
+          B.IsUse = #IsUse#
+        </isNotNull>
+    </dynamic>
     </select>
 
     <select id="SelRole" parameterClass="Role" resultClass="Role">

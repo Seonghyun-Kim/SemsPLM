@@ -1,37 +1,37 @@
 ﻿@{
     Layout = null;
 }
-    <div class="dashboardTop clearfix">
-        <div>
-            <p>내 작업<span>16</span></p>
-            <p style="color:#f00;">내 지연작업<span>2</span></p>
-            <button>+</button>
-        </div>
-        <div>
-            <p>내 프로젝트<span>3</span></p>
-            <button>+</button>
-        </div>
-        <div>
-            <p>결재중 작업<span>5</span></p>
-            <button>+</button>
-        </div>
-        <div>
-            <p>산출물<span>12</span></p>
-            <button>+</button>
-        </div>
-        <div>
-            <p>이슈<span>4</span></p>
-            <button>+</button>+
-        </div>
-        <div>
-            <p>DV 현황<span>6</span></p>
-            <button>+</button>
-        </div>
-        <div>
-            <p>PV 현황<span>6</span></p>
-            <button>+</button>
-        </div>
+<div class="dashboardTop clearfix">
+    <div>
+        <p>내 작업<span>@ViewBag.PmMyTask</span></p>
+        <p style="color:#f00;" id="spPmDelayTask">내 지연작업<span>0</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyTask" data-title="내 작업">+</button>
     </div>
+    <div>
+        <p>내 프로젝트<span>@ViewBag.PmMyProjectTask</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyProject" data-title="내 프로젝트">+</button>
+    </div>
+    <div>
+        <p>결재중 작업<span>@ViewBag.PmMyApprovTask</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyApprovTask" data-title="결재중 작업">+</button>
+    </div>
+    <div>
+        <p>산출물<span>@ViewBag.PmMyDelivery</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyDelivery" data-title="산출물">+</button>
+    </div>
+    <div>
+        <p>이슈<span>@ViewBag.PmMyIssue</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyIssue" data-title="이슈">+</button>
+    </div>
+    <div>
+        <p>DV 현황<span>@ViewBag.PmMyDvStatus</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyDvStatus" data-title="DV 현황">+</button>
+    </div>
+    <div>
+        <p>PV 현황<span>@ViewBag.PmMyPvStatus</span></p>
+        <button class="btnPsClick" data-info="PmDashboardMyPvStatus" data-title="PV 현황">+</button>
+    </div>
+</div>
 
     <div class="dashboardGraphs clearfix">
         <div class="piechart">
@@ -42,27 +42,37 @@
             <div class="chartTotal">작업 총
                 <div id="totalTaskForChart"></div>
             </div>
-            <div id="personalTaskRate"></div>
+            <div id="personalTaskRate" style="margin-left:10px;"></div>
         </div>
         <div class="piechart">
             <div class="graphH">
-                이슈/DV현황/PV현황 작업 상태
+                <ul class="issueDVPVLabel" id="piechart_label">
+                    <li data="issue">이슈</li>
+                    <li data="DV">DV현황</li>
+                    <li data="PV">PV현황</li>
+                </ul>
                 <div class="dashboardSelBox"></div>
             </div>
             <div class="chartTotal">이슈 총
                 <div id="totalIssueForChart"></div>    
             </div>
-            <div id="personalIssueRate"></div>
+            <div id="personalIssueRate" style="margin-left:10px;"></div>
         </div>
         <div class="barchart">
             <div class="graphH">
-                작업 &colon; Total <span></span>
+                프로젝트별 작업진행 상태
+                <span style="float:right;">Total : <span id="totalTasks"></span></span>
             </div>
             <div id="personalTaskChart"></div>
         </div>
         <div class="barchart">
             <div class="graphH">
-                이슈 &colon; Total <span></span>
+                <ul class="issueDVPVLabel" id="barchart_label">
+                    <li data="issue">이슈</li>
+                    <li data="DV">DV현황</li>
+                    <li data="PV">PV현황</li>
+                </ul>
+                <span style="float:right;">Total : <span id="totalIssues"></span></span>
             </div>
             <div id="personalIssueChart"></div>
         </div>
@@ -72,248 +82,351 @@
         <div>
             <div class="graphH">
                 예정작업
-                <button>+</button>
+                @*<button>+</button>*@
             </div>
             <div id="personalScheduleList"></div>
         </div>
         <div>
             <div class="graphH">
                 상세지연현황
-                <button>+</button>
+                @*<button>+</button>*@
             </div>
             <div id="personalDelayList"></div>
         </div>
     </div>
     <script type="text/javascript">
+        var carType;
+        var item;
+        var project;
         $(function () {
 
-            $('.dashboardSelBox').jqxComboBox({
-                width: 120,
-                height: 32,
+            var projList =  @Html.Raw(Json.Encode(ViewBag.PmMyProjectInfo));
+            projList.unshift({ 'OID': '', 'Name': '' });
+            var dashboardProjSource =
+            {
+                localdata: projList,
+                datatype: "json",
+                datafields:
+                    [
+                        { name: 'OID', type: 'int' },
+                        { name: 'Name', type: 'string' }
+                    ]
+            };
+            var dashboardProjAdapter = new $.jqx.dataAdapter(dashboardProjSource);
+            $('.dashboardSelBox').jqxComboBox({ width: 120, height: 32, });
+            $('.dashboardSelBox').jqxComboBox({ source: dashboardProjAdapter, displayMember: "Name", valueMember: "OID" });
+
+            //차트
+
+            //이슈DVPV구분
+            $('.issueDVPVLabel').find('[data="issue"]').addClass('activeLabel');
+            $('.issueDVPVLabel > li').click(function () {
+                $(this).siblings().removeClass('activeLabel');
+                $(this).addClass('activeLabel');
             });
 
-            var taskRatePersonSample = [
-                { status: '완료', amount: 10 },
-                { status: '지연', amount: 40 },
-                { status: '준비', amount: 20 },
-                { status: '진행', amount: 30 },
-            ];
+            $('#piechart_label > li').click(function () {
+                var type=$(this).attr('data');
+                callIssueDVPV(type);
+            });
+
+            $('#barchart_label > li').click(function () {
+                var type = $(this).attr('data');
+                callProjectIssueDVPV(type);
+            });
+
+            //프로젝트별 작업진행 상태 donutchart
+            var taskRatePersonData = [0,0,0,0];
+            var taskRatePersonLabels = ['완료', '지연', '준비', '진행'];
             var taskRatePersonDonutSetting = {
-                title: '',
-                description: '',
-                colorScheme: 'scheme26',
-                padding: {
-                    left: 5,
-                    top: 5,
-                    right: 5,
-                    bottom: 15
+                series: taskRatePersonData,
+                chart: {
+                    type: 'donut',
+                    width: 360,
                 },
-                borderLineColor: 'transparent',
-                showLegend: true,
-                legendLayout: { flow: 'horizon' },
-                source: taskRatePersonSample,
-                enableAnimations: true,
-                categoryAxis: {
-                    dataField: 'status',
-                    showGridLines: false,
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                    floating: false,
                 },
-                seriesGroups: [{
-                    type: 'pie',
-                    useGradient: false,
-                    showLabels: true,
-                    series: [
-                        {
-                            dataField: 'amount',
-                            displayText: 'status',
-                            labelRadius: 100,
-                            initialAngle: 15,
-                            radius: 90,
-                            innerRadius: 60,
-                            legendFormatFunction: function (value, itemIndex, serie, group) {
-                                return value;
-                            },
-                            formatSettings: { sufix: '%' }
-                        }
-                    ]
-                }],
-            };
+                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
+                labels:taskRatePersonLabels,
+                responsive: [{
+                    breakpoint: 480,
+                }]
+            }
+            var taskRatePersonDonut = new ApexCharts(document.querySelector('#personalTaskRate'), taskRatePersonDonutSetting);
+            taskRatePersonDonut.render();
 
-            $('#personalTaskRate').jqxChart(taskRatePersonDonutSetting);
+            function callProjectTask(param) {
+                RequestData('/Pms/CallProjectTask', param, function (res) {
+                    taskRatePersonData = res;
+                    taskRatePersonDonut.updateSeries(res);
+                    const totalTaskBox$ = $('#totalTaskForChart');
+                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-            var issuePersonSample = [
-                { status: '진행', amount: 10 },
-                { status: '완료', amount: 40 },
-                { status: '지연', amount: 30 },
-            ];
+                    totalTaskBox$.empty();
+                    var donutTaskTotal = taskRatePersonData.reduce(reducer);
+                    totalTaskBox$.append(donutTaskTotal);
+                });
+            }
+                
+            //이슈,DV,PV donutchart
+            var issuePersonData = [0,0,0];
+            var issuePersonLabels = ['진행', '완료', '지연'];
+
             var issuePersonDonutSetting = {
-                title: '',
-                description: '',
-                colorScheme: 'scheme26',
-                padding: {
-                    left: 5,
-                    top: 5,
-                    right: 5,
-                    bottom: 15
+                series: issuePersonData,
+                labels: issuePersonLabels,
+                chart: {
+                    type: 'donut',
+                    width: 360,
                 },
-                borderLineColor: 'transparent',
-                showLegend: true,
-                legendLayout: { flow: 'horizon' },
-                source: issuePersonSample,
-                enableAnimations: true,
-                categoryAxis: {
-                    dataField: 'status',
-                    showGridLines: false,
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                    floating: false,
                 },
-                seriesGroups: [{
-                    type: 'pie',
-                    useGradient: false,
-                    showLabels: true,
-                    series: [
-                        {
-                            dataField: 'amount',
-                            displayText: 'status',
-                            labelRadius: 100,
-                            initialAngle: 15,
-                            radius: 90,
-                            innerRadius: 60,
-                            legendFormatFunction: function (value, itemIndex, serie, group) {
-                                return value;
-                            },
-                            formatSettings: { sufix: '%' }
-                        }
-                    ]
-                }],
-            };
+                colors: ['rgb(0,227,150)', 'rgb(0,143,251)', 'rgb(244,67,54)'],
+                responsive: [{
+                    breakpoint: 480,
+                }]
+            }
+            var issuePersonDonut = new ApexCharts(document.querySelector('#personalIssueRate'), issuePersonDonutSetting);
+            issuePersonDonut.render();
 
-            $('#personalIssueRate').jqxChart(issuePersonDonutSetting);
+            function callIssueDVPV(param) {
+                RequestData('/Pms/CallIssueDVPV', { _Type: param }, function (res) {
+                    issuePersonData = res;
+                    issuePersonDonut.updateSeries(res);
+                  
+                    const totalIssueBox$ = $('#totalIssueForChart');
+                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    totalIssueBox$.empty();
+                    var donutIssueTotal = issuePersonData.reduce(reducer);
+                    totalIssueBox$.append(donutIssueTotal);
+                });
+            }
 
-
-            function showTotalTaskAmount() {
-                const totalTaskBox$ = $('#totalTaskForChart');
-                const totalIssueForChart$ = $('#totalIssueForChart');
-                for (i = 0; i < taskRatePersonSample.length; i++) {
-                    var taskTotalSum = 0;
-                    taskRatePersonSample.forEach(function (e) {
-                        taskTotalSum += e.amount;
-                    });
-                };
-                totalTaskBox$.append(taskTotalSum);
-
-                for (i = 0; i < issuePersonSample.length; i++) {
-                    var issueTotalSum = 0;
-                    issuePersonSample.forEach(function (e) {
-                        issueTotalSum += e.amount;
-                    });
-                };
-                totalIssueForChart$.append(issueTotalSum);
-
-            };
-
-            showTotalTaskAmount();
-
-
-            var dsbdPersonTaskChartSample = [
-                { data: 'task1', finish: 18, delay: 10, ready: 20, onprocess: 30 },
-                { data: 'task2', finish: 5, delay: 2, ready: 10, onprocess: 12 },
-                { data: 'task3', finish: 12, delay: 16, ready: 23, onprocess: 18 },
-                { data: 'task4', finish: 20, delay: 10, ready: 43, onprocess: 23 },
-            ]
+            //프로젝트별 작업진행 상태 barchart
+            var dsbdPersonTaskList = [];
+            var dsbdPersonTaskChartSample = [];
 
             var dsbdPersonTaskChartSetting = {
-                title: '',
-                description: '',
-                colorScheme: 'scheme26',
-                padding: {
-                    left: 10,
-                    top: 10,
-                    right: 10,
-                    bottom: 15
-                },
-                borderLineColor: 'transparent',
-                showLegend: true,
-                source: dsbdPersonTaskChartSample,
-                enableAnimations: true,
-                categoryAxis: {
-                    dataField: 'data',
-                    showGridLines: false,
-                },
-                seriesGroups: [{
-                    type: 'column',
-                    useGradient: false,
-                    valueAxis: {
-                        minValue: 0,
-                        maxValue: 50,
-                        unitInterval: 10,
+                series: dsbdPersonTaskChartSample,
+                chart: {
+                    type: 'bar',
+                    height: 270,
+                    zoom: {
+                        enabled:true,
                     },
-                    series: [
-                        { dataField: 'finish', displayText: '완료' },
-                        { dataField: 'delay', displayText: '지연' },
-                        { dataField: 'ready', displayText: '준비' },
-                        { dataField: 'onprocess', displayText: '진행' },
-                    ],
-                }],
+                    toolbar: {
+                        show: true,
+                        tools: {
+                            download: true,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true,
+                        },
+                        autoSelected: 'pan'
+                    }
+                },
+                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '50%',
+                    },
+                },
+                dataLabels: {
+                    enabled:false
+                },
+                xaxis: {
+                    categories:dsbdPersonTaskList,
+                    tickPlacement:'on',
+                },
+                legend: {
+                    show: true,
+                    position: 'bottom',
+                    horizontalAlign:'center',
+                },
+                grid: {
+                    padding: {
+                        left: 50,
+                        right: 50
+                    }
+                }
             }
 
-            $('#personalTaskChart').jqxChart(dsbdPersonTaskChartSetting);
+            var dsbdPersonTaskChart = new ApexCharts(document.querySelector('#personalTaskChart'), dsbdPersonTaskChartSetting);
+            dsbdPersonTaskChart.render();
 
+            function callProjectTaskInfo() {
+                RequestData('/Pms/CallProjectTaskInfo', {}, function (res) {
+                    _.each(res.PROJECT, function (item) {
+                        dsbdPersonTaskList.push(item);
+                    });
+
+                    _.each(res.COUNT, function (item, key) {
+                        dsbdPersonTaskChartSample.push({
+                            'name': key,
+                            'data': item
+                        });
+                    });
+
+                    dsbdPersonTaskChart.updateOptions({ xaxis: { categories: dsbdPersonTaskList } });
+                    dsbdPersonTaskChart.updateSeries(dsbdPersonTaskChartSample);
+
+                    const totalTaskSpan$ = $('#totalTasks');
+                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    var barTaskDataArr = [];
+                    dsbdPersonTaskChartSample.forEach(function (e) {
+                        barTaskDataArr.push(e.data.reduce(reducer));
+                    });
+                    var barTaskTotal = barTaskDataArr.reduce(reducer);
+                    totalTaskSpan$.append(barTaskTotal);
+                });
+            }
+
+            //이슈,DV,PV barchart
+            var dsbdPersonIssueChartList = [];
             var dsbdPersonIssueChartSample = [
-                { data: 'task1', finish: 18, delay: 10, onprocess: 30 },
-                { data: 'task2', finish: 5, delay: 2, onprocess: 12 },
-                { data: 'task3', finish: 12, delay: 16, onprocess: 18 },
-                { data: 'task4', finish: 20, delay: 10, onprocess: 23 },
-            ]
-
+            ];
             var dsbdPersonIssueChartSetting = {
-                title: '',
-                description: '',
-                colorScheme: 'scheme26',
-                padding: {
-                    left: 10,
-                    top: 10,
-                    right: 10,
-                    bottom: 15
-                },
-                borderLineColor: 'transparent',
-                showLegend: true,
-                source: dsbdPersonIssueChartSample,
-                enableAnimations: true,
-                categoryAxis: {
-                    dataField: 'data',
-                    showGridLines: false,
-                },
-                seriesGroups: [{
-                    type: 'column',
-                    useGradient: false,
-                    valueAxis: {
-                        minValue: 0,
-                        maxValue: 50,
-                        unitInterval: 10,
+                series: dsbdPersonIssueChartSample,
+                chart: {
+                    type: 'bar',
+                    height: 270,
+                    zoom: {
+                        enabled:true,
                     },
-                    series: [
-                        { dataField: 'finish', displayText: '완료' },
-                        { dataField: 'delay', displayText: '지연' },
-                        { dataField: 'onprocess', displayText: '진행' },
-                    ],
-                }],
+                    toolbar: {
+                        show: true,
+                        tools: {
+                            download: true,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true,
+                        },
+                        autoSelected: 'pan'
+                    }
+                },
+                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '50%',
+                    },
+                },
+                dataLabels: {
+                    enabled:false
+                },
+                xaxis: {
+                    categories: dsbdPersonIssueChartList,
+                    tickPlacement:'on',
+                },
+                legend: {
+                    show: true,
+                    position: 'bottom',
+                    horizontalAlign:'center',
+                },
+                grid: {
+                    padding: {
+                        left: 50,
+                        right: 50
+                    }
+                }
+            }
+            var dsbdPersonIssueChart = new ApexCharts(document.querySelector('#personalIssueChart'), dsbdPersonIssueChartSetting);
+            dsbdPersonIssueChart.render();
+
+            function callProjectIssueDVPV(param) {
+                dsbdPersonIssueChartList = [];
+                dsbdPersonIssueChartSample = [];
+                RequestData('/Pms/callProjectIssueDVPV', { _Type: param }, function (res) {
+                    _.each(res.PROJECT, function (item) {
+                        dsbdPersonIssueChartList.push(item);
+                    });
+
+                    _.each(res.COUNT, function (item, key) {
+                        dsbdPersonIssueChartSample.push({
+                            'name': key,
+                            'data': item
+                        });
+                    });
+
+                    dsbdPersonIssueChart.updateOptions({ xaxis: { categories: dsbdPersonIssueChartList } });
+                    dsbdPersonIssueChart.updateSeries(dsbdPersonIssueChartSample);
+
+                    const totalIssueSpan$ = $('#totalIssues');
+                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    totalIssueSpan$.empty();
+                    var barIssueDataArr = [];
+                    dsbdPersonIssueChartSample.forEach(function (e) {
+                        barIssueDataArr.push(e.data.reduce(reducer));
+                    });
+                    var barIssueTotal = barIssueDataArr.reduce(reducer);
+                    totalIssueSpan$.append(barIssueTotal)
+
+                });
             }
 
-            $('#personalIssueChart').jqxChart(dsbdPersonIssueChartSetting);
-
+            //예정작업, 상세지연현황
+            var taskPersonSource = {
+                datatype: 'json',
+                dafafields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'RootNm', type: 'string' },
+                    { name: 'No', type: 'string' },
+                    { name: 'EstDuration', type: 'number' },
+                    { name: 'EstStartDt', type: 'date' },
+                    { name: 'EstEndDt', type: 'date' },
+                    { name: 'Delay', type: 'number' },
+                ],
+            }
 
             $('#personalScheduleList').jqxGrid({
                 width: '100%',
                 height: 300,
                 editable: false,
                 columnsHeight: 44,
+                columnsresize: true,
                 columns: [
-                    { text: 'NO', format: 'number', width: '4%', },
-                    { text: '프로젝트명', width: '18%', },
-                    { text: '작업명(Task)', width: '18%', },
-                    { text: '예상시작일', width: '14%', },
-                    { text: '예상완료일', width: '14%', },
-                    { text: '기간', width: '6%', },
-                    { text: '진행상태', width: '10%', },
-                    { text: '진행률', width: '16%', },
+                    {
+                        text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '프로젝트명', width: '22%', datafield: 'RootNm', align: 'center', cellsalign: 'center', },
+                    { text: '작업명(Task)', width: '25%', datafield: 'Name', align: 'center', cellsalign: 'center', },
+                    { text: '예상기간', width: '10%', datafield: 'EstDuration', align: 'center', cellsalign: 'center', },
+                    {
+                        text: '예상시작일', width: '14%', datafield: 'EstStartDt', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            if (value == '') {
+                                return '';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:35px;'>" + moment(value).format('YYYY-MM-DD') + "</div>";
+                        }
+                    },
+                    {
+                        text: '예상완료일', width: '14%', datafield: 'EstEndDt', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            if (value == '') {
+                                return '';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:35px;'>" + moment(value).format('YYYY-MM-DD') + "</div>";
+                        }
+                    },
+                    { text: '기간', width: '10%', datafield: 'Delay', align: 'center', cellsalign: 'center', },
                 ]
             });
 
@@ -323,12 +436,13 @@
                 editable: false,
                 showtoolbar: true,
                 toolbarheight: 44,
+                columnsresize: true,
                 rendertoolbar: function (statusbar) {
                     statusbar.empty();
                     var container = $("<div class='lGridComponent'></div>");
-                    var carType = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                    var item = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                    var project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                     carType = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                     item = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                     project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
                     var delay = $("<input type='text' placeholder='지연일수'>");
                     var btnSearch = $("<button class='custom-button'><i class='fas fa-search'></i> 검색</button>");
                     var btnExport = $("<button class='custom-button'>Excel Export</button>");
@@ -341,16 +455,98 @@
                     statusbar.append(container);
                 },
                 columns: [
-                    { text: 'NO', format: 'number', width: '4%', },
-                    { text: '프로젝트명', width: '22%', },
-                    { text: '작업 NO', width: '8%', },
-                    { text: '작업명(Task)', width: '22%', },
-                    { text: '예상시작일', width: '17%', },
-                    { text: '예상완료일', width: '17%', },
-                    { text: '지연일수', width: '10%', },
+                    {
+                        text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '프로젝트명', width: '21%', datafield: 'RootNm', align: 'center', cellsalign: 'center', },
+                    { text: '작업 NO', width: '8%', datafield: 'No', align: 'center', cellsalign: 'center', },
+                    { text: '작업명(Task)', width: '22%', datafield: 'Name', align: 'center', cellsalign: 'center', },
+                    {
+                        text: '예상시작일', width: '17%', datafield: 'EstStartDt', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            if (value == '') {
+                                return '';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:35px;'>" + moment(value).format('YYYY-MM-DD') + "</div>";
+                        }
+                    },
+                    {
+                        text: '예상완료일', width: '17%', datafield: 'EstEndDt', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            if (value == '') {
+                                return '';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:35px;'>" + moment(value).format('YYYY-MM-DD') + "</div>";
+                        }
+                    },
+                    { text: '지연일수', width: '10%', datafield: 'Delay', align: 'center', cellsalign: 'center', },
                 ],
             });
-        });
 
+            RequestData("/Pms/PersonDashboardPrepareTaskList", {}, function (res) {
+                PrintJqxGrid(taskPersonSource, $('#personalScheduleList'), res);
+            });
+
+            RequestData("/Pms/PersonDashboardDelayTaskList", {}, function (res) {
+                var carSource =
+                {
+                    localdata: res.carList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'OID', type: 'number' },
+                            { name: 'Name', type: 'string' },
+                        ]
+                };
+                var carAdapter = new $.jqx.dataAdapter(carSource);
+                carType.jqxComboBox({ source: carAdapter, displayMember: "Name", valueMember: "OID" });
+                var itemSource =
+                {
+                    localdata: res.itemList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'OID', type: 'number' },
+                            { name: 'Name', type: 'string' },
+                        ]
+                };
+                var itemAdapter = new $.jqx.dataAdapter(itemSource);
+                item.jqxComboBox({ source: itemAdapter, displayMember: "Name", valueMember: "OID" });
+                var projSource =
+                {
+                    localdata: res.projList,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'OID', type: 'number' },
+                            { name: 'Name', type: 'string' },
+                        ]
+                };
+                var projAdapter = new $.jqx.dataAdapter(projSource);
+                project.jqxComboBox({ source: projAdapter, displayMember: "Name", valueMember: "OID" });
+
+                PrintJqxGrid(taskPersonSource, $('#personalDelayList'), res.Result);
+            });
+
+            $('.btnPsClick').on('click', function () {
+                var info = this.getAttribute('data-info');
+                var title = this.getAttribute('data-title');
+                var url = '/Pms/' + info;
+                if (info == 'PmDashboardMyTask') {
+                    OpenDashboardPageDialog(null, null, { 'linker': '@Common.Constant.PmsConstant.ROLE_PE' }, url, title);
+                } else {
+                    OpenDashboardDefaultPageDialog(null, null, { 'linker': '@Common.Constant.PmsConstant.ROLE_PE' }, url, title);
+                }
+            });
+
+            callIssueDVPV('issue');
+            callProjectIssueDVPV('issue');
+            callProjectTask(null);
+            callProjectTaskInfo();
+
+        });
 
     </script>

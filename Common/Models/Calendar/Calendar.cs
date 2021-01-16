@@ -11,6 +11,8 @@ namespace Common.Models
     {
         public int? WorkingDay { get; set; }
 
+        public int? DefaultHoliday { get; set; }
+
         public List<CalendarDetail> CalendarDetails { get; set; }
 
     }

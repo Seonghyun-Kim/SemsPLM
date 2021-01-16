@@ -15,5 +15,8 @@ namespace Common.Constant
         //DB화 문서 명
         public static string ATTRIBUTE_RELIABILITY = "신뢰성 시험 의뢰서";
         public static string ATTRIBUTE_RELIABILITY_REPORT = "신뢰성 시험 성적서";
+
+        public static string ATTRIBUTE_DV = "DV";
+        public static string ATTRIBUTE_PV = "PV";
     }
 }

@@ -106,7 +106,7 @@
 
             var GridCellFileBtn = function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
                 var DownloadBtn$ = "<button style='width:26px;' title='다운로드' onclick='javascript:WebUtils.CommonFileDownload(" + rowData.FileOID + ");'><i class='fas fa-file-download'></i></button>";
-                var ViewerBtn$ = "<button style='width:26px;' title='뷰어'><i class='fas fa-book-reader'></i></button>";
+                var ViewerBtn$ = "<button style='width:26px;' title='뷰어' onclick='javascript:WebUtils.CallAutoVueFile(" + rowData.FileOID + ");'><i class='fas fa-book-reader'></i></button>";
                 return "<div style='display:flex;justify-content:space-around;align-items:center;width:100%;height:100%;text-align:center;vertical-align:middle;'>" + DownloadBtn$ + ViewerBtn$ + "</div>";
             }
 

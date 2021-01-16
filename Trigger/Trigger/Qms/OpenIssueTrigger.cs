@@ -22,9 +22,13 @@ namespace Qms.Trigger
             string type = Convert.ToString(oArgs[1]);
             string status = Convert.ToString(oArgs[2]);
             string oid = Convert.ToString(oArgs[3]);
-
+            string action = Convert.ToString(oArgs[5]);
             try
             {
+                if (action.Equals(CommonConstant.ACTION_REJECT))
+                {
+                    return "";
+                }
                 OpenIssue _openIssue = OpenIssueRepository.SelOpenIssue(new OpenIssue() { ProjectOID = Convert.ToInt32(oid) });
 
                 // 해당 프로젝트의 OPEN ISSUE 가 있을 경우는 패스함.

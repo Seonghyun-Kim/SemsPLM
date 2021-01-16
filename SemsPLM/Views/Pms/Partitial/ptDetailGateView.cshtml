@@ -88,22 +88,25 @@
     });
 
     function fProcess(_projOID, _processOID, _bpolicyNm, _approvStatus) {
-        console.log(_approvStatus);
         if (_bpolicyNm == '@Common.Constant.PmsConstant.POLICY_PROCESS_STARTED') {
             if (_approvStatus == '@Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED') {
                 alert('결재진행 중입니다.');
                 return;
             }
             RequestData('/Pms/ApprovProcess', { 'OID': _processOID }, function (res) {
-                OpenApprovalDialog(function () {
-                    PageReload();
-                }, null, { TargetOID: _processOID, AutoStatus: false }, '/Common/Approval', '결재');
+                setTimeout(function () {
+                    OpenApprovalDialog(function () {
+                        PageReload();
+                    }, null, { TargetOID: _processOID, AutoStatus: false }, '/Common/Approval', '결재');
+                }, 100)
             });
         } else if (_bpolicyNm == '@Common.Constant.PmsConstant.POLICY_PROCESS_PAUSED') {
             RequestData('/Pms/ApprovProcess', { 'OID': _processOID }, function (res) {
-                OpenApprovalDialog(function () {
-                    PageReload();
-                }, null, { TargetOID: _processOID, AutoStatus: true }, '/Common/Approval', '결재');
+                setTimeout(function () {
+                    OpenApprovalDialog(function () {
+                        PageReload();
+                    }, null, { TargetOID: _processOID, AutoStatus: true }, '/Common/Approval', '결재');
+                }, 100)
             });
         } else {
             alert('결재할 수 있는 상태가 아닙니다.');

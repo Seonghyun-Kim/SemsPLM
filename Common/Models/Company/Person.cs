@@ -64,6 +64,10 @@ namespace Common.Models
         {
             _param.Type = CommonConstant.TYPE_PERSON;
             Person person = DaoFactory.GetData<Person>("Users.SelPerson", _param);
+            if (person == null || person.DeleteDt != null)
+            {
+                person = null;
+            }
             return person;
         }
 
@@ -73,6 +77,10 @@ namespace Common.Models
             Person person = DaoFactory.GetData<Person>("Users.SelPerson", _param);
             person.Password = "**************";
             person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
+            if (person.DeleteDt != null)
+            {
+                person.Name = person.Name + "(삭제)";
+            }
             return person;
         }
 
@@ -83,7 +91,11 @@ namespace Common.Models
             lPerson.ForEach(person =>
             {
                 person.Password = "**************";
-                person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name; 
+                person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
+                if (person.DeleteDt != null)
+                {
+                    person.Name = person.Name + "(삭제)";
+                }
             });
             return lPerson;
         }

@@ -43,11 +43,13 @@
                 <tbody>
                     <tr>
                         <td style="text-align: right;" id="InfoChangeOrder_defaultBtn_@ViewBag.ECODetail.OID">
-                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1
+                                && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
                             {
                                 <button id="InfoChangeOrder_EditBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
                             }
-                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
+                            @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1
+                                            && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
                             {
                                 <button id="InfoChangeOrder_ApprovalBtn_@ViewBag.ECODetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
                             }
@@ -220,13 +222,17 @@
             <table class="tableTopButtonBox">
                 <tr>
                     <td>
-                        @if (((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+                        @if ((((List<Common.Models.BPolicyAuth>)ViewBag.ECODetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1
+                        && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)) || ViewBag.ApprovFlag == Common.Constant.CommonConstant.ACTION_YES)
                         {
-                            <button class="custom-button" id="InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID"><i class="fas fa-pen"></i> 수정</button>
+                        <button class="custom-button" id="InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID"><i class="fas fa-pen"></i> 수정</button>
                         }
                         <button class="custom-button" id="InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-window-close"></i> 취소</button>
                         <button class="custom-button" id="InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 저장</button>
+                        @if (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)
+                        {
                         <button class="custom-button" id="InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID" hidden="hidden"><i class="fas fa-save"></i> 최신 평가표 불러오기</button>
+                        }
                     </td>
                 </tr>
             </table>
@@ -409,24 +415,60 @@
         for (var i = 0; i < InfoOriginList$.length; i++) {
             var tr;
             var td = document.createElement("td");
+            var nametag = document.createElement("h4");
+            var managerDiv = document.createElement("div");
+            nametag.innerHTML = InfoOriginList$[i].Name;
+
+            var managerOID = document.createElement("input");
+            managerOID.type = "hidden";
+            managerOID.id = "managerOID_" + i + "_@ViewBag.ECODetail.OID";
+
+            var manager = document.createElement("input");
+            manager.type = "text";
+            manager.setAttribute('readonly', 'readonly');
+            manager.id = "managerNm_" + i + "_@ViewBag.ECODetail.OID";
+            if (InfoOriginList$[i].ToOID != null) {
+                managerOID.setAttribute('value',InfoOriginList$[i].ToOID);
+                manager.setAttribute('value',InfoOriginList$[i].ManagerNm);
+            }
+            var btn = document.createElement("button");
+            btn.innerHTML = "<i class='fas fa-search'></i> 처리자 선택";
+            btn.className = "custom-button assessModify";
+            btn.setAttribute('data-oid', i);
+            btn.id = "selManager_" + i + "_@ViewBag.ECODetail.OID";
+            btn.addEventListener('click', function (e) {
+                var param = {};
+                param.ToOID = $(this).attr('data-oid');
+                param.OID = "@ViewBag.ECODetail.OID";
+                OpenAssessManagerDialog(function (res) {
+                }, null, param, '/ChangeOrder/dlgSelectAssessmanager', '처리자 등록');
+            }, false);
+
+            var wrapDiv$ = document.createElement("div");
+                wrapDiv$.className = "scrollY";
+             var div$ = document.createElement("div");
+            div$.id = "assessList_" + i + "_@ViewBag.ECODetail.OID";
+
             if (i % 2 != 1) {
                 tr = document.createElement("tr");
-                var td = document.createElement("td");
-                var nametag = document.createElement("h4");
-                nametag.innerHTML = InfoOriginList$[i].Name;
-                var div$ = document.createElement("div");
-                div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
+
                 td.appendChild(nametag);
-                td.appendChild(div$);
+                nametag.appendChild(managerDiv);
+                managerDiv.appendChild(managerOID);
+                managerDiv.appendChild(manager);
+                managerDiv.appendChild(btn);
+                wrapDiv$.appendChild(div$);
+                td.appendChild(wrapDiv$);
                 tr.appendChild(td);
             } else {
-                var td = document.createElement("td");
-                var nametag = document.createElement("h4");
-                nametag.innerHTML = InfoOriginList$[i].Name;
-                var div$ = document.createElement("div");
-                div$.id = "assessList_" + i+"_@ViewBag.ECODetail.OID";
+
                 td.appendChild(nametag);
-                td.appendChild(div$);
+                nametag.appendChild(managerDiv);
+                managerDiv.appendChild(managerOID);
+                managerDiv.appendChild(manager);
+                managerDiv.appendChild(btn);
+                wrapDiv$.appendChild(div$);
+                td.appendChild(wrapDiv$);
                 tr.appendChild(td);
             }
             $(InfoAssess$).append(tr);
@@ -442,12 +484,13 @@
                 ],
             }
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#assessList_" + i+"_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
+            $("#assessList_" + i+"_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true , autoHeight:true});
 
         }
+        $('.assessModify').attr('hidden', true);
         for (var i = 0; i < InfoSelassessList$.length; i++) {
             for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
-                var check = InfoSelassessList$[i].CheckData[j].FromOID;
+                var check = InfoSelassessList$[i].CheckData[j].ToOID;
                 $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
 
             }
@@ -455,6 +498,7 @@
                 disabled: true
             });
         }
+
         $('[group="InfoECOcompatible_@ViewBag.ECODetail.OID"]').on('click', function (event) {
             if (Compatible == $(this).data('value')) {
                 $(this).jqxRadioButton('uncheck');
@@ -613,29 +657,34 @@
 
         });
 
-        $('#InfoChangeOrder_' + ECOOID + ' .tab').on('click', function () {
-            const self$ = $(this);
-            const infoValue = self$.attr('info');
-            //control side menu
-            DocDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
-            self$.addClass('info_focus');
-            DocDiv$.find('[class="basic_grid"]').addClass('dective');
-            DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
-
-            if (infoValue == 'ECOEffectAssess') {
-                $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').on('click', function () {
+        $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').on('click', function () {
                     $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
                     $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').removeAttr('hidden');
                     $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').removeAttr('hidden');
                     $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').removeAttr('hidden');
-                    for (var i = 0; i < InfoOriginList$.length; i++) {
-                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
-                            disabled: false
-                        });
+                    if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
+                        $('.assessModify').attr('hidden', false);
+                    }
+                    //ToDo 결재중상태시 유동적 열기기능
+                    if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
+                       for (var i = 0; i < InfoOriginList$.length; i++) {
+                            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                                disabled: false
+                            });
+                        }
+                    } else {
+                         for (var i = 0; i < InfoOriginList$.length; i++) {
+                             if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() == '@Session["UserOID"]') {    
+                                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                                    disabled: false
+                                });
+                            }
+                        }
                     }
                 });
                 $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').on('click', function () {
                     loadFlag = 'F';
+                    $('.assessModify').attr('hidden', true);
                     $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
                     $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
                     $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
@@ -646,8 +695,16 @@
                         $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('clearSelection');
                         $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('uncheckAll');
 
+                        if (InfoOriginList$[i].ToOID != null) {
+                            $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ToOID);
+                            $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ManagerNm);
+                        } else {
+                              $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val("");
+                            $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val("");
+                        }
+
                         for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
-                            var check = InfoSelassessList$[i].CheckData[j].FromOID;
+                            var check = InfoSelassessList$[i].CheckData[j].ToOID;
                             $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
 
                         }
@@ -656,7 +713,9 @@
                         });
                     }
                 });
-                $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').on('click', function () {
+                $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').off().on('click', function () {
+                    if (gClickDuplication) { return; }
+                    gClickDuplication = true;
                     if (confirm('저장 하시겠습니까?')) {
                         var iData = {};
                         iData.RootOID = @ViewBag.ECODetail.OID;
@@ -667,6 +726,9 @@
                                 var list = [];
                                 var data = {};
                                 data.OID = InfoOriginList$[i].OID;
+                                if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() != null) {
+                                    data.ToOID = $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val();
+                                }
                                 list.push(data);
                                 var a = $('#assessList_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
                                 for (var j = 0; j < a.length; j++) {
@@ -695,64 +757,94 @@
                                 return;
                             }
                             alert("저장되었습니다.");
-                            PageReload();
+                            gClickDuplication = false;
+                            //PageReload();
+                            $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
+                            $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                            $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                            $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+                            RequestData('/ChangeOrder/SelChangeOrderAssessList', { OID: '@ViewBag.ECODetail.OID' }, function (response) {
+                                if (response.isError) {
+                                    alert(response.resultMessage);
+                                    return;
+                                }
+                                InfoOriginList$ = response.originList;
+                                InfoSelassessList$ = response.SelassessList;
+                            });
+                            for (var i = 0; i < InfoSelassessList$.length; i++) {
+                                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                                    disabled: true
+                                });
+                            }
                         });
 
                     }
+                    gClickDuplication = false;
                 });
-                $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').on('click', function () {
-                    if (confirm('최신 평가표를 불러오시겠습니까?')) {
-                        RequestData('/Manage/SelAssessLibrary', param, function (response) {
-                            if (response.isError) {
-                                alert(response.resultMessage);
-                                return;
-                            }
-                            loadFlag = 'T';
-                            InfoAssess$.attr('hidden', 'hidden');
-                            newList.removeAttr('hidden');
-                            newList.empty();
-                            loadAssessData = response;
-                            for (var i = 0; i < response.length; i++) {
-                                var tr;
-                                var td = document.createElement("td");
-                                if (i % 2 != 1) {
-                                    tr = document.createElement("tr");
-                                    var td = document.createElement("td");
-                                    var nametag = document.createElement("h4");
-                                    nametag.innerHTML = response[i].Name;
-                                    var div$ = document.createElement("div");
-                                    div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
-                                    td.appendChild(nametag);
-                                    td.appendChild(div$);
-                                    tr.appendChild(td);
-                                } else {
-                                    var td = document.createElement("td");
-                                    var nametag = document.createElement("h4");
-                                    nametag.innerHTML = response[i].Name;
-                                    var div$ = document.createElement("div");
-                                    div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
-                                    td.appendChild(nametag);
-                                    td.appendChild(div$);
-                                    tr.appendChild(td);
-                                }
-                                $(newList).append(tr);
+        $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').on('click', function () {
+            if (confirm('최신 평가표를 불러오시겠습니까?')) {
+                RequestData('/Manage/SelAssessLibrary', param, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    loadFlag = 'T';
+                    InfoAssess$.attr('hidden', 'hidden');
+                    newList.removeAttr('hidden');
+                    newList.empty();
+                    loadAssessData = response;
+                    for (var i = 0; i < response.length; i++) {
+                        var tr;
+                        var td = document.createElement("td");
+                        if (i % 2 != 1) {
+                            tr = document.createElement("tr");
+                            var td = document.createElement("td");
+                            var nametag = document.createElement("h4");
+                            nametag.innerHTML = response[i].Name;
+                            var div$ = document.createElement("div");
+                            div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
+                            td.appendChild(nametag);
+                            td.appendChild(div$);
+                            tr.appendChild(td);
+                        } else {
+                            var td = document.createElement("td");
+                            var nametag = document.createElement("h4");
+                            nametag.innerHTML = response[i].Name;
+                            var div$ = document.createElement("div");
+                            div$.id = "assessListNew_" + i + "_@ViewBag.ECODetail.OID";
+                            td.appendChild(nametag);
+                            td.appendChild(div$);
+                            tr.appendChild(td);
+                        }
+                        $(newList).append(tr);
 
 
-                                var source = {
-                                    localdata: response[i].Cdata,
-                                    datatype: "json",
-                                    datafields: [
-                                        { name: 'Name' },
-                                        { name: 'OID' },
-                                        { name: 'FromOID' }
-                                    ],
-                                }
-                                var dataAdapter = new $.jqx.dataAdapter(source);
-                                $("#assessListNew_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
-                            }
-                        });
+                        var source = {
+                            localdata: response[i].Cdata,
+                            datatype: "json",
+                            datafields: [
+                                { name: 'Name' },
+                                { name: 'OID' },
+                                { name: 'FromOID' }
+                            ],
+                        }
+                        var dataAdapter = new $.jqx.dataAdapter(source);
+                        $("#assessListNew_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
                     }
                 });
+            }
+        });
+
+        $('#InfoChangeOrder_' + ECOOID + ' .tab').on('click', function () {
+            const self$ = $(this);
+            const infoValue = self$.attr('info');
+            //control side menu
+            DocDiv$.find('[class="tab info_focus"]').removeClass('info_focus');
+            self$.addClass('info_focus');
+            DocDiv$.find('[class="basic_grid"]').addClass('dective');
+            DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
+
+            if (infoValue == 'ECOEffectAssess') {
 
             } else if (infoValue == "ECRRelation") {
                 var selRow;
@@ -794,7 +886,7 @@
                         { text: '변경요청일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
                         { text: '작성자', datafield: 'CreateUsNm', width: '10%', },
                         {
-                            text: '상태', datafield: 'BPolicy', width: '14%', align: 'center', cellsalign: 'center', 
+                            text: '상태', datafield: 'BPolicy', width: '14%', align: 'center', cellsalign: 'center',
                             cellsrenderer: function (row, column, value) {
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                             },

@@ -59,15 +59,16 @@
     margin-right:5px;
     font-size:21px;
     font-weight:bold;
+    cursor:pointer;
 }
 
 .mainProjectCharts > div {
+    width:49.5%;
     height: 310px;
     float: left;
 }
 
 .mainProjectCharts > div > div{
-    width:465px;
     height:280px;
     border-radius:4px;
     box-shadow: 0 1px 4px #aaa;
@@ -87,10 +88,13 @@
 .mainNoticeGrid {
     position: relative;
 }
-.mainNoticeGrid > button{
+.mainNoticeGrid > .noticeBtn{
     position:absolute;
-    top:8px;
+    top:6px;
     right:5px;
+}
+
+.mainNoticeGrid button{
     font-size:14px;
     padding:3px 8px;
     background:#fff;
@@ -98,7 +102,7 @@
     border-radius:4px;
 }
 
-.mainNoticeGrid > button:hover{
+.mainNoticeGrid button:hover{
     background:#eee;
 }
 
@@ -191,10 +195,10 @@
 
     .piechart > .chartTotal{
         position:absolute;
-        top:46%;
+        top:44%;
         left:50%;
         z-index:1000;
-        width:100px;
+        width:105px;
         margin-left:-50px;
         text-align:center;
     }
@@ -207,6 +211,34 @@
 .piechart > div:last-child, .barchart > div:last-child {
     width: 100%;
     height: 90%;
+}
+
+.barchart > .graphH{
+    padding-right:10px;
+}
+
+.barchart > .graphH > .issueDVPVLabel{
+    float:left;
+}
+
+.issueDVPVLabel{
+    margin-bottom:0;
+}
+
+.issueDVPVLabel > li{
+    display:inline-block;
+    padding:0px 5px;
+    line-height:22px;
+    text-align:center;
+    text-indent:0px;
+    border-bottom:1px solid transparent;
+    color:#ccc;
+    cursor:pointer;
+}
+
+.issueDVPVLabel > li.activeLabel{
+    color:#111;
+    border-bottom:1px solid #333;
 }
 
 .dashboardGraphs .graphH, .dashboardGrids .graphH {
@@ -233,10 +265,10 @@
     border: none;
 }
 
-.dashboardSelBox{
-    position:absolute;
-    right:6px;
-    top:6px;
+.dashboardSelBox, .dashboardStatusSelBox {
+    position: absolute;
+    right: 6px;
+    top: 6px;
 }
 
 
@@ -325,44 +357,29 @@
 
 
 .pmDelayTask {
-    width: 5%;
-    margin-left:1%;
-    padding-right: 10px;
+    margin-left: 0.5%;
     box-sizing: border-box;
     height: 90%;
-    float: left;
+    position:absolute;
+    top:42px;
+    right: 0.5%;
+    width: 5%;
     text-align: center;
 }
 
 
 .pmDelayTask > ul{
     width:100%;
-    line-height:68px;
-    border-top:20px solid transparent;
 }
 
-.apexcharts-menu-icon{
-    opacity:0 !important;
+.pmDelayTask > ul > li{
+    line-height:78px;
+    border-bottom:1px solid #ddd;
 }
 
-.pmProjectList {
-    width:100%;
-    padding-left:5px;
-    margin-top: 50px;
-    overflow-y:scroll;
-    height:210px;
+foreignObject{
+    cursor:pointer;
 }
-
-.pmProjectList::-webkit-scrollbar{
-    width:5px;
-    background-color:#fff;
-}
-
-.pmProjectList::-webkit-scrollbar-thumb{
-    background-color:#ddd;
-}
-
-
 
 /* ResourceDashBoard */
 .resourceDashboard {
@@ -509,4 +526,115 @@ input[name=rscRadio] {
 
 .tblChart {
     border-color: transparent !important;
+}
+
+/* timeline chart */
+
+.timeline-chart{
+    cursor:pointer;
+}
+
+path.domain {
+    display: none;
+}
+
+.domain, .chart-bounds {
+    fill: #fff;
+}
+
+.pmProjectList {
+    width: 100%;
+    height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.pmProjectList::-webkit-scrollbar {
+    width: 10px;
+    background-color: #fff;
+}
+
+.pmProjectList::-webkit-scrollbar-thumb {
+    width: 8px;
+    background-color: #aaa;
+}
+
+.chart-tick {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:21px;
+    z-index:999;
+    background-color:#fff;
+    border-bottom:1px solid #ddd;
+}
+
+#pmProjectTimeline {
+    width: 100%;
+    background: #fff;
+    opacity: .8;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+    #pmProjectTimeline line {
+        stroke: #ccc;
+    }
+
+        #pmProjectTimeline line.vertical-marker.now {
+            stroke: #f00;
+            stroke-width:3px;
+        }
+
+rect.interval.step1 {
+    fill: #008FFB;
+    stroke: transparent;
+}
+
+rect.interval.step2 {
+    fill: #00E396;
+    stroke: transparent;
+}
+
+rect.interval.step3 {
+    fill: #FEB019;
+    stroke: transparent;
+}
+
+rect.interval.step4 {
+    fill: #FF4560;
+    stroke: transparent;
+}
+
+rect.interval.step5 {
+    fill: #775DD0;
+    stroke: transparent;
+}
+
+
+g.tick > line, line.group-section:nth-child(2n-1){
+    stroke: transparent !important;
+}
+
+/* Override d3tip */
+
+.d3-tip {
+    background: white;
+    color: #444;
+    border-radius:3px;
+    padding:10px;
+    box-shadow:0 0 3px #ccc;
+}
+
+
+#tickNow {
+    position: absolute;
+    z-index:9999;
+    opacity:0.8;
+    top: 80px;
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow: 0 0 3px #ccc;
 }

@@ -16,6 +16,8 @@ namespace Common.Constant
         public static string TYPE_CALENDAR = "CALENDAR";
         public static string TABLE_CALENDAR = "T_DCALENDAR";
 
+        public static string TYPE_NOTICE = "NOTICE";
+
         public static string TYPE_COMPANY = "COMPANY";
         public static string TYPE_DEPARTMENT = "DEPARTMENT";
         public static string TYPE_PERSON = "PERSON";

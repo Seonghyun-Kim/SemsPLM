@@ -44,7 +44,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trigger\ChangeOrder\ChangeOrderTrigger.cs" />
+    <Compile Include="Trigger\Common\ApprovalMail.cs" />
     <Compile Include="Trigger\Common\ApprovalTrigger.cs" />
+    <Compile Include="Trigger\Common\ReleasedTrigger.cs" />
     <Compile Include="Trigger\EBom\EPartApprovalTrigger.cs" />
     <Compile Include="Trigger\Pms\IssueTrigger.cs" />
     <Compile Include="Trigger\Pms\GateTirgger.cs" />

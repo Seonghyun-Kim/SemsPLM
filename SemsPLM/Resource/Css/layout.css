@@ -68,10 +68,6 @@ input[readonly] {
     background-color: #ddd !important;
 }
 
-input[readonly='readonly'] {
-    background-color: #ddd !important;
-}
-
 .floatL{
     float:left;
 }
@@ -260,12 +256,12 @@ nav {
 
 #wrapContent, #loading {
     position: absolute;
-    top: 80px;
 }
 
 #wrapContent {
-    width:1900px;
+    width: 1900px;
     border-top: 10px solid #77787b;
+    top: 80px;
 }
 
 #wrapContent .jqx-tabs-content-element {
@@ -278,9 +274,10 @@ nav {
     /*background-color: rgba(255,255,255,.5);*/
     z-index: 9999;
     height: 880px;
-    padding-top:200px;
-    text-align:center;
-    -ms-overflow-style:none;
+    padding-top: 200px;
+    text-align: center;
+    -ms-overflow-style: none;
+    top: 0px;
 }
 
 .loader-inner{
@@ -1108,13 +1105,60 @@ button > .fas{
     padding:5px 0;
 }
 
+.checkExportData {
+    margin: 5px 0 10px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.checkExportData > li{
+    float:left;
+}
+
+.checkExportData > li > div.requiredData{
+    background:transparent !important;
+    cursor:default !important;
+}
+
+.checkExportMember {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-bottom:0;
+    position:relative;
+    padding:9px;
+}
+
+.checkExportMember > button{
+    position:absolute;
+    top:2px;
+    right:2px;
+}
+
+.checkExportMember + div{
+    width:100%;
+    height:200px;
+}
+
+.checkMemberListTable{
+    width:100%;
+}
+
+.checkMemberListTable td{
+    border:1px solid #ddd;
+    height:28px;
+    text-align:center;
+}
+
+.checkMemberListTable thead{
+    background-color:#eee;
+}
 
 /* dlgGateSignOffReport */
-.dlgGateReportTab{
-    height:40px;
-    box-sizing:border-box;
-    padding:5px 0 0 5px;
-    background-color:#888;
+.dlgGateReportTab {
+    height: 40px;
+    box-sizing: border-box;
+    padding: 5px 0 0 5px;
+    background-color: #888;
 }
 
 .dlgGateReportTab > input[type=radio]{
@@ -1709,19 +1753,44 @@ table[TableType=Why] th, table[TableType=Why] td {
 
 .effectAssessList {
     width: 100%;
+    table-layout:fixed;
 }
 
 .effectAssessList td{
     width:50%;
+    overflow:hidden;
     vertical-align:top;
+    border:1px solid #c5c5c5;
+}
+
+.effectAssessList td > div{
+    overflow-x:hidden;
+    height:180px;
+}
+
+.effectAssessList td > div > div{
+    border:0px solid transparent !important;
+    border:none !important;
 }
 
 .effectAssessList h4{
     line-height:40px;
     text-indent:8px;
     background-color:#eee;
-    border:1px solid #c5c5c5;
-    border-bottom:none;
+    border-bottom:1px solid #c5c5c5;
+    position:relative;
+}
+
+.effectAssessList h4 > div{
+    line-height:1.16;
+    font-weight:normal;
+    position:absolute;
+    right:5px;
+    top:4px;
+}
+
+.effectAssessList h4 > div> input[type=text]{
+    height:32px;
 }
 
 .effectAssessList .chkbox{

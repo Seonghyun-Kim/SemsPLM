@@ -47,6 +47,8 @@ namespace Pms.Models
 
         public string ObjStNm { get; set; }
 
+        public string ObjStDisNm { get; set; }
+
         public string ObjDescription { get; set; }
 
         public int? Id { get; set; }
@@ -99,6 +101,15 @@ namespace Pms.Models
         public string DocStNm { get; set; }
 
         public List<BPolicyAuth> BPolicyAuths { get; set; }
+        public string Oem_Lib_Nm { get; set; }
+        public string Car_Lib_Nm { get; set; }
+        public string PartNm { get; set; }
+        public string TotalTestDt { get; set; }
+        public int? TotalTestItem { get; set; }
+        public int? WaitingNum { get; set; }
+        public int? ProgressNum { get; set; }
+        public int? CompleteNum { get; set; }
+        public int? NGNum { get; set; }
     }
 
     public static class PmsRelationshipRepository
@@ -545,7 +556,9 @@ namespace Pms.Models
         public static void GetWbsList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
         {
             List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            PmsProject tmpProject = null;
             PmsProcess tmpToData = null;
+            List<DateTime> lHoliday = null;
             children.ForEach(item =>
             {
                 if (tmpToData != null)
@@ -564,6 +577,7 @@ namespace Pms.Models
                 item.ActEndDt = tmpToData.ActEndDt != null ? Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpToData.ActEndDt)) : tmpToData.ActEndDt;
                 item.ObjSt = tmpToData.BPolicyOID;
                 item.ObjStNm = tmpToData.BPolicy.Name;
+                item.ObjStDisNm = tmpToData.BPolicy.StatusNm;
                 item.Id = tmpToData.Id;
                 item.Dependency = tmpToData.Dependency;
                 item.Complete = tmpToData.Complete;
@@ -576,6 +590,26 @@ namespace Pms.Models
                     item.Members.Add(new PmsRelationship { FromOID = item.ToOID, ToOID = person.OID, PersonNm = person.Name, Thumbnail = person.Thumbnail });
                     person = null;
                 });
+
+                if (tmpProject != null)
+                {
+                    tmpProject = null;
+                }
+                if (lHoliday != null)
+                {
+                    lHoliday = null;
+                }
+                tmpProject = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = item.RootOID });
+                lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = Convert.ToInt32(tmpProject.CalendarOID), IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
+                if (item.ActEndDt != null)
+                {
+
+                    item.Delay = PmsUtils.CalculateDelay(Convert.ToDateTime(item.EstEndDt), Convert.ToDateTime(item.ActEndDt), Convert.ToInt32(tmpProject.WorkingDay), lHoliday);
+                }
+                else
+                {
+                    item.Delay = PmsUtils.CalculateDelay(Convert.ToDateTime(item.EstEndDt), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(tmpProject.WorkingDay), lHoliday);
+                }
                 _ldStructure.Add(item);
                 GetWbsList(Context, item, _ldStructure);
             });
@@ -589,7 +623,8 @@ namespace Pms.Models
             PmsProject project = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = _param.RootOID, Type = (_param.ObjType != null ? _param.ObjType : null), IsTemplate = (_param.ObjType != null ? _param.ObjType : null) });
             _param.Type = Common.Constant.PmsConstant.RELATIONSHIP_DOC_MASTER;
             List<PmsRelationship> RelationshipList = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
-            List<PmsRelationship> lProjectList = PmsRelationshipRepository.GetProjWbsLIst(Context, Convert.ToString(project.OID));
+            //List<PmsRelationship> lProjectList = PmsRelationshipRepository.GetProjWbsLIst(Context, Convert.ToString(project.OID));
+            List<PmsRelationship> lProjectList = PmsRelationshipRepository.GetWbsOidLIst(Context, Convert.ToString(project.OID));
             List<PmsRelationship> getStructureList = new List<PmsRelationship>();
 
 
@@ -609,10 +644,11 @@ namespace Pms.Models
                         Task = null;
                     }
                     PmsRelationship getStructure = new PmsRelationship();
-                    
+
                     DocClas = DocClassRepository.SelDocClassObject(Context, new DocClass { OID = obj.ToOID });
                     getStructure.Level = _Lev;
 
+                    getStructure.OID = obj.OID;
                     getStructure.RootOID = project.OID;
                     getStructure.ProjectNm = project.Name;
                     getStructure.FromOID = obj.FromOID;
@@ -656,9 +692,10 @@ namespace Pms.Models
             {
                 ProjectList = DaoFactory.GetList<PmsRelationship>("Pms.SelPmsRelationshipTaskIsNull", _param);
             }
-            
+
             foreach (PmsRelationship Obj in ProjectList)
             {
+                Obj.OID = Obj.OID;
                 Obj.RootOID = _rootOID;
                 Obj.ProjectNm = projectNm;
                 Obj.TaskNm = TaskNm;
@@ -675,7 +712,7 @@ namespace Pms.Models
                 }
                 else
                 {
-                    if(_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
+                    if (_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
                     {
                         PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Context, new PmsReliability { OID = Obj.ToOID });
                         Obj.DocClassNm = _param.DocClassNm;
@@ -687,7 +724,7 @@ namespace Pms.Models
                         Obj.CreateUsNm = Reliability.CreateUsNm;
                         Obj.ViewUrl = ViewUrl;
                     }
-                    else if(_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT)
+                    else if (_param.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT)
                     {
                         PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Context, new PmsReliabilityReport { OID = Obj.ToOID });
                         Obj.DocClassNm = _param.DocClassNm;
@@ -702,6 +739,71 @@ namespace Pms.Models
                 }
             }
             return ProjectList;
+        }
+
+        #endregion
+
+        #region -- API : WBS LIST ROOT
+
+        public static List<PmsRelationship> GetWbsOidLIst(HttpSessionStateBase Context, string OID)
+        {
+            List<PmsRelationship> lWbs = new List<PmsRelationship>();
+
+            PmsRelationship getStructure = new PmsRelationship();
+            getStructure.ToOID = Convert.ToInt32(OID);
+            lWbs.Add(getStructure);
+
+            GetWbsChildOidList(Context, getStructure, lWbs);
+            return lWbs;
+        }
+
+        public static void GetWbsChildOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
+        {
+            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            children.ForEach(item =>
+            {
+                _ldStructure.Add(item);
+                GetWbsChildOidList(Context, item, _ldStructure);
+            });
+        }
+
+        #endregion
+
+        #region -- API : WBS LIST OID, TYPE ROOT
+
+        public static List<PmsRelationship> GetProjWbsTypeOidList(HttpSessionStateBase Context, string OID)
+        {
+            List<PmsRelationship> lWbs = new List<PmsRelationship>();
+
+            PmsRelationship getStructure = new PmsRelationship();
+            getStructure.ToOID = Convert.ToInt32(OID);
+            getStructure.ObjType = PmsConstant.TYPE_PROJECT;
+            lWbs.Add(getStructure);
+
+            GetWbsChildTypeOidList(Context, getStructure, lWbs);
+            return lWbs;
+        }
+
+        public static void GetWbsChildTypeOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
+        {
+            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            PmsProcess tmpProcess = null;
+            children.ForEach(item =>
+            {
+                if (tmpProcess != null)
+                {
+                    tmpProcess = null;
+                }
+                tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                item.ObjType = tmpProcess.Type;
+                item.ObjName = tmpProcess.Name;
+                item.EstStartDt = tmpProcess.EstStartDt;
+                item.EstEndDt = tmpProcess.EstEndDt;
+                item.ActStartDt = tmpProcess.ActStartDt;
+                item.ActEndDt = tmpProcess.ActEndDt;
+                _ldStructure.Add(item);
+                GetWbsChildTypeOidList(Context, item, _ldStructure);
+            });
         }
 
         #endregion

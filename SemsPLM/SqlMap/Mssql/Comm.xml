@@ -64,6 +64,9 @@
       <isNotNull prepend="and" property="CreateUs">
         CreateUs = #CreateUs#
       </isNotNull>
+      <isNotNull prepend="and" property="TdmxOID">
+        TdmxOID = #TdmxOID#
+      </isNotNull>
     </select>
 
     <insert id="InsDObject" parameterClass="DObject" >
@@ -294,6 +297,9 @@
       <isNotNull prepend="and" property="CreateUs">
         A.CreateUs = #CreateUs#
       </isNotNull>
+      <isNotNull prepend="and" property="BPolicyOID">
+        A.BPolicyOID = #BPolicyOID#
+      </isNotNull>
       ORDER BY B.OID
     </select>
 
@@ -372,7 +378,7 @@
         LEFT OUTER JOIN T_DAPPROVAL_TASK B ON A.OID = B.OID
         WHERE A.DeleteDt IS NULL
         <isNotNull prepend="and" property="OID">
-          OID = #OID#
+          A.OID = #OID#
         </isNotNull>
         <isNotNull prepend="and" property="Name">
           A.Name = #Name#
@@ -407,6 +413,9 @@
       LEFT OUTER JOIN T_DOBJECT F ON F.OID = E.CreateUs
       LEFT OUTER JOIN T_BDEFINE G ON G.TYPE = 'TYPE' AND G.NAME = E.TYPE
       WHERE B.DeleteDt IS NULL AND E.OID IS NOT NULL AND A.ApprovalType != 'DIST'
+      <isNotNull prepend="and" property="CreateUs">
+        B.CreateUs = #CreateUs#
+      </isNotNull>
       <isNotNull prepend="and" property="PersonOID">
         A.PersonOID = #PersonOID#
       </isNotNull>

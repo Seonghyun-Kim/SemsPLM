@@ -138,5 +138,23 @@ namespace Common.Models.File
             if (httpFile == null || httpFile.OID == null) return null;
             return DaoFactory.GetList<HttpFile>("Comm.SelFile", httpFile);
         }
+
+        public static HttpFile ReviseFiles(HttpSessionStateBase Context, HttpFile httpFile, int? NewOID)
+        {
+            if (httpFile == null || httpFile.OID == null) return null;
+
+            List<HttpFile> SelReviseFiles = HttpFileRepository.SelFiles(Context, httpFile);
+
+            if (SelReviseFiles.Count > 0 && SelReviseFiles != null)
+            {
+                SelReviseFiles.ForEach(v =>
+                {
+                    v.OID = NewOID;
+                    v.CreateUs = Convert.ToInt32(Context["UserOID"]);
+                    DaoFactory.SetInsert("Comm.InsFile", v);
+                });
+            }
+            return httpFile;
+        }
     }
 }

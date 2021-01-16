@@ -127,14 +127,15 @@
     </insert>
     
   <update id="updateCodeLibrary" parameterClass="Library">
-      UPDATE T_DCODELIBRARY SET
-      Code1 = #Code1#
-      ,Code2 = #Code2#
-      ,KorNm = #KorNm#
-      ,IsUse = #IsUse#
-      ,Ord = #Ord#
-      WHERE OID = #OID#
-    </update>
+    UPDATE T_DCODELIBRARY SET
+    Code1 = #Code1#
+    ,Code2 = #Code2#
+    ,KorNm = #KorNm#
+    ,IsUse = #IsUse#
+    ,Description = #Description#
+    ,Ord = #Ord#
+    WHERE OID = #OID#
+  </update>
 
     <update id="deleteCodeLibrary" parameterClass="Library">
       UPDATE T_DCODELIBRARY SET
@@ -327,6 +328,11 @@
       ,#Name#
       ,#Ord#)
     </insert>
+
+    <delete id="delCustomerScheduleTemplate" parameterClass="Library">
+      DELETE FROM T_DCUSTOMER_SCHEDULE_TEMPLATE 
+      WHERE OID = #OID#
+    </delete>
 
     <delete id="delCustomerScheduleTemplateSub" parameterClass="Library">
       DELETE FROM T_DCUSTOMER_SCHEDULE_TEMPLATE_DETAIL

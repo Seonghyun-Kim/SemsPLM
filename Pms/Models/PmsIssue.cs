@@ -16,6 +16,8 @@ namespace Pms.Models
         public int? RootOID { get; set; }
         public int? FromOID { get; set; }
         public string ProjectNm { get; set; }
+        public string Oem_Lib_Nm { get; set; }
+        public string Car_Lib_Nm { get; set; }
         public string TaskNm { get; set; }
         public int? Importance { get; set; }
         public DateTime? EstFinDt { get; set; }
@@ -25,7 +27,7 @@ namespace Pms.Models
         public DateTime? FinDt { get; set; }
         public string IsApprovalRequired { get; set; }
         public string IssueType { get; set; }
-
+        public int? TaskOID { get; set; }
         public string IssueTypeNm
         {
             get
@@ -110,8 +112,11 @@ namespace Pms.Models
         public static PmsIssue SelIssue(HttpSessionStateBase Context, PmsIssue _param)
         {
             PmsIssue pmsIssue = DaoFactory.GetData<PmsIssue>("Pms.SelIssue", _param);
-            pmsIssue.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = pmsIssue.Type, OID = pmsIssue.BPolicyOID }).First();
-            pmsIssue.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = pmsIssue.CreateUs }).Name;
+            if (pmsIssue != null)
+            {
+                pmsIssue.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = pmsIssue.Type, OID = pmsIssue.BPolicyOID }).First();
+                pmsIssue.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = pmsIssue.CreateUs }).Name;
+            }
             return pmsIssue;
         }
         public static PmsIssue UdtIssue(HttpSessionStateBase Context, PmsIssue _param)

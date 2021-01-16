@@ -13,10 +13,8 @@
       SELECT
       A.*
       , B.*
-      , C.Name AS CreateUsNm
       FROM T_DOBJECT A
       LEFT OUTER JOIN T_DDOCUMENT_CLASSIFICATION B ON A.OID = B.OID
-      LEFT OUTER JOIN T_DOBJECT C ON A.CreateUs = C.OID
       WHERE A.Type = #Type#
       <isNotNull prepend="and" property="OID">
         A.OID = #OID#
@@ -32,9 +30,6 @@
       </isNotNull>
       <isNotNull prepend="and" property="ViewUrl">
         A.ViewUrl = #ViewUrl#
-      </isNotNull>
-      <isNotNull prepend="and" property="CreateUsNm">
-        C.Name like '%' + #CreateUsNm# + '%'
       </isNotNull>
       AND A.DeleteDt IS NULL
     </select>

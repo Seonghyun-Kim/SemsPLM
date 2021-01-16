@@ -439,3 +439,67 @@ function fMoveGridRecusive(_rows, _target, _motion) {
         }
     }
 }
+
+function OpenAssessManagerDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 800, maxWidth: 800, height: 650, minHeight: 650, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            $('#btRegPerson').on('click', function () {
+                var memList$ = $("#selectedUserList").find('li');
+                var returnList = [];
+                for (var index = 0; index < memList$.length; index++) {
+                    returnList.push({
+                        'OID': memList$.eq(index).attr('OID'),
+                        'Name': memList$.eq(index).attr('Name'),
+                        'Depart': memList$.eq(index).attr('Depart'),
+                        'DepartOID': memList$.eq(index).attr('DepartOID')
+                    });
+                }
+                if (_Param.OID == null) {
+                    $('#managerOID_' + _Param.ToOID).val(returnList[0].OID);
+                    $('#managerNm_' + _Param.ToOID).val(returnList[0].Name);
+                } else {
+                    $('#managerOID_' + _Param.ToOID + "_" + _Param.OID).val(returnList[0].OID);
+                    $('#managerNm_' + _Param.ToOID + "_" + _Param.OID).val(returnList[0].Name);
+                }
+                if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                    _CallBackFunction();
+                }
+                $(popLayer).jqxWindow('modalDestory');
+            });
+
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}

@@ -65,6 +65,9 @@
         <isNotNull prepend="and" property="ToOID">
           ToOID = #ToOID#
         </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          FromOID = #FromOID#
+        </isNotNull>
         <isNotNull prepend="and" property="Type">
           Type = #Type#
         </isNotNull>

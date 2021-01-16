@@ -44,19 +44,20 @@
                 <input type="text" id="dlgCreateEPartName" value="" readonly="readonly" />
                 @*<button id="dlgCreateEPartChk" class="custom-button"><i class="fas fa-check"></i> 중복 확인</button>*@
             </td>
-            <th><i class="fa fa-caret-right"></i> 리비전</th>
-            <td><input type="text" value="00" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 품명</th>
+            <td><input type="text" value="" id="dlgCreateEPartTitle" /></td>
         </tr>
         <tr>
-            <th><i class="fa fa-caret-right"></i> 등록자</th>
-            <td><input type="text" value="등록자" readonly="readonly" /></td>
+            <th><i class="fa fa-caret-right"></i> 리비전</th>
+            <td><input type="text" value="00" readonly="readonly" /></td>
             <th><i class="fa fa-caret-right"></i> 상태</th>
             <td><input type="text" value="작성중" readonly="readonly" /></td>
         </tr>
         <tr>
+            <th><i class="fa fa-caret-right"></i> 등록자</th>
+            <td><input type="text" value="@Session["UserNm"]" readonly="readonly" /></td>
             <th><i class="fa fa-caret-right"></i> 등록일</th>
             <td><input type="text" value="@DateTime.Now.ToShortDateString()" readonly="readonly" /></td>
-            <td colspan="2"></td>
         </tr>
         <tr>
             <th><i class="fa fa-caret-right"></i> 구분</th>
@@ -71,7 +72,8 @@
                     스탠다드
                 </div>
             </td>
-            <td colspan="2"></td>
+            <th><i class="fa fa-caret-right"></i> 규격</th>
+            <td><input type="text" value="" id="dlgCreateEPart_Standard'" /></td>
         </tr>
 
         <!--조립도-->
@@ -434,12 +436,18 @@
         CarType$.jqxComboBox({ width: 250, height: 32 });
         oem$.on('change', function (evt) {
             var param = {};
-            param.fromOID = oem$.val();
-            RequestData('/Manage/SelCodeLibrary', param, function (res) {
-
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                param.FromOID = $('#dlgCreateEPart_Oem1').val();
+            } else {
+                param.FromOID = $('#dlgCreateEPart_Oem2').val();
+            }
+            
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var CarData = res;
                 var carSource =
                 {
-                    localdata: res,
+                    localdata: CarData,
                     datatype: "json",
                     datafields:
                         [
@@ -450,19 +458,21 @@
                         ]
                 };
                 var caradapter = new $.jqx.dataAdapter(carSource);
-                CarType$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID"});
+                CarType$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID" });
 
                 CarType$.on('change', function (evt) {
                     var idx = evt.args.index;
                     if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
-                        car = res[idx].Code1;
+                        car = CarData[idx].Code1;
                     } else {
-                        car = res[idx].Code2;
+                        car = CarData[idx].Code2;
                     }
-                    CreateEPartName();
+                    dlgCreateEPartName();
                 });
             });
         });
+
+
 
         psize$.on('change', function (evt) {
             var idx = evt.args.index;
@@ -513,6 +523,7 @@
         });
 
         Serial$.bind('change paste keyup', function () {
+            $(this).val($(this).val().toUpperCase());
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 serial=  $('#dlgCreateEPart_Serial1').val();
             } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
@@ -523,6 +534,13 @@
             dlgCreateEPartName();
         });
         Srev$.bind('change paste keyup', function () {
+            $(this).val($(this).val().toUpperCase());
+            if ($(this).val() == "O" || $(this).val() == "I") {
+                $(this).val("");
+                CreateEPartName();
+                return;
+            }
+
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 srev = Srev$[0].value;
             } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
@@ -531,34 +549,35 @@
 
             dlgCreateEPartName();
         });
-        $('#dlgCreateEPartChk').bind('change paste keyup', function () {
-            dlgCreateEPartChk$ = true;
-        });
 
-        $('#dlgCreateEPartChk').on('click', function () {
-            var param = {};
-            param.Name = $('#dlgCreateEPartName').val();
-            if (param.Name == null || param.Name == "") {
-                dlgCreateEPartChk$ = true;
-                alert("품번을 입력해주세요");
-                return;
-            }
+        //$('#dlgCreateEPartChk').bind('change paste keyup', function () {
+        //    dlgCreateEPartChk$ = true;
+        //});
 
-            //RequestData('/EBom/dlgCreateEPartChk', param, function (response) {
-            //    if (response.isError) {
-            //        alert(response.resultMessage);
-            //        return;
-            //    }
-            //    if (response == 1) {
-            //        alert("이미 사용중인 품번입니다");
-            //        dlgCreateEPartChk$ = true;
-            //    } else {
-            //        alert("사용 가능한 품번입니다.");
-            //        dlgCreateEPartChk$ = false;
-            //    }
-            //});
-
-        });
+        //$('#dlgCreateEPartChk').on('click', function () {
+        //    var param = {};
+        //    param.Name = $('#dlgCreateEPartName').val();
+        //    if (param.Name == null || param.Name == "") {
+        //        dlgCreateEPartChk$ = true;
+        //        alert("품번을 입력해주세요");
+        //        return;
+        //    }
+        //
+        //    //RequestData('/EBom/dlgCreateEPartChk', param, function (response) {
+        //    //    if (response.isError) {
+        //    //        alert(response.resultMessage);
+        //    //        return;
+        //    //    }
+        //    //    if (response == 1) {
+        //    //        alert("이미 사용중인 품번입니다");
+        //    //        dlgCreateEPartChk$ = true;
+        //    //    } else {
+        //    //        alert("사용 가능한 품번입니다.");
+        //    //        dlgCreateEPartChk$ = false;
+        //    //    }
+        //    //});
+        //
+        //});
 
 
 

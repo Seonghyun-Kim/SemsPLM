@@ -18,7 +18,7 @@ namespace Common.Constant
         public static string TYPE_MBOM_STATEMENT = "MBOM_STATEMENT";
         public static string TYPE_ASSESSLIST = "ASSESSLIST";
         public static string TYPE_ASSESSLIST_CHILD = "ASSESSLIST_CHILD";
-
+        public static string TYPE_ASSESSLIST_MANAGER = "ASSESSLIST_MANAGER";
 
 
         public static string TYPE_CHANGE_REQUEST = "CHANGE_REQUEST";

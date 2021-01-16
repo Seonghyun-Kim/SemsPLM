@@ -96,6 +96,40 @@ namespace Common
             }
             return result;
         }
+
+        public static string SingleMakeMajorRevisonUp(string str)
+        {
+            if (String.IsNullOrEmpty(str)) return CommonConstant.REVISION_PREFIX + CommonConstant.INIT_REVISION;
+            string sR = "";
+            if (str.IndexOf('.') > 0)
+            {
+                string[] ss = str.Split('.');
+                sR = ss[0].Replace(Convert.ToChar(CommonConstant.REVISION_PREFIX), ' ').Trim();
+            }
+            else
+            {
+                sR = str;
+            }
+            string newR = SingleNumberToletters((CurrentLettersToNumber(sR) + 1));
+            return newR;
+        }
+
+        public static string SingleNumberToletters(int value, int length = 1)
+        {
+            //string map = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string map = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+
+            char[] result = new char[length];
+            var x = value;
+            for (int i = 0; i < length; i++)
+            {
+                int threshold = (int)Math.Pow(Convert.ToDouble(map.Length), length - i - 1);
+                var index = Math.Min(map.Length - 1, x / threshold);
+                result[i] = map[index];
+                x -= threshold * index;
+            }
+            return new string(result);
+        }
     }
 
     public class StringValue : System.Attribute

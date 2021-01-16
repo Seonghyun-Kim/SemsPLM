@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
@@ -25,6 +26,8 @@ namespace EBom.Models
         public string ObjTdmxOID { get; set; }
         public int? ObjIsLatest { get; set; }
         public string ObjTitle { get; set; }
+
+
         public string ObjRep_Part_No { get; set; }
         public string ObjRep_Part_No2 { get; set; }
         public string ObjEo_No { get; set; }
@@ -32,19 +35,22 @@ namespace EBom.Models
         public string ObjEo_No_History { get; set; }
         public string ObjEtc { get; set; }
         public int? ObjApprovOID { get; set; }
-        public int? ObjEPartType { get; set; }
-        public string ObjEPartTypeNm { get; set; }
         public string ObjSel_Eo { get; set; }
         public DateTime? ObjSel_Eo_Dt { get; set; }
         public string ObjSpec { get; set; }
         public string ObjSurface { get; set; }
-        public int? ObjOem_Lib_OID { get; set; }
-        public int? ObjCar_Lib_OID { get; set; }
         public int? ObjPms_OID { get; set; }
         public int? ObjProd_Lib_Lev1_OID { get; set; }
         public int? ObjProd_Lib_Lev2_OID { get; set; }
         public int? ObjProd_Lib_Lev3_OID { get; set; }
+
+
+        public int? ObjEPartType { get; set; }
+        public string ObjEPartTypeNm { get; set; }
+        public int? ObjOem_Lib_OID { get; set; }
+        public int? ObjCar_Lib_OID { get; set; }
         public string ObjDivision { get; set; }
+        public string ObjDivisionNm { get; set; }
         public int?   ObjITEM_No { get; set; }
         public string ObjITEM_NoNm { get; set; } //ITEM_NO
         public int?   ObjITEM_Middle { get; set; }
@@ -60,47 +66,51 @@ namespace EBom.Models
 
 
 
+
+        public string ObjStandard { get; set; }
+        public string ObjOem_Lib_Nm { get; set; }
+
         public string ObjCar_Lib_Nm { get; set; }
-
         public string ObjThumbnail { get; set; }
-
         public string Action { get; set; }
         public int? OldOID { get; set; }
         public int? RootOID { get; set; }
         public int? LToOID { get; set; }
         public int? RToOID { get; set; }
-
         public int? TimeOID { get; set; }
     }
 
     public static class EBomRepository
     {
         #region EBom Add
-        public static int AddAction(EBOM _param)
+        public static int AddAction(HttpSessionStateBase Context, EBOM _param)
         {
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             int OID = DaoFactory.SetInsert("EBom.InsEBomStructure", _param);
             return OID;
         }
         #endregion
 
         #region EBom Delete
-        public static int DeleteAction(EBOM _param)
+        public static int DeleteAction(HttpSessionStateBase Context, EBOM _param)
         {
+            _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             int OID = DaoFactory.SetDelete("EBom.delEBomStructure", _param);
             return OID;
         }
         #endregion
 
         #region EBom Ru
-        public static int RuAction(EBOM _param)
+        public static int RuAction(HttpSessionStateBase Context, EBOM _param)
         {
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             int OID = DaoFactory.SetUpdate("EBom.RuEBomStructure", _param);
             return OID;
         }
         #endregion
 
         #region EBom Udt
-        public static int UdtAction(EBOM _param)
+        public static int UdtAction(HttpSessionStateBase Context, EBOM _param)
         {
             int OID = DaoFactory.SetUpdate("EBom.UdtEBomStructure", _param);
             return OID;

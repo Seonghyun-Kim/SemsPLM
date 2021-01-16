@@ -39,11 +39,11 @@
             <tr>
                 <th>등록자</th>
                 <td>
-                    @Session["UserNm"]
+                    <input type="text" readonly="readonly" value="@Session["UserNm"]" />
                 </td>
                 <th>등록일</th>
                 <td>
-                    @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    <input type="text" readonly="readonly" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 </td>
                 <th>요구일정</th>
                 <td>
@@ -153,6 +153,9 @@
     var DevStep$ = $('#DevStep');
     var DevStepList = @Html.Raw(Json.Encode(ViewBag.DevStepList));
 
+    var param = {};
+    param.Oem_Lib_OID = @ViewBag.OEM;
+
     var TestMethodDt$ = $('#TestMethodDt');
     TestMethodDt$.jqxDateTimeInput({ width: 180, height: 32, formatString: 'yyyy/MM/dd' });
 
@@ -255,7 +258,7 @@
             },
         });
 
-        getSearchTestItemList(TestItemListSource, TestItemListGrid$, null);
+        getSearchTestItemList(TestItemListSource, TestItemListGrid$, param);
     });
 
     function getSearchTestItemList(_Source, _Grid$, param) {

@@ -314,6 +314,8 @@ function fPmsWokingDay(_validaciton, _param) {
         if (_param == 0 || _param == 6) {
             result = true;
         }
+    } else if (_validaciton == 7) {
+        result = true;
     }
     return result;
 }
@@ -471,6 +473,7 @@ function fAddModMemberChildrenRecusive(_rows, _target, _members) {
 function fTaskStart(_this, proj, idx) {
     RequestData('Common/PromoteObjectTask',
     { Type: _this.getAttribute('data-Type'), Status: _this.getAttribute('data-Status'), OID: idx, RootOID: proj }, function () {
+        alert('타스크가 진행되었습니다.');
         gPmsModifyHistoryMaster[proj].obj.jqxTreeGrid('pagerRenderer');
     });
 }
@@ -488,10 +491,10 @@ function fGettingDependData(depends) {
         for (var index = 0, size = lDepends.length; index < size; index++) {
             if (lDepends[index].indexOf(':') > -1) {
                 var splitVal = lDepends[index].split(':');
-                returns[splitVal[0]] = parseInt(splitVal[1] != '' ? splitVal[1] : '2');
+                returns[splitVal[0]] = parseInt(splitVal[1] != '' ? splitVal[1] : '1');
             } else {
                 if (lDepends[index] != '') {
-                    returns[lDepends[index]] = 2;
+                    returns[lDepends[index]] = 1;
                 }
             }
         }

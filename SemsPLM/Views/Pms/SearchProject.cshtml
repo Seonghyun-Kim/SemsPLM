@@ -3,7 +3,7 @@
 }
 
 <div id="listView">
-      <div class="user_tree clearfix">
+    <div class="user_tree clearfix">
         <div class="treeButtonWrap">
             <h3><i class="fas fa-building"></i> &nbsp;고객사/차종</h3>
         </div>
@@ -33,7 +33,7 @@
                     <div>
                         <input type="text" class="txtBox" id="txtContent" />
                     </div>
-                </div>             
+                </div>
                 <div class="searchButton">
                     <button id="btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
                 </div>
@@ -49,6 +49,7 @@
     var selOemOID = null;
     var selOemText = "";
     var selProjOID = null;
+    var selRowKey = null;
     var param = {};
     $(function () {
 
@@ -59,7 +60,7 @@
                 { name: 'Name' },
                 { name: 'ProjectType' },
                 { name: 'BPolicy' },
-                { name: 'BPolicyOID' },
+                { name: 'BPolicyAuths', type: 'Array' },
                 { name: 'CreateUsNm' },
                 { name: 'Oem_Lib_OID' },
                 { name: 'Oem_Lib_Nm' },
@@ -88,7 +89,7 @@
         ProjOemCarTree$.on('select', function (event) {
             var args = event.args;
             var item = ProjOemCarTree$.jqxTree('getItem', args.element);
-          
+
             if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_OEM") {
                 param.Oem_Lib_OID = item.id;
                 param.Car_Lib_OID = null;
@@ -105,12 +106,12 @@
                 var parentval = ProjOemCarTree$.jqxTree('getItem', args.element.parentElement.parentElement);
                 if (parentval != null) {
                     selOemText = parentval.label;
-                }              
+                }
                 param.Car_Lib_OID = selCarOID;
                 getPmsProjectList(ProjectSource, Grd$, param);
                 Grd$.jqxGrid('clearselection');
                 selProjOID = null;
-            }          
+            }
         });
 
         const Grd$ = $('#grd');
@@ -182,11 +183,38 @@
                         getPmsProjectList(ProjectSource, Grd$, param);
                     }, null, { ProjectOID: selProjOID }, '/Pms/ModifyProject?OID=' + selProjOID, '프로젝트 수정');
                 });
+                btnDelete.on('click', function () {
+                    if (selProjOID == null || selProjOID == "") {
+                        alert('프로젝트를 선택하여주세요.');
+                        return;
+                    }
+                    var data = Grd$.jqxGrid('getrowdata', selRowKey);
+                    if (data.BPolicyAuths != null) {
+                        var chkAuths = data.BPolicyAuths.findIndex(function (item) {
+                            return item.AuthNm == '@Common.Constant.CommonConstant.AUTH_DELETE';
+                        });
+                        if (chkAuths > -1) {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                RequestData('/Pms/DelProject', { OID: selProjOID }, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    alert("삭제 되었습니다.");
+                                    getPmsProjectList(ProjectSource, Grd$, param);
+                                });
+                            }
+                        } else {
+                            alert('권한이 없습니다.');
+                        }
+                    }
+                });
             },
         });
         Grd$.on('rowselect', function (event) {
             var args = event.args;
             var rowData = args.row;
+            selRowKey = rowData.uid;
             selProjOID = rowData.OID;
         });
 
@@ -226,7 +254,7 @@
             });
         });
 
-        $('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 32, });
+        $('#projType').jqxComboBox({ source: ['', '선행', '개발', '양산'], selectedIndex: 0, width: 170, height: 32, });
         getPmsProjectList(ProjectSource, Grd$, null);
 
         $('#btnSearch').on('click', function () {
@@ -237,6 +265,12 @@
             searchParam.Car_Lib_OID = selCarOID;
             searchParam.Oem_Lib_OID = selOemOID;
             getPmsProjectList(ProjectSource, Grd$, searchParam);
+        });
+
+        $('#txtContent, #txtProjName').keydown(function (key) {
+            if (key.keyCode == 13) {
+                $('#btnSearch').trigger('click');
+            }
         });
     });
 

@@ -1,6 +1,22 @@
 ﻿@{
     Layout = null;
 }
+<div style="padding:10px;">
+    <table width="100%">
+        <tr>
+            <td>
+                <h2><i class="fas fa-folder-open"></i>고객대일정 템플릿</h2>
+            </td>
+            <td style="text-align:right;">
+                <button id="CustomerScheduleTemplate_EditBtn" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                <div class="ModifiableEditCustomBox">
+                    <button id="CustomerScheduleTemplate_SaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                    <button id="CustomerScheduleTemplate_CancelBtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 <div id="CustomerScheduleTemplate_ParentGrid" style="float:left;margin-right:0.9%;"></div>
 
 <div id="CustomerScheduleTemplate_ChildGrid" style="float:left;"></div>
@@ -12,7 +28,54 @@
     var subkey; //서브idx
     var rowKey = null;
     var rowDataField = null;
+    var TemplateParentAddBtn$;
+    var TemplateParentdelBtn$;
+    var TemplateParentUpBtn$;
+    var TemplateParentDownBtn$;
+    var TemplateChildAddBtn$;
+    var TemplateChilddelBtn$;
+    var TemplateChildUpBtn$;
+    var TemplateChildDownBtn$;
     $(function () {
+
+        $('.ModifiableEditCustomBox').attr('hidden', true);
+
+        $('#CustomerScheduleTemplate_EditBtn').on('click', function () {
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            $('#CustomerScheduleTemplate_EditBtn').attr('hidden', true);
+
+            TemplateParentAddBtn$.jqxButton({ disabled: false });
+            TemplateParentdelBtn$.jqxButton({ disabled: false });
+            TemplateParentUpBtn$.jqxButton({ disabled: false });
+            TemplateParentDownBtn$.jqxButton({ disabled: false });
+
+            TemplateChildAddBtn$.jqxButton({ disabled: false });
+            TemplateChilddelBtn$.jqxButton({ disabled: false });
+            TemplateChildUpBtn$.jqxButton({ disabled: false });
+            TemplateChildDownBtn$.jqxButton({ disabled: false });
+
+            ScheduleTemplateParentGrd$.jqxGrid('setcolumnproperty', 'Name', 'editable', true);
+            ScheduleTemplateChildGrd$.jqxGrid('setcolumnproperty', 'Name', 'editable', true);
+        });
+
+        $('#CustomerScheduleTemplate_CancelBtn').on('click', function () {
+            PageReload();
+        });
+
+        $('#CustomerScheduleTemplate_SaveBtn').on('click', function () {
+            ScheduleTemplateChildGrd$.jqxGrid('endcelledit', rowKey, rowDataField, false);
+            if (confirm("저장하시겠습니까?")) {
+                RequestData('/Pms/updatCustomerScheduleTemplate', { _param: Data }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    PageReload();
+                });
+            }
+        });
+
         var ScheduleTemplateParentsource =
         {
             dataType: "json",
@@ -25,6 +88,7 @@
                 { name: 'Cdata', type: 'array' },
                 { name: 'isChange', type: 'string' },
                 { name: 'isParentMove', type: 'string' },
+                { name: 'isDelete', type: 'string' },
             ],
             addrow: function (rowid, rowdata, position, commit) {
                 // synchronize with the server - send insert command
@@ -49,8 +113,10 @@
                 commit(true);
             },
             deleterow: function (rowid, commit) {
-                Data[mkey].Cdata.splice(rowid, 1);
-                ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isChange", "Y");
+                Data[mkey].isDelete = 'Y';
+                ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isChange", null);
+                ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", null);
+                ScheduleTemplateParentGrd$.jqxGrid('setcellvalue', mkey, "isDelete", "Y");
                 commit(true);
             }
         };
@@ -59,7 +125,7 @@
         ScheduleTemplateParentGrd$.jqxGrid(
             {
                 width: "49.4%",
-                height: 810,
+                height: 750,
                 theme: "kdnc",
                 selectionmode: 'checkbox',
                 //      source: dataAdapter,
@@ -72,16 +138,17 @@
                     { text: 'OID', datafield: 'OID', type: 'number', align: 'center', hidden: true },
                     { text: 'isChange', datafield: 'isChange', type: 'string', align: 'center', hidden: true },
                     { text: 'isMove', datafield: 'isMove', type: 'string', align: 'center', hidden: true },
+                    { text: 'isDelete', datafield: 'isDelete', type: 'string', align: 'center', hidden: true },
                     { text: 'isParentMove', datafield: 'isParentMove', type: 'string', align: 'center', hidden: true },
                     {
 
-                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
                     {
-                        text: '템플릿명', datafield: 'Name', type: 'string', width: '86.8%',
+                        text: '템플릿명', datafield: 'Name', type: 'string', width: '86.8%', editable: false,
                         cellsrenderer: function (row, column, value) {
                             var item = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
@@ -102,18 +169,22 @@
                 renderToolbar: function (statusbar) {
 
                     var container$ = $('<div class="lGridComponent"></div>');
-                    var AssessListParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                    //    var AssessListParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                    var AssessListParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                    var AssessListParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
-
-                    container$.append(AssessListParentAddBtn$);
-                    //    container$.append(AssessListParentdelBtn$);
-                    container$.append(AssessListParentUpBtn$);
-                    container$.append(AssessListParentDownBtn$);
+                    TemplateParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    TemplateParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    TemplateParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    TemplateParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                    TemplateParentAddBtn$.jqxButton({ disabled: true });
+                    TemplateParentdelBtn$.jqxButton({ disabled: true });
+                    TemplateParentUpBtn$.jqxButton({ disabled: true });
+                    TemplateParentDownBtn$.jqxButton({ disabled: true });
+                    TemplateParentDownBtn$
+                    container$.append(TemplateParentAddBtn$);
+                    container$.append(TemplateParentdelBtn$);
+                    container$.append(TemplateParentUpBtn$);
+                    container$.append(TemplateParentDownBtn$);
                     statusbar.append(container$);
                     //행 추가
-                    AssessListParentAddBtn$.on('click', function (e) {
+                    TemplateParentAddBtn$.on('click', function (e) {
                         ScheduleTemplateParentGrd$.jqxGrid('addrow', null, {
                             'Name': null,
                             'KorNm': null,
@@ -125,27 +196,28 @@
 
                         });
                     });
-                    //AssessListParentdelBtn$.on('click', function (e) {
-                    //    var rowindex = ScheduleTemplateParentGrd$.jqxGrid('selectedrowindexes');
-                    //    var selectedRecords = new Array();
-                    //    if (rowindex == null || rowindex == undefined) {
-                    //        alert('삭제할 행을 선택하여 주세요');
-                    //    } else {
-                    //        if (confirm('삭제하시겠습니까?')) {
-                    //            for (var i = rowindex.length - 1; i >= 0; i--) {
-                    //                var id = ScheduleTemplateParentGrd$.jqxGrid('getrowid', rowindex[i]);
-                    //                ScheduleTemplateParentGrd$.jqxGrid('deleterow', id);
-                    //            }
-                    //        }
+                    TemplateParentdelBtn$.on('click', function (e) {
+                        var rowindex = ScheduleTemplateParentGrd$.jqxGrid('selectedrowindexes');
+                        rowindex.sort();
+                        if (rowindex == null || rowindex == undefined || rowindex.length <= 0) {
+                            alert('삭제할 행을 선택하여 주세요');
+                        } else {
+                            if (confirm('삭제하시겠습니까?')) {
+                                for (var i = rowindex.length - 1; i >= 0; i--) {
+                                    var id = ScheduleTemplateParentGrd$.jqxGrid('getrowid', rowindex[i]);
+                                    ScheduleTemplateParentGrd$.jqxGrid('deleterow', id);
+                                }
+                            }
+                            ScheduleTemplateParentGrd$.jqxGrid('clearselection');
 
-                    //    }
-                    //});
-                    AssessListParentUpBtn$.on('click', function (e) {
+                        }
+                    });
+                    TemplateParentUpBtn$.on('click', function (e) {
                         //var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindex');
 
                         var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
                         var idx = row.boundindex - 1;
-                        if (row.uid == 1) {
+                        if (row.uid == 0) {
                             return;
                         }
                         const parentDataSource = ScheduleTemplateParentGrd$.jqxGrid("source").loadedData;
@@ -160,7 +232,7 @@
                             ScheduleTemplateParentGrd$.jqxGrid('selectrow', 0);
                         }
                     });
-                    AssessListParentDownBtn$.on('click', function (e) {
+                    TemplateParentDownBtn$.on('click', function (e) {
                         //  var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindexes');
                         var row = ScheduleTemplateParentGrd$.jqxGrid('getrowdata', mkey);
                         var idx = row.boundindex + 1;
@@ -231,7 +303,7 @@
         ScheduleTemplateChildGrd$.jqxGrid(
             {
                 width: "49.4%",
-                height: 810,
+                height: 750,
                 theme: "kdnc",
                 //      source: dataAdapter,
                 selectionmode: 'checkbox',
@@ -244,13 +316,14 @@
                     { text: 'OID', datafield: 'OID', type: 'number', cellsalign: 'center', hidden: true },
                     {
 
-                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
                     {
-                        text: '고객일정명', width: '86.8%', datafield: 'Name', type: 'string', cellsrenderer: function (row, column, value) {
+                        text: '고객일정명', width: '86.8%', datafield: 'Name', type: 'string', editable: false,
+                        cellsrenderer: function (row, column, value) {
                             var item = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
                                 return "<div class='modifyTag' style='text-align:center;vertical-align:middle;'></div><p style='line-height:32px;text-indent:4px;'>" + value + "</p>";
@@ -270,25 +343,27 @@
                 renderToolbar: function (statusbar) {
 
                     var container$ = $('<div class="lGridComponent"></div>');
-                    var AssessListChildAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                    var AssessListChilddelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                    var AssessListChildUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                    var AssessListChildDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
-                    var AssessListChildSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i>저장</button>').jqxButton();
+                    TemplateChildAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    TemplateChilddelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    TemplateChildUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    TemplateChildDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
 
-                    container$.append(AssessListChildAddBtn$);
-                    container$.append(AssessListChilddelBtn$);
-                    container$.append(AssessListChildUpBtn$);
-                    container$.append(AssessListChildDownBtn$);
-                    container$.append(AssessListChildSaveBtn$);
+                    TemplateChildAddBtn$.jqxButton({ disabled: true });
+                    TemplateChilddelBtn$.jqxButton({ disabled: true });
+                    TemplateChildUpBtn$.jqxButton({ disabled: true });
+                    TemplateChildDownBtn$.jqxButton({ disabled: true });
+                    container$.append(TemplateChildAddBtn$);
+                    container$.append(TemplateChilddelBtn$);
+                    container$.append(TemplateChildUpBtn$);
+                    container$.append(TemplateChildDownBtn$);
                     statusbar.append(container$);
                     //행 추가
-                    AssessListChildAddBtn$.on('click', function (e) {
+                    TemplateChildAddBtn$.on('click', function (e) {
                         var datarow = {};
                         datarow.isChange = "Y"
                         ScheduleTemplateChildGrd$.jqxGrid('addrow', null, datarow);
                     });
-                    AssessListChilddelBtn$.on('click', function (e) {
+                    TemplateChilddelBtn$.on('click', function (e) {
                         var rowindex = ScheduleTemplateChildGrd$.jqxGrid('selectedrowindexes');
                         rowindex.sort();
                         var selectedRecords = new Array();
@@ -304,7 +379,7 @@
 
                         }
                     });
-                    AssessListChildUpBtn$.on('click', function (e) {
+                    TemplateChildUpBtn$.on('click', function (e) {
                         //var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindex');
 
                         var row = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', subkey);
@@ -325,7 +400,7 @@
                             ScheduleTemplateChildGrd$.jqxGrid('selectrow', 0);
                         }
                     });
-                    AssessListChildDownBtn$.on('click', function (e) {
+                    TemplateChildDownBtn$.on('click', function (e) {
                         //  var datarowIdx = ScheduleTemplateChildGrd$.jqxGrid('getselectedrowindexes');
                         var row = ScheduleTemplateChildGrd$.jqxGrid('getrowdata', subkey);
                         var idx = row.boundindex + 1;
@@ -344,23 +419,6 @@
                             ScheduleTemplateChildGrd$.jqxGrid('selectrow', idx);
                         } else {
                             ScheduleTemplateChildGrd$.jqxGrid('selectrow', midx);
-                        }
-                    });
-
-                    AssessListChildSaveBtn$.on('click', function (e) {
-                        ScheduleTemplateChildGrd$.jqxGrid('endcelledit', rowKey, rowDataField, false);
-                        if (confirm("저장하시겠습니까?")) {
-                            RequestData('/Pms/updatCustomerScheduleTemplate', { _param: Data }, function (response) {
-                                if (response.isError) {
-                                    alert(response.resultMessage);
-                                    return;
-                                }
-                                alert("저장되었습니다.");
-                                ScheduleTemplateParentGrd$.jqxGrid('clearselection');
-                                ScheduleTemplateChildGrd$.jqxGrid('clearselection');
-                                getScheduleTemplateList(ScheduleTemplateParentsource, ScheduleTemplateParentGrd$, param);
-                                PrintJqxGrid(ScheduleTemplateChildsource, ScheduleTemplateChildGrd$, null);
-                            });
                         }
                     });
                 }

@@ -8,6 +8,7 @@
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
             <li class="tab" info="Reverse"><i class="fas fa-file-medical"></i> 역전개 보기</li>
             <li class="tab" info="Structure"><i class="fas fa-exclamation"></i> EBOM구조</li>
+            <li class="tab" info="Revhistory"><i class="fas fa-stream"></i> 이력</li>
             <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
             @*<li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>*@
         </ul>
@@ -19,13 +20,13 @@
                 <p>품명 : <span>@Model.Title</span></p>
             </div>
             <div class="basic_image">
-                <div class="ModifiableCustomBox_@ViewBag.OID">
+                <div class="ModifiableRevCustomBox_@ViewBag.OID">
                     @if (Model.Thumbnail != null)
                     {
                         <img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")@Model.Thumbnail" style="height:90px;" />
                     }
                 </div>
-                <div class="ModifiableEditCustomBox_@ViewBag.OID">
+                <div class="ModifiableRevEditCustomBox_@ViewBag.OID">
                     <input type="file" name="file" multiple="true" id="imageDrag_@ViewBag.OID" style="display:none;">
                     <div class="image_inputbox" id="dropZone_@ViewBag.OID" style="float:left;">이미지</div>
                     <ul class="image_thumbnail" id="uploadResult_@ViewBag.OID" style="float:left;">
@@ -66,8 +67,6 @@
                                 <button id="EditBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
                                 <button id="EditSaveBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-check-square"></i> 저장</button>
                                 <button id="EditCancelBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
-                                @*<button id="AppDrwEditBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-highlighter"></i> 승인도면정정</button>
-        <button id="ReverseEditBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-eraser"></i> 역전개 수정</button>*@
                             </td>
                         </tr>
                     </tbody>
@@ -87,6 +86,14 @@
                             <td>
                                 <input type="text" value="@Model.Name" readonly="readonly" id="InfoEPartName_@ViewBag.OID" />
                             </td>
+                            <th>품명</th>
+                            <td colspan="3">
+                                <input type="text" value="@Model.Title" class="ModifiableRev_@ViewBag.OID" readonly="readonly" id="InfoEPartTitle_@ViewBag.OID" />
+                            </td>
+
+                        </tr>
+
+                        <tr>
                             <th>리비전</th>
                             <td>
                                 <input type="text" value="@Model.Revision" readonly="readonly" />
@@ -99,6 +106,10 @@
                                     <div id="InfoEPartDivisionSingleDrawing" class="EPartRadioBtn" group="EPartDivision_@ViewBag.OID" data-value="@Common.Constant.EBomConstant.DIV_SINGLE">단품도</div>
                                     <div id="InfoEPartDivisionStandard" class="EPartRadioBtn" group="EPartDivision_@ViewBag.OID" data-value="@Common.Constant.EBomConstant.DIV_STANDARD">스탠다드</div>
                                 </div>
+                            </td>
+                            <th>규격</th>
+                            <td>
+                                <input type="text" id="InfoEPartStandard_@ViewBag.OID" value="@Model.Standard" class="ModifiableRev_@ViewBag.OID" readonly="readonly" />
                             </td>
                         </tr>
 
@@ -151,7 +162,7 @@
                             </td>
                             <th>고객리비전</th>
                             <td colspan="3">
-                                <input type="text" maxlength="1" class="InfoEPart_SelRev_@ViewBag.OID Modifiable_@ViewBag.OID" id="AssemblyDrawingSel_Revision_@Model.Serial" value="@Model.Sel_Revision" readonly="readonly" />
+                                <input type="text" maxlength="1" class="InfoEPart_SelRev_@ViewBag.OID ModifiableRev_@ViewBag.OID" id="AssemblyDrawingSel_Revision_@Model.Serial" value="@Model.Sel_Revision" readonly="readonly" />
                             </td>
                         </tr>
 
@@ -192,7 +203,7 @@
                             </td>
                             <th>고객리비전</th>
                             <td colspan="3">
-                                <input type="text" class="InfoEPart_SelRev_@ViewBag.OID Modifiable_@ViewBag.OID" id="" value="@Model.Sel_Revision" readonly="readonly" maxlength="1" />
+                                <input type="text" class="InfoEPart_SelRev_@ViewBag.OID ModifiableRev_@ViewBag.OID" id="" value="@Model.Sel_Revision" readonly="readonly" maxlength="1" />
                             </td>
                         </tr>
 
@@ -214,12 +225,12 @@
                             </td>
                         </tr>
 
-                        <tr>
+                        @*<tr>
                             <th style="vertical-align:top;line-height:40px;">세부사양</th>
                             <td colspan="5">
                                 <textarea id="InfoEPartDescription_@ViewBag.OID" class="Modifiable_@ViewBag.OID" style="border:1px solid #59a3d5; height:124px; width:100%" readonly="readonly">@Model.Description</textarea>
                             </td>
-                        </tr>
+                        </tr>*@
                         <tr>
                             <th>작성일</th>
                             <td>
@@ -227,7 +238,7 @@
                             </td>
                             <th>작성자</th>
                             <td>
-                                <input type="text" value="@Model.CreateUs" readonly="readonly">
+                                <input type="text" value="@Model.CreateUsNm" readonly="readonly">
                             </td>
                             <th>상태</th>
                             <td>
@@ -237,7 +248,7 @@
                         <tr>
                             <th>수정일</th>
                             <td>
-                                <input type="text" readonly="readonly" />
+                                <input type="text" value="@Model.ModifyDt" readonly="readonly" />
                             </td>
                             <th>수정자</th>
                             <td>
@@ -275,6 +286,11 @@
         <div id="Structure" class="basic_grid dective">
             <div id="StructureInfo_@ViewBag.OID"></div>
         </div>
+
+        <div id="Revhistory" class="basic_grid dective">
+            <div id="RevhistoryInfo_@ViewBag.OID"></div>
+        </div>
+
     </div>
 </div>
 <script>
@@ -314,9 +330,9 @@
     }
 
     var name = '';
-
     var InfoEPartDivision = null;
 
+    var DoubleClickEvent = true;
 
 
     $(function () {
@@ -356,6 +372,7 @@
         $('div[group="EPartDivision_' + EPartOID + '"]').jqxRadioButton({ groupName: 'EPartDivision' });
 
         $('.ModifiableEditCustomBox_' + EPartOID).attr('hidden', true);
+        $('.ModifiableRevEditCustomBox_' + EPartOID).attr('hidden', true);
         $('.EPartRadioBtn').jqxRadioButton({ width: 110, height: 32 });
         $('.InfoEPart_Block_No_' + EPartOID).jqxComboBox({ width: 330, height: 32 });
         $('.InfoEPart_ITEM_NO_' + EPartOID).jqxComboBox({ width: "100%", height: 32 });
@@ -477,6 +494,8 @@
                 InfoEPart_psize$.jqxComboBox('selectItem', "@Model.Material_OID");
 
             } else if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+                // 선택 못하게 하는 로직 추가
+
                 InfoEPartDivision$.val("@Common.Constant.EBomConstant.DIV_STANDARD_NM");
                 $('.DivisionAssemblyDrawing_' + EPartOID).prop('hidden', 'hidden');
                 $('.DivisionSingleDrawing_' + EPartOID).prop('hidden', 'hidden');
@@ -574,7 +593,6 @@
             } else if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
                 itemno = ItemList[idx].Code2;
 
-                //InfoEPartName();
             }
         });
 
@@ -679,18 +697,31 @@
 
             if (infoValue == 'properties') {
                 $('#EditBtn_' + EPartOID).on('click', function () {
-                    $('.Modifiable_@ViewBag.OID').removeAttr('readonly');
-                    $('.ModifiableCustomBox_@ViewBag.OID').attr('hidden', true);
-                    $('.ModifiableEditCustomBox_@ViewBag.OID').attr('hidden', false);
 
                     var modifyTag = document.createElement('div');
                     modifyTag.className = "modifyTag";
+                    if (@Model.Revision == 00) {
+                        $('.Modifiable_@ViewBag.OID').removeAttr('readonly');
+                        $('.ModifiableCustomBox_@ViewBag.OID').attr('hidden', true);
+                        $('.ModifiableEditCustomBox_@ViewBag.OID').attr('hidden', false);
 
-                    $('.Modifiable_@ViewBag.OID').parent().css('position', 'relative');
-                    $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
+                        $('.Modifiable_@ViewBag.OID').parent().css('position', 'relative');
+                        $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
 
-                    $('.Modifiable_@ViewBag.OID').parent().append(modifyTag);
-                    $('.ModifiableEditCustomBox_@ViewBag.OID').parent().append(modifyTag);
+                        $('.Modifiable_@ViewBag.OID').parent().append(modifyTag);
+                        $('.ModifiableEditCustomBox_@ViewBag.OID').parent().append(modifyTag);
+                    }
+
+                    $('.ModifiableRev_@ViewBag.OID').removeAttr('readonly');
+                    $('.ModifiableRevCustomBox_@ViewBag.OID').attr('hidden', true);
+                    $('.ModifiableRevEditCustomBox_@ViewBag.OID').attr('hidden', false);
+
+                    $('.ModifiableRev_@ViewBag.OID').parent().css('position', 'relative');
+                    $('.ModifiableRev_@ViewBag.OID').parent().append(modifyTag);
+
+                    $('#EditBtn_@ViewBag.OID').attr('hidden', true);
+                    $('#EditSaveBtn_@ViewBag.OID').attr('hidden', false);
+                    $('#EditCancelBtn_@ViewBag.OID').attr('hidden', false);
 
                     InfoFiles.EditMode();
 
@@ -699,12 +730,23 @@
                     });
 
                     InfoEPart_ITEM_NO$.on('change', function (evt) {
+                        block = '';
+                        InfoEPart_Serial$.val('');
+                        InfoEPart_Serial$.change();
                         InfoEPartName();
                     });
 
                     InfoEPart_Place$.on('change', function (evt) {
                         var idx = evt.args.index;
                         place = placeList[idx].Name;
+                        InfoEPartName();
+                    });
+
+                    InfoEPart_ITEM_Middle$.on('change', function (evt) {
+                        //var idx = evt.args.index;
+                        var data = evt.args.item.originalItem;
+                        InfoEPart_Serial$.val(data.Code1);
+                        InfoEPart_Serial$.change();
                         InfoEPartName();
                     });
 
@@ -719,13 +761,6 @@
                         InfoEPartName();
                     });
 
-                    InfoEPart_ITEM_Middle$.on('change', function (evt) {
-                        //var idx = evt.args.index;
-                        var data = evt.args.item.originalItem;
-                        InfoEPart_Serial$.val(data.Code1);
-                        InfoEPartName();
-                    });
-
                     InfoEPart_epartType$.on('change', function (evt) {
                         var idx = evt.args.index;
                         etype = epartList[idx].Name;
@@ -733,11 +768,25 @@
                     });
 
                     InfoEPart_Serial$.on('change paste keyup', function () {
+                        $(this).val($(this).val().toUpperCase());
                         serial = $(this).val();
                         InfoEPartName();
                     });
 
                     InfoEPart_SelRev$.on('change paste keyup', function () {
+                        $(this).val($(this).val().toUpperCase());
+                        if ($(this).val() == "O" || $(this).val() == "I") {
+                            $(this).val("");
+                            InfoEPartName();
+                            return;
+                        }
+
+                        if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                            srev = InfoEPart_SelRev$[0].value;
+                        } else if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                            srev = InfoEPart_SelRev$[1].value;
+                        }
+
                         srev = $(this).val();
                         InfoEPartName();
                     });
@@ -770,6 +819,9 @@
                     var InfoEPartParam = {};
                     InfoEPartParam.OID = EPartOID;
                     InfoEPartParam.Name = InfoEPartName$.val();
+                    InfoEPartParam.Title = $('#InfoEPartTitle_@ViewBag.OID').val();
+                    InfoEPartParam.Standard = $('#InfoEPartStandard_@ViewBag.OID').val();
+
                     InfoEPartParam.Description = $('#InfoEPartDescription_@ViewBag.OID').val();
                     InfoEPartParam.Thumbnail = InfoEPartThumbnailData;
                     if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {            //조립도일때
@@ -868,6 +920,16 @@
                         { name: 'ObjProduction_PlaceNm', type: 'text' },
                         { name: 'ObjCar_Lib_OID', type: 'number' },
                         { name: 'ObjCar_Lib_Nm', type: 'text' },
+
+                        { name: 'ObjOem_Lib_OID', type: 'number' },
+                        { name: 'ObjOem_Lib_Nm', type: 'text' },
+
+                        { name: 'ObjTitle' },
+                        { name: 'ObjSel_Revision', type: 'text' },
+                        { name: 'ObjDivision', type: 'text' },
+                        { name: 'ObjDivisionNm', type: 'text' },
+                        { name: 'ObjStandard', type: 'text' },
+
                     ],
                     hierarchy:
                     {
@@ -891,16 +953,19 @@
                     height: 665,
                     theme: "kdnc",
                     sortable: true,
+                    toolbarHeight: 44,
                     showToolbar: true,
                     editable: false,
                     source: ReverseDataAdapter,
                     ready: function () {
                     },
                     columns: [
-                        { name: 'Level', dataField: 'Level', type: 'number', width: '10%' },
-                        { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '15%' },
+                        { dataField: 'Level', type: 'number', width: '10%', align: 'center' },
+                        { dataField: 'ObjOem_Lib_Nm', type: 'text', text: 'OEM', width: '5%', cellsalign: 'center', align: 'center' },
+                        { dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '5%', cellsalign: 'center', align: 'center' },
+                        { dataField: 'ObjDivisionNm', type: 'text', text: '구분', width: '6%', cellsalign: 'center', align: 'center' },
                         {
-                            name: 'ObjName', dataField: 'ObjName', type: 'text', text: '품번', width: '15%',
+                            dataField: 'ObjName', type: 'text', text: '품번', width: '12%', align: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 if (rowData.FromOID == @ViewBag.OID) {
 
@@ -910,13 +975,32 @@
                                 }
                             }
                         },
-                        { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '15%' },
-                        { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '11%' },
-                        { name: 'ObjBlock_NoNm', dataField: 'ObjBlock_NoNm', type: 'text', text: 'BLOCK_NO', width: '12%' },
-                        { name: 'Ord', dataField: 'Ord', type: 'number', text: '순서', width: '5%' },
-                        { name: 'Count', dataField: 'Count', type: 'number', text: '수량', width: '5%' },
-                        { name: 'ObjThumbnail', dataField: 'ObjThumbnail', type: 'text', text: '이미지', width: '12%' },
-                    ]
+                        { dataField: 'ObjTitle', type: 'text', text: '품명', width: '12%', cellsalign: 'center', align: 'center' },
+                        { dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '10%', align: 'center', cellsalign: 'center', },
+                        { dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '10%', align: 'center', cellsalign: 'center', },
+                        { dataField: 'ObjStandard', type: 'text', text: '규격', width: '9%', align: 'center', cellsalign: 'center', },
+                        { dataField: 'ObjSel_Revision', type: 'text', text: '고객리비전', width: '6%', align: 'center', cellsalign: 'center', },
+                        { dataField: 'ObjRevision', type: 'text', text: '리비전', width: '5%', align: 'center', cellsalign: 'center', },
+                        //{ dataField: 'Ord', type: 'number', text: '순서', width: '4%', align: 'center', cellsalign: 'center',},
+                        //{ dataField: 'Count', type: 'number', text: '수량', width: '4%', align: 'center', cellsalign: 'center',},
+                        { dataField: 'ObjThumbnail', type: 'text', text: '이미지', width: '10%', align: 'center', cellsalign: 'center', },
+                    ],
+                    rendertoolbar: function (toolBar) {
+                        toolBar.empty();
+                        var container = $("<div class='lGridComponent' ></div>");
+                        var reverseButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 역전개 개정</button>").jqxButton();
+                        container.append(reverseButton);
+                        toolBar.append(container);
+
+                        reverseButton.click(function (event) {
+                            OpenSearchTopEPartDialog(null, null, { OID: EPartOID }, '/EBom/dlgSearchTopEPart', '최상위 EPart 검색');
+
+
+                            //function (res) {
+                            //    EBomTreeGrid$.jqxTreeGrid('selectRow', rowKey);
+                            //}
+                        });
+                    },
                 });
 
 
@@ -928,7 +1012,7 @@
 
             } else if (infoValue == 'Structure') {
                 var maxId = 0;
-                var click = true;
+
                 EBomParam.OID = EPartOID;
 
                 //rowSelectFlag = "T";
@@ -950,8 +1034,9 @@
                         { name: 'Count', type: 'number' },
                         { name: 'Action' },
                         { name: 'OldOID' },
+                        { name: 'BPolicy' },
 
-                        { name: 'TimeOID'},
+                        { name: 'TimeOID' },
 
                         { name: 'ObjRevision', type: 'text' },
                         { name: 'ObjTdmxOID', type: 'text' },
@@ -973,12 +1058,21 @@
                         { name: 'ObjProduction_PlaceNm', type: 'text' },
                         { name: 'ObjCar_Lib_OID', type: 'number' },
                         { name: 'ObjCar_Lib_Nm', type: 'text' },
+                        { name: 'ObjDivision' },
+                        { name: 'ObjDivisionNm' },
+
+                        { name: 'ObjOem_Lib_OID', type: 'number' },
+                        { name: 'ObjOem_Lib_Nm', type: 'text' },
+
+                        { name: 'ObjTitle' },
+                        { name: 'ObjSel_Revision', type: 'text' },
+                        { name: 'ObjStandard', type: 'text' },
                     ],
                     hierarchy:
                     {
                         root: 'Children',
                     },
-                    id: 'TimeOID',
+                    id: 'OID',
                     addRow: function (rowID, rowData, position, parentID, commit) {
                         //rowData.Level = rowData.level;
                         if (maxId == 0) {
@@ -1037,13 +1131,15 @@
 
                     columns: [
                         { name: 'Level', dataField: 'Level', type: 'number', width: '10%', editable: false },
-                        { name: 'OID', dataField: 'OID', type: 'number', width: '10%',  editable: false, hidden: false },
-                        { name: 'FromOID', dataField: 'FromOID', type: 'number', width: '10%',  editable: false, hidden: false },
-                        { name: 'ToOID', dataField: 'ToOID', type: 'number', width: '10%',  editable: false, hidden: false },
+                        { name: 'OID', dataField: 'OID', type: 'number', width: '10%', editable: false, hidden: true },
+                        { name: 'FromOID', dataField: 'FromOID', type: 'number', width: '10%', editable: false, hidden: true },
+                        { name: 'ToOID', dataField: 'ToOID', type: 'number', width: '10%', editable: false, hidden: true },
 
-                        { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '15%', editable: false },
+                        { name: 'ObjOem_Lib_Nm', dataField: 'ObjOem_Lib_Nm', type: 'text', text: 'OEM', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjDivisionNm', dataField: 'ObjDivisionNm', type: 'text', text: '구분', width: '5%', editable: false, cellsalign: 'center', align: 'center' },
                         {
-                            name: 'ObjName', id: 'ObjName', dataField: 'ObjName', type: 'text', text: '품번', width: '15%', editable: false,
+                            name: 'ObjName', id: 'ObjName', dataField: 'ObjName', type: 'text', text: '품번', width: '12%', editable: false, align: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 const editable = EBomTreeGrid$.jqxTreeGrid('editable');
                                 if (rowData.ToOID == @ViewBag.OID) {
@@ -1058,11 +1154,16 @@
                                 }
                             }
                         },
-                        { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '15%', editable: false },
-                        { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '11%', editable: false },
-                        { name: 'ObjBlock_NoNm', dataField: 'ObjBlock_NoNm', type: 'text', text: 'BLOCK_NO', width: '12%', editable: false },
+                        { name: 'ObjTitle', dataField: 'ObjTitle', type: 'text', text: '품명', width: '12%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '10%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '8%', editable: false, cellsalign: 'center', align: 'center' },
+
+                        { name: 'ObjStandard', dataField: 'ObjStandard', type: 'text', text: '규격', width: '7%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjSel_Revision', dataField: 'ObjSel_Revision', type: 'text', text: '고객리비전', width: '6%', editable: false, cellsalign: 'center', align: 'center' },
+                        { name: 'ObjRevision', dataField: 'ObjRevision', type: 'text', text: '리비전', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+
                         {
-                            name: 'Ord', dataField: 'Ord', type: 'number', text: '순서', width: '5%',
+                            name: 'Ord', dataField: 'Ord', type: 'number', text: '순서', width: '4%', align: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData) {
                                 var editable = EBomTreeGrid$.jqxTreeGrid('editable');
                                 if (editable && rowData.ToOID != @ViewBag.OID) {
@@ -1074,7 +1175,7 @@
                             },
                         },
                         {
-                            name: 'Count', dataField: 'Count', type: 'number', text: '수량', width: '5%',
+                            name: 'Count', dataField: 'Count', type: 'number', text: '수량', width: '4%', align: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData) {
                                 var editable = EBomTreeGrid$.jqxTreeGrid('editable');
                                 if (editable && rowData.ToOID != @ViewBag.OID) {
@@ -1086,7 +1187,7 @@
                             },
                         },
                         {
-                            name: 'ObjThumbnail', dataField: 'ObjThumbnail', type: 'text', text: '이미지', width: '12%', editable: false,
+                            name: 'ObjThumbnail', dataField: 'ObjThumbnail', type: 'text', text: '이미지', width: '10%', editable: false, align: 'center',
                             cellsrenderer: function (row, column, value) {
                                 if (value.length > 1) {
                                     return "<div class='ebomImg'><img src='@Url.Content("~/images/Thumbnail/")" + value + "'></div>";
@@ -1097,17 +1198,22 @@
                         },
                     ],
                     rendertoolbar: function (toolBar) {
-                        toolBar.empty();
+                        const editable = EBomTreeGrid$.jqxTreeGrid('editable');
+                        if (!editable && toolBar[0].children.length > 0) {
+                            return;
+                        }
+
                         var modifyFlag = false;
                         var container = $("<div class='lGridComponent' ></div>");
-                        var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
+                        var modifyButton = $("<button id='modifyButton' class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
                         var TreeAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
-                        var AddButton = $("<button id='ChildAddBtn' class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
-                        var replacedButton = $("<button id='ReplacedBtn' class='custom-button'><i class='fas fa-exchange-alt'></i> 대체</button>").jqxButton();
-                        var deleteButton = $("<button id='DeleteBtn' class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
+                        var AddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                        var replacedButton = $("<button class='custom-button'><i class='fas fa-exchange-alt'></i> 대체</button>").jqxButton();
+                        var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
                         var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
                         var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
                         var excelButton = $("<button class='custom-button'><i class='fas fa-file-excel'></i> excelExport</button>").jqxButton();
+                        var revisionUpButton = $("<button class='custom-button'><i class='fas fa-save'></i> 개정</button>").jqxButton();
 
                         TreeAddButton.jqxButton({ disabled: true });
                         AddButton.jqxButton({ disabled: true });
@@ -1115,6 +1221,7 @@
                         saveButton.jqxButton({ disabled: true });
                         cancelButton.jqxButton({ disabled: true });
                         replacedButton.jqxButton({ disabled: true });
+                        revisionUpButton.jqxButton({ disabled: true });
 
                         container.append(modifyButton);
                         container.append('<span class="buttonSeparator"></span>');
@@ -1127,16 +1234,15 @@
                         container.append(cancelButton);
                         container.append('<span class="buttonSeparator"></span>');
                         container.append(excelButton);
+                        container.append(revisionUpButton);
                         toolBar.append(container);
 
                         var actionContent = function (action) {
                             switch (action.toUpperCase()) {
                                 case "MODIFY":
-                                    console.log("MODIFY");
                                     EBomTreeGrid$.jqxTreeGrid({ editable: true });
 
                                 case "CANCEL":
-                                    console.log("CANCEL");
                                     modifyFlag = !modifyFlag;
                                     modifyButton.jqxButton({ disabled: modifyFlag });
                                     saveButton.jqxButton({ disabled: !modifyFlag });
@@ -1144,30 +1250,29 @@
                                     replacedButton.jqxButton({ disabled: !modifyFlag });
                                     TreeAddButton.jqxButton({ disabled: !modifyFlag });
                                     deleteButton.jqxButton({ disabled: !modifyFlag });
+                                    revisionUpButton.jqxButton({ disabled: !modifyFlag });
                                     if (action.toUpperCase() == 'CANCEL') {
-                                        console.log("CANCEL2");
                                         replacedButton.jqxButton({ disabled: !modifyFlag });
                                         //AddButton.jqxButton({ disabled: !modifyFlag });
                                         TreeAddButton.jqxButton({ disabled: !modifyFlag });
                                         deleteButton.jqxButton({ disabled: !modifyFlag });
                                         EBomTreeGrid$.jqxTreeGrid({ editable: false });
+                                        revisionUpButton.jqxButton({ disabled: !modifyFlag });
                                     }
                                     break;
                                 case "SELECT":
                                     replacedButton.jqxButton({ disabled: !modifyFlag });
                                     if (action.toUpperCase() == 'SELECT') {
-                                        console.log(1);
-                                        console.log(!modifyFlag);
                                         replacedButton.jqxButton({ disabled: !modifyFlag });
                                         //AddButton.jqxButton({ disabled: !modifyFlag });
                                         TreeAddButton.jqxButton({ disabled: !modifyFlag });
                                         deleteButton.jqxButton({ disabled: !modifyFlag });
+                                        revisionUpButton.jqxButton({ disabled: !modifyFlag });
                                     }
                                     break;
                                 case "LEVEL":
                                     if (action.toUpperCase() == 'LEVEL') {
                                         deleteButton.jqxButton({ disabled: true });
-                                        replacedButton.jqxButton({ disabled: true });
                                     }
                                     break;
                                 case "UNSELECT":
@@ -1175,6 +1280,7 @@
                                     //AddButton.jqxButton({ disabled: true });
                                     TreeAddButton.jqxButton({ disabled: true });
                                     deleteButton.jqxButton({ disabled: true });
+                                    revisionUpButton.jqxButton({ disabled: true });
                                     break;
                             }
                         };
@@ -1188,11 +1294,7 @@
 
                         saveButton.click(function (event) {
                             if (confirm('저장하시겠습니까?')) {
-                                if (click) {
-                                    click = !click;
-                                } else {
-                                    return;
-                                }
+
                                 var EditDataList = [];
 
                                 var EditData = fEPartArray(EBomTreeGrid$.jqxTreeGrid('getRows'));
@@ -1223,27 +1325,30 @@
                                         DelDataList = [];
                                         cancelButton.click();
                                         modifyFlag = false;
-                                        click = !click;
                                         return;
                                     }
                                     alert("저장되었습니다.");
                                     DelDataList = [];
                                     cancelButton.click();
                                     modifyFlag = false;
-                                    click = !click;
                                 });
                             }
                         });
 
                         replacedButton.click(function (event) {
-                            if (click) {
-                                click = !click;
-                            } else {
-                                return;
-                            }
 
                             var checkRows = EBomTreeGrid$.jqxTreeGrid('getSelection');
                             if (checkRows.length == 0) {
+                                return;
+                            }
+
+                            if (checkRows[0].level == 0) {
+                                alert('최상위는 대체 할 수 없습니다');
+                                return;
+                            }
+
+                            if (checkRows[0].Action == "A" || checkRows[0].Action == "RU") {
+                                alert('작업중인 품번은 대체가 불가능 합니다.');
                                 return;
                             }
 
@@ -1251,7 +1356,6 @@
                                 EBomTreeGrid$.jqxTreeGrid('selectRow', rowKey);
                             }, null, null, '/EBom/dlgSearchEBomStructure?OID=' + EPartOID, 'EBOM 대체', null, EBomTreeGrid$, rowKey, "RU", checkRows);
 
-                            click = !click;
                         });
 
 
@@ -1275,9 +1379,8 @@
                                 return;
                             }
 
-                            EBomTreeGrid$.jqxTreeGrid('expandRow', rowKey);
+                            //EBomTreeGrid$.jqxTreeGrid('expandRow', rowKey);
                             const parentData = EBomTreeGrid$.jqxTreeGrid('getRow', rowKey);
-                            //console.log(parentData);
 
                             EBomTreeGrid$.jqxTreeGrid('addRow', null, {
 
@@ -1308,12 +1411,17 @@
 
                         deleteButton.click(function (event) {
                             if (!deleteButton.jqxButton('disabled')) {
+                                if (rowKey == null) {
+                                    alert('구조를 선택해주세요');
+                                    return;
+                                }
                                 var Key = rowKey;
                                 var DeleteKey = EBomTreeGrid$.jqxTreeGrid('getRow', Key);
-                                //EBomTreeGrid$.jqxTreeGrid('updateRow', Key, { Action : "D" });
-                                //EBomTreeGrid$.jqxTreeGrid('updateBoundData');
-                                //EBomTreeGrid$.jqxTreeGrid('deleteRow', Key);
-                                //EBomTreeGrid$.jqxTreeGrid('clearSelection');
+
+                                if (DeleteKey.level == 0) {
+                                    alert('최상위는 삭제 할 수 없습니다.');
+                                    return;
+                                }
 
                                 DeleteKey.Action = "D";
                                 EBomTreeGrid$.jqxTreeGrid('deleteRow', Key);
@@ -1333,28 +1441,42 @@
                             EBomTreeGrid$.jqxTreeGrid('exportData', 'xls');
                         });
 
+                        revisionUpButton.click(function () {
+                            var checkRows = EBomTreeGrid$.jqxTreeGrid('getSelection');
+                            console.log(checkRows);
+                            if (checkRows != null && checkRows.length > 0) {
+                                if (checkRows[0].BPolicy.Name != '@Common.Constant.CommonConstant.POLICY_APPROVAL_COMPLETED') {
+                                    alert('작성중 또는 반려중인 품번 입니다.');
+                                    return;
+                                }
+                                if (checkRows[0].parent != null && checkRows[0].parent.BPolicy.Name == '@Common.Constant.CommonConstant.POLICY_APPROVAL_COMPLETED') {
+                                    alert('상위가 배포중입니다.');
+                                    return;
+                                }
+
+                                var StructureUpdate = {};
+                                StructureUpdate.ToOID = checkRows[0].ToOID;
+                                StructureUpdate.OID = checkRows[0].OID;
+                                StructureUpdate.ObjDivision = checkRows[0].ObjDivision;
+                                RequestData('/EBom/EPartStructureUpdate', StructureUpdate, function (response) {
+                                    if (response.isError) {
+                                        alert(response.resultMessage);
+                                        return;
+                                    }
+                                    alert("개정 되었습니다.");
+                                });
+                            }
+                        });
+
                         rowKey = null;
                         EBomTreeGrid$.on('rowSelect', function (event) {
                             if (rowKey == event.args.key) {
                                 return;
                             }
-                            var previousRowKey = null;
-                            var checkRows = EBomTreeGrid$.jqxTreeGrid('getSelection');
-                            if (checkRows != null && checkRows.length > 0) {
-                                previousRowKey = checkRows.filter(function (item) {
-                                    return item.OID != rowKey
-                                });
-                                if (previousRowKey.length > 0) {
-                                    previousRowKey = previousRowKey[0].ToOID;
-                                } else {
-                                    previousRowKey = rowKey;
-                                }
-                            }
                             var args = event.args;
-                            if (previousRowKey != rowKey) {
-                                //EBomTreeGrid$.jqxTreeGrid('unselectRow', rowKey);
-                            }
                             rowKey = args.key;
+
+                            var checkRows = EBomTreeGrid$.jqxTreeGrid('getSelection');
                             actionContent('Select');
                             if (rowKey == 0) {
                                 actionContent('Level');
@@ -1367,7 +1489,6 @@
                 RequestData('/EBom/SelectEBom', EBomParam, function (res) {
                     PrintJqxTreeGrid(EBomsource, EBomTreeGrid$, [res]);
                     EBomTreeGrid$.jqxTreeGrid('expandAll');
-                    //EBomTreeGrid$.jqxTreeGrid('sortBy', 'Ord', 'asc');
                 });
 
 
@@ -1386,6 +1507,8 @@
                 });
 
                 EBomTreeGrid$.on('rowEndEdit', function (event) {
+
+
                     var args = event.args;
                     var row = args.row;
                     var key = args.key;
@@ -1398,11 +1521,118 @@
                         return;
                     }
                     if (row.ObjName != SaveObjName && (SaveLevel == row.Level || SaveLevel == null)) {
-                        OpenSearchEBomTreeADialog(function (res) {
-                            EBomTreeGrid$.jqxTreeGrid('selectRow', rowKey);
-                        }, null, null, '/EBom/dlgSetSearchEBomStructure?OID=' + EPartOID, 'EBOM 추가', null, EBomTreeGrid$, rowKey, "TreeA", checkRows);
+                        if (DoubleClickEvent == true) {
+                            DoubleClickEvent = false;
+                        } else {
+                            return;
+                        }
+                        setTimeout(function () {
+                            OpenSearchEBomTreeADialog(function (res) {
+                                EBomTreeGrid$.jqxTreeGrid('selectRow', rowKey);
+                            }, null, null, '/EBom/dlgSetSearchEBomStructure?OID=' + EPartOID, 'EBOM 추가', null, EBomTreeGrid$, rowKey, "TreeA", checkRows);
+                            DoubleClickEvent = true;
+                        }, 100);
+
                     }
                 });
+            } else if (infoValue == 'Revhistory') {
+                var TdmxParam = {};
+                TdmxParam.TdmxOID = "@Model.TdmxOID";
+
+                var RevhistorySource =
+                {
+                    dataType: "json",
+                    dataFields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'BPolicyOID' },
+                        { name: 'BPolicy' },
+                        { name: 'CreateUsNm' },
+                        { name: 'CreateDt', type: 'date' },
+
+                        { name: 'Title' },
+
+                        { name: 'Oem_Lib_OID' },
+                        { name: 'Oem_Lib_Nm' },
+                        { name: 'Sel_Revision' },
+                        { name: 'Division' },
+                        { name: 'Standard' },
+
+                        { name: 'Car_Lib_OID' },
+                        { name: 'Car_Lib_Nm' },
+                        { name: 'ITEM_No' },
+                        { name: 'ITEM_NoNm' },
+                        { name: 'Block_No' },
+                        { name: 'Block_NoNm' },
+                        { name: 'Material_OID' },
+                        { name: 'Material_Nm' },
+                        { name: 'EPartType' },
+                        { name: 'Sel_Eo' },
+                        { name: 'Sel_Eo_Dt', type: 'date' },
+                        { name: 'Thumbnail' },
+                        { name: 'Revision' },
+                    ],
+                    id: 'OID',
+                };
+
+                var RevhistoryAdapter = new $.jqx.dataAdapter(RevhistorySource);
+                const RevhistoryGrid$ = $('#RevhistoryInfo_' + EPartOID);
+                RevhistoryGrid$.jqxGrid('render');
+                RevhistoryGrid$.jqxGrid({
+                    width: "100%",
+                    height: 665,
+                    theme: "kdnc",
+                    sortable: true,
+                    toolbarHeight: 44,
+                    showToolbar: false,
+                    editable: false,
+                    source: RevhistoryAdapter,
+                    ready: function () {
+                        RequestData("/Ebom/SelEPart", TdmxParam, function (res) {
+                            PrintJqxGrid(RevhistorySource, RevhistoryGrid$, res);
+                        });
+                    },
+                    columns: [
+                        {
+                            text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '구분', datafield: 'Division', width: "7%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                if (value == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                                    return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_ASSEMBLY_NM" + "</div>";
+                                } else if (value == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                                    return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_SINGLE_NM" + "</div>";
+                                } else {
+                                    return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_STANDARD_NM" + "</div>";
+                                }
+                            }
+                        },
+                        { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                        { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                        { text: '고객리비전', datafield: 'Sel_Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            }
+                        },
+                    ],
+                });
+
+
+
             }
         });
 
@@ -1464,5 +1694,7 @@
         }
         InfoEPartName$.val(name);
     }
+
+
 
 </script>

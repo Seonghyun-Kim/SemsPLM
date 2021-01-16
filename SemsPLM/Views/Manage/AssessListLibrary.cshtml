@@ -1,6 +1,22 @@
 ﻿@{
     Layout = null;
 }
+<div style="padding:10px;">
+    <table width="100%">
+        <tr>
+            <td>
+                <h2><i class="fas fa-folder-open"></i> 영향성평가 라이브러리</h2>
+            </td>
+            <td style="text-align:right;">
+                <button id="AssessListLibrary_EditBtn" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                <div class="ModifiableEditCustomBox">
+                    <button id="AssessListLibrary_SaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+                    <button id="AssessListLibrary_CancelBtn" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 <div id="AssessListLibrary_ParentGrid" style="float:left;margin-right:0.9%;"></div>
 
 <div id="AssessListLibrary_ChildGrid" style="float:left;"></div>
@@ -8,9 +24,53 @@
 <script>
     var param = {};
     var Data;
-    var mkey; //메인idx
-    var subkey; //서브idx
+    var mkey = null; //메인idx
+    var subkey = null; //서브idx
+    var AssessListParentAddBtn$;
+    var AssessListParentdelBtn$;
+    var AssessListParentUpBtn$;
+    var AssessListParentDownBtn$;
+    var AssessListChildAddBtn$;
+    var AssessListChilddelBtn$;
+    var AssessListChildUpBtn$;
+    var AssessListChildDownBtn$;
     $(function () {
+        $('.ModifiableEditCustomBox').attr('hidden', true);
+
+        $('#AssessListLibrary_EditBtn').on('click', function () {
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+            $('#AssessListLibrary_EditBtn').attr('hidden', true);
+
+            AssessListParentAddBtn$.jqxButton({ disabled: false });
+            AssessListParentdelBtn$.jqxButton({ disabled: false });
+            AssessListParentUpBtn$.jqxButton({ disabled: false });
+            AssessListParentDownBtn$.jqxButton({ disabled: false });
+
+            AssessListChildAddBtn$.jqxButton({ disabled: false });
+            AssessListChilddelBtn$.jqxButton({ disabled: false });
+            AssessListChildUpBtn$.jqxButton({ disabled: false });
+            AssessListChildDownBtn$.jqxButton({ disabled: false });
+
+            AssessListParentGrd$.jqxGrid('setcolumnproperty', 'Name', 'editable', true);
+            AssessListChildGrd$.jqxGrid('setcolumnproperty', 'Name', 'editable', true);
+        });
+
+        $('#AssessListLibrary_CancelBtn').on('click', function () {
+            PageReload();
+        });
+
+        $('#AssessListLibrary_SaveBtn').on('click', function () {
+            if (confirm("저장하시겠습니까?")) {
+                RequestData('/Manage/updateAssessLibrary', { _param: Data }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    PageReload();
+                });
+            }
+        });
         var AssessListParentsource =
         {
             dataType: "json",
@@ -25,7 +85,7 @@
                 { name: 'Revision', type: 'string' },
                 { name: 'isParentMove', type: 'string' },
                 { name: 'isDelete', type: 'string' },
-                ],
+            ],
             addrow: function (rowid, rowdata, position, commit) {
                 // synchronize with the server - send insert command
                 // call commit with parameter true if the synchronization with the server is successful
@@ -62,7 +122,7 @@
         AssessListParentGrd$.jqxGrid(
             {
                 width: "49.4%",
-                height: 800,
+                height: 750,
                 theme: "kdnc",
                 selectionmode: 'checkbox',
                 //      source: dataAdapter,
@@ -79,13 +139,13 @@
                     { text: 'isParentMove', datafield: 'isParentMove', type: 'string', align: 'center', hidden: true },
                     {
 
-                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
                     {
-                        text: '내용', datafield: 'Name', type: 'string', width: '86.8%',
+                        text: '내용', datafield: 'Name', type: 'string', width: '86.8%', editable: false,
                         cellsrenderer: function (row, column, value) {
                             var item = AssessListParentGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
@@ -103,89 +163,99 @@
                 showToolbar: true,
                 toolbarHeight: 45,
 
-                 renderToolbar: function (statusbar) {
+                renderToolbar: function (statusbar) {
 
                     var container$ = $('<div class="lGridComponent"></div>');
-                    var  AssessListParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                     var AssessListParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                     var AssessListParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                     var AssessListParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
-
-                     container$.append(AssessListParentAddBtn$);
-                     container$.append(AssessListParentdelBtn$);
-                     container$.append(AssessListParentUpBtn$);
-                     container$.append(AssessListParentDownBtn$);
+                    AssessListParentAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    AssessListParentdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    AssessListParentUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    AssessListParentDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                    AssessListParentAddBtn$.jqxButton({ disabled: true });
+                    AssessListParentdelBtn$.jqxButton({ disabled: true });
+                    AssessListParentUpBtn$.jqxButton({ disabled: true });
+                    AssessListParentDownBtn$.jqxButton({ disabled: true });
+                    container$.append(AssessListParentAddBtn$);
+                    container$.append(AssessListParentdelBtn$);
+                    container$.append(AssessListParentUpBtn$);
+                    container$.append(AssessListParentDownBtn$);
                     statusbar.append(container$);
                     //행 추가
                     AssessListParentAddBtn$.on('click', function (e) {
                         AssessListParentGrd$.jqxGrid('addrow', null, {
-                            'Name' : null,
-                            'KorNm' : null,
-                            'Ord' : null, 
+                            'Name': null,
+                            'KorNm': null,
+                            'Ord': null,
                             'isMove': null,
-                            'Cdata' : [],
+                            'Cdata': [],
                             'isChange': "Y",
-                            'isParentMove':null
+                            'isParentMove': null
 
                         });
                     });
-                     AssessListParentdelBtn$.on('click', function (e) {
-                         var rowindex = AssessListParentGrd$.jqxGrid('selectedrowindexes');
-                         rowindex.sort();
-                         if (rowindex == null || rowindex == undefined || rowindex.length <=0) {
-                             alert('삭제할 행을 선택하여 주세요');
-                         } else {
-                             if (confirm('삭제하시겠습니까?')) {
-                                 for (var i = rowindex.length - 1; i >= 0; i--) {
-                                     var id = AssessListParentGrd$.jqxGrid('getrowid', rowindex[i]);
-                                     AssessListParentGrd$.jqxGrid('deleterow', id);
-                                 }
-                             }
-                             AssessListParentGrd$.jqxGrid('clearselection');
+                    AssessListParentdelBtn$.on('click', function (e) {
+                        var rowindex = AssessListParentGrd$.jqxGrid('selectedrowindexes');
+                        rowindex.sort();
+                        if (rowindex == null || rowindex == undefined || rowindex.length <= 0) {
+                            alert('삭제할 행을 선택하여 주세요');
+                        } else {
+                            if (confirm('삭제하시겠습니까?')) {
+                                for (var i = rowindex.length - 1; i >= 0; i--) {
+                                    var id = AssessListParentGrd$.jqxGrid('getrowid', rowindex[i]);
+                                    AssessListParentGrd$.jqxGrid('deleterow', id);
+                                }
+                            }
+                            AssessListParentGrd$.jqxGrid('clearselection');
 
-                         }
-                     });
-                     AssessListParentUpBtn$.on('click', function (e) {
-                         //var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindex');
-
-                         var row = AssessListParentGrd$.jqxGrid('getrowdata', mkey);
-                         var idx = row.boundindex - 1;
-                         if (row.uid == 1) {
-                             return;
-                         }
-                         const parentDataSource = AssessListParentGrd$.jqxGrid("source").loadedData;
-                         fMoveGridRecusive(parentDataSource, row.OID, 'UP');
-                         AssessListParentGrd$.jqxGrid('updatebounddata');
-                         //AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
-                         Data[0].isParentMove = "Y";
-                         AssessListParentGrd$.jqxGrid('clearselection');
-                         if (idx >= 0) {
-                             AssessListParentGrd$.jqxGrid('selectrow', idx);
-                         } else {
-                             AssessListParentGrd$.jqxGrid('selectrow', 0);
-                         }
-                     });
-                     AssessListParentDownBtn$.on('click', function (e) {
-                         //  var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindexes');
-                         var row = AssessListParentGrd$.jqxGrid('getrowdata', mkey);
-                         var idx = row.boundindex + 1;
-                         var maxLength = AssessListParentGrd$.jqxGrid('getrows').length;
-                         if (row.uid == maxLength) {
-                             return;
-                         }
-                         const parentDataSource = AssessListParentGrd$.jqxGrid("source").loadedData;
-                         var midx = parentDataSource.length - 1;
-                         fMoveGridRecusive(parentDataSource, row.OID, 'DOWN');
-                         AssessListParentGrd$.jqxGrid('updatebounddata');
-                         // AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
-                         Data[0].isParentMove = "Y";
-                         AssessListParentGrd$.jqxGrid('clearselection');
-                         if (idx <= midx) {
-                             AssessListParentGrd$.jqxGrid('selectrow', idx);
-                         } else {
-                             AssessListParentGrd$.jqxGrid('selectrow', midx);
-                         }
-                     });
+                        }
+                    });
+                    AssessListParentUpBtn$.on('click', function (e) {
+                        //var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindex');
+                        if (mkey == null) {
+                            alert('행을 선택하여 주세요.');
+                            return;
+                        }
+                        var row = AssessListParentGrd$.jqxGrid('getrowdata', mkey);
+                        var idx = row.boundindex - 1;
+                        if (row.uid == 0) {
+                            return;
+                        }
+                        const parentDataSource = AssessListParentGrd$.jqxGrid("source").loadedData;
+                        fMoveGridRecusive(parentDataSource, row.OID, 'UP');
+                        AssessListParentGrd$.jqxGrid('updatebounddata');
+                        //AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        Data[0].isParentMove = "Y";
+                        AssessListParentGrd$.jqxGrid('clearselection');
+                        if (idx >= 0) {
+                            AssessListParentGrd$.jqxGrid('selectrow', idx);
+                        } else {
+                            AssessListParentGrd$.jqxGrid('selectrow', 0);
+                        }
+                    });
+                    AssessListParentDownBtn$.on('click', function (e) {
+                        //  var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindexes');
+                        if (mkey == null) {
+                            alert('행을 선택하여 주세요.');
+                            return;
+                        }
+                        var row = AssessListParentGrd$.jqxGrid('getrowdata', mkey);
+                        var idx = row.boundindex + 1;
+                        var maxLength = AssessListParentGrd$.jqxGrid('getrows').length;
+                        if (row.uid == maxLength) {
+                            return;
+                        }
+                        const parentDataSource = AssessListParentGrd$.jqxGrid("source").loadedData;
+                        var midx = parentDataSource.length - 1;
+                        fMoveGridRecusive(parentDataSource, row.OID, 'DOWN');
+                        AssessListParentGrd$.jqxGrid('updatebounddata');
+                        // AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        Data[0].isParentMove = "Y";
+                        AssessListParentGrd$.jqxGrid('clearselection');
+                        if (idx <= midx) {
+                            AssessListParentGrd$.jqxGrid('selectrow', idx);
+                        } else {
+                            AssessListParentGrd$.jqxGrid('selectrow', midx);
+                        }
+                    });
                 }
             });
         getAssessList(AssessListParentsource, AssessListParentGrd$, param);
@@ -224,7 +294,7 @@
                 commit(true);
             },
             deleterow: function (rowid, commit) {
-                Data[mkey].Cdata.splice(rowid,1);
+                Data[mkey].Cdata.splice(rowid, 1);
                 AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isChange", "Y");
                 commit(true);
             }
@@ -236,7 +306,7 @@
         AssessListChildGrd$.jqxGrid(
             {
                 width: "49.4%",
-                height: 800,
+                height: 750,
                 theme: "kdnc",
                 //      source: dataAdapter,
                 selectionmode: 'checkbox',
@@ -249,13 +319,14 @@
                     { text: 'OID', datafield: 'OID', type: 'number', cellsalign: 'center', hidden: true },
                     {
 
-                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "10%", cellsalign: 'center', columntype: 'number', align: 'center', editable: false,
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
                     {
-                        text: '내용', width: '86.8%', datafield: 'Name', type: 'string', cellsrenderer: function (row, column, value) {
+                        text: '내용', width: '86.8%', datafield: 'Name', type: 'string', editable: false,
+                        cellsrenderer: function (row, column, value) {
                             var item = AssessListChildGrd$.jqxGrid('getrowdata', row);
                             if (item.isChange == "Y") {
                                 return "<div class='modifyTag' style='text-align:center;vertical-align:middle;'></div><p style='line-height:32px;text-indent:4px;'>" + value + "</p>";
@@ -275,17 +346,18 @@
                 renderToolbar: function (statusbar) {
 
                     var container$ = $('<div class="lGridComponent"></div>');
-                    var AssessListChildAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                    var AssessListChilddelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                    var AssessListChildUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                    var AssessListChildDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
-                    var AssessListChildSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i>저장</button>').jqxButton();
-
+                    AssessListChildAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                    AssessListChilddelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                    AssessListChildUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                    AssessListChildDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                    AssessListChildAddBtn$.jqxButton({ disabled: true });
+                    AssessListChilddelBtn$.jqxButton({ disabled: true });
+                    AssessListChildUpBtn$.jqxButton({ disabled: true });
+                    AssessListChildDownBtn$.jqxButton({ disabled: true });
                     container$.append(AssessListChildAddBtn$);
                     container$.append(AssessListChilddelBtn$);
                     container$.append(AssessListChildUpBtn$);
                     container$.append(AssessListChildDownBtn$);
-                    container$.append(AssessListChildSaveBtn$);
                     statusbar.append(container$);
                     //행 추가
                     AssessListChildAddBtn$.on('click', function (e) {
@@ -310,10 +382,12 @@
                     });
                     AssessListChildUpBtn$.on('click', function (e) {
                         //var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindex');
-
+                        if (subkey == null) {
+                            alert('행을 선택하여 주세요.');
+                            return;
+                        }
                         var row = AssessListChildGrd$.jqxGrid('getrowdata', subkey);
                         var idx = row.boundindex - 1;
-                        console.log(row);
                         if (row.uid == 0) {
                             return;
                         }
@@ -331,6 +405,10 @@
                     });
                     AssessListChildDownBtn$.on('click', function (e) {
                         //  var datarowIdx = AssessListChildGrd$.jqxGrid('getselectedrowindexes');
+                        if (subkey == null) {
+                            alert('행을 선택하여 주세요.');
+                            return;
+                        }
                         var row = AssessListChildGrd$.jqxGrid('getrowdata', subkey);
                         var idx = row.boundindex + 1;
                         var maxLength = AssessListChildGrd$.jqxGrid('getrows').length;
@@ -341,29 +419,13 @@
                         var midx = childDataSource.length - 1;
                         fMoveGridRecusive(childDataSource, row.OID, 'DOWN');
                         AssessListChildGrd$.jqxGrid('updatebounddata');
-                       // AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
+                        // AssessListParentGrd$.jqxGrid('setcellvalue', mkey, "isMove", "Y");
                         Data[mkey].isMove = "Y";
                         AssessListChildGrd$.jqxGrid('clearselection');
                         if (idx <= midx) {
                             AssessListChildGrd$.jqxGrid('selectrow', idx);
                         } else {
                             AssessListChildGrd$.jqxGrid('selectrow', midx);
-                        }
-                    });
-
-                    AssessListChildSaveBtn$.on('click', function (e) {
-                        if (confirm("저장하시겠습니까?")) {
-                            RequestData('/Manage/updateAssessLibrary',{ _param: Data }, function (response) {
-                                if (response.isError) {
-                                    alert(response.resultMessage);
-                                    return;
-                                }
-                                alert("저장되었습니다.");
-                                AssessListParentGrd$.jqxGrid('clearselection');
-                                AssessListChildGrd$.jqxGrid('clearselection');
-                                getAssessList(AssessListParentsource, AssessListParentGrd$, param);
-                                PrintJqxGrid(AssessListChildsource, AssessListChildGrd$, null);
-                            });
                         }
                     });
                 }
@@ -374,7 +436,7 @@
             mkey = args.rowindex;
             var item = AssessListParentGrd$.jqxGrid('getrowdata', args.rowindex);
             AssessListChildGrd$.jqxGrid('clearselection');
-           // PrintJqxGrid(AssessListChildsource, AssessListChildGrd$, Data[args.rowindex].Cdata);
+            // PrintJqxGrid(AssessListChildsource, AssessListChildGrd$, Data[args.rowindex].Cdata);
         });
         AssessListParentGrd$.on('cellclick', function (event) {
             var args = event.args;
@@ -388,7 +450,7 @@
             var args = event.args;
             subkey = args.rowindex;
             var item = AssessListChildGrd$.jqxGrid('getrowdata', args.rowindex);
-           // console.log(Data[args.rowindex].Cdata);
+            // console.log(Data[args.rowindex].Cdata);
         });
     });
     function getAssessList(_Source, _Grid$, _param) {

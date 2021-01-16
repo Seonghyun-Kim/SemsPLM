@@ -27,15 +27,43 @@ namespace SemsPLM.Controllers
             SelassessList.ForEach(item =>
             {
                 Library pdata = LibraryRepository.SelAssessLibraryObject(new Library { OID = item.ToOID }); //마스터 검색
-
+                EO AssessManager = EORepository.SelEOContentsObject(new EO { FromOID = item.ToOID, RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_MANAGER });
+                if (AssessManager != null)
+                {
+                    pdata.ToOID = AssessManager.ToOID;
+                    pdata.ManagerNm = PersonRepository.SelPerson(Session, new Person { OID = AssessManager.ToOID }).Name;
+                }
                 pdata.Cdata = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = pdata.OID }); //마스터 자녀들검색
                 originList.Add(pdata);
 
-                List<EO> checkData = EORepository.SelEOContentsOID(new EO { ToOID = item.ToOID, RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
+                List<EO> checkData = EORepository.SelEOContentsOID(new EO { FromOID = item.ToOID, RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
 
                 item.CheckData = checkData;  //체크리스트 검색
             });
-
+            Approval approv = ApprovalRepository.SelApprovalNonStep(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
+            Approval tempApprov = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
+            List<ApprovalTask> curApprov = tempApprov.InboxStep[Convert.ToInt32(tempApprov.CurrentNum - 1)].InboxTask;
+            var ApprovFlag =CommonConstant.ACTION_NO;
+            if(curApprov != null)
+            {
+                curApprov.ForEach(app =>
+                {
+                    if ((Convert.ToInt32(Session["UserOID"]) == app.PersonOID))
+                    {
+                        ApprovFlag = CommonConstant.ACTION_YES;
+                    }
+                });
+            }
+           
+            if (approv != null)
+            {
+                ViewBag.ApprovStatus = DObjectRepository.SelDObject(Session, new DObject { OID = approv.OID }).BPolicy.Name;
+            }
+            else
+            {
+                ViewBag.ApprovStatus = null;
+            }
+            ViewBag.ApprovFlag = ApprovFlag;
             ViewBag.reasonList = reasonList;
             ViewBag.SelassessList = SelassessList;
             ViewBag.originList = originList;
@@ -44,11 +72,37 @@ namespace SemsPLM.Controllers
 
             return PartialView("InfoChangeOrder");
         }
+        public JsonResult SelChangeOrderAssessList(int OID)
+        {
+            List<EO> SelassessList = EORepository.SelEOContentsOID(new EO { RootOID = OID, Type = EoConstant.TYPE_ASSESSLIST });  //설계변경의 체크리스트 마스터OID검색
+            List<Library> originList = new List<Library>();
+            SelassessList.ForEach(item =>
+            {
+                Library pdata = LibraryRepository.SelAssessLibraryObject(new Library { OID = item.ToOID }); //마스터 검색
+                EO AssessManager = EORepository.SelEOContentsObject(new EO { FromOID = item.ToOID, RootOID = OID, Type = EoConstant.TYPE_ASSESSLIST_MANAGER });
+                if (AssessManager != null)
+                {
+                    pdata.ToOID = AssessManager.ToOID;
+                    pdata.ManagerNm = PersonRepository.SelPerson(Session, new Person { OID = AssessManager.ToOID }).Name;
+                }
+                pdata.Cdata = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = pdata.OID }); //마스터 자녀들검색
+                originList.Add(pdata);
+
+                List<EO> checkData = EORepository.SelEOContentsOID(new EO { FromOID = item.ToOID, RootOID = OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
+
+                item.CheckData = checkData;  //체크리스트 검색
+            });
+
+            ViewBag.SelassessList = SelassessList;
+            ViewBag.originList = originList;
+            var result = new { SelassessList = SelassessList, originList = originList };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult CreateChangeOrder()
         {
             Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
-            List<Library> assessList = LibraryRepository.SelAssessLibrary(null);
+            List<Library> assessList = LibraryRepository.SelAssessLibraryLatest(null);
             assessList.ForEach(item =>
             {
                 List<Library> child = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = item.OID });
@@ -79,15 +133,28 @@ namespace SemsPLM.Controllers
             SelassessList.ForEach(item =>
             {
                 Library pdata = LibraryRepository.SelAssessLibraryObject(new Library { OID = item.ToOID }); //마스터 검색
-
+                EO AssessManager = EORepository.SelEOContentsObject(new EO { FromOID = item.ToOID, RootOID = ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_MANAGER });
+                if(AssessManager != null)
+                {
+                    pdata.ToOID = AssessManager.ToOID;
+                    pdata.ManagerNm = PersonRepository.SelPerson(Session,new Person { OID = AssessManager.ToOID }).Name;
+                }
                 pdata.Cdata = LibraryRepository.SelAssessLibraryChild(new Library { FromOID = pdata.OID }); //마스터 자녀들검색
                 originList.Add(pdata);
 
-                List<EO> checkData = EORepository.SelEOContentsOID(new EO { ToOID = item.ToOID,RootOID =ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
+                List<EO> checkData = EORepository.SelEOContentsOID(new EO { FromOID = item.ToOID,RootOID =ECODetail.OID, Type = EoConstant.TYPE_ASSESSLIST_CHILD });
 
                 item.CheckData = checkData;  //체크리스트 검색
             });
-
+            Approval approv = ApprovalRepository.SelApprovalNonStep(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
+            if (approv != null)
+            {
+                ViewBag.ApprovStatus = DObjectRepository.SelDObject(Session, new DObject { OID = approv.OID }).BPolicy.Name;
+            }
+            else
+            {
+                ViewBag.ApprovStatus = null;
+            }
             ViewBag.reasonList = reasonList;
             ViewBag.SelassessList = SelassessList;
             ViewBag.originList = originList;
@@ -115,6 +182,12 @@ namespace SemsPLM.Controllers
         public ActionResult dlgSearchECR(string Type)
         {
             return PartialView("Dialog/dlgSearchECR");
+        }
+
+        public PartialViewResult dlgSelectAssessManager()
+        {
+            ViewBag.Organization = CompanyRepository.SelOrganizationWithPerson(Session, new List<string> { CommonConstant.TYPE_PERSON });
+            return PartialView("Dialog/dlgSelectAssessManager");
         }
 
         #region -- Module : ChangeOder
@@ -167,25 +240,47 @@ namespace SemsPLM.Controllers
                         HttpFileRepository.DeleteData(Session, v);
                     });
                 }
+                EO data = null;
                 for (var i = 0; i < _assessList.Count; i++)
                 {
                     for (var j = 0; j < _assessList[i].Count; j++)
                     {
                         if (j == 0) //평가표 마스터 등록
                         {
-                            EO data = new EO();
+                           if(data!= null)
+                            {
+                                data = null;
+                            }
+                            data = new EO();
                             data.RootOID = resultOid;
+                            data.FromOID = resultOid;
                             data.ToOID = _assessList[i][0].OID;
                             data.Type = EoConstant.TYPE_ASSESSLIST;
                             EORepository.InsEOContents(Session,data);
-
+                            if(_assessList[i][0].ToOID != null)
+                            {
+                                if (data != null)
+                                {
+                                    data = null;
+                                }
+                                data = new EO();
+                                data.RootOID = resultOid;
+                                data.FromOID = _assessList[i][0].OID; 
+                                data.ToOID = _assessList[i][0].ToOID;
+                                data.Type = EoConstant.TYPE_ASSESSLIST_MANAGER;
+                                EORepository.InsEOContents(Session, data);
+                            }
                         }
                         else //평가표 체크리스트 등록
                         {
-                            EO data = new EO();
+                            if (data != null)
+                            {
+                                data = null;
+                            }
+                            data = new EO();
                             data.RootOID = resultOid;
-                            data.ToOID = _assessList[i][0].OID;
-                            data.FromOID = _assessList[i][j].OID;
+                            data.FromOID = _assessList[i][0].OID;
+                            data.ToOID = _assessList[i][j].OID;
                             data.Type = EoConstant.TYPE_ASSESSLIST_CHILD;
                             EORepository.InsEOContents(Session,data);
                         }
@@ -193,12 +288,12 @@ namespace SemsPLM.Controllers
                 }
                 if (_eo != null && _eo.Count > 0)
                 {
-                    _eo.ForEach(data =>
+                    _eo.ForEach(eoData =>
                    {
-                       if (data != null)
+                       if (eoData != null)
                        {
-                           data.RootOID = resultOid;
-                           EORepository.InsEOContents(Session,data);
+                           eoData.RootOID = resultOid;
+                           EORepository.InsEOContents(Session, eoData);
                        }
 
                    });
@@ -252,25 +347,48 @@ namespace SemsPLM.Controllers
                 }
                 if (_assessList != null && _assessList.Count > 0)
                 {
+                    EO data = null;
                     for (var i = 0; i < _assessList.Count; i++)
                     {
                         for (var j = 0; j < _assessList[i].Count; j++)
                         {
                             if (j == 0) //평가표 마스터 등록
                             {
-                                EO data = new EO();
+                                if (data != null)
+                                {
+                                    data = null;
+                                }
+                                data = new EO();
                                 data.RootOID = delData.RootOID;
+                                data.FromOID = delData.RootOID;
                                 data.ToOID = _assessList[i][0].OID;
                                 data.Type = EoConstant.TYPE_ASSESSLIST;
                                 EORepository.InsEOContents(Session,data);
+                                if (_assessList[i][0].ToOID != null)
+                                {
+                                    if (data != null)
+                                    {
+                                        data = null;
+                                    }
+                                    data = new EO();
+                                    data.RootOID = delData.RootOID;
+                                    data.FromOID = _assessList[i][0].OID;
+                                    data.ToOID = _assessList[i][0].ToOID;
+                                    data.Type = EoConstant.TYPE_ASSESSLIST_MANAGER;
+                                    EORepository.InsEOContents(Session, data);
+                                }
 
                             }
                             else //평가표 체크리스트 등록
                             {
-                                EO data = new EO();
+                                if (data != null)
+                                {
+                                    data = null;
+                                }
+                                data = new EO();
                                 data.RootOID = delData.RootOID;
-                                data.ToOID = _assessList[i][0].OID;
-                                data.FromOID = _assessList[i][j].OID;
+                                data.FromOID = _assessList[i][0].OID;
+                                data.ToOID = _assessList[i][j].OID;
                                 data.Type = EoConstant.TYPE_ASSESSLIST_CHILD;
                                 EORepository.InsEOContents(Session,data);
                             }

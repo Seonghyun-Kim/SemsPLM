@@ -253,7 +253,7 @@ namespace SemsPLM.Controllers
                                     }
                                 });
 
-                                DObjectRepository.DelDObject(Session, item);
+                                DObjectRepository.DelDObject(Session, item, null);
                                 OpenIssueRepository.UdtOpenIssueDelSuspenseCnt(_param);
                             }
                             else
@@ -1293,7 +1293,7 @@ namespace SemsPLM.Controllers
                             {
                                 if (w.IsRemove == "Y")
                                 {
-                                    DObjectRepository.DelDObject(Session, w);
+                                    DObjectRepository.DelDObject(Session, w, null);
                                 }
                                 else
                                 {
@@ -1384,7 +1384,7 @@ namespace SemsPLM.Controllers
                         if (v.IsRemove == "Y")
                         {
                             v.DeleteUs = 73;
-                            DObjectRepository.DelDObject(Session, v);
+                            DObjectRepository.DelDObject(Session, v, null);
                         }
                         else
                         {
@@ -1631,7 +1631,7 @@ namespace SemsPLM.Controllers
                         if (v.IsRemove == "Y")
                         {
                             v.DeleteUs = 73;
-                            DObjectRepository.DelDObject(Session, v);
+                            DObjectRepository.DelDObject(Session, v, null);
                         }
                         else
                         {

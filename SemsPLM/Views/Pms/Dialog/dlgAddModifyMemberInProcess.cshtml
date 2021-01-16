@@ -64,13 +64,14 @@
                 { text: '설명', datafield: 'Description', width: "41.5%", align: 'center', cellsalign: 'left', },
             ],
             pagerrenderer: function () {
-                var peRole = procRole.filter(function (item) {
-                    return item.Name == '@Common.Constant.PmsConstant.ROLE_PE';
+                var guestRole = procRole.filter(function (item) {
+                    return item.Name == '@Common.Constant.PmsConstant.ROLE_GUEST';
                 });
-                RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID', 'RoleOID': peRole[0].OID }, function (res) {
+
+                RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID' }, function (res) {
                     procResourceData = [];
-                    procResourceData = res;
-                    PrintJqxGrid(procResourceSource, procResourceGrd$, res);
+                    procResourceData = res.filter(function (item) { return item.RoleOID != guestRole[0].OID });
+                    PrintJqxGrid(procResourceSource, procResourceGrd$, procResourceData);
                 });
             }
         });

@@ -1,6 +1,7 @@
 ﻿using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Pms.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,16 @@ namespace Pms.Models
         public int CompleteNum { get; set; }
         public int NGNum { get; set; }
         public string PartNm { get; set; }
-        public DateTime? TotalTestDt { get; set; }
+        public string TotalTestDt
+        {
+            get
+            {
+                string returnVal = "";
+                returnVal = DateTime.Parse(this.TotalTestStartDt.ToString()).ToShortDateString() + "~" + DateTime.Parse(this.TotalTestEndDt.ToString()).ToShortDateString();
+
+                return returnVal;
+            }
+        }
         public DateTime? TotalTestStartDt { get; set; }
         public DateTime? TotalTestEndDt { get; set; }
         public string TestPurpose { get; set; }
@@ -72,7 +82,7 @@ namespace Pms.Models
             PmsReliabilityReport PmsReliabilityReport = DaoFactory.GetData<PmsReliabilityReport>("Pms.SelPmsReliabilityReport", _param);
             PmsReliabilityReport.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = PmsReliabilityReport.CreateUs }).Name;
             PmsReliabilityReport.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = PmsReliabilityReport.Type, OID = PmsReliabilityReport.BPolicyOID }).First();
-            PmsReliabilityReport.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, PmsReliabilityReport, null);
+            PmsReliabilityReport.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, PmsReliabilityReport, PmsAuth.RoleAuth(Context, PmsReliabilityReport));
             PmsReliabilityReport.DevStepNm = LibraryRepository.SelLibraryObject(new Library { OID = PmsReliabilityReport.DevStep }).KorNm;
             return PmsReliabilityReport;
         }
