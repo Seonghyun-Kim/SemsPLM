@@ -494,7 +494,218 @@ namespace SemsPLM.Controllers
                 return Content("<script language='javascript' type='text/javascript'>alert('" + message + "');history.back();</script>");
             }
         }
+
+        public JsonResult CommonFilePath(HttpFile fileModel)
+        {
+            try
+            {
+                HttpFile downFile = HttpFileRepository.SelFile(Session, fileModel);
+
+                if (downFile == null || downFile.FileOID == null)
+                {
+                    throw new Exception("잘못된 호출입니다.");
+                }
+
+                string filePath = SemsValut.GetFileString(downFile);
+                return Json(filePath.Replace("\\", "/"));
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+        }
         #endregion
 
+        #region -- Notice
+        public ActionResult EditNotice(string OID)
+        {
+            DObject tmpNotice = DObjectRepository.SelDObject(Session, new DObject { OID = Convert.ToInt32(OID) });
+            if (tmpNotice != null)
+            {
+                tmpNotice.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID = tmpNotice.CreateUs }).Name;
+            }
+            ViewBag.OID = OID;
+            ViewBag.Detail = tmpNotice;
+            return PartialView("Dialog/dlgEditNotice");
+        }
+
+        public ActionResult InsNotice(DObject _param)
+        {
+            int result = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObject dobj = new DObject();
+                dobj.Type = CommonConstant.TYPE_NOTICE;
+                dobj.Name = _param.Name;
+                dobj.CreateUs = Convert.ToInt32(Session["UserOID"]);
+                dobj.Description = _param.Description;
+                result = DObjectRepository.InsDObject(Session, dobj);
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(result);
+        }
+
+        public ActionResult SelNotice(DObject _param)
+        {
+            List<DObject> dobj = DObjectRepository.SelDObjects(Session, new DObject { Type = CommonConstant.TYPE_NOTICE, OID = _param.OID });
+            if(dobj.Count > 0)
+            {
+                dobj.ForEach(obj =>
+                {
+                    obj.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID = obj.CreateUs }).Name;
+                });
+            }
+            return Json(dobj);
+        }
+
+        public JsonResult UdtNotice(DObject _param)
+        {
+            int result = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObject dobj = new DObject();
+                dobj.Type = CommonConstant.TYPE_NOTICE;
+                dobj.Name = _param.Name;
+                dobj.OID = _param.OID;
+                dobj.Description = _param.Description;
+                result = DObjectRepository.UdtDObject(Session, dobj);
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+
+            }
+            return Json(result);
+        }
+
+        public JsonResult DelNotice(DObject _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+                DObjectRepository.DelDObject(Session, _param, null);
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(0);
+        }
+
+        #endregion
+
+        #region -- Approval Dashboard
+
+        public JsonResult ApprvalDashboard()
+        {
+            Dictionary<string, object> lResult = new Dictionary<string, object>();
+            int startedCount = 0, weekCompleteCount = 0, prepareCount = 0, rejectCount = 0;
+            int iUser = Convert.ToInt32(Session["UserOID"]);
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL });
+
+            List<Approval> lApproval = ApprovalRepository.SelApprovalsNonStep(Session, new Approval { Type = CommonConstant.TYPE_APPROVAL, CreateUs = iUser });
+            int startedOID = Convert.ToInt32(lBPolicy.Find(bpolicy => bpolicy.Name == CommonConstant.POLICY_APPROVAL_STARTED).OID);
+            int rejectOID = Convert.ToInt32(lBPolicy.Find(bpolicy => bpolicy.Name == CommonConstant.POLICY_APPROVAL_REJECTED).OID);
+            int completeOID = Convert.ToInt32(lBPolicy.Find(bpolicy => bpolicy.Name == CommonConstant.POLICY_APPROVAL_COMPLETED).OID);
+            int weekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)));
+
+            lApproval.ForEach(approv =>
+            {
+                if (approv.BPolicyOID == startedOID)
+                {
+                    startedCount++;
+                }
+                else if (approv.BPolicyOID == rejectOID)
+                {
+                    rejectCount++;
+                }
+                else if (approv.BPolicyOID == completeOID)
+                {
+                    int innerWeekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", approv.ModifyDt)));
+                    if (weekNum == innerWeekNum)
+                    {
+                        weekCompleteCount++;
+                    }
+                }
+            });
+
+            List<BPolicy> lBPolicyTask = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL_TASK });
+            int taskStartedOID = Convert.ToInt32(lBPolicyTask.Find(bpolicy => bpolicy.Name == CommonConstant.POLICY_APPROVAL_TASK_STARTED).OID);
+            ApprovalTaskRepository.SelInboxMyTasks(Session, new ApprovalTask { BPolicyOID = taskStartedOID, PersonOID = iUser }).ForEach(approv =>
+            {
+                prepareCount++;
+            });
+
+            lResult.Add("started", startedCount);
+            lResult.Add("weekComplete", weekCompleteCount);
+            lResult.Add("prepare", prepareCount);
+            lResult.Add("reject", rejectCount);
+            return Json(lResult);
+        }
+
+        public JsonResult ApprvalListDashboard(Approval _param)
+        {
+            List<Approval> myApproval = new List<Approval>();
+            int iUser = Convert.ToInt32(Session["UserOID"]);
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL });
+            int statusOID = Convert.ToInt32(lBPolicy.Find(bpolicy => bpolicy.Name == _param.BPolicyNm).OID);
+            List<Approval> lApproval = ApprovalRepository.SelApprovalsNonStep(Session, new Approval { Type = CommonConstant.TYPE_APPROVAL, CreateUs = iUser, BPolicyOID = statusOID });
+            int weekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)));
+
+            List<BDefine> lBDefine = BDefineRepository.SelDefines(new BDefine { Type = CommonConstant.DEFINE_TYPE });
+            DObject dobj = null;
+            lApproval.ForEach(approv =>
+            {
+                if (dobj != null)
+                {
+                    dobj = null;
+                }
+                
+                dobj = DObjectRepository.SelDObject(Session, new DObject { OID = approv.TargetOID });
+                if (dobj == null)
+                {
+                    return;
+                }
+                approv.DocType = lBDefine.Find(define => define.Name == dobj.Type).Description;
+                approv.DocNm = dobj.Name;
+                approv.DocCreateUs = dobj.CreateUs;
+                approv.DocCreateNm = PersonRepository.SelPerson(Session, new Person { OID = dobj.CreateUs }).Name;
+                approv.DocBpolicyNm = dobj.BPolicy.StatusNm;
+
+                int innerWeekNum = -1;
+                if (_param.BPolicyNm == CommonConstant.POLICY_APPROVAL_COMPLETED)
+                {
+                    innerWeekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", approv.ModifyDt)));
+                    if (innerWeekNum == weekNum)
+                    {
+                        myApproval.Add(approv);
+                    }
+                }
+                else
+                {
+                    myApproval.Add(approv);
+                }
+
+            });
+            return Json(myApproval);
+        }
+
+
+        #endregion
     }
 }

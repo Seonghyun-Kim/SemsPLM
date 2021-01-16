@@ -5,7 +5,7 @@ T_BPOLICY_AUTH 권한추가
 76	127	NULL	OWNER	Promote	진행	SYSTEM	NULL
 77	16	1	ROLE	Relation	연결	SYSTEM	NULL
 78	2	2	ROLE	Relation	연결	SYSTEM	NULL
-79	3	1	ROLE	Relation	연결	SYSTEM	NULL
+79	3	1	ROLE	Relation	연결	SYSTEM	NULL    ---- 적용완료
 
 
 
@@ -15,12 +15,127 @@ shkim
 
 T_DPMS_ISSUE
 IsApprovalRequired 컬럼추가
-IsApprovalRequired	nvarchar(50)	Checked
+IsApprovalRequired	nvarchar(50)	Checked            ---- 적용완료
 
 PmsIssue.cs 데이터타입추가
 public string IsApprovalRequired { get; set; } 추가 
 
+T_BPOLICY_AUTH 권한추가
+80	2	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+81	3	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+82	4	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+83	5	NULL	OWNER	Delete	삭제	SYSTEM	NULL     --- 적용완료
+
+
+2021-01-04
+ihjung
+
+T_BPOLICY(PROJECT)
+CheckProgram : Pms.Trigger.ProjectTrigger:CheckStartedProjectPromote,Pms.Trigger.ProjectTrigger:CheckCompleteProjectPromote
+
+Pms.Trigger.ProjectTrigger:CheckCompleteProjectPromote 제거        -- 적용완료
+
+T_BPOLICY_AUTH 권한추가
+PolicyOID  AuthTartgetOID   AuthTargetDiv   AuthNm    AuthTitle     AuthDiv
+   46           2               ROLE         View       보기         SYSTEM 
+  127	       NULL	            OWNER	    Promote	    진행	     SYSTEM
+  16			1				ROLE		Relation	연결		 SYSTEM
+  2				2				ROLE		Relation	연결		 SYSTEM
+  3				1				ROLE		Relation	연결		 SYSTEM     -- 적용완료
+
+
+  OID	Type	Name	StatusOID	StatusNm	CheckProgram	ActionProgram	StatusOrd	IsRevision	BeforeActionOID	NextActionOID
+135	OPEN_ISSUE_ITEM	Suspense	135	미결	NULL	NULL	1	NULL	NULL	NULL
+136	OPEN_ISSUE_ITEM	Uncommitted	136	관망	NULL	NULL	2	NULL	NULL	NULL
+137	OPEN_ISSUE_ITEM	Compleated	137	완료	NULL	NULL	3	NULL	NULL	NULL
+138	NOTICE	Exist	138	존재함	NULL	NULL	1	NULL	NULL	NULL     -- 적용완료
+
+
+  2021-01-05
+  shkim
+
+  T_BPOLICY_AUTH 권한추가
+  85	2	1	ROLE	Promote	진행	SYSTEM	NULL
+  86	3	NULL	OWNER	View	보기	SYSTEM	NULL
+  87	3	1	ROLE	Promote	진행	SYSTEM	NULL
+  88	138	NULL	OWNER	Modify	수정	SYSTEM	NULL
+  89	138	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+
+  T_BOLICY 추가
+  138	NOTICE	Exist	138	존재함	NULL	NULL	1	NULL	NULL	NULL
+
+  2021-01-06
+  shkim
+
+  T_BPOLICY_AUTH 권한추가
+  90	122	NULL	OWNER	Promote	진행	SYSTEM	NULL
+
+  2021-01-07
+  cskim
+
+  T_BPOLICY_AUTH 권한추가
+  91	131	NULL	OWNER	Modify	수정	SYSTEM	NULL
+ 
+  shkim
+
+  T_BPOLICY_AUTH 권한추가
+  92	1	1	ROLE	Relation	연결	SYSTEM	NULL
+  93	2	1	ROLE	Relation	연결	SYSTEM	NULL
+  94	18	2	ROLE	Modify	수정	SYSTEM	NULL
+  95	18	2	ROLE	Relation	연결	SYSTEM	NULL
+  96	18	2	ROLE	Promote	진행	SYSTEM	NULL
+  97	2	3	ROLE	View	보기	SYSTEM	NULL
+  98	3	3	ROLE	View	보기	SYSTEM	NULL
+  99	4	3	ROLE	VIew	보기	SYSTEM	NULL
+  100	3	1	ROLE	Modify	수정	SYSTEM	NULL
+
+T_BOLICY 수정
+18	TASK	Paused	18	일시중지	NULL	NULL	4	NULL	NULL	P:19,R:18
+
+
+ihjung
+
+TASK	Paused	18	일시중지 상태에
+Pms.Trigger.ProcessTrigger:ActionDefaultProcessPromote,Pms.Trigger.ProcessTrigger:ActionTaskRelationshipPromote   추가   -적용완료
 
 2021-01-09
 김성현
 신속대응 등록 메뉴 없애기
+
+21-01-11
+ihjung
+BPOLICY_AUTH
+46	NULL	PUBLIC	View	보기	SYSTEM	NULL     - 적용완료
+
+
+21-01-12
+메뉴
+내 작업 -> 내 업무
+내 업무 안 PM 대시보드, 개인 대시보드 이동      - 적용완료
+
+T_DPMS_PROJECT column 추가  EstDisposalDt datetime
+
+21-01-13
+메뉴
+내 업무 -> 내 작업
+프로젝트 내 업무를 내 작업 밑으로                - 적용완료
+
+
+PROJECT	Prepare P:2,R:1
+PROJECT	Paused	P:2,R:3
+
+T_DCALENDAR 테이블에 DefaultHoliday 컬럼 추가
+
+shkim
+T_DOBJECT
+Description nvarchar(MAX) 로 수정
+
+T_DPMS_ISSUE
+Contents nvarchar(MAX) 로 수정
+
+cskim
+T_DEPART 테이블
+Standard nvarchar(100) 컬럼 추가
+
+T_BPOLICY 테이블
+OID 42번에 ActionProgram 컬럼에 Common.Trigger.ReleasedTrigger:ReleasedLatestUpdate 데이터 추가

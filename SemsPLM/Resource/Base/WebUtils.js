@@ -1,4 +1,5 @@
 ﻿var WebUtils = function () { };
+var gAutoVue;
 
 WebUtils.IsRightClick = function (event) {
     var rightclick;
@@ -273,4 +274,14 @@ WebUtils.GetGrdSearchData = function (callBackFunction, source, grdId, pagenum, 
     source.data.pagesize = paginginformation.pagesize;
 
     $("#" + grdId).jqxGrid({ source: new $.jqx.dataAdapter(source) });
+}
+
+WebUtils.CallAutoVue = function () {
+    gAutoVue = new WebAutoVue();
+}
+
+WebUtils.CallAutoVueFile = function (FileOID) {
+    RequestData('/Common/CommonFilePath', { 'FileOID': FileOID }, function (res) {
+        gAutoVue.CallAutoVue(res);
+    });
 }

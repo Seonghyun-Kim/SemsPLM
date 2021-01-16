@@ -429,7 +429,7 @@
                             }
                         },
                         {
-                            text: '구분', dataField: 'ObjType', width: '8%', align: 'center', editable: false, cellsAlign: 'center',
+                            text: '구분', dataField: 'ObjType', width: '8%', align: 'center', editable: false, cellsAlign: 'center', pinned: true,
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 if (cellText == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP') {
                                     return "프로젝트 템플릿";
@@ -437,7 +437,7 @@
                                 return cellText;
                             }
                         },
-                        { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                        { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
                         { text: 'NO', dataField: 'No', width: '6%', align: 'center', editable: false, cellsAlign: 'left', },
                         { text: '레벨', dataField: 'Level', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
                         {
@@ -454,8 +454,18 @@
                             text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '7%', align: 'center', cellsAlign: 'center',
                             validation: function (cell, value) {
                                 var bResult = true;
+                                if (value == '') {
+                                    return bResult;
+                                }
+
                                 const lParent = fPmsParentArray([projWbsInfo$.jqxTreeGrid('getRow', cell.row)]);
                                 lParent.filter(function (item) { return item.Id == parseInt(value); }).length > 0 ? bResult = false : bResult = true;
+                                if (!bResult) {
+                                    return { message: "사용할 수 없는 Dependency 입니다.", result: false };
+                                }
+
+                                const allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                                allDatas.filter(function (item) { return item.Id == parseInt(value); }).length < 1 ? bResult = false : bResult = true;
                                 if (!bResult) {
                                     return { message: "사용할 수 없는 Dependency 입니다.", result: false };
                                 }
@@ -1003,7 +1013,6 @@
                     },
                     deleteRow: function (rowID, commit) {
                         _.each(rowID, function (item) {
-                            console.log(item);
                             deleteResourceData.push({ 'Action': '@Common.Constant.PmsConstant.ACTION_DELETE', 'ToOID': item, 'FromOID': ProjectOID, 'RootOID': ProjectOID });
                         });
                         commit(true);
@@ -1177,9 +1186,12 @@
                                     rowData[_row].RoleOID = (PmsRole.filter(function (item) { return item.Description == rowData[_row].RoleOIDNm })[0]).OID;
                                 }
                                 RequestData('/Pms/InsertMembers', rowData.concat(deleteResourceData), function (res) {
-                                    deleteResourceData = [];
-                                    btnCancel.click();
+                                    //deleteResourceData = [];
+                                    //btnCancel.click();
                                 });
+
+                                deleteResourceData = [];
+                                resourceGrd$.jqxTreeGrid('pagerRenderer');
                             }
                         });
 

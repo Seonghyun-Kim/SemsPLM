@@ -85,6 +85,7 @@ function OpenPmsCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.WorkingDay = $("#hidWorkingDay").val();
                 param.ProdecessorOID = $("#hidProdecessorProject").val();
                 param.TemplateOID = $('#hidTemplateOID').val();
+                param.BaseProjectOID = $('#hidBaseProject').val();
                 param.TemplateContent = ($("#IsWbs").jqxCheckBox('checked') ? 'WBS' : '') + '|' + ($("#IsMember").jqxCheckBox('checked') ? 'MEMBER' : '') + '|' + ($("#IsDocument").jqxCheckBox('checked') ? 'DOC_MASTER' : '');
 
                 if (param.ProjectType == null || param.ProjectType.length < 1) {
@@ -680,7 +681,8 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     $(popLayer).jqxWindow({
         width: 1200, maxWidth: 1200, height: 800, minHeight: 800, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
-            divId = $(popLayer);
+            selInfoDialog = this;
+            selInfoDialog.CallBackFunction = _CallBackFunction;
             $('#dlgCreateIssue').on('click', function (event) {
                 var param = {};
                 param.FromOID = _Param.FromOID;
@@ -733,7 +735,8 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 if (param.Contents == "") {
                     param.Contents = null;
                 }
-                SendDataWithFile('/Pms/UdtIssue', param,Files, function (response) {
+                param.Files = Files;
+                RequestData('/Pms/UdtIssue', param, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
@@ -776,7 +779,8 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                     alert('이슈명을 입력해주세요.');
                     return;
                 }
-                SendDataWithFile('/Pms/UdtIssue', param, Files, function (response) {
+                param.Files = Files;
+                RequestData('/Pms/UdtIssue', param, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
@@ -963,6 +967,11 @@ function OpenReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.SampleQuantity = $('#SampleQuantity').val();
                 param.TestStandardContents = $('#TestStandardContents').val();
                 param.Requirements = $('#Requirements').val();
+
+                if (param.DevStep == null || param.DevStep == undefined) {
+                    alert('개발단계를 선택하여주세요.');
+                    return;
+                }
 
                 RequestData('/Pms/InsReliability', { _param: param, _ItemListParam: TestItemListGrid$.jqxGrid('getrows') }, function (response) {
                     if (response.isError) {
@@ -1194,6 +1203,11 @@ function OpenInfoReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                 param.SampleQuantity = $('#SampleQuantity').val();
                 param.TestStandardContents = $('#TestStandardContents').val();
                 param.Requirements = $('#Requirements').val();
+
+                if (param.DevStep == null || param.DevStep == undefined) {
+                    alert('개발단계를 선택하여주세요.');
+                    return;
+                }
 
                 RequestData('/Pms/UdtReliability', { _param: param, _ItemListParam: TestItemListGrid$.jqxGrid('getrows') }, function (response) {
                     if (response.isError) {

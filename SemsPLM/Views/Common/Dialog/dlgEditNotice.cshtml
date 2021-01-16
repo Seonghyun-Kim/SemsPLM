@@ -1,0 +1,71 @@
+﻿@{
+    Layout = null;
+}
+<div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+    @if (ViewBag.OID != null && ((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1)
+    {
+        <button id="btnDlgEditNotice" class="custom-button ModifiableCustomBox"><i class="fas fa-sync"></i> 수정</button>
+    }
+    @if (ViewBag.OID == null)
+    {
+        <button id="btnDlgRegNotice" onclick="" class="custom-button"><i class="fas fa-check-circle"></i> 등록</button>
+    }
+    <div class="ModifiableEditCustomBox">
+        <button id="btnDlgSaveNotice" onclick="" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        <button id="dlgCancelNotice" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>
+    </div>
+</div>
+
+
+<div class="dlg_table dlgEditPerson_table">
+
+    <table class="createtable">
+        <tr>
+            <th><i class="fa fa-caret-right"></i>제목</th>
+            <td colspan="3">
+                <input type="text"class="Modifiable" id="dlgNoticeNm" value="@(ViewBag.OID != null ? ViewBag.Detail.Name : "")" />
+            </td>
+        </tr>
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 작성일</th>
+            <td>
+                <input type="text" value="@Convert.ToString(DateTime.Now.ToString("yyyy-MM-dd"))" readonly />
+            </td>
+            <th><i class="fa fa-caret-right"></i> 작성자</th>
+            <td>
+                <input type="text" value="@Session["UserNm"]" readonly />
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align:top;line-height:32px;"><i class="fa fa-caret-right"></i> 내용</th>
+            <td colspan="3">
+                <textarea class="Modifiable" id="dlgNoticeDescription">@(ViewBag.OID != null ? ViewBag.Detail.Description != null ? ViewBag.Detail.Description : "" : "")</textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var oid = '@ViewBag.OID';
+        $('.ModifiableEditCustomBox').attr('hidden', true);
+        if (oid != null && oid.length > 0) {
+            $('.Modifiable').attr('readonly', 'readonly');
+        }
+
+        $('#btnDlgEditNotice').on('click', function () {
+            $('.Modifiable').removeAttr('readonly');
+            $('.ModifiableCustomBox').attr('hidden', true);
+            $('.ModifiableEditCustomBox').attr('hidden', false);
+        });
+
+        $('#dlgCancelNotice').on('click', function () {
+            $('.Modifiable').attr('readonly', 'readonly');
+            $('.ModifiableCustomBox').attr('hidden', false);
+            $('.ModifiableEditCustomBox').attr('hidden', true);
+            $('#dlgNoticeNm').val('@(ViewBag.Detail == null ? "" : ViewBag.Detail.Name)');
+            $('#dlgNoticeDescription').val('@(ViewBag.Detail == null ? "" : ViewBag.Detail.Description)');
+        });
+
+    });
+</script>

@@ -25,10 +25,25 @@ namespace Common.Models
 
         //Option
         public bool? AutoStatus { get; set; }
+
+        public string DocType { get; set; }
+
+        public string DocNm { get; set; }
+
+        public int? DocCreateUs { get; set; }
+
+        public string DocCreateNm { get; set; }
+
+        public string DocBpolicyNm { get; set; }
     }
 
     public static class ApprovalRepository
     {
+        public static List<Approval> SelApprovalsNonStep(HttpSessionStateBase Context, Approval _param)
+        {
+            return DaoFactory.GetList<Approval>("Comm.SelApproval", _param);
+        }
+
         public static Approval SelApprovalNonStep(HttpSessionStateBase Context, Approval _param)
         {
             Approval tmpApproval = DaoFactory.GetData<Approval>("Comm.SelApproval", _param);

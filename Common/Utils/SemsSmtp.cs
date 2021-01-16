@@ -41,7 +41,7 @@ namespace Common.Utils
             int smtpPort = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["SmtpPort"]);
             string authUserID = System.Configuration.ConfigurationManager.AppSettings["SmtpUserID"];
             //string authPassword = SemsEncrypt.AESDecrypte256Text(System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"], Define.ConstDefine.LoginKey);
-            string authPassword = "";
+            string authPassword = System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"];
             bool isAuthLogin = System.Configuration.ConfigurationManager.AppSettings["IsAuthLogin"] == "Y" ? true : false;
             bool isPasswordSecurity = System.Configuration.ConfigurationManager.AppSettings["IsPasswordSecurity"] == "Y" ? true : false;
 

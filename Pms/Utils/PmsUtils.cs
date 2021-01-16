@@ -2,6 +2,7 @@
 using Common.Constant;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +58,26 @@ namespace Pms
                     }
                 }
             }
+            else if (workingDay == 7)
+            {
+                for (var i = PmsConstant.INIT_DURATION; i < numberofWorkDays; i++)
+                {
+                    if ((holidays != null && holidays.Contains(futureDate)))
+                    {
+                        //futureDate = futureDate.AddDays(1);
+                        //numberofWorkDays++;
+                    }
+                    else
+                    {
+                        futureDate = futureDate.AddDays(1);
+                    }
+                    while (futureDate.DayOfWeek == DayOfWeek.Sunday
+                        || (holidays != null && holidays.Contains(futureDate)))
+                    {
+                        futureDate = futureDate.AddDays(1);
+                    }
+                }
+            }
             return futureDate;
         }
 
@@ -90,6 +111,21 @@ namespace Pms
                 {
                     if (tmp.DayOfWeek == DayOfWeek.Saturday
                           || (holidays != null && holidays.Contains(tmp))) { }
+                    else
+                    {
+                        iBetWeenDayCnt++;
+                    }
+
+                    TimeSpan betWeen = toDate - tmp;
+                    if (betWeen.Days <= 0)
+                    {
+                        break;
+                    }
+                    i++;
+                }
+                else if (workingDay == 7)
+                {
+                    if ((holidays != null && holidays.Contains(tmp))) { }
                     else
                     {
                         iBetWeenDayCnt++;
@@ -158,6 +194,26 @@ namespace Pms
                     }
                     i++;
                 }
+                else if (workingDay == 7)
+                {
+                    if ((holidays != null && holidays.Contains(tmp))) { }
+                    else
+                    {
+                        iBetWeenDayCnt++;
+                    }
+
+                    TimeSpan betWeen = toDate - tmp;
+                    if (betWeen.Days == 0)
+                    {
+                        break;
+                    }
+                    else if (betWeen.Days < 0)
+                    {
+                        iBetWeenDayCnt = betWeen.Days;
+                        break;
+                    }
+                    i++;
+                }
             }
             return iBetWeenDayCnt;
         }
@@ -167,6 +223,14 @@ namespace Pms
             int delay = 0;
             delay = PmsUtils.CalculateGapFutureDuration(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", _estEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", _actEndDt)), _workingDay, _lHoliday);
             return delay;
+        }
+
+        public static int CalculateWeekNumber(DateTime _calculateDate)
+        {
+            Calendar calenderCalc = CultureInfo.CurrentCulture.Calendar;
+            //DayOfWeek.Sunday 인수는 기준 요일
+            int usWeekNumber = calenderCalc.GetWeekOfYear(_calculateDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+            return usWeekNumber;
         }
 
     }

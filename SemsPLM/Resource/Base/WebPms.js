@@ -27,6 +27,8 @@ $(document).on('focus', '.datePicker', function () {
                 return [(day != 0 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
             } else if (working == 5) {
                 return [(day != 0 && day != 6 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
+            } else if (working == 7) {
+                return [(holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
             }
         },
         onSelect: function (dateText, inst) {

@@ -149,8 +149,14 @@
         window.Promise || document.write('<script defer type="text/javascript" src="@Url.Content("~/Resource/apexcharts-bundle/loadUtils/classlist.min.js")"><\/script>');
         window.Promise || document.write('<script defer type="text/javascript" src="@Url.Content("~/Resource/apexcharts-bundle/loadUtils/findIndex.js")"><\/script>');
     </script>
-    <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.js")></script>
 
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.js")></script>
+    <!--AutoVue-->
+    <!--
+    <script defer type="text/javascript" src="http://192.168.0.38:8080/Autovue/AutoVueClient/autovue.js"></script>
+    <script defer type="text/javascript" src="http://192.168.0.38:8080/Autovue/servlet/VueKeyPairServlet"></script>
+    <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebAutoVue.js")></script>
+    -->
 
     <div id="loading">
         <div class="loader-inner ball-grid-pulse">
@@ -185,6 +191,8 @@
             </div>
         </div>
     </div>
+
+    <iframe id="hidFrame" style="display:none;"></iframe>
 
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
@@ -283,9 +291,22 @@
                 }
             });
 
-            $("#tabContent").bind('mousedown', function (event) {
+            jqxTabs$.jqxTabs('hideCloseButtonAt', 0);
+
+            jqxTabs$.on('selected', function (event) {
+                var index = event.args.item;
+                if (index == 0) {
+                    dashboardTmpFunction(dashboardTmpParam);
+                }
+            });
+
+            jqxTabs$.bind('mousedown', function (event) {
                 var rightClick = WebUtils.IsRightClick(event);
                 if (rightClick) {
+                    var selectedItem = jqxTabs$.jqxTabs('selectedItem');
+                    if (selectedItem == 0) {
+                        return false;
+                    }
                     var scrollTop = $(window).scrollTop();
                     var scrollLeft = $(window).scrollLeft();
 

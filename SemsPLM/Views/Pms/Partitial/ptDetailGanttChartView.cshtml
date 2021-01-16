@@ -41,8 +41,14 @@
                 satIsHoly = true;
             } else if (workingDaysPerWeek == 6) {
                 satIsHoly = false;
-            }
+            } 
+
             var sunIsHoly = true;
+
+            if (workingDaysPerWeek == 7) {
+                satIsHoly = false;
+                sunIsHoly = false;
+            }
 
             var pad = function (val) {
                 val = "0" + val;

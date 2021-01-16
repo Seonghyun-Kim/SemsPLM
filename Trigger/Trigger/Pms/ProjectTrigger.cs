@@ -22,8 +22,13 @@ namespace Pms.Trigger
             string type = Convert.ToString(oArgs[1]);
             string status = Convert.ToString(oArgs[2]);
             string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
             try
             {
+                if (action.Equals(CommonConstant.ACTION_REJECT))
+                {
+                    return "";
+                }
                 List<PmsRelationship> lProjWbs = PmsRelationshipRepository.GetProjWbsLIst(Context, oid);
                 if(lProjWbs.FindAll(wbs => { return wbs.ObjType == PmsConstant.TYPE_TASK && wbs.Members.Count < 1; }).Count > 0)
                 {

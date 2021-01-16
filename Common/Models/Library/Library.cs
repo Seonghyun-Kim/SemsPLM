@@ -12,6 +12,7 @@ namespace Common.Models
     {
         public string KorNm { get; set; }    //한글명
         public int? FromOID { get; set; }     //부모 OID
+        public int? ToOID { get; set; }     //target OID
         public string IsUse { get; set; }    //사용여부
         public int? Ord { get; set; }         //순서
         public string isRequired { get; set; } //필수여부
@@ -23,6 +24,9 @@ namespace Common.Models
         public string isDelete{ get; set; } //부모삭제여부
 
         public List<Library> Cdata { get; set; }
+
+        //영향성 평가표용
+        public string ManagerNm { get; set; }
     }
 
     public static class LibraryRepository

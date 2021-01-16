@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Pms.Models
 {
@@ -25,9 +26,9 @@ namespace Pms.Models
             return DaoFactory.GetList<PmsBaseLineRelationship>("Pms.SelPmsBaseLineRelationship", _param);
         }
 
-        public static int InsPmsBaseLineRelationship(PmsBaseLineRelationship _param)
+        public static int InsPmsBaseLineRelationship(HttpSessionStateBase Context, PmsBaseLineRelationship _param)
         {
-            _param.CreateUs = 1;
+            _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
             return DaoFactory.SetInsert("Pms.InsPmsBaseLineRelationship", _param);
         }
 
@@ -74,7 +75,5 @@ namespace Pms.Models
                 getBaseLineWbsStructure(item, _projOID, _RootBaseLineOID, _workingDay);
             });
         }
-
-
     }
 }

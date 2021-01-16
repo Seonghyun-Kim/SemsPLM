@@ -61,8 +61,8 @@
         height: 590,
         theme: "kdnc",
         checkboxes: function (rowKey, dataRow) {
-            var level = dataRow.level;
-            if (level == 0) {
+            var IsRequired = dataRow.IsRequired;
+            if (IsRequired == "Y") {
                 return false;
             }
             return true;
@@ -147,7 +147,11 @@
         });
     });
 
-
+    $('#dlgDocClassName').keydown(function (key) {
+        if (key.keyCode == 13) {
+            $('#dlgDocClassSearchBtn').trigger('click');
+        }
+    });
 
     function GetDocClassList() {
         param.Name = $('#dlgDocClassName').val();

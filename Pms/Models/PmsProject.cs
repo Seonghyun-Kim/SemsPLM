@@ -41,25 +41,45 @@ namespace Pms.Models
 
         public int? Complete { get; set; }
 
+        public int? PMOID { get; set; }
+
         public string PMNm { get; set; }
 
         public int? TemplateOID { get; set; }
+
+        public int? BaseProjectOID { get; set; }
+
+        public DateTime? EstDisposalDt { get; set; }
 
         //프로젝트 템플릿 내용
         public string TemplateContent { get; set; }
 
         public int? Oem_Lib_OID { get;set;}
+
         public int? Car_Lib_OID { get;set;}
+
         public int? ITEM_No { get;set;}
+
         public int? ITEM_Middle { get;set;}
+
         public string ProjectGrade { get;set;}
+
         public int? Customer_OID { get;set;}
+
         public string ProductNm { get; set; }
+
         public string Oem_Lib_Nm { get; set; }
+
         public string Car_Lib_Nm { get; set; }
+
         public string ITEM_NoNm { get; set; } //ITEM_NO
+
         public string ITEM_MiddleNm { get; set; }
+
         public string CustomerNm { get; set; }
+
+        //도낫 차트 집계용 수량
+        public int? Count { get; set; }
 
     }
 
@@ -118,6 +138,7 @@ namespace Pms.Models
             pmsProject.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, pmsProject, PmsAuth.RoleAuth(Context, pmsProject));
             pmsProject.Calendar = CalendarRepository.SelCalendar(new Calendar { Type = CommonConstant.TYPE_CALENDAR, OID = pmsProject.CalendarOID });
             PmsRelationship Member = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_MEMBER, RootOID = pmsProject.OID, RoleOID = BDefineRepository.SelDefine(new BDefine { Module = PmsConstant.MODULE_PMS, Type = CommonConstant.DEFINE_ROLE, Name = PmsConstant.ROLE_PM }).OID }).First();
+            pmsProject.PMOID = Member.ToOID;
             pmsProject.PMNm = PersonRepository.SelPerson(Context, new Person { OID = Member.ToOID }).Name;
             return pmsProject;
         }
@@ -216,6 +237,13 @@ namespace Pms.Models
                 innerJqTreeModel.type = Common.Constant.PmsConstant.TYPE_PROJECT;
                 _jqxTree.items.Add(innerJqTreeModel);
             });
+        }
+        #endregion
+
+        #region -- API : TotalProjectOemChart
+        public static List<PmsProject> SelOemBPolicy(HttpSessionStateBase Context, PmsProject _param)
+        {
+            return DaoFactory.GetList<PmsProject>("Pms.SelOemBPolicy", _param);
         }
         #endregion
     }

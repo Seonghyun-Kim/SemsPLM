@@ -70,7 +70,16 @@ namespace Common.Models
 
         public static List<ApprovalTask> SelInboxMyTasks(HttpSessionStateBase Context, ApprovalTask _param)
         {
-            _param.PersonOID = Convert.ToInt32(Context["UserOID"]);
+            List<BPolicy> lBolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = _param.BPolicyOID });
+            if (lBolicy.First().Name.Equals(CommonConstant.POLICY_APPROVAL_STARTED))
+            {
+                _param.PersonOID = Convert.ToInt32(Context["UserOID"]);
+            }
+            else
+            {
+                _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
+            }
+            
             List<ApprovalTask> lApprovalTasks = DaoFactory.GetList<ApprovalTask>("Comm.SelMyApprovalTask", _param);
             lApprovalTasks.ForEach(task =>
             {

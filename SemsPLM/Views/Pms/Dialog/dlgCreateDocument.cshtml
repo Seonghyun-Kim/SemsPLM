@@ -33,7 +33,7 @@
                 <input type="text" id="dlgCreateDocument_Title" autocomplete="off" />
             </td>
             <th><i class="fa fa-caret-right"></i> 작성자</th>
-            <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off"></td>
+            <td><input type="text" id="CreateDocument_CreateUs" class="readonly _r" readonly="readonly" autocomplete="off" value="@Session["UserNm"]"></td>
 
         </tr>
         <tr>
@@ -42,7 +42,7 @@
                 <input type="text" id="" autocomplete="off" class="readonly _r" readonly="readonly" value="자동 발번" />
             </td>
             <th><i class="fa fa-caret-right"></i> 작성일</th>
-            <td><input type="text" id="" class="readonly" readonly="readonly" autocomplete="off" /></td>
+            <td><input type="text" id="" class="readonly" readonly="readonly" autocomplete="off" value="@Convert.ToString(DateTime.Now.ToString("yyyy-MM-dd"))"/></td>
         </tr>
         <tr>
             <th class="reqVal"><i class="fa fa-caret-right"></i> 리비전</th>

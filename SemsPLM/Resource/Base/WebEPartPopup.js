@@ -1,4 +1,5 @@
-﻿function OpenSearchEBomTreeDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Name, _Id, key, _Action, _SelectRow) {
+﻿//대체시
+function OpenSearchEBomTreeDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Name, _Id, key, _Action, _SelectRow) {
     const loading$ = $('#loading');
     loading$.css('display', 'block');
     var popLayer = document.createElement("div");
@@ -18,18 +19,16 @@
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1400 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (750 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
 
     //var EBomStructureParam = {};
     //EBomStructureParam.Name = _Name;
 
     var rowKey = null;
 
-    
-
     $(popLayer).jqxWindow({
-        width: 1400, maxWidth: 1400, height: 750, minHeight: 750, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1500, maxWidth: 1500, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
             if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
@@ -46,6 +45,7 @@
                     { name: 'Children', type: 'array' },
                     { name: 'Ord', type: 'number' },
                     { name: 'Count', type: 'number' },
+                    { name: 'BPolicy' },
 
                     { name: 'ObjRevision', type: 'text' },
                     { name: 'ObjTdmxOID', type: 'text' },
@@ -61,15 +61,21 @@
                     { name: 'ObjITEM_NoNm', type: 'text' },
                     { name: 'ObjMaterial_OID', type: 'text' },
                     { name: 'ObjMaterial_Nm', type: 'text' },
-                    { name: 'ObjITEM_Middle', type: 'text' },              
+                    { name: 'ObjITEM_Middle', type: 'text' },
                     { name: 'ObjITEM_MiddleNm', type: 'text' },
                     { name: 'ObjProduction_Place', type: 'text' },
                     { name: 'ObjProduction_PlaceNm', type: 'text' },
                     { name: 'ObjBlock_No', type: 'text' },
                     { name: 'ObjBlock_NoNm', type: 'text' },
+
+                    { name: 'ObjOem_Lib_Nm', type: 'text' },
+                    { name: 'ObjDivision', type: 'text' },
+
+                    { name: 'ObjDivisionNm', type: 'text' },
+
                     { name: 'ObjSerial', type: 'text' },
                     { name: 'ObjSel_Revision', type: 'text' },
-
+                    { name: 'ObjStandard', type: 'text' },
                 ],
                 hierarchy:
                 {
@@ -90,7 +96,7 @@
             digSearchEBomStructureGrid$.jqxTreeGrid({
                 width: "100%",
                 theme: "kdnc",
-                height: 510,
+                height: 570,
                 sortable: true,
                 showToolbar: true,
                 toolbarHeight: 44,
@@ -106,18 +112,24 @@
                     { name: 'FromOID', dataField: 'FromOID', type: 'text', align: 'center', cellsalign: 'center', text: 'FromOID', width: '9%', hidden: 'true' },
                     { name: 'ToOID', dataField: 'ToOID', type: 'text', align: 'center', cellsalign: 'center', text: 'ToOID', width: '9%', hidden: 'true' },
 
-                    { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', align: 'center', cellsalign: 'center', type: 'text', text: '차종', width: '14%' },
-                    { name: 'ObjName', id: 'ObjName', dataField: 'ObjName', align: 'center', cellsalign: 'center', type: 'text', text: '품번', width: '14%' },
-                    { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', align: 'center', cellsalign: 'center', type: 'text', text: 'ITEM_NO', width: '14%' },
-                    { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', align: 'center', cellsalign: 'center', type: 'text', text: '재질', width: '11%' },
-                    { name: 'ObjBlock_NoNm', dataField: 'ObjBlock_NoNm', align: 'center', cellsalign: 'center', type: 'text', text: 'Block_No', width: '14%' },
-                    { name: 'Ord', dataField: 'Ord', type: 'number', align: 'center', cellsalign: 'center', text: '순서', width: '6%' },
-                    { name: 'Count', dataField: 'Count', align: 'center', cellsalign: 'center', type: 'number', text: '수량', width: '6%' },
+                    { name: 'ObjOem_Lib_Nm', dataField: 'ObjOem_Lib_Nm', type: 'text', text: 'OEM', width: '5%',  cellsalign: 'center', align: 'center' },
+                    { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '5%',  cellsalign: 'center', align: 'center' },
+                    { name: 'ObjDivisionNm', dataField: 'ObjDivisionNm', type: 'text', text: '구분', width: '5%', cellsalign: 'center', align: 'center' },
+                    { name: 'ObjName', dataField: 'ObjName', align: 'center', cellsalign: 'center', type: 'text', text: '품번', width: '11%' },
+                    { name: 'ObjTitle', dataField: 'ObjTitle', type: 'text', text: '품명', width: '11%', cellsalign: 'center', align: 'center' },
+                    { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '8%',  cellsalign: 'center', align: 'center' },
+                    { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '8%', cellsalign: 'center', align: 'center' },
+
+                    { name: 'ObjStandard', dataField: 'ObjStandard', type: 'text', text: '규격', width: '7%', cellsalign: 'center', align: 'center' },
+                    { name: 'ObjSel_Revision', dataField: 'ObjSel_Revision', type: 'text', text: '고객리비전', width: '7%', cellsalign: 'center', align: 'center' },
+                    { name: 'ObjRevision', dataField: 'ObjRevision', type: 'text', text: '리비전', width: '4%', cellsalign: 'center', align: 'center' },
+                    { name: 'Ord', dataField: 'Ord', type: 'number', align: 'center', cellsalign: 'center', text: '순서', width: '5%' },
+                    { name: 'Count', dataField: 'Count', align: 'center', cellsalign: 'center', type: 'number', text: '수량', width: '5%' },
                     {
-                        name: 'ObjThumbnail', dataField: 'ObjThumbnail', align: 'center', type: 'text', text: '이미지', width: '12%',
+                        name: 'ObjThumbnail', dataField: 'ObjThumbnail', align: 'center', type: 'text', text: '이미지', width: '10%',
                         cellsrenderer: function (row, column, value) {
                             if (value.length > 1) {
-                                return "<div class='ebomImg'><img src='~/images/Thumbnail/" + value + "'></div>";
+                                return "<div class='ebomImg'><img src='/images/Thumbnail/" + value + "'></div>";
                             } else {
                                 return ""
                             }
@@ -218,6 +230,7 @@
                 var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
                 var EBomStructureParam = {};
+                EBomStructureParam.Title = $("#SearchEBomStructureTitle").val();
                 EBomStructureParam.Car_Lib_OID = $("#SearchEBomStructureCar").val();
                 //EBomStructureParam. = dlgSearchEPartPms
                 EBomStructureParam.Name = $('#SearchEBomStructureName').val();
@@ -283,6 +296,7 @@ function EPartNewTabClick(url, Oid, Name) {
     });
 }
 
+//비교시 검색
 function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Action) {
     const loading$ = $('#loading');
     loading$.css('display', 'block');
@@ -303,13 +317,13 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1400 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (750 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
 
     var rowKey = null;
 
     $(popLayer).jqxWindow({
-        width: 1400, maxWidth: 1400, height: 750, minHeight: 750, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1500, maxWidth: 1500, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
             if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
@@ -326,6 +340,16 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
                     { name: 'BPolicy' },
                     { name: 'CreateUsNm' },
                     { name: 'CreateDt', type: 'date' },
+
+                    { name: 'Title' },
+
+                    { name: 'Oem_Lib_OID' },
+                    { name: 'Oem_Lib_Nm' },
+                    { name: 'Sel_Revision' },
+                    { name: 'Division' },
+                    { name: 'DivisionNm' },
+                    { name: 'Standard' },
+
                     { name: 'Car_Lib_OID' },
                     { name: 'Car_Lib_Nm' },
                     { name: 'ITEM_No' },
@@ -366,31 +390,29 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
                 },
                 columns: [
                     {
-                        text: 'NO', width: "6%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
                     },
-
-                    { name: 'OID', dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', width: '9%', hidden: 'true' },
-
-                    { name: 'Car_Lib_Nm', dataField: 'Car_Lib_Nm', type: 'text', align: 'center', cellsalign: 'center', text: '차종', width: '14%' },
-                    { name: 'Name', id: 'ObjName', dataField: 'Name', type: 'text', align: 'center', cellsalign: 'center', text: '품번', width: '16%' },
-                    { name: 'ITEM_NoNm', dataField: 'ITEM_NoNm', type: 'text', align: 'center', cellsalign: 'center',text: 'ITEM_NO', width: '14%' },
-                    { name: 'Material_Nm', dataField: 'Material_Nm', type: 'text', align: 'center', cellsalign: 'center', text: '재질', width: '12%' },
-                    { name: 'Block_NoNm', dataField: 'Block_NoNm', type: 'text', align: 'center', cellsalign: 'center', text: 'Block_No', width: '14%' },
-                    { name: 'CreateDt', dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd',  width: '12%' },
+                    { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '구분', datafield: 'DivisionNm', width: "7%", align: 'center', cellsalign: 'center', },
+                    { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                    { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                    { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "11%", align: 'center', cellsalign: 'center', },
+                    { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                    { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '고객리비전', datafield: 'Sel_Revision', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
                     {
-                        name: 'Thumbnail', dataField: 'Thumbnail', align: 'center', type: 'text', text: '이미지', width: '12%',
+                        text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
-                            if (value.length > 1) {
-                                return "<div class='ebomImg'><img src='~/images/Thumbnail/" + value + "'></div>";
-                            } else {
-                                return ""
-                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                         }
-                    }
-
+                    },
                 ],
                 rendertoolbar: function (toolBar) {
                     var container = $("<div class='lGridComponent' ></div>");
@@ -491,6 +513,8 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
             $('#dlgCreateEPartBtn').on('click', function () {
                 var param = {};
                 param.Name = $('#dlgCreateEPartName').val();
+                param.Title = $('#dlgCreateEPartTitle').val();
+                param.Standard = $('#dlgCreateEPart_Standard').val();
                 param.Description = $('#dlgCreateEPart_Description').val();
                 param.Thumbnail = EPartThumbnailData;
                 if (EPartDivision == "ASSEMBLY") {            //조립도일때
@@ -524,6 +548,10 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
                 }
 
+                if (param.Title == null || param.Title == "") {
+                    alert('품명을 확인해주세요.');
+                    return;
+                }
                 if (param.Name == null || param.Name == "") {
                     alert('품번을 확인해주세요.');
                     return;
@@ -540,7 +568,10 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         alert(response.resultMessage);
                         return;
                     }
-                    _Param = response;
+                    //_Param = param.Name;
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction(param.Name);
+                    }
                     alert("저장되었습니다.");
                     $(popLayer).jqxWindow('modalDestory');
                 });
@@ -568,7 +599,7 @@ function OpenInfoEPartCreateDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 }
 
 
-
+// EBOM 추가시
 function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Title, _Name, _Id, key, _Action, _SelectRow) {
     const loading$ = $('#loading');
     loading$.css('display', 'block');
@@ -589,8 +620,8 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1400 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (750 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
 
     var EBomStructureParam = {};
     EBomStructureParam.Name = _Name;
@@ -598,11 +629,8 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
     var rowKey = null;
 
     $(popLayer).jqxWindow({
-        width: 1400, maxWidth: 1400, height: 750, minHeight: 750, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1500, maxWidth: 1500, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
-            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                _CallBackFunction();
-            }
 
             var EBomStructureSource =
             {
@@ -614,6 +642,7 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                     { name: 'Children', type: 'array' },
                     { name: 'Ord', type: 'number' },
                     { name: 'Count', type: 'number' },
+                    { name: 'BPolicy'},
 
                     { name: 'ObjRevision', type: 'text' },
                     { name: 'ObjTdmxOID', type: 'text' },
@@ -635,9 +664,15 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                     { name: 'ObjProduction_PlaceNm', type: 'text' },
                     { name: 'ObjBlock_No', type: 'text' },
                     { name: 'ObjBlock_NoNm', type: 'text' },
+
+                    { name: 'ObjOem_Lib_Nm', type: 'text' },
+                    { name: 'ObjDivision', type: 'text' },
+
+                    { name: 'ObjDivisionNm', type: 'text' },
+                    
                     { name: 'ObjSerial', type: 'text' },
                     { name: 'ObjSel_Revision', type: 'text' },
-
+                    { name: 'ObjStandard', type: 'text' },
                 ],
                 hierarchy:
                 {
@@ -653,12 +688,13 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                 }
             };
             var dataAdapter = new $.jqx.dataAdapter(EBomStructureSource);
-            const digSetSearchEBomStructureGrid$ = $('#digSetSearchEBomStructureGrid');
-            digSetSearchEBomStructureGrid$.jqxTreeGrid({
+            const dlgSetSearchEBomStructureGrid$ = $('#dlgSetSearchEBomStructureGrid');
+            dlgSetSearchEBomStructureGrid$.jqxTreeGrid({
                 width: "100%",
                 theme: "kdnc",
                 sortable: true,
                 showToolbar: true,
+                height: 730,
                 toolbarHeight: 44,
                 editable: false,
                 source: dataAdapter,
@@ -666,29 +702,36 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
                 },
                 columns: [
-                    { name: 'Level', dataField: 'Level', type: 'number', width: '9%' },
+                    { name: 'Level', dataField: 'Level', type: 'number', width: '10%', editable: false },
+                    { name: 'OID', dataField: 'OID', type: 'number', width: '10%', editable: false, hidden: true },
+                    { name: 'FromOID', dataField: 'FromOID', type: 'number', width: '10%', editable: false, hidden: true },
+                    { name: 'ToOID', dataField: 'ToOID', type: 'number', width: '10%', editable: false, hidden: true },
 
-                    { name: 'OID', dataField: 'OID', type: 'text', align: 'center', cellsalign: 'center', text: 'OID', width: '9%', hidden: 'true' },
-                    { name: 'FromOID', dataField: 'FromOID', type: 'text', align: 'center', cellsalign: 'center', text: 'FromOID', width: '9%', hidden: 'true' },
-                    { name: 'ToOID', dataField: 'ToOID', type: 'text', align: 'center', cellsalign: 'center', text: 'ToOID', width: '9%', hidden: 'true' },
+                    { name: 'ObjOem_Lib_Nm', dataField: 'ObjOem_Lib_Nm', type: 'text', text: 'OEM', width: '5%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '5%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjDivisionNm', dataField: 'ObjDivisionNm', type: 'text', text: '구분', width: '5%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjName', id: 'ObjName', dataField: 'ObjName', align: 'center', cellsalign: 'center', type: 'text', text: '품번', width: '13%' },
+                    { name: 'ObjTitle', dataField: 'ObjTitle', type: 'text', text: '품명', width: '13%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '10%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '10%', editable: false, cellsalign: 'center', align: 'center' },
 
-                    { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', align: 'center', cellsalign: 'center', type: 'text', text: '차종', width: '14%' },
-                    { name: 'ObjName', id: 'ObjName', dataField: 'ObjName', align: 'center', cellsalign: 'center', type: 'text', text: '품번', width: '14%' },
-                    { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', align: 'center', cellsalign: 'center', type: 'text', text: 'ITEM_NO', width: '14%' },
-                    { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', align: 'center', cellsalign: 'center', type: 'text', text: '재질', width: '11%' },
-                    { name: 'ObjBlock_NoNm', dataField: 'ObjBlock_NoNm', align: 'center', cellsalign: 'center', type: 'text', text: 'Block_No', width: '14%' },
+                    { name: 'ObjStandard', dataField: 'ObjStandard', type: 'text', text: '규격', width: '7%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjSel_Revision', dataField: 'ObjSel_Revision', type: 'text', text: '고객리비전', width: '6%', editable: false, cellsalign: 'center', align: 'center' },
+                    { name: 'ObjRevision', dataField: 'ObjRevision', type: 'text', text: '리비전', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+
                     { name: 'Ord', dataField: 'Ord', type: 'number', align: 'center', cellsalign: 'center', text: '순서', width: '6%' },
                     { name: 'Count', dataField: 'Count', align: 'center', cellsalign: 'center', type: 'number', text: '수량', width: '6%' },
-                    {
-                        name: 'ObjThumbnail', dataField: 'ObjThumbnail', align: 'center', type: 'text', text: '이미지', width: '12%',
-                        cellsrenderer: function (row, column, value) {
-                            if (value.length > 1) {
-                                return "<div class='ebomImg'><img src='/images/Thumbnail/" + value + "'></div>";
-                            } else {
-                                return ""
-                            }
-                        }
-                    }
+                    
+                    //{
+                    //    name: 'ObjThumbnail', dataField: 'ObjThumbnail', align: 'center', type: 'text', text: '이미지', width: '12%',
+                    //    cellsrenderer: function (row, column, value) {
+                    //        if (value.length > 1) {
+                    //            return "<div class='ebomImg'><img src='/images/Thumbnail/" + value + "'></div>";
+                    //        } else {
+                    //            return ""
+                    //        }
+                    //    }
+                    //}
 
                 ],
 
@@ -701,18 +744,18 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                     container.append(CreateButton);
                     toolBar.append(container);
 
-                    digSetSearchEBomStructureGrid$.on('rowSelect', function (event) {
+                    dlgSetSearchEBomStructureGrid$.on('rowSelect', function (event) {
                         const previousRowKey = rowKey;
                         var args = event.args;
                         if (previousRowKey != null && rowKey == previousRowKey) {
-                            digSetSearchEBomStructureGrid$.jqxTreeGrid('uncheckRow', previousRowKey);
+                            dlgSetSearchEBomStructureGrid$.jqxTreeGrid('uncheckRow', previousRowKey);
                         }
                         rowKey = args.key;
                     });
 
                     AddButton.click(function (event) {
-                        digSetSearchEBomStructureGrid$.jqxTreeGrid('expandRow', rowKey);
-                        const SelectData = digSetSearchEBomStructureGrid$.jqxTreeGrid('getRow', rowKey);
+                        dlgSetSearchEBomStructureGrid$.jqxTreeGrid('expandRow', rowKey);
+                        const SelectData = dlgSetSearchEBomStructureGrid$.jqxTreeGrid('getRow', rowKey);
                         var parentData = _Id.jqxTreeGrid('getRow', key);
                         SelectData.Action = "A";
                         SelectData.FromOID = parentData.FromOID;
@@ -729,25 +772,32 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         _Id.jqxTreeGrid('updateBoundData');
 
                         _Id.jqxTreeGrid('expandAll');
+                        
 
                         $(popLayer).jqxWindow('modalDestory');
                     });
 
-                    var A;
+                    var AddName;
                     CreateButton.click(function (event) {
-                        OpenInfoEPartCreateDialog(null, null, A, '/EBom/dlgCreateEPart', 'EPART 등록');
+                        OpenInfoEPartCreateDialog(
+                            function (res) {
+                                RequestData('/EBom/SelectEBomAddChild', { Name: res }, function (res) {
+                                    PrintJqxTreeGrid(EBomStructureSource, dlgSetSearchEBomStructureGrid$, res);
+                                    dlgSetSearchEBomStructureGrid$.jqxTreeGrid('expandAll');
+                                })
+                            }, null, AddName, '/EBom/dlgCreateEPart', 'EPART 등록');
                     });
 
                     //검색 
                 },
             });
 
-            digSetSearchEBomStructureGrid$.on('rowSelect', function (event) {
+            dlgSetSearchEBomStructureGrid$.on('rowSelect', function (event) {
                 const previousRowKey = rowKey;
                 var args = event.args;
 
                 if (args.row.Level != 0) {
-                    digSetSearchEBomStructureGrid$.jqxTreeGrid('clearSelection');
+                    dlgSetSearchEBomStructureGrid$.jqxTreeGrid('clearSelection');
                 }
                 rowKey = args.key;
             });
@@ -755,8 +805,8 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
             var SetSearchData = _Id.jqxTreeGrid('getRow', key);
 
             RequestData('/EBom/SelectEBomAddChild', { Name: SetSearchData.ObjName }, function (res) {
-                PrintJqxTreeGrid(EBomStructureSource, digSetSearchEBomStructureGrid$, res);
-                digSetSearchEBomStructureGrid$.jqxTreeGrid('expandAll');
+                PrintJqxTreeGrid(EBomStructureSource, dlgSetSearchEBomStructureGrid$, res);
+                dlgSetSearchEBomStructureGrid$.jqxTreeGrid('expandAll');
             });
         }
     });
@@ -797,11 +847,11 @@ function OpenSearchEPartAssyDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1400 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (750 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 1400, maxWidth: 1400, height: 750, minHeight: 750, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1500, maxWidth: 1500, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
             var dlgEPartAssySource =
@@ -872,7 +922,7 @@ function OpenSearchEPartAssyDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         name: 'Thumbnail', dataField: 'Thumbnail', align: 'center', type: 'text', text: '이미지', width: '12%',
                         cellsrenderer: function (row, column, value) {
                             if (value.length > 1) {
-                                return "<div class='ebomImg'><img src='~/images/Thumbnail/" + value + "'></div>";
+                                return "<div class='ebomImg'><img src='/images/Thumbnail/" + value + "'></div>";
                             } else {
                                 return ""
                             }
@@ -926,6 +976,52 @@ function OpenSearchEPartAssyDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                     PrintJqxGrid(dlgEPartAssySource, digSearchEPartAssyGrid$, res);
                 });
             });
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        loading$.css('display', 'none');
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}
+
+
+function OpenSearchTopEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var rowKey = null;
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1500, maxWidth: 1500, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
         }
     });
 

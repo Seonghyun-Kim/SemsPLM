@@ -12,8 +12,12 @@
         </div>
         <div class="searchContent">
             <div class="searchData">
-                <div>부품번호</div>
+                <div>품번</div>
                 <div><input id="SearchEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>품명</div>
+                <div><input id="SearchEPartTitle" type="text" class="txtBox" value="" /></div>
             </div>
             <div class="searchData">
                 <div class="checkBoxLabel">구분</div>
@@ -109,6 +113,7 @@
                 var CardataAdapter = new $.jqx.dataAdapter(CarSource);
                 SearchEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
             });
+
         });
 
         var ItemSource =
@@ -125,7 +130,7 @@
         SearchEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
 
 
-        $('#SearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: true });
+        $('#SearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: false });
         $('#SearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
         $('#SearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
         $('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
@@ -139,6 +144,15 @@
                 { name: 'BPolicy'},
                 { name: 'CreateUsNm' },
                 { name: 'CreateDt', type: 'date' },
+
+                { name: 'Title' },
+
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_Nm' },
+                { name: 'Sel_Revision' },
+                { name: 'Division' },
+                { name: 'Standard'},
+
                 { name: 'Car_Lib_OID' },
                 { name: 'Car_Lib_Nm' },
                 { name: 'ITEM_No' },
@@ -172,22 +186,35 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '차종', datafield: 'Car_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
-                { text: '품번', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
-                { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "15%", align: 'center', cellsalign: 'center', },
-                { text: '재질', datafield: 'Material_Nm', width: "10%", align: 'center', cellsalign: 'center', },
-                { text: 'Block_No', datafield: 'Block_NoNm', width: "15%", align: 'center', cellsalign: 'center', },
-                { text: 'Rev', datafield: 'Revision', width: "6%", align: 'center', cellsalign: 'center', },
-                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '작성자', datafield: 'CreateUsNm', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
                 {
-                    text: '상태', datafield: 'BPolicy', width: "8%", align: 'center', cellsalign: 'center',
+                    text: '구분', datafield: 'Division', width: "7%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        if (value == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_ASSEMBLY_NM" + "</div>";
+                        } else if (value == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_SINGLE_NM" + "</div>";
+                        } else {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_STANDARD_NM" + "</div>";
+                        }
+                    }
+                },
+                { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '고객리비전', datafield: 'Sel_Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                     }
                 },
-                //{ text: '2D', datafield: 'Thumbnail', width: "7%", align: 'center', cellsalign: 'center', },
-                //{ text: '3D', datafield: 'Description', width: "7%", align: 'center', cellsalign: 'center', }
             ],
             showtoolbar: true,
             toolbarheight: 45,
@@ -230,14 +257,21 @@
             });
         });
 
-        //$('#projType').jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 170, height: 33, });
-        getSearchEPartList(SearchEPartSource, SearchEPartGrid$, {});
+        var param = {};
+        if ("@ViewBag.MOD" == "@Common.Constant.EBomConstant.SEARCH_EPART_RELEASE") {
+            param.IsReleasedLatest = 1;
+        } else {
+            //param.IsLatest = 1;
+            //param.IsReleasedLatest = 0;
+        }
+        getSearchEPartList(SearchEPartSource, SearchEPartGrid$, param);
 
         var SearchDivision=null;
         $("#SearchEPartAssemble").on('change', function (event) {
             checked = event.args.checked;
             if (checked) {
                 SearchDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+                $('#SearchEPartbtn').click();
             }
         });
 
@@ -245,6 +279,7 @@
             checked = event.args.checked;
             if (checked) {
                 SearchDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+                $('#SearchEPartbtn').click();
             }
         });
 
@@ -252,21 +287,41 @@
             checked = event.args.checked;
             if (checked) {
                 SearchDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+                $('#SearchEPartbtn').click();
             }
         });
+
+        $('#SearchEPartName, #SearchEPartTitle').keydown(function (e) {
+            if (e.keyCode === 13) {
+                $('#SearchEPartbtn').click();
+            }
+        });
+
+        $('#SearchEPartItemNo, #SearchEPartCar').on('change',function (e) {
+            $('#SearchEPartbtn').click();
+        });
+
 
         $('#SearchEPartbtn').on('click', function () {
             var SearchEPartCreateDt = $('#SearchEPartCreateDt').val();
             var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
-            var param = {};
+            param = {};
             param.Name = $('#SearchEPartName').val();
+            param.Title = $('#SearchEPartTitle').val();
             param.Division = SearchDivision;
             param.Car_Lib_OID = SearchEPartCarLib$.val();
             param.ITEM_No = SearchEPartItemLib$.val();
             param.StartCreateDt = SearchEPartCreateDtArray[0];
-            param.EndCreateDt = SearchEPartCreateDtArray[1]+" 23:59:59";
-            console.log(param);
+            param.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+
+            if ("@ViewBag.MOD" == "@Common.Constant.EBomConstant.SEARCH_EPART_RELEASE") {
+                param.IsReleasedLatest = 1;
+            } else {
+                //param.IsLatest = 1;
+                //param.IsReleasedLatest = 0;
+            }
+            //param.IsLatest = 0;
             getSearchEPartList(SearchEPartSource, SearchEPartGrid$, param);
         });
     });

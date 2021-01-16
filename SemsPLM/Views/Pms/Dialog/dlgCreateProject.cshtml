@@ -111,7 +111,7 @@
     var iuputText = "";
     $(function () {
         const dlgProjType$ = $('#dlgProjType');
-        dlgProjType$.jqxComboBox({ source: ['', '선행', '양산'], selectedIndex: 0, width: 185, height: 30, });
+        dlgProjType$.jqxComboBox({ source: ['', '선행', '개발', '양산'], selectedIndex: 0, width: 185, height: 30, });
 
         var itemList =  @Html.Raw(Json.Encode(ViewBag.ItemList));
         var placeList = @Html.Raw(Json.Encode(ViewBag.placeList));
@@ -227,19 +227,28 @@
         $('#schDlgProjectTemplate').on('click', function () {
             OpenCreateProjectContentDialog(function (checkData) {
                 $('#txtDlgProjectTemplate').val(checkData.Name);
+                if (!$("#isCopyTemplate").jqxCheckBox('checked')) {
+                    $('#hidBaseProject').val(checkData.OID);
+                }
                 $('#hidTemplateOID').val(checkData.OID);
                 $("#IsWbs").jqxCheckBox({ checked: true, locked: false });
                 $("#IsMember").jqxCheckBox({ checked: true, locked: false });
                 $("#IsDocument").jqxCheckBox({ checked: true, locked: false });
-            }, null, "/Pms/CreateProjectContent", { Title: '템플릿 검색', Mode: 'Template' });
+            }, null, "/Pms/CreateProjectContent", { Title: ($("#isCopyTemplate").jqxCheckBox('checked') ? '템플릿 검색' : '프로젝트 검색'), Mode: $("#isCopyTemplate").jqxCheckBox('checked') ? 'Template' : 'Base' });
         });
 
         $('#schDlgProjectTemplateClear').on('click', function () {
             $('#txtDlgProjectTemplate').val('');
             $('#hidTemplateOID').val('');
+            $('#hidBaseProject').val('');
             $("#IsWbs").jqxCheckBox({ checked: false, locked: true });
             $("#IsMember").jqxCheckBox({ checked: false, locked: true });
             $("#IsDocument").jqxCheckBox({ checked: false, locked: true });
+        });
+
+
+        $('#isCopyTemplate').on('change', function (event) {
+            $('#schDlgProjectTemplateClear').click();
         });
 
         dlgItemMiddle$.on('change', function (evt) {
@@ -249,6 +258,7 @@
             var idx = evt.args.index;
             CreateProjName();
         });
+
         txtDlgItemName$.bind('change paste keyup', function () {
             iuputText = txtDlgItemName$.val();
             CreateProjName();

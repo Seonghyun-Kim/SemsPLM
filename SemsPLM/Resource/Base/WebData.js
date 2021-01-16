@@ -1,4 +1,7 @@
-﻿var DateFormat = {
+﻿var dashboardTmpFunction;
+var dashboardTmpParam;
+
+var DateFormat = {
     culture: 'ko-KR',
     formatString: 'yyyy-MM-dd',
     width: 140,

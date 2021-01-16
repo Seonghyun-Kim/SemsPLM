@@ -106,9 +106,8 @@
 
         $("#calendarList").on("rowdoubleclick", function (event) {
             var clickData = event.args.row.bounddata;
-            console.log(clickData);
             var iFrameObj = $('#calendarDetail').get(0).contentWindow;
-            iFrameObj.standard = clickData.WorkingDay == 5 ? 6 : 0;
+            iFrameObj.standard = clickData.WorkingDay == 5 ? 6 : (clickData.WorkingDay == 6 ? 0 : 7);
             iFrameObj.editable = true;
             iFrameObj.loadCalender(clickData.OID);
             $('#spanLabel').html(clickData.Name + ' 수정');
@@ -137,9 +136,9 @@
             var winHeight = $(window).height();
             var winWidth = $(window).width();
             var posX = (winWidth / 2) - (400 / 2) + $(window).scrollLeft();
-            var posY = (winHeight / 2) - (480 / 2) + $(window).scrollTop();
+            var posY = (winHeight / 2) - (520 / 2) + $(window).scrollTop();
 
-            $('#dlgCalendar').jqxWindow({ position: { x: posX, y: posY } });
+            $('#dlgCalendar').jqxWindow({ width: 400, maxWidth: 400, height: 520, minHeight: 520, position: { x: posX, y: posY } });
             $('#dlgCalendar').jqxWindow('setTitle', "캘린더 등록");
             $('#dlgCalendar').jqxWindow("show");
         });

@@ -14,10 +14,12 @@
     <insert id="InsCalendar" parameterClass="Calendar" >
       INSERT INTO T_DCALENDAR
       (OID,
-      WorkingDay
+      WorkingDay,
+      DefaultHoliday
       ) VALUES (
       #OID#,
-      #WorkingDay#)
+      #WorkingDay#,
+      #DefaultHoliday#)
     </insert>
 
     <select id="SelCalendar" parameterClass="Calendar" resultClass="Calendar">

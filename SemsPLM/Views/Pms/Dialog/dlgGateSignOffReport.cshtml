@@ -7,6 +7,8 @@
     <label for="gateReportTab">보고서</label>
     <input type="radio" name="gateReportRadio" value="gateIssueList" id="gateIssueListTab" />
     <label for="gateIssueListTab">이슈리스트</label>
+    <input type="radio" name="gateReportRadio" value="tatalIssueList" id="totalIssueListTab" />
+    <label for="totalIssueListTab">전체이슈리스트</label>
 </div>
 <div class="dlgGateReportContent">
     <div>
@@ -19,7 +21,7 @@
             {
                 <button class="custom-button" id="dlgGateSaveBtn_@ViewBag.InfoProc.OID"><i class="fas fa-save"></i> 저장</button>
             }
-            </div>
+        </div>
         <h4>1. 개발개요</h4>
         <table class="dlgGateReportTable">
             <colgroup>
@@ -156,6 +158,9 @@
     <div style="padding-top:10px;">
         <div id="issueListGrid"></div>
     </div>
+    <div style="padding-top:10px;">
+        <div id="totalIssueListGrid"></div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -176,6 +181,7 @@
                     { name: 'CreateUs', type: 'number' },
                     { name: 'CreateUsNm', type: 'string' },
                     { name: 'TaskNm', type: 'string' },
+                    { name: 'TaskOID', type: 'number' },
                     { name: 'IssueType', type: 'string' },
                     { name: 'IssueTypeNm', type: 'string' },
                     { name: 'IssueTypeList', type: 'array' },
@@ -392,9 +398,137 @@
                 ],
             });
             PrintJqxGrid(IssueListSource, $('#issueListGrid'), IssueList);
+
+            $('#totalIssueListGrid').jqxGrid({
+                width: 1238,
+                height: 750,
+                columnsresize: true,
+                columns: [
+                    {
+                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    {
+                        text: '사양', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_SPEC') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    {
+                        text: '4M', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_4M') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+
+                    },
+                    {
+                        text: '품질', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_QUALITY') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    {
+                        text: '기타', width: '5%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row).IssueTypeList;
+                            if (data != null && data != undefined) {
+                                var flag = "";
+                                _.each(data, function (val) {
+                                    if (val == '@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_ETC') {
+                                        return flag = "V";
+                                    }
+                                });
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + flag + "</div>";
+                            } else {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'></div>";
+                            }
+                        }
+                    },
+                    { text: 'Open Issue', datafield: "Name", width: '14%', align: 'center', },            
+                    { text: '추진계획', datafield: "Description", width: '15%', align: 'center', },
+                    { text: 'Start Date', datafield: "CreateDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    { text: 'Due Date', datafield: "EstFinDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    { text: 'Close Date', datafield: "FinDt", width: '10%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                    {
+                        text: 'Status', width: '6%', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row);
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                                var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
+                                if (today.getTime() <= data.EstFinDt.getTime()) {
+                                    if (dateGap < 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    }
+                                } else {
+                                    if (dateGap > 7) {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>';
+                                    }
+                                }
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                                return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                            }
+                        }
+                    },
+                    { text: '비고', datafield: "Contents", width: '12%', align: 'center', },
+                    { text: 'TaskOID', datafield: "TaskOID", width: '14%', align: 'center',hidden:true, filtertype: 'number', filtercondition: 'not_null'},
+                ],
+            });
+            RequestData('/Pms/SelIssue', { 'RootOID': @ViewBag.InfoProj.OID }, function (res) {
+                var result = [];
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].RootOID != res[i].FromOID) {
+                        result.push(res[i]);
+                    }
+                }
+                PrintJqxGrid(IssueListSource, $('#totalIssueListGrid'), result);
+                //var filtergroup = new $.jqx.filter();
+                //var filtervalue = 10; // Each cell value is compared with the filter's value.
+                //var filter = filtergroup.createfilter('numericfilter', filtervalue, 'NOT_NULL');
+                //filtergroup.addfilter(0, filter);
+                //$('#totalIssueListGrid').jqxGrid('addfilter', 'TaskOID', filtergroup, true)
+            });
             //Tab Hide&Show
             const gateReportContent$ = $(".dlgGateReportContent > div");
-            gateReportContent$.last().hide();
+            gateReportContent$.hide();
+            gateReportContent$.first().show();
             $("input[name=gateReportRadio]").click(function () {
                 gateReportContent$.hide();
                 gateReportContent$.eq($("input[name=gateReportRadio]").index(this)).show();

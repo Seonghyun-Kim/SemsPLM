@@ -41,6 +41,16 @@ namespace Pms.Models
         //System
         public int? RootOID { get; set; }
 
+        public string RootNm { get; set; }
+
+        public string RootOEM { get; set; }
+
+        public string RootCarType { get; set; }
+
+        public string RootItem { get; set; }
+
+        public int? Delay { get; set; }
+
         public string ApprovStatus { get; set; }
     }
 
@@ -61,8 +71,11 @@ namespace Pms.Models
         {
             _param.Type = _param.ProcessType;
             PmsProcess pmsProcess = DaoFactory.GetData<PmsProcess>("Pms.SelPmsProcess", _param);
-            pmsProcess.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = pmsProcess.ProcessType, OID = pmsProcess.BPolicyOID }).First();
-            pmsProcess.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, pmsProcess, PmsAuth.RoleAuth(Context, pmsProcess));
+            if (pmsProcess != null)
+            {
+                pmsProcess.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = pmsProcess.ProcessType, OID = pmsProcess.BPolicyOID }).First();
+                pmsProcess.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, pmsProcess, PmsAuth.RoleAuth(Context, pmsProcess));
+            }
             return pmsProcess;
         }
 

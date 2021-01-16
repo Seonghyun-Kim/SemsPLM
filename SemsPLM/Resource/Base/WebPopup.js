@@ -815,3 +815,173 @@ function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
         }
     });
 }
+
+//Notice Dialog
+function OpenNoticeDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (560 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 800, maxWidth: 800, height: 560, minHeight: 560, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
+            $('#btnDlgRegNotice').on('click', function () {
+                var param = {};
+                param.Name = $('#dlgNoticeNm').val();
+                param.Description = $('#dlgNoticeDescription').val();
+                if (param.Name == null) {
+                    alert('제목을 입력하여주세요.');
+                    return;
+                }
+                RequestData("/Common/InsNotice", param, function (res) {
+                    alert('등록 되었습니다.');
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                });
+            });
+            $('#btnDlgSaveNotice').on('click', function () {
+                var param = {};
+                param.OID = _Param.OID;
+                param.Name = $('#dlgNoticeNm').val();
+                param.Description = $('#dlgNoticeDescription').val();
+                if (param.Name == null) {
+                    alert('제목을 입력하여주세요.');
+                    return;
+                }
+                if (confirm('수정 하시겠습니까?')) {
+                    RequestData("/Common/UdtNotice", param, function (res) {
+                        alert('수정 되었습니다.');
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction();
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
+                }
+            });
+
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}
+
+function OpenDashboardPageDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1800 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1800, maxWidth: 1800, height: 900, minHeight: 900, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                _CallBackFunction();
+            }
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}
+
+function OpenDashboardDefaultPageDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1200 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1200, maxWidth: 1200, height: 650, minHeight: 650, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                _CallBackFunction();
+            }
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}

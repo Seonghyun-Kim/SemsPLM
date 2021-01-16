@@ -1,0 +1,65 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <h4 class="cleanTitle"><i class="fas fa-poll"></i> DV현황</h4>
+        <div id="pmMyDVStatusGrid"></div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var dvSource = {
+                dataType: "json",
+                dataFields: [
+                    { name: 'OID', type: 'number' },
+                    { name: 'ProjectNm', type: 'string' },
+                    { name: 'Oem_Lib_Nm', type: 'string' },
+                    { name: 'Car_Lib_Nm', type: 'string' },
+                    { name: 'PartNm', type: 'string' },
+                    { name: 'TotalTestDt', type: 'date' },
+                    { name: 'TotalTestItem', type: 'number' },
+                    { name: 'WaitingNum', type: 'number' },
+                    { name: 'ProgressNum', type: 'number' },
+                    { name: 'CompleteNum', type: 'number' },
+                    { name: 'NGNum', type: 'number' },
+                ],
+                id: 'OID',
+            }
+            $('#pmMyDVStatusGrid').jqxGrid({
+                width: '100%',
+                height: 550,
+                editable: false,
+                columns: [
+                    {
+                        text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '프로젝트명', datafield: 'ProjectNm', width: "25%", align: 'center', cellsalign: 'center', },
+                    { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '차종', datafield: 'Car_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '제품명', datafield: 'PartNm', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '전체시험일정', datafield: 'TotalTestDt', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '총 시험항목', datafield: 'TotalTestItem', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '대기건수', datafield: 'WaitingNum', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '완료건수', datafield: 'CompleteNum', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '진행건수', datafield: 'ProgressNum', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'NG건수', datafield: 'NGNum', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                ],
+            });
+              RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                  PrintJqxGrid(dvSource, $('#pmMyDVStatusGrid'), res);
+            });
+        });
+    </script>
+</body>
+</html>

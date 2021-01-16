@@ -1,16 +1,22 @@
 ﻿
 @{
     Layout = null;
+    ViewBag.Title = "비교시 검색";
 }
+
 <div style="width:100%; margin-right:20px;">
     <div class="searchBox">
         <div class="searchTitle">
-            <label><i class="fas fa-folder-open"></i> &nbsp;E-PART 검색</label>
+            <label><i class="fas fa-folder-open"></i> &nbsp;EPart 검색</label>
         </div>
         <div class="searchContent">
             <div class="searchData">
-                <div>부품번호</div>
+                <div>품번</div>
                 <div><input id="dlgSearchEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>품명</div>
+                <div><input id="dlgSearchEPartTitle" type="text" class="txtBox" value="" /></div>
             </div>
             <div class="searchData">
                 <div class="checkBoxLabel">구분</div>
@@ -52,6 +58,7 @@
         </div>
     </div>
 </div>
+
 
 <div id="digSearchEPartGrid"></div>
 
@@ -111,9 +118,9 @@
         var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
         dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
 
-        $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 34, checked: true });
-        $('#dlgSearchEPartSingle').jqxRadioButton({ width: 120, height: 34, checked: false });
-        $('#dlgSearchEPartStandard').jqxRadioButton({ width: 120, height: 34, checked: false });
+        $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 33, checked: false });
+        $('#dlgSearchEPartSingle').jqxRadioButton({ width: 120, height: 33, checked: false });
+        $('#dlgSearchEPartStandard').jqxRadioButton({ width: 120, height: 33, checked: false });
         $('#dlgSearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         $('#dlgSearchEPartAssemble').on('change', function (event) {

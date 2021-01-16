@@ -179,69 +179,7 @@
                 DivCustomerSchedule$.attr('hidden', true);
                 CustomerSchedule$.attr('hidden', true);
                 ProjectProperties$.attr('hidden', true);
-                var partnerProjInfo = '<div>';
-                var ADTotalDonutChart$ = '<div id="ADTotalDonutChart"></div>';
-                var CKTotalDonutChart$ = '<div id="CKTotalDonutChart"></div>';
-                var EDTotalDonutChart$ = '<div id="EDTotalDonutChart"></div>';
-                var X2TotalDonutChart$ = '<div id="X2TotalDonutChart"></div>';
-                partnerProjInfo += '<h3 class="cleanTitle"><i class="fas fa-info-circle"></i> &nbsp;고객사별 통합 프로젝트 정보</h3><div class="partnerChartBox scrollY">';
-                partnerProjInfo += ADTotalDonutChart$ + CKTotalDonutChart$ + EDTotalDonutChart$ + X2TotalDonutChart$;
-                partnerProjInfo += '</div></div>';
-                TempChart$.append(partnerProjInfo);
-
-                 var partnerProjSampleData = [
-                { status: '완료', amount: 10 },
-                { status: '진행중', amount: 40 },
-                { status: '중단', amount: 20 },
-                { status: '페기', amount: 30 },
-            ];
-            var partnerTotalChartSetting = {
-                description: '',
-                colorScheme: 'scheme26',
-                padding: {
-                    left: 5,
-                    top: 20,
-                    right: 5,
-                    bottom: 20
-                },
-                borderLineColor: 'transparent',
-                showLegend: true,
-                legendLayout: { flow: 'horizon' },
-                source: partnerProjSampleData,
-                enableAnimations: true,
-                categoryAxis: {
-                    dataField: 'status',
-                    showGridLines: false,
-                },
-                seriesGroups: [{
-                    type: 'pie',
-                    useGradient: false,
-                    showLabels: true,
-                    series: [
-                        {
-                            dataField: 'amount',
-                            displayText: 'status',
-                            labelRadius: 85,
-                            initialAngle: 15,
-                            radius: 85,
-                            innerRadius: 50,
-                            legendFormatFunction: function (value, itemIndex, serie, group) {
-                                return value;
-                            },
-                            formatSettings: { sufix: '%' }
-                        }
-                    ]
-                }],
-            };
-
-                $('#ADTotalDonutChart').jqxChart(partnerTotalChartSetting);
-                $('#ADTotalDonutChart').jqxChart({title :'AD 차종 총  프로젝트'});
-                $('#CKTotalDonutChart').jqxChart(partnerTotalChartSetting);
-                $('#CKTotalDonutChart').jqxChart({title :'CK 차종 총  프로젝트'});
-                $('#EDTotalDonutChart').jqxChart(partnerTotalChartSetting);
-                $('#EDTotalDonutChart').jqxChart({title: 'ED 차종 총  프로젝트' });
-                $('#X2TotalDonutChart').jqxChart(partnerTotalChartSetting);
-                $('#X2TotalDonutChart').jqxChart({title :'X2 차종 총  프로젝트'});
+                getProjDonut(item.id, TempChart$);
 
             } else if (item.type == "@Common.Constant.PmsConstant.ATTRIBUTE_CAR") {
                 TempChart$.children().remove();
@@ -507,5 +445,73 @@
         day = day >= 10 ? day : '0' + day;
         return year + '-' + month + '-' + day;
     }
+    function getProjDonut(_Param, _TargetDiv) {
+        RequestData("/Pms/SelOemProjDonut", { OemOID: _Param }, function (res) {
+            var keys = Object.keys(res);
+            _TargetDiv.empty();
+            var partnerProjInfo = '<div>';
+            partnerProjInfo += '<h3 class="cleanTitle"><i class="fas fa-info-circle"></i> &nbsp;고객사별 통합 프로젝트 정보</h3><div class="partnerChartBox scrollY">';
+            _TargetDiv.append(partnerProjInfo);
+            for (var i = 0; i < keys.length; i++) {
+                var partnerProjSampleData = [];
+                var innerKeys = Object.keys(res[keys[i]]);
+                var sumValue = 0;
+                for (var j = 0; j < innerKeys.length; j++) {
 
+                    sumValue += res[keys[i]][innerKeys[j]];
+                    partnerProjSampleData.push({ status: innerKeys[j], amount: res[keys[i]][innerKeys[j]] });
+
+                }
+                var chart$ = '<div id="DonutChart_' + i + '"></div>';
+                $('.partnerChartBox ').append(chart$);
+
+
+
+                var partnerTotalChartSetting = {
+                    description: '',
+                    colorScheme: 'scheme01',
+                    padding: {
+                        left: 5,
+                        top: 20,
+                        right: 5,
+                        bottom: 20
+                    },
+                    borderLineColor: 'transparent',
+                    showLegend: true,
+                    legendLayout: { flow: 'horizon' },
+                    source: partnerProjSampleData,
+                    enableAnimations: true,
+                    categoryAxis: {
+                        dataField: 'status',
+                        showGridLines: false,
+                    },
+                    seriesGroups: [{
+                        type: 'pie',
+                        useGradient: false,
+                        showLabels: true,
+                        series: [
+                            {
+                                dataField: 'amount',
+                                displayText: 'status',
+                                labelRadius: 85,
+                                initialAngle: 15,
+                                radius: 85,
+                                innerRadius: 50,
+                                legendFormatFunction: function (value, itemIndex, serie, group) {
+                                    return value;
+                                },
+                                //formatSettings: { sufix: '%' },
+                                //formatFunction: function (value) {
+
+                                //    return (value / sumArray[1]* 100)+ "%";
+                                //},
+                            }
+                        ]
+                    }],
+                };
+                $('#DonutChart_' + i).jqxChart(partnerTotalChartSetting);
+                $('#DonutChart_' + i).jqxChart({ title: keys[i] + ' 차종 총  프로젝트' });
+            }
+        });
+    }
 </script>

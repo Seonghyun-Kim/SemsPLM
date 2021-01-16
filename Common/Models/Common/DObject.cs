@@ -126,9 +126,14 @@ namespace Common.Models
         {
             int result = -1;
             DObject targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = _param.OID });
-            DObjectRepository.UdtReleaseLatestDObject(Context, new DObject { OID = _param.OID, IsReleasedLatest = 0 });
+            //DObjectRepository.UdtReleaseLatestDObject(Context, new DObject { OID = _param.OID, IsReleasedLatest = 0 });
+            DObjectRepository.UdtLatestDObject(Context, new DObject { OID = _param.OID, IsLatest = 0 });
             targetDobj.BPolicyOID = null;
             targetDobj.Revision = SemsUtil.MakeMajorRevisonUp(targetDobj.Revision);
+            if(_param.Name != null)
+            {
+                targetDobj.Name = _param.Name;
+            }
             result = DObjectRepository.InsDObject(Context, targetDobj);
             return result;
         }
@@ -174,11 +179,18 @@ namespace Common.Models
             return result;
         }
 
-        public static int DelDObject(HttpSessionStateBase Context, DObject _param)
+        public static int DelDObject(HttpSessionStateBase Context, DObject _param, List<string> _delQuery)
         {
             int result = -1;
             _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             result = DaoFactory.SetUpdate("Comm.DelDObject", _param);
+            if (_delQuery != null && _delQuery.Count > 0)
+            {
+                _delQuery.ForEach(query =>
+                {
+                    DaoFactory.SetUpdate(query, new DRelationship { ToOID = _param.OID, DeleteUs = _param.DeleteUs });
+                });
+            }
             return result;
         }
 

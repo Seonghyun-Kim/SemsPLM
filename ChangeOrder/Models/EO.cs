@@ -38,6 +38,11 @@ namespace ChangeOrder.Models
             List<EO> lEO = DaoFactory.GetList<EO>("EO.SelEOContents", _param);
             return lEO;
         }
+        public static EO SelEOContentsObject(EO _param)
+        {
+            EO lEO = DaoFactory.GetData<EO>("EO.SelEOContents", _param);
+            return lEO;
+        }
 
         public static int delEOContents(EO _param)
         {

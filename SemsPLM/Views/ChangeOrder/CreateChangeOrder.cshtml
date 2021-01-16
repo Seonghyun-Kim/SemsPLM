@@ -596,24 +596,52 @@
             for (var i = 0; i < assessList$.length; i++) {
                 var tr;
                 var td = document.createElement("td");
+                var nametag = document.createElement("h4");
+                var managerDiv = document.createElement("div");
+                nametag.innerHTML = assessList$[i].Name;
+                var managerOID = document.createElement("input");
+                managerOID.type = "hidden";
+                managerOID.id = "managerOID_" + i;
+                var manager = document.createElement("input");
+                manager.type = "text";
+                manager.setAttribute('readonly', 'readonly');
+                manager.id = "managerNm_" + i;
+                var btn = document.createElement("button");
+                btn.innerHTML = "<i class='fas fa-search'></i> 처리자 선택";
+                btn.className = "custom-button";
+                btn.setAttribute('data-oid', i);
+                btn.id = "selManager_" + i;
+                btn.addEventListener('click', function (e) {
+                      var param = {};
+                    param.ToOID = $(this).attr('data-oid');
+                    OpenAssessManagerDialog(function (res) {
+                    }, null, param, '/ChangeOrder/dlgSelectAssessmanager', '처리자 등록');
+                }, false);
+
+                var wrapDiv$ = document.createElement("div");
+                wrapDiv$.className = "scrollY";
+                var div$ = document.createElement("div");
+                div$.id = "assessList_" + i;
+
                 if (i % 2 != 1) {
                     tr = document.createElement("tr");
-                    var td = document.createElement("td");
-                    var nametag = document.createElement("h4");
-                    nametag.innerHTML = assessList$[i].Name;
-                    var div$ = document.createElement("div");
-                    div$.id = "assessList_" + i;
                     td.appendChild(nametag);
-                    td.appendChild(div$);
+                    nametag.appendChild(managerDiv);
+                    managerDiv.appendChild(managerOID);
+                    managerDiv.appendChild(manager);
+                    managerDiv.appendChild(btn);
+                    wrapDiv$.appendChild(div$);
+                    td.appendChild(wrapDiv$);
                     tr.appendChild(td);
                 } else {
-                    var td = document.createElement("td");
-                    var nametag = document.createElement("h4");
-                    nametag.innerHTML = assessList$[i].Name;
-                    var div$ = document.createElement("div");
-                    div$.id = "assessList_" + i;
+
                     td.appendChild(nametag);
-                    td.appendChild(div$);
+                    nametag.appendChild(managerDiv);
+                    managerDiv.appendChild(managerOID);
+                    managerDiv.appendChild(manager);
+                    managerDiv.appendChild(btn);
+                    wrapDiv$.appendChild(div$);
+                    td.appendChild(wrapDiv$);
                     tr.appendChild(td);
                 }
                 $(effectAssessList$).append(tr);
@@ -629,7 +657,7 @@
                     ],
                 }
                 var dataAdapter = new $.jqx.dataAdapter(source);
-                $("#assessList_" + i).jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: "100%", checkboxes: true });
+                $("#assessList_" + i).jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true, autoHeight:true });
 
             }
                 var reasonSource =
@@ -682,6 +710,8 @@
 
 
             $('#ECOSaveBtn').on('click', function () {
+                if (gClickDuplication) { return; }
+                gClickDuplication = true;
                 var param = {};
                 param.ItemGroup = $('#CreateChangeOrder_ItemGroup').val();
                 param.Title = $('#CreateChangeOrder_Title').val();
@@ -699,14 +729,14 @@
                 param.EBom = $('#CreateChangeOrder_EBom').val();
                 param.DevMP = devType$.val();
                 param.CarType = $('#CreateChangeOrder_CarType').val();
-                param.Description = $('#CreateChangeOrder_Description').val();               
+                param.Description = $('#CreateChangeOrder_Description').val();
                 var chkReason = [];
                 for (var i = 0; i < $('input[name="Changes"]').length; i++) {
                     if ($('input[name="Changes"]')[i].value == "true") {
                         chkReason.push($('div[name="Changes"]').eq(i).data('value'));
                     }
                 }
-                param.Changes = chkReason.join(',');;
+                param.Changes = chkReason.join(',');
                 var removeFiles = fileUpload.RemoveFiles();
                 if (!WebUtils.isEmpty(removeFiles)) {
                     param.delFiles = [];
@@ -715,24 +745,31 @@
                 param.Files = fileUpload.Files();
                 if (param.Title == "" || param.Title == null) {
                     alert('제목을 입력하여 주세요.');
+                    gClickDuplication = false;
                     return;
                 }
                 if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
                     alert('설계변경일자를 선택하여 주세요.');
+                    gClickDuplication = false;
                     return;
                 }
                 if (param.ReasonChange == "" || param.ReasonChange == null) {
                     alert('변경사유를 선택하여 주세요.');
+                    gClickDuplication = false;
                     return;
                 }
                 if (param.DevMP == "" || param.DevMP == null) {
                     alert('개발/양산 구분을 선택하여 주세요.');
+                    gClickDuplication = false;
                     return;
                 }
                 for (var i = 0; i < assessList$.length; i++) {
                     var list = [];
                     var data = {};
                     data.OID = assessList$[i].OID;
+                    if ($('#managerOID_' + i).val() != null) {
+                        data.ToOID = $('#managerOID_' + i).val();
+                    }
                     list.push(data);
                     var a = $('#assessList_' + i).jqxListBox('getCheckedItems');
                     for (var j = 0; j < a.length; j++) {
@@ -748,6 +785,7 @@
                     for (var i = 0; i < statementList.length; i++) {
                         if (statementList[i].PNo == null || statementList[i].PNo == "") {
                             alert("설계변경 내역서를 확인해주세요");
+                            gClickDuplication = false;
                             return;
                         }
                     }
@@ -766,6 +804,7 @@
                         return;
                     }
                     alert("저장되었습니다.");
+                    gClickDuplication = false;
                     PageReload();
                 });
 

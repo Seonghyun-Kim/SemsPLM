@@ -20,10 +20,13 @@
         <tbody>
             <tr>
                 <th colspan="10" style="text-align:right;font-weight:normal;">
-                    <button id='dlgEditBtn' class='custom-button'><i class='fas fa-check-circle'></i> 수정</button>
-                    <button id='dlgSaveBtn' class='custom-button' hidden="hidden"><i class='fas fa-check-circle'></i> 저장</button>
-                    <button id='dlgCancelBtn' class='custom-button'><i class='fas fa-check-circle'></i> 취소</button>
-
+                    @if((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
+                    
+                    {
+                        <button id='dlgEditBtn' class='custom-button'><i class='fas fa-check-circle'></i> 수정</button>
+                        <button id='dlgSaveBtn' class='custom-button' hidden="hidden"><i class='fas fa-check-circle'></i> 저장</button>
+                        <button id='dlgCancelBtn' class='custom-button'><i class='fas fa-check-circle'></i> 취소</button>
+                    }
                 </th>
             </tr>
 
@@ -290,7 +293,7 @@
                 { text: '실적(Actual)', name: 'Actual', align: 'center', cellsalign: 'center', },
             ],
             toolbarheight: 45,
-            showtoolbar: true,
+            showtoolbar: @Json.Encode((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
             rendertoolbar: function (toolBar) {
                 toolBar.empty();
                 var container = $("<div class='lGridComponent' ></div>");
@@ -304,6 +307,10 @@
                 var rowkey;
 
                 AddButton.click(function (event) {
+                    if (dlgRelEditCheck == "F") {
+                        alert("수정 버튼을 클릭하여 수정창으로 변경후 추가 해주세요");
+                        return;
+                    }
                     var checkRows = ReportTestItemListGrid$.jqxGrid('getSelection');
                     if (checkRows.length == 0) {
                         return;
@@ -313,6 +320,10 @@
                 });
 
                 deleteButton.click(function (event) {
+                    if (dlgRelEditCheck == "F") {
+                        alert("수정 버튼을 클릭하여 수정창으로 변경후 추가 해주세요");
+                        return;
+                    }
                     ReportTestItemListGrid$.jqxGrid('deleterow', rowkey);
                 });
 

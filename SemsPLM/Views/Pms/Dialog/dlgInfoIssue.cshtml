@@ -128,7 +128,7 @@
         <tr>
             <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 이슈내용</th>
             <td colspan="3">
-                <textarea id="dlgDescription" class="Modifiable" style="height:160px;" readonly>@ViewBag.Detail.Description</textarea>
+                <textarea id="dlgDescription" class="Modifiable" style="height:160px;">@ViewBag.Detail.Description</textarea>
             </td>
         </tr>
         <tr class="Process">
@@ -148,10 +148,16 @@
 </div>
 
 <script>
-    var divIdDetail
+    var divIdDetail;
+    var selInfoDialog;
     var fileUpload = $("#dlgFile_FileList_@ViewBag.Detail.OID").FileUpload({ OID: '@ViewBag.Detail.OID' });
     var ApprovRequired = "@ViewBag.Detail.IsApprovalRequired";
     $(function () {
+        $('#dlgDescription,#dlgContents').jqxEditor({
+            width: '100%',
+            height: 200,
+        });
+        $('#dlgDescription').jqxEditor({ disabled: true }); 
         fileUpload.ReadOnlyMode();
         $('.issueRadioBtn').jqxRadioButton({ width: 100, height: 32 });
        // $('#importance_Poor').jqxRadioButton({ checked: true});
@@ -185,12 +191,13 @@
             $('tr.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
             $('.BeforeCompleted').attr('hidden', false);
-            $('#dlgContents').attr('readonly', 'readonly');
+            $('#dlgContents').jqxEditor({ disabled: true }); 
         } else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
             $('.Finish').attr('hidden', false);
             $('tr.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
-            $('#dlgContents').attr('readonly', 'readonly');
+            $('#dlgContents').jqxEditor({ disabled: true }); 
+
         }
         if ('@ViewBag.Detail.IsApprovalRequired' == '@Common.Constant.CommonConstant.ACTION_YES') {
             $('#IsApprovalRequired').jqxCheckBox('check');
@@ -205,6 +212,7 @@
             $('.ModifiableEditCustomBox').attr('hidden', false);
             $('.issueRadioBtn').jqxRadioButton('enable');
             $('.issueCheckBox').jqxCheckBox({ locked: false });
+            $('#dlgDescription').jqxEditor({ disabled: false }); 
             var IssueType = "@ViewBag.Detail.IssueType";
             _.each($('div[name="IssueType"]'), function (item) {
                 if (IssueType.indexOf(',') > -1) {
@@ -237,9 +245,10 @@
             $('.ModifiableEditCustomBox').attr('hidden', true);
             $('.issueRadioBtn').jqxRadioButton('disable');
             $('.issueCheckBox').jqxCheckBox({ locked: true });
+            $('#dlgDescription').jqxEditor({ disabled: true }); 
             $('#dlgIssueNm').val('@ViewBag.Detail.Name');
             var description = @Html.Raw(Json.Encode(@ViewBag.Detail.Description));
-            $('#dlgDescription').html(description);
+            $('#dlgDescription').val(description);
             $('#issueEstimatedFinDate').jqxDateTimeInput('val', '@String.Format("{0:yyyy-MM-dd}", ViewBag.Detail.EstFinDt)');
 
             switch (@ViewBag.Detail.Importance) {
@@ -279,10 +288,9 @@
                         return;
                     }
                     alert("처리 되었습니다.");
-                    $(divId).jqxWindow('modalDestory');
-                    OpenIssueDialog(
-                        function (res) {
-                        }, null, orginData, '/Pms/InfoIssue', '이슈 상세');
+                    selInfoDialog.CallBackFunction();
+                    selInfoDialog.close();
+
                 });
             }
         });

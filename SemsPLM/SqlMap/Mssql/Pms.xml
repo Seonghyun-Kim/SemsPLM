@@ -48,7 +48,8 @@
       , Customer_OID
       , ProductNm
       , TemplateOID
-      , TemplateContent )
+      , TemplateContent
+      , EstDisposalDt )
       VALUES
       ( #OID#
       , #IsTemplate#
@@ -70,7 +71,8 @@
       , #Customer_OID#
       , #ProductNm#
       , #TemplateOID#
-      , #TemplateContent# )
+      , #TemplateContent#
+      , #EstDisposalDt# )
     </insert>
     
     <select id="SelPmsProject" parameterClass="PmsProject" resultClass="PmsProject">
@@ -95,14 +97,17 @@
         <isNotNull prepend="and" property="ProjectType">
           B.ProjectType = #ProjectType#
         </isNotNull>
+        <isNotNull prepend="and" property="Oem_Lib_OID">
+          B.Oem_Lib_OID = #Oem_Lib_OID#
+        </isNotNull>
         <isNotNull prepend="and" property="Car_Lib_OID">
           B.Car_Lib_OID = #Car_Lib_OID#
         </isNotNull>   
         <isNotNull prepend="and" property="IsTemplate">
-          IsTemplate IS NOT NULL
+          B.IsTemplate IS NOT NULL
         </isNotNull>
         <isNull prepend="and" property="IsTemplate">
-          IsTemplate IS NULL
+          B.IsTemplate IS NULL
         </isNull>
       </dynamic>
       AND A.DeleteDt IS NULL
@@ -137,6 +142,9 @@
         </isNotNull>
         <isNotNull prepend="," property="Complete">
           Complete = #Complete#
+        </isNotNull>
+        <isNotNull prepend="," property="EstDisposalDt">
+          EstDisposalDt = #EstDisposalDt#
         </isNotNull>
         WHERE OID = #OID#
       </dynamic>
@@ -637,7 +645,7 @@
         <isNotNull prepend="and" property="Description">
           A.Description LIKE CONCAT('%',#Description#,'%')
         </isNotNull>
-        <isNotNull prepend="," property="IsApprovalRequired">
+        <isNotNull prepend="and" property="IsApprovalRequired">
           B.IsApprovalRequired = #IsApprovalRequired#
         </isNotNull>
       </dynamic>
@@ -1093,6 +1101,22 @@
         AND DeleteDt IS NULL
       </dynamic>
       ORDER BY Ord
+    </select>
+
+    <select id="SelOemBPolicy" parameterClass="PmsProject" resultClass="PmsProject">
+      SELECT A.BPolicyOID,COUNT(*) as Count
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DPMS_PROJECT B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="Car_Lib_OID">
+          B.Car_Lib_OID = #Car_Lib_OID#
+        </isNotNull>
+      </dynamic>
+      AND A.DeleteDt IS NULL
+      GROUP BY A.BPOLICYOID
     </select>
     
   </statements>

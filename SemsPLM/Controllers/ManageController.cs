@@ -59,12 +59,15 @@ namespace SemsPLM.Controllers
                 _param.OID = dOid;
                 DaoFactory.SetInsert("Manage.InsCalendar", _param);
 
-                List<CalendarDetail> holidayDefault = DaoFactory.GetList<CalendarDetail>("Manage.SelCalendarHolidayDefailt", null);
-                holidayDefault.ForEach(item =>
+                if (_param.DefaultHoliday == 1)
                 {
-                    item.CalendarOID = dOid;
-                    DaoFactory.SetInsert("Manage.InsCalendarDetail", item);
-                });
+                    List<CalendarDetail> holidayDefault = DaoFactory.GetList<CalendarDetail>("Manage.SelCalendarHolidayDefailt", null);
+                    holidayDefault.ForEach(item =>
+                    {
+                        item.CalendarOID = dOid;
+                        DaoFactory.SetInsert("Manage.InsCalendarDetail", item);
+                    });
+                }
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -379,7 +382,7 @@ namespace SemsPLM.Controllers
                 DObject dobj = new DObject();
                 dobj.Type = CommonConstant.TYPE_PERSON;
                 dobj.OID = _param.OID;
-                DObjectRepository.DelDObject(Session, dobj);
+                DObjectRepository.DelDObject(Session, dobj, new List<string> { "" });
 
                 DaoFactory.Commit();
             }
@@ -467,7 +470,7 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-                DObjectRepository.DelDObject(Session, _param);
+                DObjectRepository.DelDObject(Session, _param, null);
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -862,7 +865,7 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-                DObjectRepository.DelDObject(Session, _param);
+                DObjectRepository.DelDObject(Session, _param, null);
                 DaoFactory.Commit();
             }
             catch (Exception ex)
