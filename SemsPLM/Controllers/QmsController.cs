@@ -2,6 +2,7 @@
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using OfficeOpenXml;
 using Pms.Models;
 using Qms.Models;
 using SemsPLM.Filter;
@@ -46,7 +47,7 @@ namespace SemsPLM.Controllers
             {
                 ViewBag.ItemRatio = null;
             }
-            else if(items.Count() > 0)
+            else if (items.Count() > 0)
             {
                 int FinishCnt = _OpenIssue.CompleatedCnt;
 
@@ -434,6 +435,10 @@ namespace SemsPLM.Controllers
                     });
                     ViewBag.OccurrenceCauseItems = OccurrenceCauseItems;
                     ViewBag.DetectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = v.OID });
+                    if (ViewBag.DetectCounterMeasure == null)
+                    {
+                        ViewBag.DetectCounterMeasure = new DetectCounterMeasure();
+                    }
                     ViewBag.OccurrenceCauseApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
@@ -450,7 +455,7 @@ namespace SemsPLM.Controllers
                     ViewBag.ErrorProofApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
                 }
                 else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
-                {      
+                {
                     ViewBag.LpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = v.OID });
                     ViewBag.LpaUnfitFl = v.ModuleFl;
                     ViewBag.LpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = v.OID });
@@ -540,7 +545,7 @@ namespace SemsPLM.Controllers
                 relationships.ForEach(v =>
                 {
                     QuickResponse data = list.Find(q => q.OID == v.ToOID);
-                   
+
                     if (data != null)
                     {
                         data.CarCode = pmsProject.Car_Lib_Nm;
@@ -564,7 +569,7 @@ namespace SemsPLM.Controllers
 
                     PmsProject pms = lPmses.Find(p => p.OID == rel.FromOID);
 
-                    if(pms != null)
+                    if (pms != null)
                     {
                         v.CarCode = pms.Car_Lib_Nm;
 
@@ -987,7 +992,6 @@ namespace SemsPLM.Controllers
             return Json(result);
         }
 
-
         #region -- 고품사진
         public JsonResult ImgUploadFile(int? OID)
         {
@@ -1091,7 +1095,880 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
+        [HttpGet]
+        public ActionResult ExcelExportQuickResponseDetail(int OID)
+        {
+            QuickResponse QuickResponse = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
 
+            List<QuickResponseModule> Modulelist = QuickResponseModuleRepository.SelQuickResponseModules(new QuickResponseModule() { QuickOID = OID });
+
+            QuickResponseModule Blockade = null;
+            int? BlockadeFl = null;
+            List<BlockadeItem> BlockadeItems = null;
+            Approval BlockadeApprvalData = null;
+
+            QuickResponseModule OccurrenceCause = null;
+            int? OccurrenceCauseFl = null;
+            List<OccurrenceCauseItem> OccurrenceCauseItems = null;
+            DetectCounterMeasure DetectCounterMeasure = null;
+            Approval OccurrenceCauseApprvalData = null;
+
+            QuickResponseModule ImproveCountermeasure = null;
+            int? ImproveCountermeasureFl = null;
+            List<ImproveCounterMeasureItem> ImproveCounterMeasureItems = null;
+            Approval ImproveCountermeasureApprvalData = null;
+
+            ErrorProof ErrorProof = null;
+            int? ErrorProofFl = null;
+            Approval ErrorProofApprvalData = null;
+
+            LpaUnfit LpaUnfit = null;
+            int? LpaUnfitFl = null;
+            List<LpaUnfitCheck> LpaUnfitCheck = null;
+
+            LpaMeasure LpaMeasure = null;
+            Approval LpaMeasureApprvalData = null;
+
+            QuickResponseModule QmsCheck = null;
+            int? QmsCheckFl = null;
+            List<QmsCheck> QmsCheckItems = null;
+            Approval QmsCheckApprvalData = null;
+
+            QuickResponseModule StandardDoc = null;
+            int? StandardDocFl = null;
+            List<StandardDoc> StandardDocItem = null;
+            Approval StandardDocApprvalData = null;
+
+            WorkerEdu WorkerEdu = null;
+            int? WorkerEduFl = null;
+            Approval WorkerEduApprvalData = null;
+
+            Modulelist.ForEach(v =>
+            {
+                if (v.ModuleType == QmsConstant.TYPE_BLOCKADE)
+                {
+                    Blockade = v;
+                    BlockadeFl = v.ModuleFl;
+                    BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = v.OID });
+                    BlockadeApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_OCCURRENCE_CAUSE)
+                {
+                    OccurrenceCause = v;
+                    OccurrenceCauseFl = v.ModuleFl;
+                    List<OccurrenceCauseItem> _OccurrenceCauseItems = OccurrenceCauseItemRepository.SelOccurrenceCauseItems(new OccurrenceCauseItem() { ModuleOID = v.OID });
+                    _OccurrenceCauseItems.ForEach(i =>
+                    {
+                        i.OccurrenceWhys = OccurrenceWhyRepository.SelOccurrenceWhys(new OccurrenceWhy() { CauseOID = i.OID });
+                    });
+                    OccurrenceCauseItems = _OccurrenceCauseItems;
+                    DetectCounterMeasure = DetectCounterMeasureRepository.SelDetectCounterMeasure(new DetectCounterMeasure() { ModuleOID = v.OID });
+                    if (DetectCounterMeasure == null)
+                    {
+                        DetectCounterMeasure = new DetectCounterMeasure();
+                    }
+                    OccurrenceCauseApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE)
+                {
+                    ImproveCountermeasure = v;
+                    ImproveCountermeasureFl = v.ModuleFl;
+                    ImproveCounterMeasureItems = ImproveCounterMeasureItemRepository.SelImproveCounterMeasureItems(new ImproveCounterMeasureItem() { ModuleOID = v.OID });
+                    ImproveCountermeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_ERROR_PRROF)
+                {
+                    ErrorProof = ErrorProofRepository.SelErrorProof(new ErrorProof() { ModuleOID = v.OID });
+                    ErrorProofFl = v.ModuleFl;
+                    ErrorProofApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_UNFIT)
+                {
+                    LpaUnfit = LpaUnfitRepository.SelLpaUnfit(new LpaUnfit() { ModuleOID = v.OID });
+                    LpaUnfitFl = v.ModuleFl;
+                    LpaUnfitCheck = LpaUnfitCheckRepository.SelLpaUnfitChecks(new LpaUnfitCheck() { ModuleOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_LPA_MEASURE)
+                {
+                    LpaMeasure = LpaMeasureRepository.SelLpaMeasure(new LpaMeasure() { ModuleOID = v.OID });
+                    LpaMeasureApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_QUICK_RESPONSE_CHECK)
+                {
+                    QmsCheck = v;
+                    QmsCheckFl = v.ModuleFl;
+                    QmsCheckItems = QmsCheckRepository.SelQmsChecks(new QmsCheck() { ModuleOID = v.OID });
+                    QmsCheckApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_STANDARD)
+                {
+                    StandardDoc = v;
+                    StandardDocFl = v.ModuleFl;
+                    StandardDocItem = StandardDocRepository.SelStandardDocs(new StandardDoc() { ModuleOID = v.OID });
+                    StandardDocApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+                else if (v.ModuleType == QmsConstant.TYPE_WORKER_EDU)
+                {
+                    WorkerEdu = WorkerEduRepository.SelWorkerEdu(new WorkerEdu() { ModuleOID = v.OID });
+                    WorkerEduFl = v.ModuleFl;
+                    WorkerEduApprvalData = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = v.OID });
+                }
+            });
+
+            Stream DownExcelStream = null;
+            string newTempFilePath = "";
+            string strNewFileName = DateTime.Now.Ticks.ToString() + ".xlsx";
+
+            //string FilePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ExcelTemplatePath"]) + "\\" + DateTime.Now.Ticks.ToString() + ".xlsx";
+            var file = new FileInfo(strNewFileName);
+
+            using (ExcelPackage excelPackage = new ExcelPackage(file))
+            {
+                excelPackage.Workbook.Worksheets.Add("sheet1");
+                ExcelWorksheet ws = excelPackage.Workbook.Worksheets.First();
+
+                ws.Column(1).Width = 0.6;
+                ws.Column(2).Width = 2;
+
+                for (int iCnt = 3; iCnt <= 24; iCnt++)
+                {
+                    if (iCnt == 13 || iCnt == 14)
+                    {
+                        ws.Column(iCnt).Width = 2;
+                    }
+                    else
+                    {
+                        ws.Column(iCnt).Width = 3.9;
+                    }
+                }
+
+                ws.Column(25).Width = 2;
+                ws.Column(26).Width = 0.6;
+
+                PrintExcelCell(ws.Cells[2, 3, 2, 5], "TITLE", "제목");
+                PrintExcelCell(ws.Cells[2, 6, 2, 24], "VALUE", QuickResponse.Title);
+
+                // 기본정보
+                PrintExcelCell(ws.Cells[4, 3, 4, 5], "TITLE", "기본정보");
+                PrintExcelCell(ws.Cells[5, 3, 5, 5], "TH", "신속대응NO");
+                PrintExcelCell(ws.Cells[5, 6, 5, 13], "TD", QuickResponse.Name);
+                PrintExcelCell(ws.Cells[5, 14, 5, 16], "TH", "공장구분");
+                PrintExcelCell(ws.Cells[5, 17, 5, 24], "TD", QuickResponse.PlantNm);
+
+                PrintExcelCell(ws.Cells[6, 3, 6, 5], "TH", "발생유형");
+                PrintExcelCell(ws.Cells[6, 6, 6, 13], "TD", QuickResponse.OccurrenceNm);
+                PrintExcelCell(ws.Cells[6, 14, 6, 16], "TH", "고객사");
+                PrintExcelCell(ws.Cells[6, 17, 6, 24], "TD", QuickResponse.OemNm);
+
+                PrintExcelCell(ws.Cells[7, 3, 7, 5], "TH", "품번/품명");
+                PrintExcelCell(ws.Cells[7, 6, 7, 13], "TD", QuickResponse.PartNo + "/" + QuickResponse.PartNm);
+                PrintExcelCell(ws.Cells[7, 14, 7, 16], "TH", "고객사");
+                PrintExcelCell(ws.Cells[7, 17, 7, 24], "TD", QuickResponse.OemNm);
+
+                PrintExcelCell(ws.Cells[8, 3, 8, 5], "TH", "품질담당자");
+                PrintExcelCell(ws.Cells[8, 6, 8, 13], "TD", QuickResponse.WorkUserNm);
+                PrintExcelCell(ws.Cells[8, 14, 8, 16], "TH", "작성일시");
+                PrintExcelCell(ws.Cells[8, 17, 8, 24], "TD", QuickResponse.WriteDt == null ? "" : ((DateTime)QuickResponse.WriteDt).ToString("yyyy-MM-dd"));
+
+                PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "불량수량");
+                PrintExcelCell(ws.Cells[9, 6, 9, 24], "TD", QuickResponse.PoorCnt.ToString());
+
+                ws.Cells[5, 3, 9, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                // 문제요약
+                PrintExcelCell(ws.Cells[11, 3, 11, 5], "TITLE", "문제요약");
+                PrintExcelCell(ws.Cells[12, 3, 12, 5], "TH", "발생처");
+                PrintExcelCell(ws.Cells[12, 6, 12, 13], "TD", QuickResponse.OccurrenceAreaNm);
+                PrintExcelCell(ws.Cells[12, 14, 12, 16], "TH", "결함정도");
+                PrintExcelCell(ws.Cells[12, 17, 12, 24], "TD", QuickResponse.DefectDegreeNm);
+
+                PrintExcelCell(ws.Cells[13, 3, 13, 5], "TH", "유발공정");
+                PrintExcelCell(ws.Cells[13, 6, 13, 13], "TD", QuickResponse.InduceNm);
+                PrintExcelCell(ws.Cells[13, 14, 13, 16], "TH", "귀책구분");
+                PrintExcelCell(ws.Cells[13, 17, 13, 24], "TD", QuickResponse.ImputeNm);
+
+                PrintExcelCell(ws.Cells[14, 3, 14, 5], "TH", "귀책처");
+                PrintExcelCell(ws.Cells[14, 6, 14, 13], "TD", QuickResponse.ImputeDepartmentOID != null ? QuickResponse.ImputeDepartmentNm : QuickResponse.ImputeSupplierNm);
+                PrintExcelCell(ws.Cells[14, 14, 14, 16], "TH", "재발여부");
+                PrintExcelCell(ws.Cells[14, 17, 14, 24], "TD", QuickResponse.RecurrenceFl == true ? "Y" : "N");
+
+                PrintExcelCell(ws.Cells[15, 3, 15, 5], "TH", "불량내용상세");
+                PrintExcelCell(ws.Cells[15, 6, 15, 24], "TD", QuickResponse.PoorDetail);
+
+                PrintExcelCell(ws.Cells[16, 3, 16, 5], "TH", "발생일자");
+                PrintExcelCell(ws.Cells[16, 6, 16, 13], "TD", QuickResponse.OccurrenceDt == null ? "" : ((DateTime)QuickResponse.OccurrenceDt).ToString("yyyy-MM-dd"));
+                PrintExcelCell(ws.Cells[16, 14, 16, 16], "TH", "시정판정");
+                PrintExcelCell(ws.Cells[16, 17, 16, 24], "TD", QuickResponse.CorrectDecisionNm);
+
+                PrintExcelCell(ws.Cells[17, 3, 17, 5], "TH", "발생장소");
+                PrintExcelCell(ws.Cells[17, 6, 17, 24], "TD", QuickResponse.OccurrencePlace);
+
+                PrintExcelCell(ws.Cells[18, 3, 18, 5], "TH", "QA");
+                PrintExcelCell(ws.Cells[18, 6, 18, 24], "TD", QuickResponse.Qa);
+
+                ws.Cells[12, 3, 18, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                int iRow = 21;
+                #region -- 봉쇄조치
+                int StartModuleRow = 21;
+                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "봉쇄조치");               
+
+                iRow = ApprovPrint(ws, BlockadeApprvalData, iRow + 2);
+
+                // 봉쇄조치
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "봉쇄조치");
+                iRow++;
+                int StartBlockadeItemRow = iRow;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 4], "TH", "범위");
+                PrintExcelCell(ws.Cells[iRow, 5, iRow, 8], "TH", "대상범위");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 13], "TH", "조치방법");
+                PrintExcelCell(ws.Cells[iRow, 14, iRow, 15], "TH", "수량");
+                PrintExcelCell(ws.Cells[iRow, 16, iRow, 17], "TH", "조치부서");
+                PrintExcelCell(ws.Cells[iRow, 18, iRow, 19], "TH", "담당자");
+                PrintExcelCell(ws.Cells[iRow, 20, iRow, 24], "TH", "기한");
+                iRow++;
+           
+                BlockadeItems.ForEach(v =>
+                {
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", v.Name);
+                    PrintExcelCell(ws.Cells[iRow, 5, iRow + 1, 8], "TD", v.TargetScope);
+                    PrintExcelCell(ws.Cells[iRow, 9, iRow + 1, 13], "TD", v.Act);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow + 1, 15], "TD", v.TargetCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 16, iRow + 1, 17], "TD", v.ActDepartmentNm);
+                    PrintExcelCell(ws.Cells[iRow, 18, iRow + 1, 19], "TD", v.ActUserNm);
+                    PrintExcelCell(ws.Cells[iRow, 20, iRow + 1, 24], "TD", (v.ActStartDt == null ? "" : ((DateTime)v.ActStartDt).ToString("yyyy-MM-dd")) + "~" + (v.ActEndDt == null ? "" : ((DateTime)v.ActEndDt).ToString("yyyy-MM-dd")));
+
+                    iRow = iRow + 2;
+                });
+                
+                ws.Cells[StartBlockadeItemRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                iRow++;
+
+                // 시정결과
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "시정결과");
+                iRow++;
+                int StartCorrectiveActionRow = iRow;
+                PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", "범위");
+                PrintExcelCell(ws.Cells[iRow, 5, iRow, 8], "TH", "선별");
+                PrintExcelCell(ws.Cells[iRow + 1, 5, iRow + 1, 6], "TH", "적합");
+                PrintExcelCell(ws.Cells[iRow + 1, 7, iRow + 1, 8], "TH", "부적합");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow + 1, 10], "TH", "재작업");
+                PrintExcelCell(ws.Cells[iRow, 11, iRow + 1, 12], "TH", "폐기");
+                PrintExcelCell(ws.Cells[iRow, 13, iRow + 1, 15], "TH", "특채");
+                PrintExcelCell(ws.Cells[iRow, 16, iRow + 1, 17], "TH", "기타");
+                PrintExcelCell(ws.Cells[iRow, 18, iRow + 1, 24], "TH", "비고");
+                iRow = iRow + 2;
+
+               
+                BlockadeItems.ForEach(v =>
+                {
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", v.Name);
+                    PrintExcelCell(ws.Cells[iRow, 5, iRow + 1, 6], "TD", v.SortSuitableCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 7, iRow + 1, 8], "TD", v.SortIncongruityCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 9, iRow + 1, 10], "TD", v.ReworkCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 11, iRow + 1, 12], "TD", v.DisuseCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 13, iRow + 1, 15], "TD", v.SpecialCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 16, iRow + 1, 17], "TD", v.EtcCnt.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 18, iRow + 1, 24], "TD", v.Description);
+
+                    iRow = iRow + 2;
+                });
+
+                ws.Cells[StartCorrectiveActionRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);   
+                
+                ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                #endregion
+                iRow = iRow + 2;
+
+                #region -- 원인분석
+                StartModuleRow = iRow;
+                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "원인분석");
+
+                iRow = ApprovPrint(ws, OccurrenceCauseApprvalData, iRow + 2);
+
+                // 원인분석
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "원인분석");
+                iRow++;
+                int StartOccurrenceCauseRow = iRow;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "발생원인");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TH", "발생원인내역");
+                iRow++;
+                             
+                OccurrenceCauseItems.ForEach(v =>
+                {
+                    if(v.OccurrenceWhys.Count() == 0) { return; }
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow + v.OccurrenceWhys.Count() - 1, 5], "TH", v.OccurrenceCauseLibText);
+
+                    int Cnt = 1;
+
+                    v.OccurrenceWhys.ForEach(w =>
+                    {
+                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TD", "WHY " + Cnt.ToString());
+                        PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TD", w.OccurrenceCauseDetail);
+                        iRow++;
+                        Cnt++;
+                    });
+                });
+
+                ws.Cells[StartOccurrenceCauseRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                iRow++;
+              
+                // 검출대책
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "검출대책");
+                iRow++;
+                int StartDetectCounterMeasureRow = iRow;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "검출장소");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TH", "YES/NO");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TH", "해당공정 내용 (상세위치, 작업자, 검사원 등)");
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "제조공정");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TD", DetectCounterMeasure.DetectM == true ? "Yes" : "No");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TD", DetectCounterMeasure.DetectMDetail);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "품질");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TD", DetectCounterMeasure.DetectS == true ? "Yes" : "No");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TD", DetectCounterMeasure.DetectSDetail);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "출하단계");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TD", DetectCounterMeasure.DetectQ == true ? "Yes" : "No");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TD", DetectCounterMeasure.DetectQDetail);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "기타");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 8], "TD", DetectCounterMeasure.DetectE == true ? "Yes" : "No");
+                PrintExcelCell(ws.Cells[iRow, 9, iRow, 24], "TD", DetectCounterMeasure.DetectEDetail);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "유출원인 1");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", DetectCounterMeasure.LeakCause1);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "유출원인 2");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", DetectCounterMeasure.LeakCause2);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "유출원인 3");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", DetectCounterMeasure.LeakCause3);
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "검출일");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", DetectCounterMeasure.DetectDt == null ? "" : ((DateTime)DetectCounterMeasure.DetectDt).ToString("yyyy-MM-dd"));
+                iRow++;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "검출대책");
+                PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", DetectCounterMeasure.Measure);
+                iRow++;
+
+                ws.Cells[StartDetectCounterMeasureRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                #endregion
+                iRow = iRow + 2;
+
+                #region -- 개선대책
+                StartModuleRow = iRow;
+                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "개선대책");
+
+                iRow = ApprovPrint(ws, ImproveCountermeasureApprvalData, iRow + 2);
+
+                // 개선대책
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "개선대책");
+                iRow++;
+                int StartImproveCountermeasureRow = iRow;
+
+                PrintExcelCell(ws.Cells[iRow, 3, iRow, 11], "TH", "근본원인");
+                PrintExcelCell(ws.Cells[iRow, 12, iRow, 21], "TH", "개선대책");
+                PrintExcelCell(ws.Cells[iRow, 22, iRow, 24], "TH", "처리일자");
+                iRow++;
+
+                ImproveCounterMeasureItems.ForEach(v =>
+                {
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 11], "TD",  v.RootCause);
+                    PrintExcelCell(ws.Cells[iRow, 12, iRow, 21], "TD", v.ImproveCountermeasure);
+                    PrintExcelCell(ws.Cells[iRow, 22, iRow, 24], "TD", v.ProcessDt == null ? "" : ((DateTime)v.ProcessDt).ToString("yyyy-MM-dd"));
+                    iRow++;
+                });
+
+                ws.Cells[StartImproveCountermeasureRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                #endregion
+
+                iRow = iRow + 2;
+
+                #region -- Error Prrof
+                if(ErrorProofFl == 1)
+                {
+                    StartModuleRow = iRow;
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "Error Prrof");
+
+                    iRow = ApprovPrint(ws, ImproveCountermeasureApprvalData, iRow + 2);
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "개선대책");
+                    iRow++;
+                    int StartErrorPrrofRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "예정일자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", ErrorProof.EstDt == null ? "" : ((DateTime)ErrorProof.EstDt).ToString("yyyy-MM-dd"));
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "처리일자");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", ErrorProof.ActDt == null ? "" : ((DateTime)ErrorProof.ActDt).ToString("yyyy-MM-dd"));
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "점검내용");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", ErrorProof.CheckDetail);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "점검담당자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", ErrorProof.CheckUserNm);
+                    iRow++;
+
+                    ws.Cells[StartErrorPrrofRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                }
+                #endregion
+
+                iRow = iRow + 2;
+
+                #region -- LPA
+                if(LpaUnfitFl == 1)
+                {
+                    StartModuleRow = iRow;
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 부적합현황");
+
+                    iRow = ApprovPrint(ws, LpaMeasureApprvalData, iRow + 2);
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 부적합현황");
+                    iRow++;
+                    int StartLpaUnfitRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "Layer");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LayerLibNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "감사주기");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.AuditLibNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "그룹군");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaGrpLibNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "사용구분");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaUseLibNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckUserNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "확인공정");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckProcessLibNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사일자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckDt == null ? "" : ((DateTime)LpaUnfit.LpaCheckDt).ToString("yyyy-MM-dd"));
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "설비명");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.EquipmentNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "품번/품명");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.PartCd + "/" + LpaUnfit.PartNm);
+                    iRow++;
+
+                    int LpaUnfitCheckItemCount = LpaUnfitCheck.Count();
+                    if(LpaUnfitCheckItemCount == 0)
+                    {
+                        PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "지적사항");
+                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", "");
+                        iRow++;
+                    }
+                    else
+                    {
+                        PrintExcelCell(ws.Cells[iRow, 3, iRow + (LpaUnfitCheckItemCount - 1), 5], "TH", "지적사항");
+
+                        int iNum = 1;
+                        LpaUnfitCheck.ForEach(v =>
+                        {
+                            PrintExcelCell(ws.Cells[iRow, 6, iRow, 6], "TD", iNum.ToString());
+                            PrintExcelCell(ws.Cells[iRow, 7, iRow, 24], "TD", v.CheckPoin);
+                            iNum++;
+                            iRow++;
+                        });
+                    }
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "LPA 담당자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaUserNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "대책서담당자");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.MeasureUserNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "완료예정일");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.FinishRequestDt == null ? "" : ((DateTime)LpaUnfit.FinishRequestDt).ToString("yyyy-MM-dd"));
+                    iRow++;
+
+                    ws.Cells[StartLpaUnfitRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                    iRow = iRow + 2;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 대책서작성");
+                    iRow++;
+                    int StartLpaMeasureRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow + LpaUnfitCheckItemCount, 5], "TH", "지적사항");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 6], "TH", "NO");
+                    PrintExcelCell(ws.Cells[iRow, 7, iRow, 11], "TH", "지적사항");
+                    PrintExcelCell(ws.Cells[iRow, 12, iRow, 18], "TH", "원인분석");
+                    PrintExcelCell(ws.Cells[iRow, 19, iRow, 24], "TH", "개선대책");
+
+                    iRow++;
+                    int iLpaUnfitCheck = 0;
+                    LpaUnfitCheck.ForEach(v =>
+                    {
+                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 6], "TD", iLpaUnfitCheck.ToString());
+                        PrintExcelCell(ws.Cells[iRow, 7, iRow, 11], "TD", v.CheckPoin);
+                        PrintExcelCell(ws.Cells[iRow, 12, iRow, 18], "TD", v.CauseAnalysis);
+                        PrintExcelCell(ws.Cells[iRow, 19, iRow, 24], "TD", v.ImproveCountermeasure);
+                        iLpaUnfitCheck++;
+                        iRow++;
+                    });
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "검토원인상세");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaMeasure.CauseAnalysis);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "재발방지대책");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaMeasure.ImproveCountermeasure);
+                    iRow++;
+
+                    ws.Cells[StartLpaMeasureRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                }
+                #endregion
+
+                iRow = iRow + 2;
+
+                #region -- 유효성검증
+                if(QmsCheckFl == 1)
+                {
+                    StartModuleRow = iRow;
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 5], "MODULE", "유효성 검증");
+
+                    iRow = ApprovPrint(ws, QmsCheckApprvalData, iRow + 2);
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "유효성 검증");
+                    iRow++;
+                    int StartCheckRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "구분");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 11], "TH", "1차 유효성검증");
+                    PrintExcelCell(ws.Cells[iRow, 12, iRow, 18], "TH", "2차 유효성검증");
+                    PrintExcelCell(ws.Cells[iRow, 19, iRow, 24], "TH", "3차 유효성검증");
+
+                    PrintExcelCell(ws.Cells[iRow + 1, 3, iRow + 1, 5], "TH", "검증완료일");
+                    PrintExcelCell(ws.Cells[iRow + 2, 3, iRow + 2, 5], "TH", "담당자");
+                    PrintExcelCell(ws.Cells[iRow + 3, 3, iRow + 3, 5], "TH", "검증일");
+                    PrintExcelCell(ws.Cells[iRow + 4, 3, iRow + 4, 5], "TH", "판정");
+                    PrintExcelCell(ws.Cells[iRow + 5, 3, iRow + 5, 5], "TH", "검증내용요약");
+                    PrintExcelCell(ws.Cells[iRow + 6, 3, iRow + 6, 5], "TH", "종료여부");
+                    PrintExcelCell(ws.Cells[iRow + 7, 3, iRow + 7, 5], "TH", "종료사유");
+
+                    int iItemCnt = 0;
+                    QmsCheckItems.ForEach(v =>
+                    {
+                        int StartCheckCol = 0;
+                        int EndCheckCol = 0;
+                        if (iItemCnt == 0)
+                        {
+                            StartCheckCol = 6;
+                            EndCheckCol = 11;
+                        }
+                        else if (iItemCnt == 1)
+                        {
+                            StartCheckCol = 12;
+                            EndCheckCol = 18;
+                        }
+                        else if (iItemCnt == 2)
+                        {
+                            StartCheckCol = 19;
+                            EndCheckCol = 24;
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                        PrintExcelCell(ws.Cells[iRow + 1, StartCheckCol, iRow + 1, EndCheckCol], "TD", v.CheckEt == null ? "" : ((DateTime)v.CheckEt).ToString("yyyy-MM-dd"));
+                        PrintExcelCell(ws.Cells[iRow + 2, StartCheckCol, iRow + 2, EndCheckCol], "TD", v.CheckUserNm);
+                        PrintExcelCell(ws.Cells[iRow + 3, StartCheckCol, iRow + 3, EndCheckCol], "TD", v.CheckDt == null ? "" : ((DateTime)v.CheckDt).ToString("yyyy-MM-dd"));
+                        PrintExcelCell(ws.Cells[iRow + 4, StartCheckCol, iRow + 4, EndCheckCol], "TD", v.CheckFl == 1 ? "Y" : "N");
+                        PrintExcelCell(ws.Cells[iRow + 5, StartCheckCol, iRow + 5, EndCheckCol], "TD", v.CheckDetail);
+                        PrintExcelCell(ws.Cells[iRow + 6, StartCheckCol, iRow + 6, EndCheckCol], "TD", v.FinishFl == 1 ? "Y" : "N");
+                        PrintExcelCell(ws.Cells[iRow + 7, StartCheckCol, iRow + 7, EndCheckCol], "TD", v.FinishDetail);
+                        iItemCnt++;
+                    });
+
+                    if (iItemCnt < 3)
+                    {
+                        for (int x = iItemCnt; x < 3; x++)
+                        {
+                            int StartCheckCol = 0;
+                            int EndCheckCol = 0;
+                            if (x == 0)
+                            {
+                                StartCheckCol = 6;
+                                EndCheckCol = 11;
+                            }
+                            else if (x == 1)
+                            {
+                                StartCheckCol = 12;
+                                EndCheckCol = 18;
+                            }
+                            else if (x == 2)
+                            {
+                                StartCheckCol = 19;
+                                EndCheckCol = 24;
+                            }
+
+                            PrintExcelCell(ws.Cells[iRow + 1, StartCheckCol, iRow + 7, EndCheckCol], "TD", "");
+                        }
+                    }
+
+                    iRow = iRow + 8;
+
+                    ws.Cells[StartCheckRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                }
+                #endregion
+
+                iRow = iRow + 2;
+
+                #region -- 표준화 F/U
+                if(StandardDocFl == 1)
+                {
+                    StartModuleRow = iRow;
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "표준화 F/U");
+
+                    iRow = ApprovPrint(ws, StandardDocApprvalData, iRow + 2);
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "표준화 F/U");
+                    iRow++;
+                    int StartStandardRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "문서타입");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 12], "TH", "문서명");
+                    PrintExcelCell(ws.Cells[iRow, 13, iRow, 21], "TH", "반영내용");
+                    PrintExcelCell(ws.Cells[iRow, 22, iRow, 24], "TH", "완료일");
+                    iRow++;
+
+                    ws.Cells[StartStandardRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                }                
+                #endregion
+
+                iRow = iRow + 2;
+
+                #region -- 사용자교육
+                if(WorkerEduFl == 1)
+                {
+                    StartModuleRow = iRow;
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "사용자 교육");
+
+                    iRow = ApprovPrint(ws, WorkerEduApprvalData, iRow + 2);
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "사용자 교육");
+                    iRow++;
+                    int StartEduRow = iRow;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육일자");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", WorkerEdu.EduDt == null ? "" : ((DateTime)WorkerEdu.EduDt).ToString("yyyy-MM-dd"));
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "담당자");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", WorkerEdu.EduUserNm);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육내용");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", WorkerEdu.EduDetail);
+                    iRow++;
+
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육계획");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", WorkerEdu.EduPlan);
+                    iRow++;
+
+                    ws.Cells[StartEduRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                }
+                #endregion
+
+                newTempFilePath = SaveTempExcelFile(excelPackage, strNewFileName);
+                excelPackage.Dispose();
+                ws.Dispose();
+            }
+
+
+            DownExcelStream = FileStream(Path.Combine(newTempFilePath));
+
+            if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
+            {
+                return File(DownExcelStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(string.Format("신속대응[{0}]_{1}.xlsx", QuickResponse.Title, DateTime.Now.ToString("yyyy-MM-dd")), System.Text.Encoding.UTF8));
+            }
+            else
+            {
+                return File(DownExcelStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(string.Format("신속대응[{0}]_{1}.xlsx", QuickResponse.Title, DateTime.Now.ToString("yyyy-MM-dd"))));
+            }
+        }
+
+        private int ApprovPrint (ExcelWorksheet ws, Approval approv, int iRow)
+        {
+            if(approv == null) { return iRow; }
+            int AppvCol = 23;
+            ws.Row(iRow - 1).Height = 2.3;
+            List<ApprovalStep> approvalSteps = approv.InboxStep.OrderByDescending(d => d.OID).ToList<ApprovalStep>();
+
+            approvalSteps.ForEach(v =>
+            {
+                if( AppvCol == 2) { return; }
+                if (v.ApprovalType == Common.Constant.CommonConstant.TYPE_APPROVAL_DIST) { return; }
+
+                ApprovalTask TaskData = v.InboxTask[0];
+
+                PrintExcelCell(ws.Cells[iRow, AppvCol, iRow, AppvCol + 1], "APPV_TEXT", TaskData.PersonObj.Name);
+                if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_COMPLETED)
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "APPV_TEXT", "승인");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                }
+                else if (TaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED)
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "APPV_TEXT", "반려");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", ((DateTime)TaskData.ApprovalDt).ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    PrintExcelCell(ws.Cells[iRow + 1, AppvCol, iRow + 1, AppvCol + 1], "TD", "-");
+                    PrintExcelCell(ws.Cells[iRow + 2, AppvCol, iRow + 2, AppvCol + 1], "APPV_DATE", "-");
+                }
+
+                AppvCol = AppvCol - 2;
+
+            });
+
+            PrintExcelCell(ws.Cells[iRow, AppvCol, iRow + 2, AppvCol + 1], "APPV_TEXT", "결재");
+
+            return iRow + 3;
+        }
+            
+
+        private void PrintExcelCell(ExcelRange range, string Type, string Text)
+        {
+            range.Merge = true;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+            if (Type == "TITLE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+            else if(Type == "VALUE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                //range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                //range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+            else if (Type == "TH")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.WhiteSmoke);
+            }
+            else if (Type == "TD")
+            {
+                range.Style.Font.Size = 8;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+            }
+            else if (Type == "MODULE")
+            {
+                range.Style.Font.Size = 9;
+                range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.PapayaWhip);
+            }
+            else if (Type == "APPV_TEXT")
+            {
+                range.Style.Font.Size = 7;
+                //range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            }
+            else if (Type == "APPV_DATE")
+            {
+                range.Style.Font.Size = 7;
+                //range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            }
+
+            range.Value = Text;
+        }
+
+        public static Stream FileStream(string fileFullPath)
+        {
+            try
+            {
+                var fs = new FileStream(fileFullPath, FileMode.Open);
+                return fs;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string SaveTempExcelFile(ExcelPackage excel, string fileName)
+        {
+            try
+            {
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string TempPath = System.Configuration.ConfigurationManager.AppSettings["TempPath"];
+
+                DirectoryInfo di = new DirectoryInfo(StoragePath + "/" + TempPath + "/");
+
+                if (!di.Exists) { di.Create(); }
+
+                FileInfo uploadFile = new FileInfo(Path.Combine(StoragePath, TempPath, "", fileName));
+
+                string ext = uploadFile.Extension;
+                string purefileName = uploadFile.Name.Substring(0, uploadFile.Name.Length - ext.Length);
+
+                FileInfo fi = new FileInfo(di.FullName + "/" + fileName);
+
+                if (fi.Exists)
+                {
+                    /*중복되지 않은 파일명 생성*/
+                    int cnt = 1;
+                    string newFileName = "";
+                    string pureName = purefileName;
+
+                    while (fi.Exists)
+                    {
+                        newFileName = pureName + " (" + (cnt++) + ")" + ext;
+                        fi = new FileInfo(StoragePath + "/" + TempPath + "/" + fileName);
+                    }
+                }
+
+                excel.SaveAs(fi);
+
+                return StoragePath + "/" + TempPath + "/" + fileName;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region -- 신속대응 일정관리 
