@@ -433,16 +433,30 @@
                 { name: 'Name', type: 'string' },
                 { name: 'Title', type: 'string' },
                 { name: 'OccurrenceDt', type: 'date' },
-                { name: 'OccurrenceNm', type: 'string' },
                 { name: 'PartNo', type: 'string' },
                 { name: 'PartNm', type: 'string' },
                 { name: 'CarCode', type: 'string' },
+                { name: 'OemLibOID', type: 'number' },
+                { name: 'OemNm', type: 'string' },
+                { name: 'OccurrenceLibOID', type: 'number' },
+                { name: 'OccurrenceNm', type: 'string' },
+                { name: 'OccurrenceAreaLibOID', type: 'number' },
+                { name: 'OccurrenceAreaNm', type: 'string' },
+                { name: 'OccurrencePlace', type: 'string' },
+                { name: 'LotNo', type: 'string' },
+                { name: 'PoorCnt', type: 'string' },
+                { name: 'WorkUserNm', type: 'string' },
+                { name: 'EnrollmentLibOID', type: 'string' },
+                { name: 'EnrollmentLibNm', type: 'string' },
+                { name: 'ImputeLibOID', type: 'string' },
+                { name: 'ImputeNm', type: 'string' },
                 { name: 'PartGrpNm', type: 'string' },
                 { name: 'Summary', type: 'string' },
                 { name: 'CreateUsNm', type: 'string' },
                 { name: 'PlanUserNm', type: 'string' },
                 { name: 'StatusNm', type: 'string' },
                 { name: 'FinishDt', type: 'date' },
+                { name: 'CreateDt', type: 'date' },
 
                 { name: 'ModuleBlockadeOID', type: 'number' },
                 { name: 'ModuleBlockadeStatusNm', type: 'string' },
@@ -499,7 +513,6 @@
                 { name: 'ModuleWorkerEduChargeUserOID', type: 'number' },
                 { name: 'ModuleWorkerEduChargeUserNm', type: 'string' },
                 { name: 'ModuleWorkerEduEstEndDt', type: 'string' }
-
             ],
             type: "POST",
             url: "/Qms/SelQuickResponseGridList",
@@ -534,14 +547,23 @@
                         return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OpenQuickResonse(\"#grdQuickResponseList_@ViewBag.OpenIssue.OID\"," + rowData.uid + ")'>" + (value) + "</a></div></div>";
                     }
                 },
-                { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', pinned:true },
-                { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center', pinned:true },
-                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned:true },
-                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned:true },
+                { text: '품목', dataField: 'ItemGroup', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '고객사', dataField: 'OemNm', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '차종', dataField: 'CarCode', width: '6%', align: 'center', cellsalign: 'center' },
-                { text: '문제내용', dataField: 'Summary', width: '15%', align: 'center', cellsalign: 'center' },
+                { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생처', dataField: 'OccurrenceAreaNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생장소', dataField: 'OccurrencePlace', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: 'Lot No', dataField: 'LotNo', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생수량', dataField: 'PoorCnt', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '접수자', dataField: 'WorkUserNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                { text: '등록구분', dataField: 'EnrollmentLibNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '귀책구분', dataField: 'ImputeNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '불량내용(문제점 요약)', dataField: 'Title', width: '11%', align: 'center', cellsalign: 'center' },
                 { text: '신속대응등록자', dataField: 'CreateUsNm', width: '7%', align: 'center', cellsalign: 'center' },
-                { text: '일정계획담당자', dataField: 'PlanUserNm', width: '7%', align: 'center', cellsalign: 'center' },  ,
+                { text: '일정계획담당자', dataField: 'PlanUserNm', width: '7%', align: 'center', cellsalign: 'center' },
                 { text: '상태', dataField: 'StatusNm', width: '5%', align: 'center', cellsalign: 'center' },
                 { text: '종결일자', dataField: 'FinishDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
                 {
@@ -663,7 +685,8 @@
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
-                }
+                },
+                { text: '작성일', dataField: 'CreateDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");

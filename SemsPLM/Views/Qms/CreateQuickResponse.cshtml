@@ -85,7 +85,7 @@
             <tr>
                 <th><label class="lbText">불량내용(문제점 요약)</label></th>
                 <td colspan="5">
-                    <input type="text" id="txtDlgTitle" style="width:98%;" />
+                    <input type="text" id="txtDlgSummary" style="width:98%;" />
                 </td>
             <tr>
                 <th><label class="lbText">등록구분</label></th>
@@ -116,7 +116,7 @@
                 <th><label class="lbText">재발여부 </label></th>
                 <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
                 @*<th><label class="lbText">시정판정</label></th>
-                <td><div id="cbDlgCorrectDecision"></div></td>*@
+                    <td><div id="cbDlgCorrectDecision"></div></td>*@
                 <th><label class="lbText">대책서회신요구일자</label></th>
                 <td colspan="3"><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
             </tr>
@@ -127,11 +127,11 @@
                 </td>
             </tr>
             @*<tr>
-                <th><label class="lbText">QA</label></th>
-                <td colspan="5">
-                    <textarea id="txtDlgQa" style="width:98%;"></textarea>
-                </td>
-            </tr>*@
+                    <th><label class="lbText">QA</label></th>
+                    <td colspan="5">
+                        <textarea id="txtDlgQa" style="width:98%;"></textarea>
+                    </td>
+                </tr>*@
         </tbody>
     </table>
 
@@ -165,11 +165,11 @@
     <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
@@ -194,10 +194,19 @@
             </tr>
         </tbody>
     </table>
+
+    <label><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+    <div id="fileDlgQuickList">
+
+    </div>
 </div>
 
 <script type="text/javascript">
+    var fileUpload = $("#fileDlgQuickList").FileUpload({ OID: null });
+
     $(document).ready(function () {
+        fileUpload.EditMode();
+
         $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.factoryList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
@@ -355,13 +364,14 @@
             param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
             param.OccurrenceLibOID =WebUtils.GetComboValue("cbDlgOccurrence");
             param.PartOID = WebUtils.isEmpty($("#txtDlgPartNo").attr("PartOID")) === true ? 156 : $("#txtDlgPartNo").attr("PartOID");
-            param.LotNo = "ABC";
+            param.LotNo = $("#txtDlgLotNo").val();
             param.OemLibOID = WebUtils.GetComboValue("cbDlgOem");
             param.CarCode = $("#txtDlgCarCode").val();
             param.WorkUserOID = $("#txtDlgWorkUserNm").attr("WorkUserOID");
             param.WriteDt = $("#txtDlgWriteDt").val();
             param.PoorCnt = $("#txtDlgPoorCnt").val();
-            param.Title = $("#txtDlgTitle").val();
+            param.Title = $("#txtDlgSummary").val();
+            param.Summary = $("#txtDlgSummary").val();
             param.EnrollmentLibOID = WebUtils.GetComboValue("cbDlgEnrollmentType");
             param.OccurrenceAreaLibOID = WebUtils.GetComboValue("cbDlgOccurrenceArea");
             @*param.InduceLibOID = WebUtils.GetComboValue("cbDlgInduce");*@
@@ -481,16 +491,21 @@
                 return;
             }
 
-            $.post('/Qms/InsQuickResponse', param, function (response) {
-                  if (response.isError) {
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+            SendDataWithFile("/Qms/InsQuickResponse", param, Files, function (response) {
+                if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
                 alert("저장되었습니다.");
-
                 PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
 

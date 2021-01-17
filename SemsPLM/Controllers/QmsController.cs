@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 
@@ -285,8 +286,16 @@ namespace SemsPLM.Controllers
             ViewBag.oemList = oemList;
 
             Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
+
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            ViewBag.ItemList = ItemList;
+
+            ViewBag.Status = from x in BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE })
+                             where x.Name != "Disposal" 
+                             select x;
 
             return View();
         }
@@ -734,11 +743,10 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-
-
+                _param.Type = QmsConstant.TYPE_QUICK_RESPONSE;
 
                 DObject dobj = new DObject();
-                dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
+                dobj.Type = _param.Type;
                 _param.Name = DateTime.Now.Ticks.ToString(); // 채번필요
                 dobj.Name = _param.Name;
                 result = DObjectRepository.InsDObject(Session, dobj);
@@ -881,6 +889,19 @@ namespace SemsPLM.Controllers
                     }
                 }
 
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -902,13 +923,27 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                _param.Type = QmsConstant.TYPE_QUICK_RESPONSE;
 
                 DObject dobj = new DObject();
-                dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
+                dobj.Type = _param.Type;
                 dobj.OID = _param.OID;
                 DObjectRepository.UdtDObject(Session, dobj);
 
                 QuickResponseRepository.UdtQuickResponse(_param);
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
 
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
@@ -1014,6 +1049,45 @@ namespace SemsPLM.Controllers
                 }
             }
             return Json(fileName);
+        }
+
+        [HttpGet]
+        public ActionResult ImgFileDownload(int? OID, string fileName)
+        {
+            try
+            {
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID;
+                
+                string fileFullDirectory = Path.Combine(StoragePath, imgVaulePath, SavePath, fileName);
+
+                FileInfo fi = new FileInfo(fileFullDirectory);
+
+                if (!fi.Exists)
+                {
+                    throw new Exception("파일이 존재하지않습니다.");
+                }
+
+                System.IO.Stream fileStream = new FileStream(fi.FullName, FileMode.Open); ;
+
+                string downloadImgName = string.Format("{0}.{1}", "고품사진", fileName.Substring(fileName.LastIndexOf(".") + 1));
+
+                if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(downloadImgName, System.Text.Encoding.UTF8));
+                }
+                else
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, downloadImgName);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.Replace("'", "");
+                return Content("<script language='javascript' type='text/javascript'>alert('" + message + "');history.back();</script>");
+            }
         }
         #endregion
 
