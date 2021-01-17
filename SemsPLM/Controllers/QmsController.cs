@@ -287,8 +287,16 @@ namespace SemsPLM.Controllers
             ViewBag.oemList = oemList;
 
             Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
+
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            ViewBag.ItemList = ItemList;
+
+            ViewBag.Status = from x in BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE })
+                             where x.Name != "Disposal" 
+                             select x;
 
             return View();
         }
@@ -306,7 +314,11 @@ namespace SemsPLM.Controllers
         {
             //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library factoryKey = LibraryRepository.SelLibraryObject(new Library { Name = "FACTORY_TYPE" });
+            List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
+            ViewBag.factoryList = factoryList;
+
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" }); // OEM
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
@@ -314,13 +326,13 @@ namespace SemsPLM.Controllers
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
 
-            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE"});
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
 
-            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
+            /*Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
             List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
-            ViewBag.occurrenceAreaList = occurrenceAreaList;
+            ViewBag.occurrenceAreaList = occurrenceAreaList;*/
 
             Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
             List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
@@ -339,6 +351,10 @@ namespace SemsPLM.Controllers
             ViewBag.correctDecisionList = correctDecisionList;
             ViewBag.ProjectOID = ProjectOID;
 
+            Library EnrollmentTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = "ENROLLMENT_TYPE" });
+            List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
+            ViewBag.EnrollmentTypeList = EnrollmentTypeList;
+
             return View();
         }
 
@@ -346,6 +362,10 @@ namespace SemsPLM.Controllers
         {
             //Library oemKey = LibraryRepository.SelLibraryObject(new Library { Name = "OEM" });
             //List<Library> oemList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // OEM
+            Library factoryKey = LibraryRepository.SelLibraryObject(new Library { Name = "FACTORY_TYPE" });
+            List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
+            ViewBag.factoryList = factoryList;
+
             Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
@@ -354,13 +374,9 @@ namespace SemsPLM.Controllers
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
 
-            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE" });
-            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID });  // 발생유형
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE" });
+            List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
-
-            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_AREA" });
-            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
-            ViewBag.occurrenceAreaList = occurrenceAreaList;
 
             Library induceKey = LibraryRepository.SelLibraryObject(new Library { Name = "INDUCE" });
             List<Library> induceList = LibraryRepository.SelLibrary(new Library { FromOID = induceKey.OID });  // 유발공정
@@ -378,8 +394,18 @@ namespace SemsPLM.Controllers
             List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
             ViewBag.correctDecisionList = correctDecisionList;
 
+            Library EnrollmentTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = "ENROLLMENT_TYPE" });
+            List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
+            ViewBag.EnrollmentTypeList = EnrollmentTypeList;
+
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = OID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE });
+
+            Library occurrenceAreaKey = LibraryRepository.SelLibraryObject(new Library { Name = ViewBag.QuickDetail.OccurrenceNm == "사내" ? "OCCURRENCE_AREA_INSIDE" : "OCCURRENCE_AREA_OUT" });
+            List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
+            ViewBag.occurrenceAreaList = occurrenceAreaList;
+
+
             return View();
         }
 
@@ -722,11 +748,10 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
-
-
+                _param.Type = QmsConstant.TYPE_QUICK_RESPONSE;
 
                 DObject dobj = new DObject();
-                dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
+                dobj.Type = _param.Type;
                 _param.Name = DateTime.Now.Ticks.ToString(); // 채번필요
                 dobj.Name = _param.Name;
                 result = DObjectRepository.InsDObject(Session, dobj);
@@ -869,6 +894,19 @@ namespace SemsPLM.Controllers
                     }
                 }
 
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+
                 DaoFactory.Commit();
             }
             catch (Exception ex)
@@ -890,13 +928,27 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                _param.Type = QmsConstant.TYPE_QUICK_RESPONSE;
 
                 DObject dobj = new DObject();
-                dobj.Type = QmsConstant.TYPE_QUICK_RESPONSE;
+                dobj.Type = _param.Type;
                 dobj.OID = _param.OID;
                 DObjectRepository.UdtDObject(Session, dobj);
 
                 QuickResponseRepository.UdtQuickResponse(_param);
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
 
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
@@ -1001,6 +1053,45 @@ namespace SemsPLM.Controllers
                 }
             }
             return Json(fileName);
+        }
+
+        [HttpGet]
+        public ActionResult ImgFileDownload(int? OID, string fileName)
+        {
+            try
+            {
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID;
+                
+                string fileFullDirectory = Path.Combine(StoragePath, imgVaulePath, SavePath, fileName);
+
+                FileInfo fi = new FileInfo(fileFullDirectory);
+
+                if (!fi.Exists)
+                {
+                    throw new Exception("파일이 존재하지않습니다.");
+                }
+
+                System.IO.Stream fileStream = new FileStream(fi.FullName, FileMode.Open); ;
+
+                string downloadImgName = string.Format("{0}.{1}", "고품사진", fileName.Substring(fileName.LastIndexOf(".") + 1));
+
+                if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, HttpUtility.UrlEncode(downloadImgName, System.Text.Encoding.UTF8));
+                }
+                else
+                {
+                    return File(fileStream, MediaTypeNames.Application.Octet, downloadImgName);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.Replace("'", "");
+                return Content("<script language='javascript' type='text/javascript'>alert('" + message + "');history.back();</script>");
+            }
         }
         #endregion
 

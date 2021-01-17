@@ -28,42 +28,44 @@
     <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
             <tr>
                 <th><label class="lbText">공장 구분</label></th>
                 <td><div id="cbDlgPlant"></div></td>
-                <th><label class="lbText">검사유형</label></th>
+                <th><label class="lbText">발생유형</label></th>
                 <td><div id="cbDlgOccurrence"></div></td>
                 <th><label class="lbText">고객사</label></th>
                 <td><div id="cbDlgOem"></div></td>
             </tr>
             <tr>
-                <th><label class="lbText">품번</label></th>
+                <th><label class="lbText">품번/품명</label></th>
                 <td>
-                    <input type="text" id="txtDlgPartNo" style="width:150px;" value="" readonly="readonly"/>
+                    <input type="text" id="txtDlgPartNo" style="width:150px;" value="" readonly="readonly" />
+                    <input type="text" id="txtDlgPartNm" style="width:150px;" value="" readonly="readonly" />
                     <button id="btnEditPartSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </td>
-                <th><label class="lbText">LOT번호</label></th>
-                <td><input type="text" id="txtDlgLotNo" value="" /></td>
-                <th><label class="lbText">품질담당자</label></th>
+                <th><label class="lbText">차종</label></th>
+                <td><input type="text" id="txtDlgCarCode" value="" /></td>
+                <th><label class="lbText">접수자</label></th>
                 <td>
-                    <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" readonly="readonly"/>
+                    <input type="text" id="txtDlgWorkUserNm" style="width:60%;" value="" readonly="readonly" />
                     <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </td>
             </tr>
             <tr>
-                <th><label class="lbText">작성일시</label></th>
-                <td><input type="text" id="txtDlgWriteDt" value="" /></td>
-                <th><label class="lbText">불량수량</label></th>
+                <th><label class="lbText">Lot No</label></th>
+                <td><input type="text" id="txtDlgLotNo" value="" /></td>
+                <th><label class="lbText">발생수량</label></th>
                 <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
-                <td colspan="2"></td>
+                <th><label class="lbText">작성일자</label></th>
+                <td><input type="text" id="txtDlgWriteDt" value="" /></td>
             </tr>
         </tbody>
 
@@ -72,24 +74,26 @@
     <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
             <tr>
-                <th><label class="lbText">제목</label></th>
+                <th><label class="lbText">불량내용(문제점 요약)</label></th>
                 <td colspan="5">
-                    <input type="text" id="txtDlgTitle" style="width:98%;" />
+                    <input type="text" id="txtDlgSummary" style="width:98%;" />
                 </td>
             <tr>
+                <th><label class="lbText">등록구분</label></th>
+                <td><div id="cbDlgEnrollmentType"></div></td>
                 <th><label class="lbText">발생처</label></th>
                 <td><div id="cbDlgOccurrenceArea"></div></td>
-                <th><label class="lbText">유발공정</label></th>
-                <td><div id="cbDlgInduce"></div></td>
+                @*<th><label class="lbText">유발공정</label></th>
+                    <td><div id="cbDlgInduce"></div></td>*@
                 <th><label class="lbText">귀책구분</label></th>
                 <td>
                     <div style="display:flex;flex-direction:row;">
@@ -111,34 +115,34 @@
             <tr>
                 <th><label class="lbText">재발여부 </label></th>
                 <td> <div id="chkDlgRecurrenceFl">재발여부 선택</div></td>
-                <th><label class="lbText">시정판정</label></th>
-                <td><div id="cbDlgCorrectDecision"></div></td>
+                @*<th><label class="lbText">시정판정</label></th>
+                    <td><div id="cbDlgCorrectDecision"></div></td>*@
                 <th><label class="lbText">대책서회신요구일자</label></th>
-                <td><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
+                <td colspan="3"><input type="text" id="txtDlgMeasureResponseDt" value="" /></td>
             </tr>
             <tr>
-                <th><label class="lbText">불량내용상세</label></th>
+                <th><label class="lbText">불량 상세 내용</label></th>
                 <td colspan="5">
                     <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
                 </td>
             </tr>
-            <tr>
-                <th><label class="lbText">QA</label></th>
-                <td colspan="5">
-                    <textarea id="txtDlgQa" style="width:98%;"></textarea>
-                </td>
-            </tr>
+            @*<tr>
+                    <th><label class="lbText">QA</label></th>
+                    <td colspan="5">
+                        <textarea id="txtDlgQa" style="width:98%;"></textarea>
+                    </td>
+                </tr>*@
         </tbody>
     </table>
 
     <label><i class="fas fa-caret-square-down"></i> 고품사진</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
@@ -161,16 +165,16 @@
     <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
             <tr>
-                <th><label class="lbText">봉쇄조치 </label></th>
+                <th><label class="lbText">봉쇄조치 범위선택</label></th>
                 <td colspan="3">
                     <div style="display:flex;flex-direction:row;">
                         <div id="chkDlgBlockadeMaterial">원재료</div>
@@ -184,27 +188,56 @@
                 </td>
                 <th><label class="lbText">일정계획담당자</label></th>
                 <td>
-                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" readonly="readonly"/>
+                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" readonly="readonly" />
                     <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <label><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+    <div id="fileDlgQuickList">
+
+    </div>
 </div>
 
 <script type="text/javascript">
+    var fileUpload = $("#fileDlgQuickList").FileUpload({ OID: null });
+
     $(document).ready(function () {
+        fileUpload.EditMode();
+
         $("#cbDlgOem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgPlant").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.factoryList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceAreaList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgOccurrenceArea").jqxComboBox({ selectedIndex: 0, source: {}, displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        @*$("#cbDlgInduce").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.induceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });*@
         $("#cbDlgDefectDegree").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.defectDegreeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#cbDlgImpute").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgEnrollmentType").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.EnrollmentTypeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
-        $("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        @*$("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });*@
 
         $("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: null, displayMember: "text", valueMember: "value", width: 160, height: 30 });
+
+        // 발생유형에 따라 발생처 변경
+        $("#cbDlgOccurrence").on('select', function (event) {
+            var args = event.args;
+
+            var name = args.item.label === "사외" ? "OCCURRENCE_AREA_OUT" : args.item.label === "사내" ? "OCCURRENCE_AREA_INSIDE" : null;
+            if (!WebUtils.isEmpty(name)) {
+                RequestData("/Manage/SelLibraryObject", { Name: name }, function (res1) {
+                    var OID = res1.OID;
+
+                    RequestData("/Manage/SelLibrary", { FromOID: OID, IsUse : "Y" }, function (res2) {
+                        $("#cbDlgOccurrenceArea").jqxComboBox({ source: WebUtils.ConvComboData(res2, "OID", "KorNm", true) })
+                    });
+                });
+            } else {
+                $("#cbDlgOccurrenceArea").jqxComboBox("clearSelection");
+                $("#cbDlgOccurrenceArea").jqxComboBox({ source: {} })
+            }
+        });
 
         $("#cbDlgImpute").on('select', function (event) {
             var args = event.args;
@@ -216,6 +249,10 @@
                 $("#cbDlgImputeDepartment").css("display", "none");
                 $("#txtDlgImputeSupplier").css("display", "block");
                 $("#btnImputeSaerchSupplier").css("display", "block");
+            } else {
+                $("#cbDlgImputeDepartment").css("display", "none");
+                $("#txtDlgImputeSupplier").css("display", "none");
+                $("#btnImputeSaerchSupplier").css("display", "none");
             }
         });
 
@@ -268,6 +305,7 @@
         btnDlgPartSearch$.on("click", function () {
             OpenSearchEPartAssyDialog(function (res) {
                 $("#txtDlgPartNo").val(res[0].Name);
+                $("#txtDlgPartNm").val(res[0].Title);
                 $("#txtDlgPartNo").attr("PartOID", res[0].OID);
             }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
         });
@@ -326,14 +364,17 @@
             param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
             param.OccurrenceLibOID =WebUtils.GetComboValue("cbDlgOccurrence");
             param.PartOID = WebUtils.isEmpty($("#txtDlgPartNo").attr("PartOID")) === true ? 156 : $("#txtDlgPartNo").attr("PartOID");
-            param.LotNo = "ABC";
+            param.LotNo = $("#txtDlgLotNo").val();
             param.OemLibOID = WebUtils.GetComboValue("cbDlgOem");
+            param.CarCode = $("#txtDlgCarCode").val();
             param.WorkUserOID = $("#txtDlgWorkUserNm").attr("WorkUserOID");
             param.WriteDt = $("#txtDlgWriteDt").val();
             param.PoorCnt = $("#txtDlgPoorCnt").val();
-            param.Title = $("#txtDlgTitle").val();
+            param.Title = $("#txtDlgSummary").val();
+            param.Summary = $("#txtDlgSummary").val();
+            param.EnrollmentLibOID = WebUtils.GetComboValue("cbDlgEnrollmentType");
             param.OccurrenceAreaLibOID = WebUtils.GetComboValue("cbDlgOccurrenceArea");
-            param.InduceLibOID = WebUtils.GetComboValue("cbDlgInduce");
+            @*param.InduceLibOID = WebUtils.GetComboValue("cbDlgInduce");*@
             param.DefectDegreeLibOID = WebUtils.GetComboValue("cbDlgDefectDegree");
             param.ImputeLibOID = WebUtils.GetComboValue("cbDlgImpute");
 
@@ -350,9 +391,9 @@
             param.RecurrenceFl = WebUtils.GetCheckBoxValue("chkDlgRecurrenceFl");
             param.OccurrencePlace = $("#txtDlgOccurrencePlace").val();
             param.OccurrenceDt = $("#txtDlgOccurrenceDt").val();
-            param.CorrectDecisionLibOID = WebUtils.GetComboValue("cbDlgCorrectDecision");
+            @*param.CorrectDecisionLibOID = WebUtils.GetComboValue("cbDlgCorrectDecision");*@
             param.MeasureResponseDt = $("#txtDlgMeasureResponseDt").val();
-            param.Qa = $("#txtDlgQa").val();
+            @*param.Qa = $("#txtDlgQa").val();*@
             param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeMaterial");
             param.BlockadeOutProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeOutProduct");
             param.BlockadeProcessProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeProcessProduct");
@@ -362,16 +403,109 @@
             param.PlanUserOID = $("#txtPlanUserNm").attr("PlanUserOID");
             param.PoorPicture = $("#hidImgFileNameDlgPoorPicture").val();
 
-            $.post('/Qms/InsQuickResponse', param, function (response) {
-                  if (response.isError) {
+            if (WebUtils.isEmpty(param.PlantLibOID)) {
+                alert("공장구분을 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.OccurrenceLibOID)) {
+                alert("발생유형을 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.PartOID)) {
+                alert("제품을 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.CarCode)) {
+                alert("차종을 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.WorkUserOID)) {
+                alert("접수자을 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.PoorCnt)) {
+                alert("발생수량을 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.Title)) {
+                alert("불량내용(문제점 요약)을 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.EnrollmentLibOID)) {
+                alert("등록구분을 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.OccurrenceAreaLibOID)) {
+                alert("발생처를 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.OccurrencePlace)) {
+                alert("발생장소를 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.ImputeLibOID)) {
+                alert("귀책구분을 선택 해주세요.");
+                return;
+            }
+
+            if (item.label === "협력사" && WebUtils.isEmpty(param.ImputeSupplierOID)) {
+                alert("협력사를 선택 해주세요.");
+                return;
+            }@* else if (WebUtils.isEmpty(param.ImputeDepartmentOID)){
+                alert("부서를 선택 해주세요.");
+                return;
+            }*@
+
+            if (WebUtils.isEmpty(param.OccurrenceDt)) {
+                alert("발생일자를 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.DefectDegreeLibOID)) {
+                alert("결함정도를 선택 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.PoorDetail)) {
+                alert("불량 상세 내용을 입력 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.PoorPicture)) {
+                alert("고품사진을 등록 해주세요.");
+                return;
+            }
+
+            if (WebUtils.isEmpty(param.PlanUserOID)) {
+                alert("일정계획담당자을 선택 해주세요.");
+                return;
+            }
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+            SendDataWithFile("/Qms/InsQuickResponse", param, Files, function (response) {
+                if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
                 alert("저장되었습니다.");
-
                 PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
 

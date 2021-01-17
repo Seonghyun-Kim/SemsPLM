@@ -2,15 +2,17 @@
 using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Qms.Models
 {
-    public class QuickResponse : DObject, IDObject
+    public class QuickResponse : DObject, IDObject, IObjectFile
     {
         // 공장구분 
         public int? PlantLibOID { get; set; }
@@ -24,6 +26,9 @@ namespace Qms.Models
 
         public string OccurrenceNm { get; set; }
 
+        // 품목
+        public int? ItemGroup { get; set; }
+        public string ItemNm { get; set; }
         // 품번 
         public int? PartOID { get; set; }
 
@@ -141,6 +146,11 @@ namespace Qms.Models
 
         public DateTime? FinishDt { get; set; }
 
+        // 등록구분
+        public int? EnrollmentLibOID { get; set; }
+
+        public string EnrollmentLibNm { get; set; }
+
         #region -- Search용
         //발생유형
         public string SearchOccurrenceLibOID { get; set; }
@@ -150,16 +160,35 @@ namespace Qms.Models
 
         public string SearchOccurrenceEDt { get; set; }
 
+        // 작성일
+        public string SearchCreateSDt { get; set; }
+
+        public string SearchCreateEDt { get; set; }
+
+        // 상태
+        public int? SearchStatusOID { get; set; }
+
         public string SearchOemNm { get; set; }
 
         //차종 코드
         public string SearchCarCode { get; set; }
 
         public string SearchPartNo { get; set; }
+        public string SearchPartNm { get; set; }
 
         public string SearchCreateUsNm { get; set; }
 
         public string SearchPlanUsNm { get; set; }
+
+        // 품목 OID
+        public int? SearchItemGroup { get; set; }
+        #endregion
+
+        #region -- File
+        public List<HttpPostedFileBase> Files { get; set; }
+
+        public List<HttpFile> delFiles { get; set; }
+
         #endregion
     }
 
@@ -171,6 +200,8 @@ namespace Qms.Models
 
         public DateTime? OccurrenceDt { get; set; }
 
+        // 발생유형 
+        public int? OccurrenceLibOID { get; set; }
         public string OccurrenceNm { get; set; }
         
         public string PartNm { get; set; }
@@ -186,6 +217,69 @@ namespace Qms.Models
         public int? PlanUserOID { get; set; }
 
         public string PlanUserNm { get; set; }
+
+        // LOT NO 
+        public string LotNo { get; set; }
+
+        // 고객사 
+        public int? OemLibOID { get; set; }
+
+        public string OemNm { get; set; }
+
+        // 작업자 
+        public int? WorkUserOID { get; set; }
+
+        public string WorkUserNm { get; set; }
+
+        // 불량수량 
+        public int PoorCnt { get; set; }
+
+        // 발생처 
+        public int? OccurrenceAreaLibOID { get; set; }
+
+        public string OccurrenceAreaNm { get; set; }
+
+        // 유발공정 
+        public int? InduceLibOID { get; set; }
+
+        public string InduceNm { get; set; }
+
+        // 결함정도 
+        public int? DefectDegreeLibOID { get; set; }
+
+        public string DefectDegreeNm { get; set; }
+
+        // 귀책구분 
+        public int? ImputeLibOID { get; set; }
+
+        public string ImputeNm { get; set; }
+
+        // 귀책처(자체) 
+        public int? ImputeDepartmentOID { get; set; }
+
+        public string ImputeDepartmentNm { get; set; }
+
+        // 귀책처(협력사) 
+        public int? ImputeSupplierOID { get; set; }
+
+        public string ImputeSupplierNm { get; set; }
+
+        // 요약
+        public string Summary { get; set; }
+
+        // 불량내용상세 
+        public string PoorDetail { get; set; }
+
+        // 재발여부 
+        public bool RecurrenceFl { get; set; }
+
+        // 발생장소 
+        public string OccurrencePlace { get; set; }
+
+        // 시정판정 
+        public int? CorrectDecisionLibOID { get; set; }
+
+        public string CorrectDecisionNm { get; set; }
 
 
         public int? ModuleBlockadeOID { get; set; }
@@ -295,15 +389,42 @@ namespace Qms.Models
 
         public DateTime? FinishDt { get; set; }
 
+        // 등록구분
+        public int? EnrollmentLibOID { get; set; }
+
+        public string EnrollmentLibNm { get; set; }
+
+        public DateTime? CreateDt { get; set; }
+
+        // 품목
+        public int? ItemGroup { get; set; }
+        public string ItemNm { get; set; }
         public QuickResponseView(QuickResponse response)
         {
             this.OID = response.OID;
             this.Name = response.Name;
             this.OccurrenceDt = response.OccurrenceDt;
             this.OccurrenceNm = response.OccurrenceNm;
+            this.PoorCnt = response.PoorCnt;
             this.PartNm = response.PartNm;
             this.CarCode = response.CarCode;
             this.PartGrpNm = response.PartGrpNm;
+            this.OemLibOID = response.OemLibOID;
+            this.OemNm = response.OemNm;
+            this.OccurrenceLibOID = response.OccurrenceLibOID;
+            this.OccurrenceNm = response.OccurrenceNm;
+            this.OccurrenceAreaLibOID = response.OccurrenceAreaLibOID;
+            this.OccurrenceAreaNm = response.OccurrenceAreaNm;
+            this.OccurrencePlace = response.OccurrencePlace;
+            this.LotNo = response.LotNo;
+            this.WorkUserNm = response.WorkUserNm;
+            this.EnrollmentLibOID = response.EnrollmentLibOID;
+            this.EnrollmentLibNm = response.EnrollmentLibNm;
+            this.ImputeLibOID = response.ImputeLibOID;
+            this.ImputeNm = response.ImputeNm;
+            this.ItemGroup = response.ItemGroup;
+            this.ItemNm = response.ItemNm;
+            this.CreateDt = response.CreateDt;
             this.Title = response.Title;
             this.CreateUsNm = response.CreateUsNm;
             this.PlanUserOID = response.PlanUserOID;

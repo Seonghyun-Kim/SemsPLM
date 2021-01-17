@@ -11,11 +11,12 @@
             </div>
             <div class="searchContent">
                 <div class="searchData">
-                    <div>구분</div>
+                    <div>발생유형</div>
                     <div>
                         <div id="SearchQuick_cbOccurrence" style="margin-left:5px;"></div>
                     </div>
                 </div>
+
                 <div class="searchData">
                     <div>OEM</div>
                     <div>
@@ -23,11 +24,18 @@
                     </div>
                 </div>
                 <div class="searchData">
-                    <div>차종코드</div>
+                    <div>차종</div>
                     <div>
                         <input type="text" class="txtBox" id="SearchQuick_CarCode" />
                     </div>
                 </div>
+                <div class="searchData">
+                    <div>품목</div>
+                    <div>
+                        <div id="SearchQuick_ItemNo" style="margin-left:5px;"></div>
+                    </div>
+                </div>
+
                 <div class="searchData">
                     <div>품번</div>
                     <div>
@@ -36,10 +44,23 @@
                 </div>
 
                 <div class="searchData">
-                    <div>발생일자</div>
-                    <div style="display:flex;flex-direction:row;">
-                        <div id="SearchQuick_sDt"></div>~
-                        <div id="SearchQuick_eDt"></div>
+                    <div>품명</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchQuick_PartNm" />
+                    </div>
+                </div>
+
+                <div class="searchData">
+                    <div>일정계획담당자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchQuick_PlanUsNm" />
+                    </div>
+                </div>
+
+                <div class="searchData">
+                    <div>상태</div>
+                    <div>
+                        <div id="SearchQuick_Status" style="margin-left:5px;"></div>
                     </div>
                 </div>
 
@@ -49,14 +70,27 @@
                         <input type="text" class="txtBox" id="SearchQuick_CreateUsNm" />
                     </div>
                 </div>
+
                 <div class="searchData">
-                    <div>일정계획담당자</div>
-                    <div>
-                        <input type="text" class="txtBox" id="SearchQuick_PlanUsNm" />
+                    <div>발생일자</div>
+                    <div style="display:flex;">
+                        <div id="SearchQuick_sDt"></div>
+                        <span style="margin-left:5px; margin-right:5px; text-align:center; line-height:1.835em;">~</span>
+                        <div id="SearchQuick_eDt"></div>
                     </div>
                 </div>
 
-                
+                <div class="searchData">
+                    <div>작성일</div>
+                    <div>
+                        <div style="display:flex;">
+                            <div id="SearchQuick_CreateSDt"></div>
+                            <span style="margin-left:5px; margin-right:5px; text-align:center; line-height:1.835em;">~</span>
+                            <div id="SearchQuick_CreateEDt"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="searchButton">
                     <button id="SearchQuick_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
                 </div>
@@ -75,16 +109,30 @@
             { name: 'Name', type: 'string' },
             { name: 'Title', type: 'string' },
             { name: 'OccurrenceDt', type: 'date' },
-            { name: 'OccurrenceNm', type: 'string' },
             { name: 'PartNo', type: 'string' },
             { name: 'PartNm', type: 'string' },
             { name: 'CarCode', type: 'string' },
+            { name: 'OemLibOID', type: 'number' },
+            { name: 'OemNm', type: 'string' },
+            { name: 'OccurrenceLibOID', type: 'number' },
+            { name: 'OccurrenceNm', type: 'string' },
+            { name: 'OccurrenceAreaLibOID', type: 'number' },
+            { name: 'OccurrenceAreaNm', type: 'string' },
+            { name: 'OccurrencePlace', type: 'string' },
+            { name: 'LotNo', type: 'string' },
+            { name: 'PoorCnt', type: 'string' },
+            { name: 'WorkUserNm', type: 'string' },
+            { name: 'EnrollmentLibOID', type: 'string' },
+            { name: 'EnrollmentLibNm', type: 'string' },
+            { name: 'ImputeLibOID', type: 'string' },
+            { name: 'ImputeNm', type: 'string' },
             { name: 'PartGrpNm', type: 'string' },
             { name: 'Summary', type: 'string' },
             { name: 'CreateUsNm', type: 'string' },
             { name: 'PlanUserNm', type: 'string' },
             { name: 'StatusNm', type: 'string' },
             { name: 'FinishDt', type: 'date' },
+            { name: 'CreateDt', type: 'date' },
 
             { name: 'ModuleBlockadeOID', type: 'number' },
             { name: 'ModuleBlockadeStatusNm', type: 'string' },
@@ -156,18 +204,30 @@
         //    SearchCreateUsNm : $("#SearchQuick_CreateUsNm").val(),
         //}
     };
-    
+
     var nowDate = new Date();
 
     $(document).ready(function () {
         $("#SearchQuick_cbOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#SearchQuick_Status").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.Status)), "OID", "StatusNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#SearchQuick_ItemNo").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
+
         $("#SearchQuick_sDt").jqxDateTimeInput(DateFormat);
         $("#SearchQuick_sDt").val(WebUtils.GetDate(-1, "m", "-"));
         $("#SearchQuick_sDt").jqxDateTimeInput({ width: 180, height: 32 });
 
         $("#SearchQuick_eDt").jqxDateTimeInput(DateFormat);
         $("#SearchQuick_eDt").val(WebUtils.GetDate(0, "d", "-"));
-        $("#SearchQuick_eDt").jqxDateTimeInput({ width: 180, height: 32 });       
+        $("#SearchQuick_eDt").jqxDateTimeInput({ width: 180, height: 32 });
+
+        // 작성일
+        $("#SearchQuick_CreateSDt").jqxDateTimeInput(DateFormat);
+        $("#SearchQuick_CreateSDt").val(WebUtils.GetDate(-1, "m", "-"));
+        $("#SearchQuick_CreateSDt").jqxDateTimeInput({ width: 180, height: 32 });
+
+        $("#SearchQuick_CreateEDt").jqxDateTimeInput(DateFormat);
+        $("#SearchQuick_CreateEDt").val(WebUtils.GetDate(0, "d", "-"));
+        $("#SearchQuick_CreateEDt").jqxDateTimeInput({ width: 180, height: 32 });
 
         $("#SearchQuick_btnSearch").on("click", function () {
             initQuickResponseList();
@@ -177,7 +237,7 @@
         quickResponseList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: 675,
+            height: 625,
             rowsheight: 40,
             columnsheight: 45,
             source :  new $.jqx.dataAdapter(QuickResponseSource),
@@ -199,14 +259,23 @@
                         return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OpenQuickResonse(\"#SearchQuickResponse_Grid\"," + rowData.uid + ")'>" + (value) + "</a></div></div>";
                     }
                 },
-                { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', pinned:true },
-                { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center', pinned:true },
-                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned:true },
-                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned:true },
+                { text: '품목', dataField: 'ItemGroup', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '고객사', dataField: 'OemNm', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '차종', dataField: 'CarCode', width: '6%', align: 'center', cellsalign: 'center' },
-                { text: '문제내용', dataField: 'Summary', width: '15%', align: 'center', cellsalign: 'center' },
+                { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생처', dataField: 'OccurrenceAreaNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생장소', dataField: 'OccurrencePlace', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: 'Lot No', dataField: 'LotNo', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생수량', dataField: 'PoorCnt', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '접수자', dataField: 'WorkUserNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                { text: '등록구분', dataField: 'EnrollmentLibNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '귀책구분', dataField: 'ImputeNm', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '불량내용(문제점 요약)', dataField: 'Title', width: '11%', align: 'center', cellsalign: 'center' },
                 { text: '신속대응등록자', dataField: 'CreateUsNm', width: '7%', align: 'center', cellsalign: 'center' },
-                { text: '일정계획담당자', dataField: 'PlanUserNm', width: '7%', align: 'center', cellsalign: 'center' },  ,
+                { text: '일정계획담당자', dataField: 'PlanUserNm', width: '7%', align: 'center', cellsalign: 'center' },
                 { text: '상태', dataField: 'StatusNm', width: '5%', align: 'center', cellsalign: 'center' },
                 { text: '종결일자', dataField: 'FinishDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
                 {
@@ -328,7 +397,8 @@
                         var wrapChargerUser = "<div style='width:100%;text-align:center;'>" + status.ChargeUserText + "</div>";
                         return "<div>" + wrapPlanDate + wrapChargerUser + "</div>";
                     }
-                }
+                },
+                { text: '작성일', dataField: 'CreateDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
             ],
             rendertoolbar: function (toolBar) {
                 var container = $("<div class='lGridComponent' ></div>");
@@ -345,7 +415,7 @@
                 });
 
                 deleteButton.on('click', function () {
-                   
+
                 });
 
                 toolBar.append(container);
@@ -357,12 +427,17 @@
 
     function initQuickResponseList() {
         var param = {
-            SearchOccurrenceLibOID : $("#SearchQuick_cbOccurrence").val(),
-            SearchOccurrenceSDt : $("#SearchQuick_sDt").jqxDateTimeInput('val'),
-            SearchOccurrenceEDt : $("#SearchQuick_eDt").jqxDateTimeInput('val'),
+            SearchOccurrenceLibOID: $("#SearchQuick_cbOccurrence").val(),
+            SearchOccurrenceSDt: $("#SearchQuick_sDt").jqxDateTimeInput('val'),
+            SearchOccurrenceEDt: $("#SearchQuick_eDt").jqxDateTimeInput('val'),
+            SearchCreateSDt: $("#SearchQuick_CreateSDt").jqxDateTimeInput('val'),
+            SearchCreateEDt: $("#SearchQuick_CreateEDt").jqxDateTimeInput('val'),
+            SearchStatusOID: WebUtils.GetComboValue("SearchQuick_Status"),
+            SearchItemGroup: WebUtils.GetComboValue("SearchQuick_ItemNo"),
             SearchOemNm: $("#SearchQuick_OEM").val(),
             SearchCarCode: $("#SearchQuick_CarCode").val(),
             SearchPartNo: $("#SearchQuick_PartNo").val(),
+            SearchPartNm: $("#SearchQuick_PartNm").val(),
             SearchCreateUsNm: $("#SearchQuick_CreateUsNm").val(),
             SearchPlanUsNm : $("#SearchQuick_PlanUsNm").val(),
         }

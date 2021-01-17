@@ -60,7 +60,9 @@
       BlockadeStorageProductFl,
       BlockadeShipProductFl,
       PlanUserOID,
-      PoorPicture)
+      PoorPicture,
+      CarCode,
+      EnrollmentLibOID)
       VALUES
       (#OID#,
       #PlantLibOID#,
@@ -93,7 +95,9 @@
       #BlockadeStorageProductFl#,
       #BlockadeShipProductFl#,
       #PlanUserOID#,
-      #PoorPicture#)
+      #PoorPicture#,
+      #CarCode#,
+      #EnrollmentLibOID#)
 
     </insert>
 
@@ -229,6 +233,14 @@
         FinishDt = #FinishDt#
       </isNotNull>
 
+      <isNotNull prepend="," property="CarCode">
+        CarCode = #CarCode#
+      </isNotNull>
+
+      <isNotNull prepend="," property="EnrollmentLibOID">
+        EnrollmentLibOID = #EnrollmentLibOID#
+      </isNotNull>
+
       WHERE OID = #OID#
     </update>
 
@@ -238,13 +250,16 @@
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm, P.StatusOID, P.StatusNm
+      , A.OemLibOID, E.KorNm AS OemLibNm
+      , AO.CreateDt, A.EnrollmentLibOID, Q.KorNm AS EnrollmentLibNm, A.CarCode
+      , R.ITEM_No AS ItemGroup, S.KorNm AS ItemNm
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
       LEFT JOIN T_DLIBRARY C ON A.PlantLibOID = C.OID
       LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
-      LEFT JOIN T_DLIBRARY E ON A.OemLibOID = E.OID
+      LEFT JOIN T_DCODELIBRARY E ON A.OemLibOID = E.OID
       LEFT JOIN T_DLIBRARY F ON A.OccurrenceAreaLibOID = F.OID
       LEFT JOIN T_DLIBRARY G ON A.InduceLibOID = G.OID
       LEFT JOIN T_DLIBRARY H ON A.DefectDegreeLibOID = H.OID
@@ -256,6 +271,9 @@
       LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
       LEFT JOIN T_BPOLICY P ON AO.BPolicyOID = P.OID
+      LEFT JOIN T_DLIBRARY Q ON A.EnrollmentLibOID = Q.OID
+      LEFT JOIN T_DEPART R ON B.OID = R.OID
+      LEFT JOIN T_DCODELIBRARY S ON R.ITEM_No = S.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
           A.OID = #OID#
@@ -285,6 +303,10 @@
           A.OccurrenceDt BETWEEN CONVERT(DATETIME, #SearchOccurrenceSDt# + ' 00:00:00') AND CONVERT(DATETIME, #SearchOccurrenceEDt#+ ' 23:59:59')
         </isNotNull>
 
+        <isNotNull prepend="and" property="SearchStatusOID">
+          AO.BPolicyOID = #SearchStatusOID#
+        </isNotNull>
+
         <isNotNull prepend="and" property="SearchOemNm">
           E.KorNm LIKE '%' + #SearchOemNm# + '%'
         </isNotNull>
@@ -293,12 +315,24 @@
           B.Name  LIKE '%' + #SearchPartNo# + '%'
         </isNotNull>
 
+        <isNotNull prepend="and" property="SearchItemGroup">
+          R.ITEM_No  = #SearchItemGroup#
+        </isNotNull>
+
         <isNotNull prepend="and" property="SearchCreateUsNm">
           AO.CreateUsNm LIKE '%' + #SearchCreateUsNm# + '%'
         </isNotNull>
 
         <isNotNull prepend="and" property="SearchPlanUsNm">
           O.Name LIKE '%' + #SearchPlanUsNm# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchCarCode">
+          A.CarCode LIKE '%' + #SearchCarCode# + '%'
+        </isNotNull>
+
+        <isNotNull prepend="and" property="SearchCreateSDt">
+          AO.CreateDt between #SearchCreateSDt# and  DATEADD(dd, 1, #SearchCreateEDt#)
         </isNotNull>
       </dynamic>
     </select>
