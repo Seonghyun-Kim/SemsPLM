@@ -439,7 +439,7 @@
                     </tr>
                     <tr>
                         <th>완료예정일</th>
-                        <td colspan="3">@(ViewBag.LpaUnfit.LpaCheckDt == null ? "" : ViewBag.LpaUnfit.LpaCheckDt.ToString("yyyy-MM-dd"))</td>
+                        <td colspan="3">@(ViewBag.LpaUnfit.FinishRequestDt == null ? "" : ViewBag.LpaUnfit.FinishRequestDt.ToString("yyyy-MM-dd"))</td>
                     </tr>
                 </tbody>
             </table>
@@ -724,6 +724,7 @@
     });
 
     function loadApprovDetail(objTable, title, ApprovDatas) {
+        if (ApprovDatas == null) { return; }
         var sampleArray = ApprovDatas.InboxStep;
         var listLength = sampleArray.length;
         for (var i = 0; i < listLength; i++) {
@@ -1027,9 +1028,12 @@
 
             // 담당자
             var tdUser$ = document.createElement("td");
-
-            var divUser$ = document.createElement("div");
-            divUser$.innerText = item.CheckUserNm;
+            if (WebUtils.isEmpty(item) || item.CheckUserNm === null) {
+                tdUser$.innerText = "";
+            } else {
+                tdUser$.innerText = item.CheckUserNm;
+            }
+            
 
             // 검증일
             var tdConfirmBaseDt$ = document.createElement("td");
@@ -1043,19 +1047,19 @@
 
             // 판정
             var tdJudgment$ = document.createElement("td");
-            tdJudgment$.innerText = WebUtils.isEmpty(item) === "Yes" ? "No" : item.CheckFl === 1 ? "Yes" :  "No";
+            tdJudgment$.innerText = WebUtils.isEmpty(item) === true ? "No" : item.CheckFl === 1 ? "Yes" :  "No";
 
             // 검증내용요약
             var tdConfirmDesc$ = document.createElement("td");
-            tdConfirmDesc$.innerText = WebUtils.isEmpty(item.CheckDetail) === true ? "" : item.CheckDetail;
+            tdConfirmDesc$.innerText = WebUtils.isEmpty(item) === true ? "" : item.CheckDetail;
 
             // 종료여부
             var tdContFl$ = document.createElement("td");
-            tdContFl$.innerText = WebUtils.isEmpty(item) === "Yes" ? "No" : item.FinishFl === 1 ? "Yes" : "No";
+            tdContFl$.innerText = WebUtils.isEmpty(item) === true ? "No" : item.FinishFl === 1 ? "Yes" : "No";
 
             // 종료사유
             var tdEndDesc$ = document.createElement("td");
-            tdEndDesc$.innerText = WebUtils.isEmpty(item.FinishDetail) === true ? "" : item.FinishDetail;
+            tdEndDesc$.innerText = WebUtils.isEmpty(item) === true ? "" : item.FinishDetail;
 
             @*$("#tbQmsCheckList_@ModelConfirmSt").append(tdConfirmSt$);*@
             $("#tbQmsCheckListConfirmEt_@Model").append(tdConfirmEt$);
