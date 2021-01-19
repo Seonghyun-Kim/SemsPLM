@@ -1,0 +1,241 @@
+﻿@{
+    Layout = null;
+}
+<div id="listView">
+    <div class="user_tree clearfix">
+        <div class="treeButtonWrap">
+            <h3> <i class="fas fa-file-alt"></i> &nbsp;일반문서 분류</h3>
+        </div>
+        <div id="SearchReleaseDocumentTree" style="overflow-y: auto;"></div>
+    </div>
+    <div class="user_list">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;문서 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>문서번호</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseDocument_Name" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제목</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseDocument_Title" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성일</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseDocument_CreateDt" />
+                    </div>
+                </div>
+
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseDocument_CreatUs" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchReleaseDocument_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+            @*<div class="searchData">
+                <div>제품(검색)</div>
+                <input type="text" class="txtBox" id="txtProduct" />
+                &nbsp;<button id="schProduct" class="custom-button"><i class='fas fa-search-plus'></i></button>
+            </div>
+            <div class="searchData predecessorData" style="display:none;">
+                <div>선행 프로젝트</div>
+                <div>
+                    <input type="text" class="txtBox" id="txtProdecessorProject" />
+                    &nbsp;<button id="schProdecessorProject"><i class='fas fa-search-plus'></i></button>
+                </div>
+            </div>*@
+
+        </div>
+        <div id="SearchReleaseDocument_Grid"></div>
+    </div>
+   
+</div>
+<script>
+    var docType$;
+    var SearchReleaseDocBPolicyList$ =  @Html.Raw(Json.Encode(ViewBag.BPolicies));
+    $(function () {
+        var param = {};
+        param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+        const searchBtn$ = $('#SearchReleaseDocument_btnSearch');
+
+        var ProjectSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'ProjectType' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'CreateUsNm' },
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_Nm' },
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_Nm' },
+                { name: 'EstStartDt', type: "date" },
+                { name: 'EstEndDt', type: "date" },
+                { name: 'ActEndDt', type: "date" },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+            ],
+        }
+
+        var SearchReleaseDocumentTree$ = $('#SearchReleaseDocumentTree');
+
+        SearchReleaseDocumentTree$.jqxTree({
+            width: '100%',
+            height: 757,
+        });
+
+        RequestData("/Document/SelDocClassTree", {}, function (res) {
+            SearchReleaseDocumentTree$.jqxTree({ source: res });
+       });
+
+        SearchReleaseDocumentTree$.on('select', function (event) {
+            var args = event.args;
+            var item = SearchReleaseDocumentTree$.jqxTree('getItem', args.element);
+            if (item.type == "@Common.Constant.CommonConstant.ATTRIBUTE_DOCUMENT") {
+                param.DocType = null;
+                getSearchReleaseDocList(DocumentSource, DocGrd$, param);
+                DocGrd$.jqxGrid('clearselection');
+            } else if (item.type == "@Common.Constant.DocClassConstant.TYPE_DOCCLASS") {
+                param.DocType = item.id;
+                getSearchReleaseDocList(DocumentSource, DocGrd$, param);
+                DocGrd$.jqxGrid('clearselection');
+            }
+        });
+
+        var DocumentSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'DocType' },
+                { name: 'DocType_KorNm' },
+                { name: 'Name' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'Title' },
+                { name: 'Revision' },
+                { name: 'Eo_No' },
+                { name: 'CreateDt', type: 'date'  },
+                { name: 'CreateUs' },
+                { name: 'CreateUsNm' },
+                { name: 'Description' },
+            ],
+        }
+
+        const DocGrd$ = $('#SearchReleaseDocument_Grid');
+        DocGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 675,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ProjectSource,
+            sortable: false,
+            pageable: true,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '문서 분류', datafield: 'DocType_KorNm', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '제목', datafield: 'Title', width: "29%", align: 'center', cellsalign: 'center', },
+
+                { text: '문서번호', datafield: 'Name', width: "20%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center'},
+                { text: '작성일', datafield: 'CreateDt', width: "12%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+             //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+        });
+
+        DocGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Document/InfoDocument?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                    console.log(res);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        getSearchReleaseDocList(DocumentSource, DocGrd$,param);
+
+
+        searchBtn$.on('click', function () {
+            var param = {};
+            param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+            param.Name = $('#SearchReleaseDocument_Name').val();
+            param.Title = $('#SearchReleaseDocument_Title').val();
+          //param.CreatUsNm = $('#SearchReleaseDocument_CreatUs').val();
+            getSearchReleaseDocList(DocumentSource, DocGrd$, param);
+
+        });
+
+    });
+    function getSearchReleaseDocList(_Source, _Grid$,_param) {
+        RequestData("/Document/SelDoc", _param, function (res) {
+            var completeIdx = SearchReleaseDocBPolicyList$.findIndex(function (item) {
+                return item.Name == '@Common.Constant.DocumentConstant.POLICY_DOCUMENT_COMPLETED';
+            });
+            var result = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].BPolicy.Name == SearchReleaseDocBPolicyList$[completeIdx].Name) {
+                    result.push(res[i]);
+                } else {
+                   
+                }
+            }
+            PrintJqxGrid(_Source, _Grid$, result);
+        });
+    }
+
+
+</script>

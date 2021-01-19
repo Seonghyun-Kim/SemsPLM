@@ -1,0 +1,132 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div style="padding-bottom:40px;margin-bottom:10px;border-bottom:1px solid #ccc;">
+        <h4 class="cleanTitle"><i class="fas fa-tasks"></i> 작업</h4>
+        <div id="pmMyTaskTimelineGrid"></div>
+    </div>
+    <div>
+        <h4 class="cleanTitle"><i class="fas fa-exclamation-triangle"></i> 지연작업</h4>
+        <div id="pmMyDelayTaskTimelineGrid"></div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+
+            var taskSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    //System Mandatory
+                    { name: 'OID', type: 'number' },
+                    { name: 'RootOID', type: 'number' },
+                    { name: 'RootNm', type: 'string' },
+                    { name: 'RootOEM', type: 'string' },
+                    { name: 'RootCarType', type: 'string' },
+                    { name: 'RootItem', type: 'string' },
+                    { name: 'BPolicy', },
+
+                    //Object Mandatory
+                    { name: 'Name', type: 'string' },
+                    { name: 'ProcessType', type: 'string' },
+                    { name: 'Id', type: 'number' },
+                    { name: 'Dependency', type: 'string' },
+                    { name: 'EstDuration', type: 'number' },
+                    { name: 'EstStartDt', type: 'date' },
+                    { name: 'EstEndDt', type: 'date' },
+                    { name: 'ActDuration', type: 'number' },
+                    { name: 'ActStartDt', type: 'date' },
+                    { name: 'ActEndDt', type: 'date' },
+                    { name: 'Level', type: 'number' },
+                    { name: 'Delay', type: 'number' },
+                    { name: 'No', type: 'string' },
+
+                    //Object Optional
+                    { name: 'Description', type: 'string' },
+                ],
+                id: 'OID',
+            };
+
+            $('#pmMyTaskTimelineGrid').jqxGrid({
+                width: '100%',
+                height: 350,
+                editable: false,
+                columnsresize: true,
+                columns: [
+                    { text: '프로젝트명', datafield: 'RootNm', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'OEM', datafield: 'RootOEM', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '차종', datafield: 'RootCarType', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'ITEM', datafield: 'RootItem', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '작업명', datafield: 'Name', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'NO', datafield: 'No', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '레벨', datafield: 'Level', width: "6%", align: 'center', cellsalign: 'center', },
+                    {
+                        text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                        },
+                    },
+                    { text: '기간', columngroup: 'Estimated', datafield: 'EstDuration', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '시작일', columngroup: 'Estimated', datafield: 'EstStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '완료일', columngroup: 'Estimated', datafield: 'EstEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '기간', columngroup: 'Actual', datafield: 'ActDuration', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '시작일', columngroup: 'Actual', datafield: 'ActStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '완료일', columngroup: 'Actual', datafield: 'ActEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                ],
+                columngroups: [
+                    { text: '예상', name: 'Estimated' },
+                    { text: '실제', name: 'Actual' },
+                    { text: 'Dependency', name: 'Dependency' },
+                ]
+            });
+
+            $('#pmMyDelayTaskTimelineGrid').jqxGrid({
+                width: '100%',
+                height: 350,
+                editable: false,
+                columnsresize: true,
+                columns: [
+                    { text: '프로젝트명', datafield: 'RootNm', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'OEM', datafield: 'RootOEM', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '차종', datafield: 'RootCarType', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'ITEM', datafield: 'RootItem', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '작업명', datafield: 'Name', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: 'NO', datafield: 'No', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '레벨', datafield: 'Level', width: "6%", align: 'center', cellsalign: 'center', },
+                    {
+                        text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                        },
+                    },
+                    { text: '기간', columngroup: 'Estimated', datafield: 'EstDuration', width: "6%", align: 'center', cellsalign: 'center',  },
+                    { text: '시작일', columngroup: 'Estimated', datafield: 'EstStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '완료일', columngroup: 'Estimated', datafield: 'EstEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '기간', columngroup: 'Actual', datafield: 'ActDuration', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '시작일', columngroup: 'Actual', datafield: 'ActStartDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '완료일', columngroup: 'Actual', datafield: 'ActEndDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                ],
+                columngroups: [
+                    { text: '예상', name: 'Estimated' },
+                    { text: '실제', name: 'Actual' },
+                    { text: 'Dependency', name: 'Dependency' },
+                ]
+            });
+
+            RequestData("/Pms/PmDashboardTimeLineTaskInfo", {'ProjectOID': '@ViewBag.ProjectOID', 'GateOID': '@ViewBag.GateOID'}, function (res) {
+                PrintJqxGrid(taskSource, $('#pmMyTaskTimelineGrid'), res.started);
+                PrintJqxGrid(taskSource, $('#pmMyDelayTaskTimelineGrid'), res.delay);
+            });
+        });
+    </script>
+</body>
+</html>

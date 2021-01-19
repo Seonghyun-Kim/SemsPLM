@@ -208,7 +208,7 @@
                         { name: 'OID' },
                         { name: 'Name' },
                         { name: 'Title' },
-                        { name: 'DesignChangeDt',type:'date'},
+                        { name: 'DesignChangeDt', type: 'date' },
                         { name: 'CreateUs' },
                         { name: 'BPolicy' },
                         { name: 'BPolicyOID' },
@@ -242,10 +242,8 @@
                         var container$ = $('<div class="lGridComponent"></div>');
                         var ECRRelationAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
                         var ECRRelationdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                        var test = $('<button class="custom-button"><i class="fas fa-minus-square"></i> test</button>').jqxButton();
                         statusbar.append(container$);
                         container$.append(ECRRelationAddBtn$);
-                        container$.append(test);
                         container$.append(ECRRelationdelBtn$);
 
 
@@ -254,7 +252,7 @@
                             var datarow = {};
                             OpenSearchECRDialog(function (res) {
                                 PrintJqxGrid(ECRRelationSource, ECRRelationGrid$, ECRRelationData);
-                            }, null, param, '/ChangeOrder/dlgSearchECR?Type=' + param.Type, '변경요청 선택', ECRRelationGrid$, ECRRelationSource,"Create");
+                            }, null, param, '/ChangeOrder/dlgSearchECR?Type=' + param.Type, '변경요청 선택', ECRRelationGrid$, ECRRelationSource, "Create");
 
                         });
                         ECRRelationdelBtn$.on('click', function (e) {
@@ -275,322 +273,317 @@
 
                             }
                         });
-                        test.on('click', function (e) {
-                            console.log(ECRRelationData);
-                        });
 
                     }
                 });
-           // PrintJqxGrid(ECRRelationSource, ECRRelationGrid$, ECRRelationData);
+                // PrintJqxGrid(ECRRelationSource, ECRRelationGrid$, ECRRelationData);
 
-            ECRRelationGrid$.on('rowselect', function (event) {
-                var args = event.args;
-                rowKey = args.rowindex;
-            });
+                ECRRelationGrid$.on('rowselect', function (event) {
+                    var args = event.args;
+                    rowKey = args.rowindex;
+                });
+            } else if (ecoValue == 'ECOList') {
+                var rowKey = null;
+                var param = {};
+                param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_LIST';
+                param.ECOListData = ECOListData;
 
+                var ECOListSource = {
+                    datatype: 'json',
+                    localdata: ECOListData,
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'BPolicyOID' },
+                        { name: 'BPolicy' },
+                        { name: 'CreateUsNm' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'Car_Lib_OID' },
+                        { name: 'Car_Lib_Nm' },
+                        { name: 'ITEM_No' },
+                        { name: 'ITEM_NoNm' },
+                        { name: 'Block_No' },
+                        { name: 'Block_NoNm' },
+                        { name: 'Material_OID' },
+                        { name: 'Material_Nm' },
+                        { name: 'EPartType' },
+                        { name: 'Sel_Eo' },
+                        { name: 'Sel_Eo_Dt', type: 'date' },
+                        { name: 'Thumbnail' },
+                        { name: 'Revision' },
+                    ],
+                }
+                ECOListGrid$.jqxGrid({
+                    width: '100%',
+                    height: 767,
+                    columns: [
+                        {
+                            text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        { text: '품번', datafield: 'Name', width: '15%', },
+                        { text: 'Block_No', datafield: 'Block_NoNm', width: '15%', },
+                        { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
+                        { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
+                        { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '작성자', datafield: 'CreateUsNm', width: '8.2%', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: '15%',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                    ],
+                    selectionmode: 'checkbox',
+                    showtoolbar: true,
+                    toolbarheight: 44,
+                    renderToolbar: function (statusbar) {
+                        statusbar.empty();
+                        var container$ = $('<div class="lGridComponent"></div>');
+                        var ECOListAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                        var ECOListAddChildBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 하위부품 추가</button>').jqxButton();
+                        var ECOListdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
+                        var ECOListUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
+                        var ECOListDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
+                        var ECOListOrdSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i> 순서 적용</button>').jqxButton();
+                        statusbar.append(container$);
+                        container$.append(ECOListAddBtn$);
+                        container$.append(ECOListAddChildBtn$);
+                        container$.append(ECOListdelBtn$);
+                        container$.append(ECOListUpBtn$);
+                        container$.append(ECOListDownBtn$);
+                        container$.append(ECOListOrdSaveBtn$);
 
-
-
-
-        } else if (ecoValue == 'ECOList') {
-            var rowKey = null;
-            var param = {};
-            param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_LIST';
-            var ECOListSource = {
-                datatype: 'json',
-                localdata: ECOListData,
-                datafields: [
-                    { name: 'OID' },
-                    { name: 'Name' },
-                    { name: 'BPolicyOID' },
-                    { name: 'BPolicy' },
-                    { name: 'CreateUsNm' },
-                    { name: 'CreateDt', type: 'date' },
-                    { name: 'Car_Lib_OID' },
-                    { name: 'Car_Lib_Nm' },
-                    { name: 'ITEM_No' },
-                    { name: 'ITEM_NoNm' },
-                    { name: 'Block_No' },
-                    { name: 'Block_NoNm' },
-                    { name: 'Material_OID' },
-                    { name: 'Material_Nm' },
-                    { name: 'EPartType' },
-                    { name: 'Sel_Eo' },
-                    { name: 'Sel_Eo_Dt', type: 'date' },
-                    { name: 'Thumbnail' },
-                    { name: 'Revision' },
-                ],
-            }
-            ECOListGrid$.jqxGrid({
-                width: '100%',
-                height: 767,
-                columns: [
-                    {
-                        text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', cellsrenderer: function (row, column, value) {
-                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
-                        }
-                    },
-                    { text: '품번', datafield: 'Name', width: '15%', },
-                    { text: 'Block_No', datafield: 'Block_NoNm', width: '15%', },
-                    { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
-                    { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
-                    { text: '작성일', datafield: 'CreateDt', width: '15%', align: 'center', cellsFormat: 'yyyy-MM-dd', },
-                    { text: '작성자', datafield: 'CreateUsNm', width: '8.2%', },
-                    { text: '상태', datafield: 'BPolicy', width: '15%',
-                    cellsrenderer: function (row, column, value) {
-                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
-                    },
-                    },
-                ],
-                selectionmode: 'checkbox',
-                showtoolbar: true,
-                toolbarheight:44,
-                renderToolbar: function (statusbar) {
-                    statusbar.empty();
-                    var container$ = $('<div class="lGridComponent"></div>');
-                    var ECOListAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                    var ECOListAddChildBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 하위부품 추가</button>').jqxButton();
-                    var ECOListdelBtn$ = $('<button class="custom-button"><i class="fas fa-window-close"></i> 삭제</button>').jqxButton();
-                    var ECOListUpBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-up"></i> 위로</button>').jqxButton();
-                    var ECOListDownBtn$ = $('<button class="custom-button"><i class="fas fa-caret-square-down"></i> 아래로</button>').jqxButton();
-                    var ECOListOrdSaveBtn$ = $('<button class="custom-button"><i class="fas fa-check"></i> 순서 적용</button>').jqxButton();
-                    statusbar.append(container$);
-                    container$.append(ECOListAddBtn$);
-                    container$.append(ECOListAddChildBtn$);
-                    container$.append(ECOListdelBtn$);
-                    container$.append(ECOListUpBtn$);
-                    container$.append(ECOListDownBtn$);
-                    container$.append(ECOListOrdSaveBtn$);
-
-                    //행 추가
-                    ECOListAddBtn$.on('click', function (e) {
-                        var datarow = {};
-                        OpenSearchEPartDialog(function (res) {
-                            PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
-                        }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');
-
-                    });
-                    ECOListAddChildBtn$.on('click', function (e) {
-
-                        var datarowIdx = ECOListGrid$.jqxGrid('getselectedrowindexes');
-                        if (datarowIdx.length == 1) {
-                            var datarow = ECOListGrid$.jqxGrid('getrowdata', datarowIdx);
-                            param.FromOID = datarow.OID;
+                        //행 추가
+                        ECOListAddBtn$.on('click', function (e) {
+                            var datarow = {};
                             OpenSearchEPartDialog(function (res) {
                                 PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
-                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild','Create');
-                        } else {
-                            alert('품목을 선택해주세요');
-                        }
+                            }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'Epart', 'Create');
 
-                    });
-                    ECOListdelBtn$.on('click', function (e) {
-                        var rowindex = ECOListGrid$.jqxGrid('selectedrowindexes');
-                        rowindex.sort();
-                        var selectedRecords = new Array();
-                        if (rowindex == null || rowindex == undefined) {
-                            alert('삭제할 행을 선택하여 주세요');
-                        } else {
-                            if (confirm('삭제하시겠습니까?')) {
-                                for (var i = rowindex.length - 1; i >= 0; i--) {
-                                    var id = ECOListGrid$.jqxGrid('getrowid', rowindex[i]);
-                                    ECOListData.splice(id, 1);
-                                    ECOListGrid$.jqxGrid('deleterow', id);
-                                }
+                        });
+                        ECOListAddChildBtn$.on('click', function (e) {
+
+                            var datarowIdx = ECOListGrid$.jqxGrid('getselectedrowindexes');
+                            if (datarowIdx.length == 1) {
+                                var datarow = ECOListGrid$.jqxGrid('getrowdata', datarowIdx);
+                                param.FromOID = datarow.OID;
+                                OpenSearchEPartDialog(function (res) {
+                                    PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
+                                }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild', 'Create');
+                            } else {
+                                alert('품목을 선택해주세요');
                             }
 
-                        }
-                    });
-                    ECOListUpBtn$.on('click', function (e) {
-                        var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
-                        var idx = row.boundindex - 1;
-                        if (row.uid == 0) {
-                            return;
-                        }
-                        const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
-                        fMoveGridRecusive(ECODataSource, row.OID, 'UP');
-                        ECOListGrid$.jqxGrid('updatebounddata');
-                        ECOListGrid$.jqxGrid('clearselection');
-                        if (idx >= 0) {
-                            ECOListGrid$.jqxGrid('selectrow', idx);
-                        } else {
-                            ECOListGrid$.jqxGrid('selectrow', 0);
-                        }
-                    });
-                    ECOListDownBtn$.on('click', function (e) {
-                        var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
-                        var idx = row.boundindex + 1;
+                        });
+                        ECOListdelBtn$.on('click', function (e) {
+                            var rowindex = ECOListGrid$.jqxGrid('selectedrowindexes');
+                            rowindex.sort();
+                            var selectedRecords = new Array();
+                            if (rowindex == null || rowindex == undefined) {
+                                alert('삭제할 행을 선택하여 주세요');
+                            } else {
+                                if (confirm('삭제하시겠습니까?')) {
+                                    for (var i = rowindex.length - 1; i >= 0; i--) {
+                                        var id = ECOListGrid$.jqxGrid('getrowid', rowindex[i]);
+                                        ECOListData.splice(id, 1);
+                                        ECOListGrid$.jqxGrid('deleterow', id);
+                                    }
+                                }
 
-                        var maxLength = ECOListGrid$.jqxGrid('getrows').length;
-                        if (row.uid == maxLength) {
-                            return;
-                        }
-                        const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
-                        var midx = ECODataSource.length - 1;
-                        fMoveGridRecusive(ECODataSource, row.OID, 'DOWN');
-                        ECOListGrid$.jqxGrid('updatebounddata');
-                        ECOListGrid$.jqxGrid('clearselection');
-                        if (idx <= midx) {
-                            ECOListGrid$.jqxGrid('selectrow', idx);
-                        } else {
-                            ECOListGrid$.jqxGrid('selectrow', midx);
-                        }
-                    });
+                            }
+                        });
+                        ECOListUpBtn$.on('click', function (e) {
+                            var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
+                            var idx = row.boundindex - 1;
+                            if (row.uid == 0) {
+                                return;
+                            }
+                            const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
+                            fMoveGridRecusive(ECODataSource, row.OID, 'UP');
+                            ECOListGrid$.jqxGrid('updatebounddata');
+                            ECOListGrid$.jqxGrid('clearselection');
+                            if (idx >= 0) {
+                                ECOListGrid$.jqxGrid('selectrow', idx);
+                            } else {
+                                ECOListGrid$.jqxGrid('selectrow', 0);
+                            }
+                        });
+                        ECOListDownBtn$.on('click', function (e) {
+                            var row = ECOListGrid$.jqxGrid('getrowdata', rowKey);
+                            var idx = row.boundindex + 1;
 
-                    ECOListOrdSaveBtn$.on('click', function (e) {
-                        console.log(ECOListData);
+                            var maxLength = ECOListGrid$.jqxGrid('getrows').length;
+                            if (row.uid == maxLength) {
+                                return;
+                            }
+                            const ECODataSource = ECOListGrid$.jqxGrid("source").loadedData;
+                            var midx = ECODataSource.length - 1;
+                            fMoveGridRecusive(ECODataSource, row.OID, 'DOWN');
+                            ECOListGrid$.jqxGrid('updatebounddata');
+                            ECOListGrid$.jqxGrid('clearselection');
+                            if (idx <= midx) {
+                                ECOListGrid$.jqxGrid('selectrow', idx);
+                            } else {
+                                ECOListGrid$.jqxGrid('selectrow', midx);
+                            }
+                        });
 
-                    });
+                        ECOListOrdSaveBtn$.on('click', function (e) {
+                            console.log(ECOListData);
+
+                        });
+                    }
+                });
+                // PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
+
+                ECOListGrid$.on('rowselect', function (event) {
+                    var args = event.args;
+                    rowKey = args.rowindex;
+                });
+
+
+            } else if (ecoValue == 'ECOStatement') {
+                var rowKey = null;
+                var rowDataField = null;
+
+                var ECOStatementSource = {
+                    unboundmode: true,
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'PNo' },
+                        { name: 'RootOID' },
+                        { name: 'Type' },
+                        { name: 'PName' },
+                        { name: 'BfThumbnail' },
+                        { name: 'AfThumbnail' },
+                        { name: 'Statement' },
+                        { name: 'Description' },
+                        { name: 'Stamp' },
+                        { name: 'CreateUsNm' },
+                        { name: 'CreateDt', type: 'date' },
+                    ],
                 }
-            });
-           // PrintJqxGrid(ECOListSource, ECOListGrid$, ECOListData);
 
-            ECOListGrid$.on('rowselect', function (event) {
-                var args = event.args;
-                rowKey = args.rowindex;
-            });
+                ECOStatementGrid$.jqxGrid({
+                    width: '100%',
+                    height: 767,
+                    rowsheight: 200,
+                    editable: true,
+                    selectionmode: 'checkbox',
+                    columns: [
+                        {
+                            text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:200px;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        {
+                            text: '품번', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
+                            validation: function (cell, value) {
+                                if (value == '' || value == null) {
+                                    return { result: false, message: "P/NO를 입력해주세요" };
+                                }
+                                return true;
+                            }
+                        },
+                        {
+                            text: '품명', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
+                        },
+                        {
+                            text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                            createwidget: function (row, column, value, htmlElement) {
+                                var uid = row.bounddata.uid;
+                                var div = '<div class="basic_image changeOrderImg">';
+                                div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
+                                $(htmlElement).append(div);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone1_' + uid).empty();
+                                    $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
+                            },
+                            initwidget: function (row, column, value, htmlElement) {
 
+                            }
+                        },
+                        {
+                            text: '변경 후', datafield: 'AfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
+                            createwidget: function (row, column, value, htmlElement) {
+                                var uid = row.bounddata.uid;
+                                var div = '<div class="basic_image changeOrderImg">';
+                                div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
+                                div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
+                                $(htmlElement).append(div);
+                                if (value != null && value != '') {
+                                    $(htmlElement).find('#dropZone2_' + uid).empty();
+                                    $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                }
+                                dropImage(uid);
+                            },
+                            initwidget: function (row, column, value, htmlElement) {
 
-        } else if (ecoValue == 'ECOStatement') {
-            var rowKey = null;
-            var rowDataField = null;
+                            }
+                        },
+                        { text: '변경내용', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
+                        { text: '비고', datafield: 'Description', width: "20.2%", align: 'center', cellsalign: 'center', },
 
-            var ECOStatementSource = {
-                unboundmode: true,
-                datatype: 'json',
-                datafields: [
-                    { name: 'OID' },
-                    { name: 'PNo' },
-                    { name: 'RootOID' },
-                    { name: 'Type' },
-                    { name: 'PName' },
-                    { name: 'BfThumbnail' },
-                    { name: 'AfThumbnail' },
-                    { name: 'Statement' },
-                    { name: 'Description' },
-                    { name: 'Stamp' },
-                    { name: 'CreateUsNm' },
-                    { name: 'CreateDt', type: 'date' },
-                ],
+                        { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center', hidden: true },
+                        { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', hidden: true },
+
+                        //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+                    ],
+                    showtoolbar: true,
+                    toolbarheight: 44,
+                    renderToolbar: function (statusbar) {
+                        statusbar.empty();
+                        var container$ = $('<div class="lGridComponent"></div>');
+                        var ECOStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                        var ECOStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
+
+                        container$.append(ECOStatementAddBtn$);
+                        container$.append(ECOStatementDelBtn$);
+                        statusbar.append(container$);
+                        //행 추가
+                        ECOStatementAddBtn$.on('click', function (e) {
+                            ECOStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
+                            var rowData = {};
+                            rowData.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
+                            ECOStatementGrid$.jqxGrid('addrow', null, rowData);
+                            ECOStatementGrid$.jqxGrid({ editable: true });
+                        });
+                        ECOStatementGrid$.on('cellclick', function (event) {
+                            // event arguments.
+                            var args = event.args;
+                            rowKey = args.rowindex;
+                            rowDataField = args.datafield;
+
+                        });
+
+                        ECOStatementDelBtn$.on('click', function (e) {
+                            var rowindex = ECOStatementGrid$.jqxGrid('selectedrowindexes');
+                            rowindex.sort();
+                            if (rowindex == null || rowindex == undefined) {
+                                alert('삭제할 행을 선택하여 주세요');
+                            } else {
+                                if (confirm('삭제하시겠습니까?')) {
+                                    for (var i = rowindex.length - 1; i >= 0; i--) {
+                                        var id = ECOStatementGrid$.jqxGrid('getrowid', rowindex[i]);
+                                        ECOStatementGrid$.jqxGrid('deleterow', id);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                });
+                //   PrintJqxGrid(ECOStatementSource, ECOStatementGrid$, null);
             }
-
-            ECOStatementGrid$.jqxGrid({
-                width: '100%',
-                height: 767,
-                rowsheight: 200,
-                editable: true,
-                selectionmode: 'checkbox',
-                columns: [
-                    {
-                        text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
-                        cellsrenderer: function (row, column, value) {
-                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:200px;'>" + (value + 1) + "</div>";
-                        }
-                    },
-                    {
-                        text: '품번', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
-                        validation: function (cell, value) {
-                            if (value == '' || value == null) {
-                                return { result: false, message: "P/NO를 입력해주세요" };
-                            }
-                            return true;
-                        }
-                    },
-                    {
-                        text: '품명', datafield: 'PName', width: "20%", align: 'center', cellsalign: 'center',
-                    },
-                    {
-                        text: '변경 전', datafield: 'BfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
-                        createwidget: function (row, column, value, htmlElement) {
-                            var uid = row.bounddata.uid;
-                            var div = '<div class="basic_image changeOrderImg">';
-                            div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
-                            div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                            div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
-                            $(htmlElement).append(div);
-                            if (value != null && value != '') {
-                                $(htmlElement).find('#dropZone1_' + uid).empty();
-                                $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                            }
-                        },
-                        initwidget: function (row, column, value, htmlElement) {
-
-                        }
-                    },
-                    {
-                        text: '변경 후', datafield: 'AfThumbnail', width: "12%", align: 'center', cellsalign: 'center',
-                        createwidget: function (row, column, value, htmlElement) {
-                            var uid = row.bounddata.uid;
-                            var div = '<div class="basic_image changeOrderImg">';
-                            div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
-                            div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                            div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
-                            $(htmlElement).append(div);
-                            if (value != null && value != '') {
-                                $(htmlElement).find('#dropZone2_' + uid).empty();
-                                $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                            }
-                            dropImage(uid);
-                        },
-                        initwidget: function (row, column, value, htmlElement) {
-
-                        }
-                    },
-                    { text: '변경내용', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
-                    { text: '비고', datafield: 'Description', width: "20.2%", align: 'center', cellsalign: 'center', },
-
-                    { text: '작성자', datafield: 'CreatUsNm', width: "6%", align: 'center', cellsalign: 'center', hidden: true },
-                    { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', hidden: true },
-
-                    //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
-                ],
-                showtoolbar: true,
-                toolbarheight:44,
-                renderToolbar: function (statusbar) {
-                    statusbar.empty();
-                    var container$ = $('<div class="lGridComponent"></div>');
-                    var ECOStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                    var ECOStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
-
-                    container$.append(ECOStatementAddBtn$);
-                    container$.append(ECOStatementDelBtn$);
-                    statusbar.append(container$);
-                    //행 추가
-                    ECOStatementAddBtn$.on('click', function (e) {
-                        ECOStatementGrid$.jqxGrid('endcelledit', rowKey, rowDataField, false);
-                        var rowData = {};
-                        rowData.Type = '@Common.Constant.EoConstant.TYPE_EBOM_STATEMENT';
-                        ECOStatementGrid$.jqxGrid('addrow', null, rowData);
-                        ECOStatementGrid$.jqxGrid({ editable: true });
-                    });
-                    ECOStatementGrid$.on('cellclick', function (event) {
-                        // event arguments.
-                        var args = event.args;
-                        rowKey = args.rowindex;
-                        rowDataField = args.datafield;
-
-                    });
-
-                    ECOStatementDelBtn$.on('click', function (e) {
-                        var rowindex = ECOStatementGrid$.jqxGrid('selectedrowindexes');
-                        rowindex.sort();
-                        if (rowindex == null || rowindex == undefined) {
-                            alert('삭제할 행을 선택하여 주세요');
-                        } else {
-                            if (confirm('삭제하시겠습니까?')) {
-                                for (var i = rowindex.length - 1; i >= 0; i--) {
-                                    var id = ECOStatementGrid$.jqxGrid('getrowid', rowindex[i]);
-                                    ECOStatementGrid$.jqxGrid('deleterow', id);
-                                }
-                            }
-                        }
-                    });
-                }
-
-            });
-         //   PrintJqxGrid(ECOStatementSource, ECOStatementGrid$, null);
-        }
-    });
+        });
 
         $(function () {
             for (var i = 0; i < assessList$.length; i++) {
@@ -612,7 +605,7 @@
                 btn.setAttribute('data-oid', i);
                 btn.id = "selManager_" + i;
                 btn.addEventListener('click', function (e) {
-                      var param = {};
+                    var param = {};
                     param.ToOID = $(this).attr('data-oid');
                     OpenAssessManagerDialog(function (res) {
                     }, null, param, '/ChangeOrder/dlgSelectAssessmanager', '처리자 등록');
@@ -657,40 +650,40 @@
                     ],
                 }
                 var dataAdapter = new $.jqx.dataAdapter(source);
-                $("#assessList_" + i).jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true, autoHeight:true });
+                $("#assessList_" + i).jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true, autoHeight: true });
 
             }
-                var reasonSource =
-                {
-                    localdata: reasonList$,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var reasonAdapter = new $.jqx.dataAdapter(reasonSource);
-                reasonChange$.jqxComboBox({ source: reasonAdapter, displayMember: "KorNm", valueMember: "OID" });
+            var reasonSource =
+            {
+                localdata: reasonList$,
+                datatype: "json",
+                datafields:
+                    [
+                        { name: 'KorNm', type: 'string' },
+                        { name: 'OID', type: 'int' },
+                    ]
+            };
+            var reasonAdapter = new $.jqx.dataAdapter(reasonSource);
+            reasonChange$.jqxComboBox({ source: reasonAdapter, displayMember: "KorNm", valueMember: "OID" });
 
 
-                var DevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
-                { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
-                var DevTypeSource =
-                {
-                    localdata: DevTypeList,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'type', type: 'string' },
-                            { name: 'value', type: 'string' },
-                        ]
-                };
-                var devAdapter = new $.jqx.dataAdapter(DevTypeSource);
+            var DevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+            { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
+            var DevTypeSource =
+            {
+                localdata: DevTypeList,
+                datatype: "json",
+                datafields:
+                    [
+                        { name: 'type', type: 'string' },
+                        { name: 'value', type: 'string' },
+                    ]
+            };
+            var devAdapter = new $.jqx.dataAdapter(DevTypeSource);
             devType$.jqxComboBox({ source: devAdapter, displayMember: "type", valueMember: "value" });
 
             $('[group="Compatible"]').on('checked', function (event) {
-                    Compatible = $(this).data('value');
+                Compatible = $(this).data('value');
             });
             $('[group="IsMold"]').on('checked', function (event) {
                 IsMold = $(this).data('value');
@@ -793,9 +786,6 @@
                 }
                 EoData = EoData.concat(ECRRelationData);
 
-
-
-
                 ECOListData = ECOListData.concat(statementList);;
 
                 SendDataWithFile('/ChangeOrder/InsertChangeOrder', { _param: param, _assessList: checkList, _eo: EoData }, null, function (response) {
@@ -807,61 +797,57 @@
                     gClickDuplication = false;
                     PageReload();
                 });
-
-
             });
-
-
         });
 
         function dropImage(uid) {
-        $('#dropZone1_' + uid).simpleUpload({
-            url: '/Common/ImgUploadFile',
-            params: {},
-            method: 'post',
-            maxFileNum: 1,
-            maxFileSize: 1000000,
-            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
-            dropZone: '#dropZone1_' + uid,
-        }).on('upload:over', function (e, files) {
-            alert('Number of files is over');
-        }).on('upload:invalid', function (e, files) {
-            for (var i = 0; i < files.length; i++) {
-                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
-            }
-        }).on('upload:done', function (e, file, index, data, xhr) {
-            $('#uploadResult1_' + uid).empty();
-            $('#uploadResult1_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
-            var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
-            rowd.BfThumbnail = data;
-            $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
-            $('.imgPlaceholder').hide();
-        });
-         $('#dropZone2_' + uid).simpleUpload({
-            url: '/Common/ImgUploadFile',
-            params: {},
-            method: 'post',
-            maxFileNum: 1,
-            maxFileSize: 1000000,
-            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
-            dropZone: '#dropZone2_' + uid,
-        }).on('upload:over', function (e, files) {
-            alert('Number of files is over');
-        }).on('upload:invalid', function (e, files) {
-            for (var i = 0; i < files.length; i++) {
-                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
-            }
-        }).on('upload:done', function (e, file, index, data, xhr) {
-            $('#uploadResult2_' + uid).empty();
-            $('#uploadResult2_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
-            var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
-            rowd.AfThumbnail = data;
-            $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
-            $('.imgPlaceholder').hide();
-        });
-    }
+            $('#dropZone1_' + uid).simpleUpload({
+                url: '/Common/ImgUploadFile',
+                params: {},
+                method: 'post',
+                maxFileNum: 1,
+                maxFileSize: 1000000,
+                allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+                dropZone: '#dropZone1_' + uid,
+            }).on('upload:over', function (e, files) {
+                alert('Number of files is over');
+            }).on('upload:invalid', function (e, files) {
+                for (var i = 0; i < files.length; i++) {
+                    alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+                }
+            }).on('upload:done', function (e, file, index, data, xhr) {
+                $('#uploadResult1_' + uid).empty();
+                $('#uploadResult1_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
+                var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
+                rowd.BfThumbnail = data;
+                $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
+                $('.imgPlaceholder').hide();
+            });
+            $('#dropZone2_' + uid).simpleUpload({
+                url: '/Common/ImgUploadFile',
+                params: {},
+                method: 'post',
+                maxFileNum: 1,
+                maxFileSize: 1000000,
+                allowedMimeType: ['image/jpeg', 'image/png', 'image/gif'],
+                dropZone: '#dropZone2_' + uid,
+            }).on('upload:over', function (e, files) {
+                alert('Number of files is over');
+            }).on('upload:invalid', function (e, files) {
+                for (var i = 0; i < files.length; i++) {
+                    alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+                }
+            }).on('upload:done', function (e, file, index, data, xhr) {
+                $('#uploadResult2_' + uid).empty();
+                $('#uploadResult2_' + uid).append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '</li>');
+                var rowd = $('#ECOStatementGrid').jqxGrid('getrowdatabyid', uid);
+                rowd.AfThumbnail = data;
+                $('#ECOStatementGrid').jqxGrid('updaterow', uid, rowd);
+                $('.imgPlaceholder').hide();
+            });
+        }
 
-    </script>
+    </script>    
 
 
 

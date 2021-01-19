@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using ChangeOrder.Models;
+using Common;
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
@@ -44,20 +45,32 @@ namespace SemsPLM.Controllers
             ViewBag.psizeList = psizeList;
             return View();
         }
-        public ActionResult SearchEPart(string MOD)
+        public ActionResult SearchEPart()
         {
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
             Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
-
 
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
 
             ViewBag.oemList = oemList;
             ViewBag.ItemList = ItemList;
-            ViewBag.MOD = MOD;
             return View();
         }
+
+        public ActionResult SearchReleaseEPart()
+        {
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_OEM });
+
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });  //차종 목록
+
+            ViewBag.oemList = oemList;
+            ViewBag.ItemList = ItemList;
+            return View();
+        }
+
         public ActionResult InfoEPart(int OID)
         {
             ViewBag.OID = OID;
@@ -134,7 +147,7 @@ namespace SemsPLM.Controllers
             ViewBag.ItemList = ItemList;
             return PartialView("Dialog/dlgSearchEPart");
         }
-        public ActionResult dlgCreateEPart()
+        public ActionResult dlgCreateEPart(string Division)
         {
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM});
             Library placeKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_PRODUCED_PLACE });
@@ -153,6 +166,16 @@ namespace SemsPLM.Controllers
             ViewBag.epartList = epartList;
             ViewBag.oemList = oemList;
             ViewBag.psizeList = psizeList;
+
+            if(Division != null)
+            {
+                ViewBag.Division = Division;
+            }
+            else
+            {
+                ViewBag.Division = "";
+            }
+
             return PartialView("Dialog/dlgCreateEPart");
         }
 
@@ -186,9 +209,10 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region EPart 최상위 검색 페이지
-        public ActionResult dlgSearchTopEPart(int? OID)
+        public ActionResult dlgSearchTopEPart(int? OID, string Division)
         {
             ViewBag.OID = OID;
+            ViewBag.Division = Division;
             return PartialView("Dialog/dlgSearchTopEPart");
         }
         #endregion
@@ -218,7 +242,7 @@ namespace SemsPLM.Controllers
                     return Json(new ResultJsonModel { isError = true, resultMessage = "품번이 이미 존재합니다.", resultDescription = "" });
                 }
 
-                if(_param.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                if(_param.Division != Common.Constant.EBomConstant.DIV_STANDARD)
                 {
                     var CheckName = _param.Name.Substring(0, (_param.Name.Length - 1));
                     var CheckDiv = CreateEPartChk(new EPart { Name = CheckName, Type = EBomConstant.TYPE_PART, Division = _param.Division });
@@ -261,7 +285,7 @@ namespace SemsPLM.Controllers
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
-            return Json(dobj);
+            return Json(resultOid);
         }
         #endregion
 
@@ -339,45 +363,225 @@ namespace SemsPLM.Controllers
         #region EBOM 편집 저장
         public JsonResult EditStructure(List<EBOM> _param)
         {
-            if(_param == null)
+            int resultOID = 0;
+
+            Dictionary<int, int> applyoid = new Dictionary<int, int>();         //EPART 가 개정된 oid
+            Dictionary<int, int> relationoid = new Dictionary<int, int>();      //구조가 개정 되면서 변경 된것
+
+            EBOM NewRel = null;
+
+            if (_param == null)
             {
                 return Json(1);
             }
 
-            foreach (EBOM Data in _param)
+            try
             {
-                if(Data.Action == "A")
-                {
-                    EBomRepository.AddAction(Session, Data);
-                }
-            }
-            _param.RemoveAll(VALUE => VALUE.Action == "A");
+                DaoFactory.BeginTransaction();
 
-            foreach (EBOM Data in _param)
-            {
-                if (Data.Action == "RU")
-                {
-                    EBomRepository.RuAction(Session, Data);
-                }
-            }
-            _param.RemoveAll(VALUE => VALUE.Action == "RU");
+                var RevExist = _param.FindAll(v => v.Action == "REV");
 
-            foreach (EBOM Data in _param)
-            {
-                if (Data.Action == "U")
+                if (RevExist.Count > 0)
                 {
-                    EBomRepository.UdtAction(Session, Data);
-                }
-            }
-            _param.RemoveAll(VALUE => VALUE.Action == "U");
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "D")
+                        {
+                            EBomRepository.DeleteAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "D");
 
-            foreach (EBOM Data in _param)
-            {
-                if (Data.Action == "D")
-                {
-                    EBomRepository.DeleteAction(Session, Data);
+                    foreach (EBOM RevData in RevExist)
+                    {
+                        if (resultOID != 0)
+                        {
+                            resultOID = 0;
+                        }
+
+                        var Data = EPartRepository.SelEPartObject(Session, new EPart { OID = RevData.ToOID });
+
+                        if (Data.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                        {
+                            Data.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(Data.Sel_Revision);
+                            string SelRev = Data.Name.Substring(0, (Data.Name.Length - 1));
+                            Data.Name = SelRev + Data.Sel_Revision;
+                        }
+
+                        resultOID = DObjectRepository.ReviseDObject(Session, new DObject { OID = RevData.ToOID, Name = Data.Name });
+
+                        HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = RevData.ToOID }, resultOID);
+
+                        Data.OID = resultOID;
+
+                        DaoFactory.SetInsert("EBom.InsEPart", Data);
+
+                        applyoid.Add(Convert.ToInt32(RevData.ToOID), resultOID);
+                    }
+
+                    foreach (EBOM RevRelData in RevExist)
+                    {
+                        if (!relationoid.ContainsKey(Convert.ToInt32(RevRelData.OID)))
+                        {
+                            NewRel = new EBOM();
+                            if (applyoid.ContainsKey(Convert.ToInt32(RevRelData.FromOID)))
+                            {
+                                NewRel.FromOID = applyoid[Convert.ToInt32(RevRelData.FromOID)];
+                            }
+                            else
+                            {
+                                NewRel.FromOID = RevRelData.FromOID;
+                            }
+                            if (applyoid.ContainsKey(Convert.ToInt32(RevRelData.ToOID)))
+                            {
+                                NewRel.ToOID = applyoid[Convert.ToInt32(RevRelData.ToOID)];
+                            }
+                            else
+                            {
+                                NewRel.ToOID = RevRelData.ToOID;
+                            }
+                            NewRel.Count = RevRelData.Count;
+                            NewRel.Ord = RevRelData.Ord;
+                            
+
+                            if(applyoid.ContainsKey(Convert.ToInt32(RevRelData.FromOID)) && applyoid.ContainsKey(Convert.ToInt32(RevRelData.ToOID)))
+                            {
+                                int NewRelOID = EBomRepository.AddAction(Session, NewRel);
+                                relationoid.Add(Convert.ToInt32(RevRelData.OID), NewRelOID);
+                            }
+                            else
+                            {
+                                //테스트 해야함
+                                NewRel.OldOID = RevRelData.OID;
+                                int NewRelOID = EBomRepository.ReAction(Session, NewRel);
+
+                                List<EBOM> SelChlidEBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { FromOID = RevRelData.ToOID });
+
+                                SelChlidEBom.ForEach(val => {
+                                    val.FromOID = NewRel.ToOID;
+                                    EBomRepository.AddAction(Session, val);
+                                });
+                            }
+                            
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "REV");
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "A")
+                        {
+                            if (applyoid.ContainsKey(Convert.ToInt32(Data.FromOID)))
+                            {
+                                NewRel = new EBOM();
+                                NewRel.FromOID = applyoid[Convert.ToInt32(Data.FromOID)];
+                                if (applyoid.ContainsKey(Convert.ToInt32(Data.ToOID)))
+                                {
+                                    NewRel.ToOID = applyoid[Convert.ToInt32(Data.ToOID)];
+                                }
+                                else
+                                {
+                                    NewRel.ToOID = Data.ToOID;
+                                }
+                                NewRel.Count = Data.Count;
+                                NewRel.Ord = Data.Ord;
+                                EBomRepository.AddAction(Session, NewRel);
+                            }
+                            else
+                            {
+                                EBomRepository.AddAction(Session, Data);
+                            }
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "A");
+
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "RE")
+                        {
+                            if (applyoid.ContainsKey(Convert.ToInt32(Data.FromOID)))
+                            {
+                                NewRel = new EBOM();
+                                NewRel.FromOID = applyoid[Convert.ToInt32(Data.FromOID)];
+                                if (applyoid.ContainsKey(Convert.ToInt32(Data.ToOID)))
+                                {
+                                    NewRel.ToOID = applyoid[Convert.ToInt32(Data.ToOID)];
+                                }
+                                NewRel.Count = Data.Count;
+                                NewRel.Ord = Data.Ord;
+                                EBomRepository.AddAction(Session, NewRel);
+                            }
+                            else
+                            {
+                                EBomRepository.ReAction(Session, Data);
+                            }
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "RE");
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "U")
+                        {
+                            if (relationoid.ContainsKey(Convert.ToInt32(Data.OID)))
+                            {
+                                Data.OID = relationoid[Convert.ToInt32(Data.OID)];
+                            }
+                            EBomRepository.UdtAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "U");
+
+
                 }
+                else
+                {
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "D")
+                        {
+                            EBomRepository.DeleteAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "D");
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "A")
+                        {
+                            EBomRepository.AddAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "A");
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "RE")
+                        {
+                            EBomRepository.ReAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "RE");
+
+                    foreach (EBOM Data in _param)
+                    {
+                        if (Data.Action == "U")
+                        {
+                            EBomRepository.UdtAction(Session, Data);
+                        }
+                    }
+                    _param.RemoveAll(VALUE => VALUE.Action == "U");
+                }
+
+                DaoFactory.Commit();
             }
+            catch (Exception ex)
+            {        
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
             return Json(0);
         }
         #endregion
@@ -661,7 +865,7 @@ namespace SemsPLM.Controllers
         #endregion
 
         #region 역전개 개정
-        public JsonResult ReverseStructure(List<EPart> _param, int? RootOID)
+        public JsonResult ReverseStructure(List<EPart> _param, int? RootOID, int? NewDataOID)
         {
             Dictionary<int, int> applyoid = new Dictionary<int, int>();         //EPART 가 개정된 oid
             Dictionary<int, int> relationoid = new Dictionary<int, int>();      //구조가 개정 되면서 변경 된것
@@ -675,7 +879,7 @@ namespace SemsPLM.Controllers
                 DaoFactory.BeginTransaction();
 
                 //var RootData = EPartRepository.SelEPartObject(Session, new EPart { OID = RootOID });
-                //if (RootData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_COMPLETED)
+                //if (RootData.Division == Common.Constant.EBomConstant.DIV_STANDARD)
                 //{
                 //
                 //}
@@ -716,26 +920,33 @@ namespace SemsPLM.Controllers
 
                     if (!applyoid.ContainsKey(Convert.ToInt32(FromData.OID)))
                     {
-                        if (FromData.OID == FromTdmxData[0].OID)
+                        if (NewDataOID != null && RootOID == FromData.OID)
                         {
-                            if (FromData.Division == Common.Constant.EBomConstant.DIV_SINGLE)
-                            {
-                                FromData.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(FromData.Sel_Revision);
-                                string SelRev = FromData.Name.Substring(0, (FromData.Name.Length - 1));
-                                FromData.Name = SelRev + FromData.Sel_Revision;
-                            }
-                            NewFromOID = DObjectRepository.ReviseDObject(Session, new DObject { OID = FromData.OID, Name = FromData.Name });
-
-                            HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = FromData.OID }, NewFromOID);
-
-                            FromData.OID = NewFromOID;
-                            DaoFactory.SetInsert("EBom.InsEPart", FromData);
+                            applyoid.Add(Convert.ToInt32(RootOID), Convert.ToInt32(NewDataOID));
                         }
                         else
                         {
-                            NewFromOID = Convert.ToInt32(FromTdmxData[0].OID);
+                            if (FromData.OID == FromTdmxData[0].OID)
+                            {
+                                if (FromData.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                                {
+                                    FromData.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(FromData.Sel_Revision);
+                                    string SelRev = FromData.Name.Substring(0, (FromData.Name.Length - 1));
+                                    FromData.Name = SelRev + FromData.Sel_Revision;
+                                }
+                                NewFromOID = DObjectRepository.ReviseDObject(Session, new DObject { OID = FromData.OID, Name = FromData.Name });
+
+                                HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = FromData.OID }, NewFromOID);
+
+                                FromData.OID = NewFromOID;
+                                DaoFactory.SetInsert("EBom.InsEPart", FromData);
+                            }
+                            else
+                            {
+                                NewFromOID = Convert.ToInt32(FromTdmxData[0].OID);
+                            }
+                            applyoid.Add(Convert.ToInt32(v.FromOID), NewFromOID);
                         }
-                        applyoid.Add(Convert.ToInt32(v.FromOID), NewFromOID);
                     }
 
                     if (ToData != null)
@@ -752,26 +963,33 @@ namespace SemsPLM.Controllers
 
                     if (!applyoid.ContainsKey(Convert.ToInt32(ToData.OID)))
                     {
-                        if (ToData.OID == ToTdmxData[0].OID)
+                        if (NewDataOID != null && RootOID == ToData.OID)
                         {
-                            if (ToData.Division == Common.Constant.EBomConstant.DIV_SINGLE)
-                            {
-                                ToData.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(ToData.Sel_Revision);
-                                string SelRev = ToData.Name.Substring(0, (ToData.Name.Length - 1));
-                                ToData.Name = SelRev + ToData.Sel_Revision;
-                            }
-                            NewToOID = DObjectRepository.ReviseDObject(Session, new DObject { OID = ToData.OID, Name = ToData.Name });
-
-                            HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = ToData.OID }, NewToOID);
-
-                            ToData.OID = NewToOID;
-                            DaoFactory.SetInsert("EBom.InsEPart", ToData);
+                            applyoid.Add(Convert.ToInt32(RootOID), Convert.ToInt32(NewDataOID));
                         }
                         else
                         {
-                            NewToOID = Convert.ToInt32(ToTdmxData[0].OID);
+                            if (ToData.OID == ToTdmxData[0].OID)
+                            {
+                                if (ToData.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                                {
+                                    ToData.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(ToData.Sel_Revision);
+                                    string SelRev = ToData.Name.Substring(0, (ToData.Name.Length - 1));
+                                    ToData.Name = SelRev + ToData.Sel_Revision;
+                                }
+                                NewToOID = DObjectRepository.ReviseDObject(Session, new DObject { OID = ToData.OID, Name = ToData.Name });
+
+                                HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = ToData.OID }, NewToOID);
+
+                                ToData.OID = NewToOID;
+                                DaoFactory.SetInsert("EBom.InsEPart", ToData);
+                            }
+                            else
+                            {
+                                NewToOID = Convert.ToInt32(ToTdmxData[0].OID);
+                            }
+                            applyoid.Add(Convert.ToInt32(v.ToOID), NewToOID);
                         }
-                        applyoid.Add(Convert.ToInt32(v.ToOID), NewToOID);
                     }
                 });
 
@@ -833,10 +1051,11 @@ namespace SemsPLM.Controllers
         public JsonResult EPartStructureUpdate(EBOM _param)
         {
             int? resultOID = 0;
+            EPart Data = new EPart();
             try
             {
                 DaoFactory.BeginTransaction();
-                var Data = EPartRepository.SelEPartObject(Session, new EPart { OID = _param.ToOID });
+                Data = EPartRepository.SelEPartObject(Session, new EPart { OID = _param.ToOID });
 
                 var TdmxData = EPartRepository.SelEPart(Session, new EPart { TdmxOID = Data.TdmxOID });
                 TdmxData = TdmxData.OrderByDescending(revVal => revVal.Revision).ToList();
@@ -861,7 +1080,7 @@ namespace SemsPLM.Controllers
                
                 DaoFactory.SetInsert("EBom.InsEPart", Data);
 
-                if(_param.OID != null)
+                if (_param.OID != null)
                 {
                     EBOM SelParentEBom = DaoFactory.GetData<EBOM>("EBom.SelEBom", new EBOM { OID = _param.OID });
                     List<EBOM> SelChlidEBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { FromOID = _param.ToOID });
@@ -874,14 +1093,23 @@ namespace SemsPLM.Controllers
                     NewData.Count = SelParentEBom.Count;
                     NewData.Ord = SelParentEBom.Ord;
 
-                    EBomRepository.RuAction(Session, NewData);
+                    EBomRepository.ReAction(Session, NewData);
 
-                    SelChlidEBom.ForEach(v => {
+                    SelChlidEBom.ForEach(v =>
+                    {
                         v.FromOID = resultOID;
                         EBomRepository.AddAction(Session, v);
                     });
+                }
+                else if (_param.ToOID != null)
+                {
+                    List<EBOM> SelChlidEBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { FromOID = _param.ToOID });
 
-
+                    SelChlidEBom.ForEach(v =>
+                    {
+                        v.FromOID = resultOID;
+                        EBomRepository.AddAction(Session, v);
+                    });
                 }
 
                 DaoFactory.Commit();
@@ -891,7 +1119,7 @@ namespace SemsPLM.Controllers
                 DaoFactory.Rollback();
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
-            return Json(resultOID);
+            return Json(Data);
         }
         #endregion
 
@@ -927,5 +1155,49 @@ namespace SemsPLM.Controllers
             return Json(Tdmx);
         }
         #endregion
+
+        #region 연관된 설계변경 검색
+        public JsonResult SelRelationECO(EPart _param)
+        {
+            EO lEO = EORepository.SelEOContentsObject(new EO { ToOID = _param.OID, Type = Common.Constant.EoConstant.TYPE_EBOM_LIST });
+            List<ECO> ECODetail = new List<ECO>();
+            if (lEO != null)
+            {
+                ECODetail = ECORepository.SelChangeOrder(Session, new ECO { OID = lEO.RootOID });
+            }
+
+            return Json(ECODetail);
+        }
+        #endregion
+
+        #region 정전개 개정
+        public JsonResult SelTempEPart(EPart _param)
+        {
+            EPart TempData = EPartRepository.SelTempEPartObject(Session, _param);
+            if(TempData != null)
+            {
+                return Json(0);
+            }
+
+            EPart RootData = EPartRepository.SelEPartObject(Session, _param);
+
+            List<EPart> TdmxData = EPartRepository.SelEPart(Session, new EPart { TdmxOID = RootData.TdmxOID });
+            if(RootData.OID != TdmxData[0].OID)
+            {
+                return Json(0);
+            }
+
+            RootData.Revision = SemsUtil.MakeMajorRevisonUp(RootData.Revision);
+
+            if (RootData.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+            {
+                RootData.Sel_Revision = SemsUtil.SingleMakeMajorRevisonUp(RootData.Sel_Revision);
+                string SelRev = RootData.Name.Substring(0, (RootData.Name.Length - 1));
+                RootData.Name = SelRev + RootData.Sel_Revision;
+            }
+            return Json(RootData);
+        }
+        #endregion
+
     }
 }

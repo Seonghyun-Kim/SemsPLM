@@ -674,7 +674,7 @@
                         }
                     } else {
                          for (var i = 0; i < InfoOriginList$.length; i++) {
-                             if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() == '@Session["UserOID"]') {    
+                             if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() == '@Session["UserOID"]') {
                                 $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
                                     disabled: false
                                 });
@@ -759,6 +759,8 @@
                             alert("저장되었습니다.");
                             gClickDuplication = false;
                             //PageReload();
+
+                            $('.assessModify').attr('hidden', true);
                             $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
                             $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
                             $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
@@ -948,6 +950,7 @@
                 var param = {};
                 param.Type = '@Common.Constant.EoConstant.TYPE_EBOM_LIST';
                 param.RootOID = @ViewBag.ECODetail.OID;
+                param.ECOListData = ECOListData;
 
                 var ebomListSource = {
                     datatype: 'json',
@@ -1040,10 +1043,13 @@
                             var datarowIdx = ebomListGrid$.jqxGrid('getselectedrowindexes');
                             if (datarowIdx.length == 1) {
                                 var datarow = ebomListGrid$.jqxGrid('getrowdata', datarowIdx);
-                                param.FromOID = datarow.OID;
+                                var innerParam = {};
+                                innerParam.Type = '@Common.Constant.EoConstant.TYPE_EBOM_LIST';
+                                innerParam.RootOID = @ViewBag.ECODetail.OID;
+                                innerParam.FromOID = datarow.OID;
                                 OpenSearchEPartDialog(function (res) {
                                     getBomList(ebomListSource, ebomListGrid$, param);
-                                }, null, param, '/ChangeOrder/dlgSearchEPart?Type=' + param.Type, '부품 선택', 'EpartChild', 'Edit');
+                                }, null, innerParam, '/ChangeOrder/dlgSearchEPart?Type=' + innerParam.Type, '부품 선택', 'EpartChild', 'Edit');
                             } else {
                                 alert('품목을 선택해주세요');
                             }

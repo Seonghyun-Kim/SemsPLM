@@ -57,9 +57,11 @@
             var elementWidth = options.width || element.clientWidth;
             var elementHeight = options.height || element.clientHeight;
 
+            var delayWidth = 80;
+
             var margin = {
-                top: 20,
-                right: 0,
+                top: 30,
+                right: delayWidth,
                 bottom: 0,
                 left: 0
             };
@@ -69,27 +71,22 @@
 
             var groupWidth = options.hideGroupLabels ? 0 : 300;
 
+            
+
             var x = d3.time.scale().domain([minDt, maxDt]).range([groupWidth, width]);
 
             var xAxis = d3.svg.axis().scale(x).orient('top').tickFormat(d3.time.format("%Y.%m.%d")).tickSize(-height);
 
             var zoom = d3.behavior.zoom().x(x).on('zoom', zoomed);
 
-            //var yzoom = d3.behavior.zoom().y(x).on('zoom', zoomed); //modify 210114
-
             var svg = d3.select(element).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').call(zoom);
 
             svg.append('defs').append('clipPath').attr('id', 'chart-content').append('rect').attr('x', groupWidth).attr('y', 0).attr('height', height).attr('width', width - groupWidth);
 
-            //svg.append('rect').attr('class', 'chart-bounds').attr('x', groupWidth).attr('y', 0).attr('height', height).attr('width', width - groupWidth);
-
-            //svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + 0 + ')').call(xAxis);
-
-            svg.append('line').attr('x1', 0).attr('x2', width);
-
+            svg.append('line').attr('x1', 0).attr('x2', elementWidth);
 
             var groupHeight = height / data.length;
-            var groupSection = svg.selectAll('.group-section').data(data).enter().append('line').attr('class', 'group-section').attr('x1', 0).attr('x2', width).attr('y1', function (d, i) {
+            var groupSection = svg.selectAll('.group-section').data(data).enter().append('line').attr('class', 'group-section').attr('x1', 0).attr('x2', elementWidth).attr('y1', function (d, i) {
                 return groupHeight * (i + 1);
             }).attr('y2', function (d, i) {
                 return groupHeight * (i + 1);
@@ -103,6 +100,16 @@
                 });
 
                 var lineSection = svg.append('line').attr('x1', groupWidth).attr('x2', groupWidth).attr('y1', 0).attr('y2', height).attr('stroke', 'black');
+
+                var delayText = svg.selectAll('.group-delay').data(data).enter().append('text').attr('class', 'group-delay').attr('x', elementWidth - (delayWidth/2) - 10).attr('y', function (d, i) {
+                    return groupHeight * i + groupHeight + 5.5;
+                }).attr('dx', '0.5em').text(function (d, i) {
+                    if (i % 2 == 0) {
+                        return d.delay;
+                    };
+                });
+
+                var delayLine = svg.append('line').attr('x1', elementWidth - delayWidth).attr('x2', elementWidth - delayWidth).attr('y1', 0).attr('y2', height).attr('stroke', 'black');
             }
 
             var groupIntervalItems = svg.selectAll('.group-interval-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
@@ -115,7 +122,7 @@
 
             var intervalBarHeight = 0.8 * groupHeight;
             var intervalBarMargin = (groupHeight - intervalBarHeight) / 2;
-            var intervals = groupIntervalItems.append('rect').attr('class', withCustom('interval')).attr('width', function (d) {
+            var intervals = groupIntervalItems.append('rect').attr('class', withCustom('interval')).attr('rx', 3).attr('ry', 3).attr('width', function (d) {
                 return Math.max(options.intervalMinWidth, x(d.to) - x(d.from));
             }).attr('height', intervalBarHeight).attr('y', intervalBarMargin).attr('x', function (d) {
                 return x(d.from);
@@ -127,44 +134,40 @@
                 return x(d.from);
             });
 
-            //var groupDotItems = svg.selectAll('.group-dot-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
-            //    return 'translate(0, ' + groupHeight * i + ')';
-            //}).selectAll('.dot').data(function (d) {
-            //    return d.data.filter(function (_) {
-            //        return _.type === TimelineChart.TYPE.POINT;
-            //    });
-            //}).enter();
-
-            //var dots = groupDotItems.append('circle').attr('class', withCustom('dot')).attr('cx', function (d) {
-            //    return x(d.at);
-            //}).attr('cy', groupHeight / 2).attr('r', 5);
-
-            //var groupDotItems = svg.selectAll('.group-dot-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
-            //    return 'translate(' + x(d.at)+',' + groupHeight * i + ')';
-            //}).selectAll('.dot').data(function (d) {
-            //    return d.data.filter(function (_) {
-            //        return _.type === TimelineChart.TYPE.POINT;
-            //    });
-            //}).enter();
-
-
             var groupDotItems = svg.selectAll('.group-dot-item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', 'item').attr('transform', function (d, i) {
-                return 'translate(0, '+ groupHeight * i + ')';
+                return 'translate(0, ' + groupHeight * i + ')';
             }).selectAll('.dot').data(function (d) {
                 return d.data.filter(function (_) {
                     return _.type === TimelineChart.TYPE.POINT;
                 });
-             }).enter();
+            }).enter();
 
             var dots = groupDotItems.append('polygon').attr('class', withCustom('dot')).attr('points', function (d) {
-                return [x(d.at) - 15, 0].join(' ') + "," + [x(d.at) + 15, 0].join(' ') + "," + [x(d.at), 15].join(' ')
-            }).attr('fill', 'red').attr('class', 'item').attr('transform', function (d, i) {
-                return 'translate(' + x(d.at) + ',0)';
+                return [x(d.at) - 10, 0].join(' ') + "," + [x(d.at) + 10, 0].join(' ') + "," + [x(d.at), 10].join(' ')
+            }).attr('fill', 'red').attr('class', 'item');
+            //modify 210114
+
+            var dotLines = groupDotItems.append('line').attr('x1', function (d) {
+                return x(d.at);
+            }).attr('x2', function (d) {
+                return x(d.at);
+            }).attr('y1', 0).attr('y2', groupHeight*2).attr('class', 'dotLines');
+
+            var dotTip = groupDotItems.append('rect').attr('class', 'eventTip').attr('width',140).attr('height',30).attr('y', 3).attr('x', function (d) {
+                return x(d.at) + 5;
+            }).attr('rx', 3).attr('ry', 3);
+
+            var dotText = groupDotItems.append('text').attr('class', 'eventLabel').attr('x', function (d) {
+                return x(d.at) + 8;
+            }).attr('y', groupHeight - 28).attr('dx', '0.5em').text(function (d) {
+                var eYear = d.at.getFullYear();
+                var eMonth = d.at.getMonth() + 1;
+                var eDate = d.at.getDate();
+                var eLabel = d.label;
+                return eLabel + '\n' + eYear + '.' + eMonth + '.' + eDate;
             });
 
-            //var dots = groupDotItems.append('circle').attr('class', withCustom('dot')).attr('cx', function (d) {
-            //    return x(d.at);
-            //}).attr('cy', groupHeight / 2).attr('r', 5);
+            //added 210115
 
             if (options.tip) {
                 if (d3.tip) {
@@ -172,23 +175,25 @@
                     svg.call(tip);
                     //dots.on('mouseover', tip.show).on('mouseout', tip.hide);
                     intervals.on('mouseover', tip.show).on('mouseout', tip.hide); //modify 210114
+                    intervals.on('dblclick', function (d) {
+                        self.ondbClickEventFn(d);
+                    });
                 } else {
                     console.error('Please make sure you have d3.tip included as dependency (https://github.com/Caged/d3-tip)');
                 }
             }
 
-
             if (options.enableLiveTimer) {
                 self.now = svg.append('line').attr('clip-path', 'url(#chart-content)').attr('class', 'vertical-marker now').attr("y1", 0).attr("y2", height);
             }
-            svg.append('rect').attr('class', 'chart-bounds').attr('x', groupWidth).attr('y', -21).attr('height', 21).attr('width', width - groupWidth);
-            //var header = svg.append('g').attr('x',0).attr('y', -20).attr('height', 20).attr('width', width);
+            svg.append('rect').attr('class', 'chart-bounds').attr('x', 0).attr('y', -31).attr('height', 30).attr('width', elementWidth);
+
             svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + 0 + ')').call(xAxis);
 
-            
-            //modify 210114
+            svg.append('rect').attr('class', 'delay-box').attr('x', elementWidth - delayWidth).attr('y', -31).attr('width', delayWidth).attr('height', 30);
+            svg.append('text').attr('class', 'delay-axis').attr('x', elementWidth - delayWidth / 2 - 15).attr('y', -10).attr('fill', 'black').text(function () { return '지연'; });
 
-            //zoomed();
+            zoomed();
 
             if (options.enableLiveTimer) {
                 setInterval(updateNowMarker, options.timerTickInterval);
@@ -221,14 +226,26 @@
 
                 svg.select('.x.axis').call(xAxis);
 
-                /*
-                svg.selectAll('circle.dot').attr('cx', function (d) {
+                svg.selectAll('polygon.item').attr('points', function (d) {
+                    return [x(d.at) - 10, 0].join(' ') + "," + [x(d.at) + 10, 0].join(' ') + "," + [x(d.at), 10].join(' ')
+                });
+
+                svg.selectAll('line.dotLines').attr('x1', function (d) {
+                    return x(d.at);
+                }).attr('x2', function (d) {
                     return x(d.at);
                 });
-                */
-                svg.selectAll('polygon.item').attr('transform', function (d, i) {
-                    return 'translate(' + x(d.at) + ',0)';
+
+                svg.selectAll('rect.eventTip').attr('x', function (d) {
+                    return x(d.at) + 3;
                 });
+
+                svg.selectAll('text.eventLabel').attr('x', function (d) {
+                    return x(d.at) + 5;
+                });
+
+                svg.select('text.delay-axis').attr('transform', 'translate(0,0)');
+                //added 210115
 
                 svg.selectAll('rect.interval').attr('x', function (d) {
                     return x(d.from);
@@ -318,14 +335,20 @@
                 this.onVizChangeFn = fn;
                 return this;
             }
+        }, {
+            key: 'ondbClickEvent',
+            value: function ondbClickEvent(fn) {
+                this.ondbClickEventFn = fn;
+                return this;
+            }
         }]);
 
         return TimelineChart;
     }();
 
     TimelineChart.TYPE = {
-        POINT: Symbol(),
-        INTERVAL: Symbol()
+        POINT: 'point',
+        INTERVAL: 'interval'
     };
 
     module.exports = TimelineChart;

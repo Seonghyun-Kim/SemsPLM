@@ -2,7 +2,7 @@
     Layout = null;
 }
 <div style="text-align:right;height:33px;margin-bottom:5px;">
-    @if (ViewBag.ApprovalTaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_STARTED)
+    @if (ViewBag.ApprovalTaskData.BPolicy.Name == Common.Constant.CommonConstant.POLICY_APPROVAL_TASK_STARTED && ViewBag.ApprovFlag == Common.Constant.CommonConstant.ACTION_YES)
     {
         <button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 승인</button>
         <button class="custom-button" id="btnReject"><i class="fas fa-reply"></i> 반려</button>
@@ -11,7 +11,7 @@
 <div class="approval clearfix">
     <div>결재</div>
     <ul>
-        <li style="float:left;width:447px;">
+        <li style="float:left;width:445px;">
             <div class="approvalOrder scrollY" style="height:579px;">
                 <table>
                     <colgroup>

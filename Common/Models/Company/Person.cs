@@ -60,6 +60,11 @@ namespace Common.Models
             return DaoFactory.SetUpdate("Users.UdtPwPerson", _param);
         }
 
+        public static int UtpIpPwPerson(Person _param)
+        {
+            return DaoFactory.SetUpdate("Users.UdtIpPwPerson", _param);
+        }
+
         public static Person LoginSelPerson(Person _param)
         {
             _param.Type = CommonConstant.TYPE_PERSON;

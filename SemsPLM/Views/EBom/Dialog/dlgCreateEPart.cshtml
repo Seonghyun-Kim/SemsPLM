@@ -183,10 +183,18 @@
             <td colspan="2"></td>
         </tr>
 
-        <tr>
+        @*<tr>
             <th><i class="fa fa-caret-right"></i> 세부사양</th>
             <td colspan="3">
                 <textarea id="dlgCreateEPart_Description" style="border:1px solid #59a3d5;height:150px;"></textarea>
+            </td>
+        </tr>*@
+
+        <tr>
+            <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <td colspan="3">
+                <div id="dlgCreateEPartFile" style="width:100%">
+                </div>
             </td>
         </tr>
 
@@ -197,6 +205,8 @@
 </div>
 
 <script>
+    var InfoFiles = $('#dlgCreateEPartFile').FileUpload();
+
     var EPartThumbnailData = null;
     var DivisionAssemblyDrawing$ = $('.DivisionAssemblyDrawing');
     var DivisionSingleDrawing$ = $('.DivisionSingleDrawing');
@@ -223,6 +233,8 @@
     var srev = '';    //고객리비전
     var psize = '';  //재질
     $(function () {
+        InfoFiles.EditMode();
+
         var itemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
         var placeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.placeList))');
         var epartList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.epartList))');
@@ -230,13 +242,14 @@
         var sizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
         var dlgCreateEPartChk$ = true;
 
+        var DivStandard = "@ViewBag.Division";
+
+
         var epartType;
 
         $('#dlgCreateEPartDivisionAssemblyDrawing').jqxRadioButton({ width: "30%", height: 25, checked: false });
         $('#dlgCreateEPartDivisionSingleDrawing').jqxRadioButton({ width: "30%", height: 25, checked: false });
         $('#dlgCreateEPartDivisionStandard').jqxRadioButton({ width: "30%", height: 25, checked: false });
-
-
 
         $("#dlgCreateEPartDivisionAssemblyDrawing").on('change', function (event) {
             checked = event.args.checked;
@@ -325,7 +338,6 @@
                         break;
                     }
                 }
-
 
                 var psizeSource =
                 {
@@ -441,7 +453,7 @@
             } else {
                 param.FromOID = $('#dlgCreateEPart_Oem2').val();
             }
-            
+
             param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
             RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
                 var CarData = res;
@@ -471,8 +483,6 @@
                 });
             });
         });
-
-
 
         psize$.on('change', function (evt) {
             var idx = evt.args.index;
@@ -533,6 +543,7 @@
             }
             dlgCreateEPartName();
         });
+
         Srev$.bind('change paste keyup', function () {
             $(this).val($(this).val().toUpperCase());
             if ($(this).val() == "O" || $(this).val() == "I") {
@@ -550,36 +561,13 @@
             dlgCreateEPartName();
         });
 
-        //$('#dlgCreateEPartChk').bind('change paste keyup', function () {
-        //    dlgCreateEPartChk$ = true;
-        //});
 
-        //$('#dlgCreateEPartChk').on('click', function () {
-        //    var param = {};
-        //    param.Name = $('#dlgCreateEPartName').val();
-        //    if (param.Name == null || param.Name == "") {
-        //        dlgCreateEPartChk$ = true;
-        //        alert("품번을 입력해주세요");
-        //        return;
-        //    }
-        //
-        //    //RequestData('/EBom/dlgCreateEPartChk', param, function (response) {
-        //    //    if (response.isError) {
-        //    //        alert(response.resultMessage);
-        //    //        return;
-        //    //    }
-        //    //    if (response == 1) {
-        //    //        alert("이미 사용중인 품번입니다");
-        //    //        dlgCreateEPartChk$ = true;
-        //    //    } else {
-        //    //        alert("사용 가능한 품번입니다.");
-        //    //        dlgCreateEPartChk$ = false;
-        //    //    }
-        //    //});
-        //
-        //});
-
-
+        if (DivStandard == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+            $('#dlgCreateEPartDivisionAssemblyDrawing').jqxRadioButton({ checked: false, disabled: true });
+            $('#dlgCreateEPartDivisionSingleDrawing').jqxRadioButton({ checked: false, disabled: true });
+            $("#dlgCreateEPartDivisionStandard").jqxRadioButton({ checked: true, disabled: true });
+            //$('#dlgCreateEPartDivisionStandard').jqxRadioButton('check');
+        }
 
 
         $('#imageDrag').simpleUpload({

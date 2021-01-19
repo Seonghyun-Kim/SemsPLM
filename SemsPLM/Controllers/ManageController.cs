@@ -2,6 +2,7 @@
 using Common.Constant;
 using Common.Factory;
 using Common.Models;
+using Common.Utils;
 using DocumentClassification.Models;
 using SemsPLM.Filter;
 using System;
@@ -339,6 +340,13 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                if (_param.Password != null && _param.Password.Length > 0)
+                {
+                    _param.Password = SemsSecureEDecode.Encrypt(_param.Password);
+                    PersonRepository.UtpIpPwPerson(_param);
+                    DaoFactory.Commit();
+                    return Json(result);
+                }
                 PersonRepository.UtpPwPerson(_param);
                 DaoFactory.Commit();
             }

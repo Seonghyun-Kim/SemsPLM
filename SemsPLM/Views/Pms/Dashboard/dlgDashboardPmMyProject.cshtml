@@ -15,6 +15,7 @@
         <div id="pmMyProjectGrid"></div>
     </div>
     <script type="text/javascript">
+        var selDashBoardDialog;
         $(function () {
 
             var projSource = {
@@ -74,6 +75,43 @@
 
              RequestData("/Pms/@ViewBag.linker", {}, function (res) {
                  PrintJqxGrid(projSource, $('#pmMyProjectGrid'), res);
+             });
+
+            $('#pmMyProjectGrid').on('celldoubleclick', function (e) {
+                const linkUrl = '/Pms/InfoProject?OID=' + e.args.row.bounddata.OID;
+                if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                    var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                    $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                    return;
+                }
+
+                const loading$ = $('#loading');
+                const tabContent$ = $('#tabContent');
+                loading$.css('display', 'block');
+                var linkName = e.args.row.bounddata.Name;
+                tabContent$.jqxTabs('addLast', linkName, "");
+                var tabLength = tabContent$.jqxTabs('length');
+                $.ajax({
+                    url: linkUrl,
+                    type: 'get',
+                    dataType: 'html',
+                    async: true,
+                    success: function (resHtml) {
+                        var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                        $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                    }, error: function (res) {
+                        if (res.status === 404) {
+                            alert("현재 개발중인 화면입니다.");
+                            return false;
+                        }
+                        alert(res.responseText);
+                        console.log(res);
+                    }
+                    , complete: function () {
+                        loading$.css('display', 'none');
+                    }
+                });
+                selDashBoardDialog.close();
             });
         });
     </script>

@@ -1,7 +1,7 @@
 ﻿
 @{
     Layout = null;
-    ViewBag.Title = "대체시 검색"; 
+    ViewBag.UrlTitle = "대체시 검색"; 
 }
 
 <div style="width:100%; margin-right:20px;">
@@ -37,6 +37,10 @@
                 <div> <div id="SearchEBomStructureItemNo" class="SearchEBomStructureComboBox"></div></div>
             </div>
             <div class="searchData">
+                <div class="comboBoxLabel">ITEM_Middle</div>
+                <div> <div id="SearchEBomStructureItemMiddle" class="SearchEBomStructureComboBox"></div></div>
+            </div>
+            <div class="searchData">
                 <div class="comboBoxLabel">고객사</div>
                 <div>
                     <div id="SearchEBomStructureOem" class="dlgSearchEPartComboBox"></div>
@@ -51,6 +55,12 @@
             <div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div><div id="SearchEBomStructureCreateDt" class="SearchEBomStructureDateTimeInput"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">최신</div>
+                <div>
+                    <div id="SearchEBomStructureNew" class="SearchEBomStructureCheckBox"></div>
+                </div>
             </div>
             <div class="searchButton">
                 <button id="SearchEBomStructurebtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
@@ -71,6 +81,10 @@
         var SearchEBomStructureOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var SearchEBomStructureItemLib$ = $('#SearchEBomStructureItemNo');
         var SearchEBomStructureCarLib$ = $('#SearchEBomStructureCar');
+
+        var SearchEBomStructureItemMiddleLib$ = $('#SearchEBomStructureItemMiddle');
+        var SearchEBomStructureNew$ = $('#SearchEBomStructureNew');
+
          var oemSource =
         {
              localdata: SearchEBomStructureOemList,
@@ -84,8 +98,8 @@
                 ]
         };
         var oemAdapter = new $.jqx.dataAdapter(oemSource);
-        SearchEBomStructureOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:240, height: 32 });
-        SearchEBomStructureCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchEBomStructureOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:200, height: 32 });
+        SearchEBomStructureCarLib$.jqxComboBox({ width: 200, height: 32 });
         SearchEBomStructureOemLib$.on('change', function (evt) {
             var param = {};
             param.FromOID = SearchEBomStructureOemLib$.val();
@@ -103,7 +117,7 @@
                         ]
                 };
                 var CardataAdapter = new $.jqx.dataAdapter(CarSource);
-                SearchEBomStructureCarLib$.jqxComboBox({source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+                SearchEBomStructureCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID" });
             });
         });
 
@@ -119,12 +133,40 @@
                 ]
         };
         var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
-        SearchEBomStructureItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        SearchEBomStructureItemLib$.jqxComboBox({ width: 200, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        SearchEBomStructureItemMiddleLib$.jqxComboBox({ width: 200, height: 32 });
+        SearchEBomStructureItemLib$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = SearchEBomStructureItemLib$.val();
+            param.Code1 = 'CLASS';
+            itemno = SearchEBomStructureItemList[idx].Code1;
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var middleSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                        ]
+                };
+                var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                SearchEBomStructureItemMiddleLib$.jqxComboBox({ width: 200, height: 32, source: middleAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+
+        });
+
 
         $('#SearchEBomStructureAssemble').jqxRadioButton({ width: 100, height: 32, checked: false });
         $('#SearchEBomStructureSingle').jqxRadioButton({ width: 120, height: 32, checked: false });
         $('#SearchEBomStructureStandard').jqxRadioButton({ width: 120, height: 32, checked: false });
         $('#SearchEBomStructureCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        SearchEBomStructureNew$.jqxCheckBox({ width: 25, height: 32, checked: true });
 
         $('#SearchEBomStructureAssemble').on('change', function (event) {
             checked = event.args.checked;

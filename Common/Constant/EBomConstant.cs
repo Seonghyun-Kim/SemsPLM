@@ -29,6 +29,10 @@ namespace Common.Constant
         public static string SEARCH_EPART_RELEASE = "RELEASE";
         public static string SEARCH_EPART_WRITE = "WRITE";
 
+        public static string POLICY_EPART_PREPARE = "Prepare";
+        public static string POLICY_EPART_REVIEW = "Review"; //결재중
+        public static string POLICY_EPART_REJECT = "Reject"; //반려
+        public static string POLICY_EPART_COMPLETED = "Completed";
 
         public static List<string> DISEDITABLE
         {

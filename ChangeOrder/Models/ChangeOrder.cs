@@ -236,14 +236,20 @@ namespace ChangeOrder.Models
         public static List<ECO> SelChangeOrder(HttpSessionStateBase Context, ECO _param)
         {
             _param.Type = EoConstant.TYPE_CHANGE_ORDER;
+            List<ECO> lECOs = new List<ECO>();
             List<ECO> lECO = DaoFactory.GetList<ECO>("ChangeOrder.SelChangeOrder", _param);
             lECO.ForEach(obj =>
             {
                 obj.ReasonChangeNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.ReasonChange }).KorNm;
-
+                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj,null);
+                if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+                {
+                    lECOs.Add(obj);
+                }
             });
-            return lECO;
+            return lECOs;
         }
 
         public static ECO SelChangeOrderObject(HttpSessionStateBase Context, ECO _param)
@@ -252,7 +258,7 @@ namespace ChangeOrder.Models
             ECO lECO = DaoFactory.GetData<ECO>("ChangeOrder.SelChangeOrder", _param);
 
             lECO.ReasonChangeNm = LibraryRepository.SelLibraryObject(new Library { OID = lECO.ReasonChange }).KorNm;
-
+            lECO.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lECO.CreateUs }).Name;
             lECO.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lECO.Type, OID = lECO.BPolicyOID }).First();
             lECO.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lECO, null);
             return lECO;

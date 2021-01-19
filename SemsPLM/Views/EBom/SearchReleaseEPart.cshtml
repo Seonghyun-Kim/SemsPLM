@@ -1,0 +1,343 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<div style="width:100%; margin-right:20px;">
+    <!--검색창-->
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;E-BOM 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div>품번</div>
+                <div><input id="SearchReleaseEPartName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>품명</div>
+                <div><input id="SearchReleaseEPartTitle" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="checkBoxLabel">구분</div>
+                <div>
+                    <div id="SearchReleaseEPartAssemble" class="custom-checkbox">
+                        조립도
+                    </div>
+                    <div id="SearchReleaseEPartSingle" class="custom-checkbox">
+                        단품도
+                    </div>
+                    <div id="SearchReleaseEPartStandard" class="custom-checkbox">
+                        스탠다드
+                    </div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_NO</div>
+                <div> <div id="SearchReleaseEPartItemNo" class="searchEpartComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_Middle</div>
+                <div> <div id="SearchReleaseEPartItemMiddle" class="dlgSearchEPartComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchReleaseEPartOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="SearchReleaseEPartCar" class="searchEpartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">작성일</div>
+                <div><div id="SearchReleaseEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
+            </div>
+            <div class="searchButton">
+                <button id="SearchReleaseEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="SearchReleaseEPartGrid"></div>
+<script type="text/javascript">
+
+    $(function () {
+        var SearchReleaseEPartItemMiddleLib$ = $('#SearchReleaseEPartItemMiddle');
+        var SearchReleaseEPartOemLib$ = $('#SearchReleaseEPartOem');
+        var SearchReleaseEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var SearchReleaseEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var SearchReleaseEPartItemLib$ = $('#SearchReleaseEPartItemNo');
+        var SearchReleaseEPartCarLib$ = $('#SearchReleaseEPartCar');
+        var oemSource =
+        {
+            localdata: SearchReleaseEPartOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchReleaseEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:250, height: 32 });
+        SearchReleaseEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchReleaseEPartOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchReleaseEPartOemLib$.val();
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchReleaseEPartCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+
+        });
+
+        var ItemSource =
+        {
+            localdata: SearchReleaseEPartItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        SearchReleaseEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        SearchReleaseEPartItemMiddleLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchReleaseEPartItemLib$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = SearchReleaseEPartItemLib$.val();
+            param.Code1 = 'CLASS';
+            itemno = SearchReleaseEPartItemList[idx].Code1;
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var middleSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                        ]
+                };
+                var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                SearchReleaseEPartItemMiddleLib$.jqxComboBox({ source: middleAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+
+        });
+
+
+        $('#SearchReleaseEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: false });
+        $('#SearchReleaseEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#SearchReleaseEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
+        $('#SearchReleaseEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        var SearchReleaseEPartSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy'},
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+
+                { name: 'Title' },
+
+                { name: 'Oem_Lib_OID' },
+                { name: 'Oem_Lib_Nm' },
+                { name: 'Sel_Revision' },
+                { name: 'Division' },
+                { name: 'Standard'},
+
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_Nm' },
+                { name: 'ITEM_No' },
+                { name: 'ITEM_NoNm' },
+                { name: 'Block_No' },
+                { name: 'Block_NoNm' },
+                { name: 'Material_OID' },
+                { name: 'Material_Nm' },
+                { name: 'EPartType' },
+                { name: 'Sel_Eo' },
+                { name: 'Sel_Eo_Dt', type: 'date' },
+                { name: 'Thumbnail' },
+                { name: 'Revision' },
+            ],
+        }
+
+        const SearchReleaseEPartGrid$ = $('#SearchReleaseEPartGrid');
+        SearchReleaseEPartGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 620,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: true,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '구분', datafield: 'Division', width: "7%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        if (value == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_ASSEMBLY_NM" + "</div>";
+                        } else if (value == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_SINGLE_NM" + "</div>";
+                        } else {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + "@Common.Constant.EBomConstant.DIV_STANDARD_NM" + "</div>";
+                        }
+                    }
+                },
+                { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '고객리비전', datafield: 'Sel_Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    }
+                },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (statusbar) {
+            }
+        });
+
+        SearchReleaseEPartGrid$.on('celldoubleclick', function (e) {
+            const linkUrl = '/EBom/InfoEPart?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        var param = {};
+        param.IsReleasedLatest = 1;
+
+        getSearchReleaseEPartList(SearchReleaseEPartSource, SearchReleaseEPartGrid$, param);
+
+        var SearchDivision=null;
+        $("#SearchReleaseEPartAssemble").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+                $('#SearchReleaseEPartbtn').click();
+            }
+        });
+
+        $("#SearchReleaseEPartSingle").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+                $('#SearchReleaseEPartbtn').click();
+            }
+        });
+
+        $("#SearchReleaseEPartStandard").on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                SearchDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+                $('#SearchReleaseEPartbtn').click();
+            }
+        });
+
+        $('#SearchReleaseEPartName, #SearchReleaseEPartTitle').keydown(function (e) {
+            if (e.keyCode === 13) {
+                $('#SearchReleaseEPartbtn').click();
+            }
+        });
+
+        $('#SearchReleaseEPartItemNo, #SearchReleaseEPartCar').on('change',function (e) {
+            $('#SearchReleaseEPartbtn').click();
+        });
+
+
+        $('#SearchReleaseEPartbtn').on('click', function () {
+            var SearchReleaseEPartCreateDt = $('#SearchReleaseEPartCreateDt').val();
+            var SearchReleaseEPartCreateDtArray = SearchReleaseEPartCreateDt.split('-');
+
+            param = {};
+            param.Name =        $('#SearchReleaseEPartName').val();
+            param.Title         = $('#SearchReleaseEPartTitle').val();
+            param.Division      = SearchDivision;
+            param.Car_Lib_OID   = SearchReleaseEPartCarLib$.val();
+            param.ITEM_No       = SearchReleaseEPartItemLib$.val();
+            param.StartCreateDt = SearchReleaseEPartCreateDtArray[0];
+            param.EndCreateDt   = SearchReleaseEPartCreateDtArray[1] + " 23:59:59";
+
+            param.ITEM_Middle   = SearchReleaseEPartItemMiddleLib$.val();
+            param.IsReleasedLatest = 1;
+            getSearchReleaseEPartList(SearchReleaseEPartSource, SearchReleaseEPartGrid$, param);
+        });
+    });
+
+    function getSearchReleaseEPartList(_Source, _Grid$, param) {
+        RequestData("/Ebom/SelEPart", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

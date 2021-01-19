@@ -1,0 +1,170 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div>
+    <div style="width:100%; margin-right:20px;">
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;ECR 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>변경요청번호</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseEcrName" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제목</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseEcrTitle" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>설계변경일자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseEcrDesignChangeDt" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseEcrCuser" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchReleaseEcrBtn" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="SearchReleaseECRGrid"></div>
+</div>
+
+<script>
+    $(function () {
+        $('#SearchReleaseEcrDesignChangeDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        var SearchReleaseECRGrdSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'Title' },
+                { name: 'ItemGroup' },
+                { name: 'CreateUs' },
+                { name: 'CreateUsNm'},
+                { name: 'CreateDt', type: 'date' },
+                { name: 'DevMP' },
+                { name: 'DevMPNm' },
+                { name: 'ApprovDt' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'DesignChangeDt', type: 'date'},
+            ],
+        }
+        const SearchReleaseECRGrd$ = $('#SearchReleaseECRGrid');
+        SearchReleaseECRGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 675,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '구분', datafield: 'DevMPNm', width: "9%", align: 'center', cellsalign: 'center' },
+                { text: '변경요청번호', datafield: 'Name', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '제목', datafield: 'Title', width: "15%", align: 'center', cellsalign: 'center' },
+                { text: '설계변경일자', datafield: 'DesignChangeDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                { text: '품목그룹', datafield: 'ItemGroup', width: "15%", align: 'center', cellsalign: 'center' },
+                { text: '작성자', datafield: 'CreateUsNm', width: "10%", align: 'center', cellsalign: 'center' },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '작성일', datafield: 'CreateDt', width: "9%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+                { text: '승인일', datafield: 'ApprovDt', width: "9%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
+
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+
+        });
+
+        SearchReleaseECRGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/ChangeRequest/InfoChangeRequest?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+        var EcrParam = {};
+        EcrParam.Status = '@Common.Constant.EoConstant.POLICY_EO_COMPLETED';
+
+        getSearchReleaseECRList(SearchReleaseECRGrdSource, SearchReleaseECRGrd$, EcrParam);
+
+
+        $('#SearchReleaseEcrBtn').on('click', function () {
+            var SecarchEcrParam = {};
+            var SecarchEcrDesignChangeDt = $('#SearchReleaseEcrDesignChangeDt').val();
+            var SecarchEcrDesignChangeDtArray = SecarchEcrDesignChangeDt.split('-');
+
+            SecarchEcrParam.Name = $('#SearchReleaseEcrName').val();
+            SecarchEcrParam.Title = $('#SearchReleaseEcrTitle').val();
+            //SecarchEcrParam.DesignChangeDt = $('#SearchEcrDesignChangeDt').val();
+
+            SecarchEcrParam.StartDesignChangeDt = SecarchEcrDesignChangeDtArray[0];
+            SecarchEcrParam.EndDesignChangeDt = SecarchEcrDesignChangeDtArray[1] + " 23:59:59";
+
+            SecarchEcrParam.Status = '@Common.Constant.EoConstant.POLICY_EO_COMPLETED';
+
+            getSearchReleaseECRList(SearchReleaseECRGrdSource, SearchReleaseECRGrd$, SecarchEcrParam);
+        });
+    });
+
+    function getSearchReleaseECRList(_Source, _Grid$, _param) {
+        RequestData("/ChangeRequest/SelChangeRequest", _param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+
+</script>

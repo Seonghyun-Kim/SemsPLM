@@ -5,9 +5,14 @@
     <div class="searchContent" style="padding-bottom:0px;">
         <input type="hidden" id="parentOID" />
         <div class="searchData">
-            <div>부품번호</div>
-            <div><input id="dlgSearchEPart_Name" type="text" class="txtBox" value="" style="height:32px;" /></div>
+            <div>품번</div>
+            <div><input id="dlgSearchEPart_Name" type="text" class="txtBox" value="" /></div>
         </div>
+        <div class="searchData">
+            <div>품명</div>
+            <div><input id="dlgSearchEPart_Title" type="text" class="txtBox" value="" /></div>
+        </div>
+
         <div class="searchData">
             <div class="checkBoxLabel">구분</div>
             <div>
@@ -25,6 +30,10 @@
         <div class="searchData">
             <div class="comboBoxLabel">ITEM_NO</div>
             <div> <div id="dlgSearchEPartItemNo" class="dlgSearchEPartComboBox"></div></div>
+        </div>
+        <div class="searchData">
+            <div class="comboBoxLabel">ITEM_Middle</div>
+            <div> <div id="dlgSearchEPartItemMiddle" class="dlgSearchEPartComboBox"></div></div>
         </div>
         <div class="searchData">
             <div class="comboBoxLabel">고객사</div>
@@ -56,9 +65,10 @@
     var dlgSearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
     var dlgSearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
     var dlgSerarchEPartOemLib$ = $('#dlgSearchEPartOem');
-        var dlgSearchEPartItemLib$ = $('#dlgSearchEPartItemNo');
-        var dlgSearchEPartCarLib$ = $('#dlgSearchEPartCar');
+    var dlgSearchEPartItemLib$ = $('#dlgSearchEPartItemNo');
+    var dlgSearchEPartCarLib$ = $('#dlgSearchEPartCar');
     var EPartSearch = $('#dlgSearchEPart_Name');
+    var dlgSearchEPartItemMiddle$ = $('#dlgSearchEPartItemMiddle');
     $(function () {
 
         var oemSource =
@@ -74,8 +84,10 @@
                 ]
         };
         var oemAdapter = new $.jqx.dataAdapter(oemSource);
-        dlgSerarchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
-        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSerarchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 200, height: 32 });
+
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 200, height: 32 });
+
         dlgSerarchEPartOemLib$.on('change', function (evt) {
             var param = {};
             param.fromOID = dlgSerarchEPartOemLib$.val();
@@ -108,12 +120,38 @@
                 ]
         };
         var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
-        dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        dlgSearchEPartItemLib$.jqxComboBox({ width: 200, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        dlgSearchEPartItemMiddle$.jqxComboBox({ width: 200, height: 32 });
+        dlgSearchEPartItemLib$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = dlgSearchEPartItemLib$.val();
+            param.Code1 = 'CLASS';
+            itemno = dlgSearchEPartItemList[idx].Code1;
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var middleSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                        ]
+                };
+                var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                dlgSearchEPartItemMiddle$.jqxComboBox({ source: middleAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
 
 
-        $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: true });
-        $('#dlgSearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#dlgSearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
+        
+
+        $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: false });
+        $('#dlgSearchEPartSingle').jqxRadioButton({ width: 100, height: 30, checked: false });
+        $('#dlgSearchEPartStandard').jqxRadioButton({ width: 100, height: 30, checked: false });
 
 
         $("#dlgSearchEPartAssemble").on('change', function (event) {

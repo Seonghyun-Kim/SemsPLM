@@ -58,7 +58,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>프로젝트명</th>
+                        <th>템플릿명</th>
                         <td colspan="3">
                             @ViewBag.Detail.Name
                         </td>
@@ -432,7 +432,7 @@
                             text: '구분', dataField: 'ObjType', width: '8%', align: 'center', editable: false, cellsAlign: 'center', pinned: true,
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 if (cellText == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP') {
-                                    return "프로젝트 템플릿";
+                                    return "템플릿";
                                 }
                                 return cellText;
                             }
@@ -474,6 +474,10 @@
                             cellsRenderer: function (row, dataField, cellValue, rowData) {
                                 var editable = projWbsInfo$.jqxTreeGrid('editable');
                                 if (editable) {
+                                    if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                        _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                        return "<span style='color: #999999;'>" + cellValue + "</span>";
+                                    }
                                     if (cellValue == "") {
                                         return "<div class='editableCell' style='height:30px;'><div></div></div>";
                                     }
@@ -484,8 +488,13 @@
                         {
                             text: '멤버', dataField: 'Members', width: '14%', align: 'center', editable: false, autoCellHeight:false,
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (row == ProjectOID) {
-                                    return;
+                                console.log(rowData);
+                                if (rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP' ||
+                                    rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PHASE' ||
+                                    rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                                    var disableDiv = "<div style=text-align:center;color:#ccc;'>시스템</div>";
+                                        return disableDiv;
+;                                       return;
                                 }
                                 if (cellValue != null && cellValue != undefined) {
                                     if (cellValue.length > 0) {
@@ -505,27 +514,60 @@
                         },
                         {
                             text: '기간', dataField: 'EstDuration', columnGroup: 'Estimated', width: '4%', align: 'center', cellsAlign: 'center',
+                            validation: function (cell, value) {
+                                var bResult = true;
+                                if (value == '' || value == '0') {
+                                    bResult = false;
+                                }
+                                return bResult;
+                            },
                             cellsRenderer: function (row, dataField, cellValue, rowData) {
                                 var editable = projWbsInfo$.jqxTreeGrid('editable');
                                 if (editable) {
+                                    if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                        _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                        return "<span style='color: #999999;'>" + cellValue + "</span>";
+                                    }
                                     return "<div class='editableCell'><div></div></div>" + cellValue;
                                 }
                             }
                         },
                         {
                             text: '시작일', dataField: 'EstStartDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                            validation: function (cell, value) {
+                                var bResult = true;
+                                if (value == '') {
+                                    bResult = false;
+                                }
+                                return bResult;
+                            },
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
                                 var editable = projWbsInfo$.jqxTreeGrid('editable');
                                 if (editable) {
+                                    if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                        _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                        return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                    }
                                     return "<div class='editableCell'><div></div></div>"+cellsFormat;
                                 }
                             },
                         },
                         {
                             text: '완료일', dataField: 'EstEndDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                            validation: function (cell, value) {
+                                var bResult = true;
+                                if (value == '') {
+                                    bResult = false;
+                                }
+                                return bResult;
+                            },
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
                                 var editable = projWbsInfo$.jqxTreeGrid('editable');
                                 if (editable) {
+                                    if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                        _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                        return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                    }
                                     return "<div class='editableCell'><div></div></div>"+cellsFormat;
                                 }
                             },
@@ -533,15 +575,15 @@
                         { text: '설명', dataField: 'Description', align: 'center', width: '12%', },
                     ],
                     columnGroups: [
-                        { text: '예상', name: 'Estimated' },
-                        { text: '실제', name: 'Actual' },
+                        { text: '예상', name: 'Estimated', align: "center" },
+                        { text: '실제', name: 'Actual', align: "center" },
                         { text: 'Dependency', name: 'Dependency' },
                     ],
                     renderToolbar: function (toolBar) {
                         const editable = projWbsInfo$.jqxTreeGrid('editable');
                         if (!editable && toolBar[0].children.length > 0) {
-                            if (toolBar[0].children[0].children[14] != undefined) {
-                                toolBar[0].children[0].children[14].click();
+                            if (toolBar[0].children[0].children[12] != undefined) {
+                                toolBar[0].children[0].children[12].click();
                             }
                             return;
                         }
@@ -745,7 +787,8 @@
                                         "Level": parseInt(parentData.level) + 1,
                                         "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
                                         "expanded": "true",
-                                        "WorkingDay": workingDay
+                                        "WorkingDay": workingDay,
+                                        "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt']
                                     },
                                     'last', ProjectOID);
                             }
@@ -868,6 +911,7 @@
                             var masterlink = fMasterLink(arrData);
                             fComputeCriticalPath(arrData, masterlink);
                             PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
+                            gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
                         });
                     }
                 });
@@ -886,7 +930,7 @@
                     const editable = projWbsInfo$.jqxTreeGrid('editable');
 
                     if (editable && dataField == 'Members') {
-                        if (row.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT' ||
+                        if (row.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP' ||
                             row.ObjType == '@Common.Constant.PmsConstant.TYPE_PHASE' ||
                             row.ObjType == '@Common.Constant.PmsConstant.TYPE_GATE') {
                             return;
@@ -936,9 +980,17 @@
                                     const selDep = arrRows.filter(function (item) {
                                         return item.Id == records[i].Dependency;
                                     });
+                                    if (selDep == null || selDep.length < 1) {
+                                        return;
+                                    }
                                     projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, 2, workingDay, sHoliday));
                                 } else {
-                                    projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                    if (records[i].records != null && records[i].records.length > 0) {
+                                        const minEstStartDt = moment(fMinDate(fPmsLoadProperties(records[i].records, 'EstStartDt'))).format('YYYY-MM-DD');
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', minEstStartDt);
+                                    } else {
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                    }
                                 }
                             }
                         }
@@ -972,6 +1024,7 @@
                     var dataField = args.dataField;
                     var records = row.records;
                     var allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                    var parent = row.parent;
 
                     if (dataField == 'EstStartDt') {
                         if (records != undefined && records.length > 0) {
@@ -982,8 +1035,40 @@
                             }
                         }
                     }
-                    
+
                     fDependencyRescureControl(ProjectOID, row);
+
+                    if (dataField == 'EstStartDt' || dataField == 'Dependency') {
+                        if (parent) {
+                            _.each(fPmsParentArray([parent]), function (item) {
+                                if (item.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT') {
+                                    return;
+                                }
+                                const arrRows = fPmsArrayTasks(item.records);
+                                if (arrRows != null && arrRows.length > 0) {
+                                    const minEstStartDt = moment(fMinDate(fPmsLoadProperties(arrRows, 'EstStartDt'))).format('YYYY-MM-DD');
+                                    projWbsInfo$.jqxTreeGrid('setCellValue', item.ToOID, 'EstStartDt', minEstStartDt);
+                                }
+                            });
+                        }
+                    } else {
+                        const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                        const targetData = fListMatch(arrRows, function (x) { return fGettingDependData(x.Dependency).hasOwnProperty(row.Id); });
+                        if (targetData != null && targetData.length > 0) {
+                            _.each(targetData, function (target) {
+                                    _.each(fPmsParentArray([target.parent]), function (item) {
+                                    if (item.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT') {
+                                        return;
+                                    }
+                                    const arrRows = fPmsArrayTasks(item.records);
+                                    if (arrRows != null && arrRows.length > 0) {
+                                        const minEstStartDt = moment(fMinDate(fPmsLoadProperties(arrRows, 'EstStartDt'))).format('YYYY-MM-DD');
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', item.ToOID, 'EstStartDt', minEstStartDt);
+                                    }
+                                });
+                            });
+                        }
+                    }
                 });
 
             } else if (infoValue == 'resource') {
@@ -1153,7 +1238,7 @@
                                         'last', null);
                                     }
                                 }
-                            }, null, null, '/Common/ApprovalPerson', '멤버 추가');
+                            }, null, null, '/Common/ApprovalPerson', '참조자 추가');
                         });
 
                         btnDelete.click(function (event) {

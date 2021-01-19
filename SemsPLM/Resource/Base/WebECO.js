@@ -15,19 +15,19 @@
     } else {
         _Wrap.appendChild(popLayer);
     }
-    console.log(_Mod);
+
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1200 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1400 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 1200, maxWidth: 1200, height: 650, minHeight: 650, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1400, maxWidth: 1400, height: 800, minHeight: 800, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
             $('#parentOID').val(_Param.RootOID);
             if (_Mod == "Create") {
-                for (var i = 0; i < parent.ECOListData.length; i++) {
-                    partOIDList.push(parent.ECOListData[i].OID);
+                for (var i = 0; i < _Param.ECOListData.length; i++) {
+                    partOIDList.push(_Param.ECOListData[i].OID);
                 }
             }
 
@@ -37,10 +37,19 @@
                     { name: 'OID' },
                     { name: 'Name' },
                     { name: 'BPolicyOID' },
-                    { name: 'ToOID' },
                     { name: 'BPolicy' },
                     { name: 'CreateUsNm' },
                     { name: 'CreateDt', type: 'date' },
+
+                    { name: 'Title' },
+
+                    { name: 'Oem_Lib_OID' },
+                    { name: 'Oem_Lib_Nm' },
+                    { name: 'Sel_Revision' },
+                    { name: 'Division' },
+                    { name: 'DivisionNm' },
+                    { name: 'Standard' },
+
                     { name: 'Car_Lib_OID' },
                     { name: 'Car_Lib_Nm' },
                     { name: 'ITEM_No' },
@@ -61,30 +70,31 @@
             SearchEPartGrid$.jqxGrid({
                 theme: "kdnc",
                 width: "100%",
-                height: 480,
+                height: 610,
                 rowsheight: 28,
                 selectionmode: 'checkbox',
                 columnsheight: 30,
-                //source: ProjectSource,
                 sortable: false,
                 pageable: false,
                 columns: [
-                    { text: '차종', datafield: 'Car_Lib_Nm', width: "9%", align: 'center', cellsalign: 'center', },
-
-                    { text: '품번', datafield: 'Name', width: "24%", align: 'center', cellsalign: 'center', },
-                    { text: 'Block_No', datafield: 'Block_NoNm', width: "20%", align: 'center', cellsalign: 'center', },
-                    { text: '재질', datafield: 'Material_Nm', width: "9%", align: 'center', cellsalign: 'center', },
-                    { text: '차수(리비전)', datafield: 'Revision', width: "9%", align: 'center', cellsalign: 'center', },
-                    { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                    { text: '작성자', datafield: 'CreatUsNm', width: "8%", align: 'center', cellsalign: 'center' },
+                    { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '구분', datafield: 'DivisionNm', width: "7%", align: 'center', cellsalign: 'center', },
+                    { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                    { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                    { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "11%", align: 'center', cellsalign: 'center', },
+                    { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                    { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                    { text: '고객리비전', datafield: 'Sel_Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                    { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                    { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
                     {
-                        text: '상태', datafield: 'BPolicy', width: "8.5%", align: 'center', cellsalign: 'center',
+                        text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
-                        },
+                        }
                     },
-
-                    //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
                 ],
                 showtoolbar: true,
                 toolbarheight: 45,
@@ -109,7 +119,7 @@
                             row.Type = _Param.Type;
                             row.ToOID = row.OID;
                             if (_Mod == "Create") {
-                                parent.ECOListData.push(row);
+                                _Param.ECOListData.push(row);
                             }
                         }
                         if (selectedRecords.length == 0) {
@@ -143,8 +153,6 @@
                 var rowObj = event.args;
                 var disChk = [];
 
-                //   partOIDList.addAll(parent.ECOListData);
-                //console.log(partOIDList);
                 if (partOIDList != null && partOIDList != undefined) {
                     partOIDList.filter(function (item) {
                         if (typeof rowObj.rowindex == 'number') {
@@ -174,6 +182,11 @@
                     param.Division = SearchDivision;
                     param.Car_Lib_OID = dlgSearchEPartCarLib$.val();
                     param.ITEM_No = dlgSearchEPartItemLib$.val();
+                    param.ITEM_Middle = dlgSearchEPartItemMiddle$.val();
+
+
+                    param.IsLatest = 1;
+                    param.IsReleasedLatest = 0;
                     RequestData('/EBom/SelEPart', param, function (res) {
                         PrintJqxGrid(EPartSource, SearchEPartGrid$, res);
                     });
@@ -184,6 +197,8 @@
                 var param = {};
                 param.RootOID = _Param.RootOID;
                 param.FromOID = _Param.FromOID;
+                param.IsLatest = 1;
+                param.IsReleasedLatest = 0;
                 RequestData('/EBom/SelRootChildList', param, function (res) {
                     PrintJqxGrid(EPartSource, SearchEPartGrid$, res);
                 });

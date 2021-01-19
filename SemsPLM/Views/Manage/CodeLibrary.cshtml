@@ -160,7 +160,7 @@
                                     alert('필수항목이라 삭제할수 없습니다.');
                                 } else {
                                     if (confirm('삭제 하시겠습니까?')) {
-                                        $.post('/Manage/delLibrary', param, function (res) {
+                                        $.post('/Manage/delCodeLibrary', param, function (res) {
                                             if (res.isError) {
                                                 alert(response.resultMessage);
                                                 return;

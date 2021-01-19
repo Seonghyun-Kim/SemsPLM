@@ -33,6 +33,15 @@ namespace SemsPLM.Controllers
                 Session["UserOID"] = person.OID;
                 Session["LoginID"] = person.ID;
                 Session["UserNm"] = person.Name;
+                if (person.Thumbnail != null && person.Thumbnail.Length > 0)
+                {
+                    Session["Thumbnail"] = Url.Content("~/images/Thumbnail/") + person.Thumbnail;
+                }
+                else
+                {
+                    Session["Thumbnail"] = "";
+                }
+                
                 Session["SessionID"] = SessionID;
 
                 string IsCookies = System.Configuration.ConfigurationManager.AppSettings["IsCookies"];

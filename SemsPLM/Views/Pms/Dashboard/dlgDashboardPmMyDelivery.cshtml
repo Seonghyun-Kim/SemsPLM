@@ -20,6 +20,7 @@
                 dataType: "json",
                 dataFields: [
                     { name: 'OID', type: 'number' },
+                    { name: 'ToOID', type: 'number' },
                     { name: 'Type', type: 'string' },
                     { name: 'DocName', type: 'string' },
                     { name: 'Oem_Lib_Nm', type: 'string' },
@@ -31,6 +32,7 @@
                     { name: 'DocSt', type: 'number' },
                     { name: 'DocStNm', type: 'string' },
                     { name: 'DocRev', type: 'string' },
+                    { name: 'ViewUrl', type: 'string' },
                     { name: 'CreateDt', type: 'date' },
                     { name: 'CreateUsNm', type: 'string' },
                     { name: 'ProjectNm', type: 'string' },
@@ -60,11 +62,51 @@
                     { text: '상태', datafield: 'DocStNm', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '생성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                     { text: '생성자', datafield: 'CreateUsNm', cellsalign: 'center', align: 'center', width: '5%' },
-                
+
                 ],
             });
               RequestData("/Pms/@ViewBag.linker", {}, function (res) {
                   PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
+              });
+
+            $('#pmMyDeliveryGrid').on('celldoubleclick', function (event) {
+                const row = event.args.row.bounddata;
+
+                if (row.Type == '@Common.Constant.PmsConstant.RELATIONSHIP_DOC_CLASS') {
+                    var param = {};
+                    param.OID = row.ToOID;
+                    if (row.ViewUrl == null) {
+                        param.Type = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+                        if (gClickDuplication) { return; }
+                        gClickDuplication = true;
+                        setTimeout(function () {
+                            OpenPmsDocumentDialog(function (res) {
+                                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                            }, null, param, '/Pms/InfoDocument', '문서 상세');
+                            gClickDuplication = false;
+                        }, 250);
+                    } else {
+                        if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
+                            if (gClickDuplication) { return; }
+                            gClickDuplication = true;
+                            setTimeout(function () {
+                                OpenInfoReliabilityDialog(function (res) {
+                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
+                                gClickDuplication = false;
+                            }, 250);
+                        } else {
+                            if (gClickDuplication) { return; }
+                            gClickDuplication = true;
+                            setTimeout(function () {
+                                OpenInfoReliabilityReportDialog(function (res) {
+                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
+                                gClickDuplication = false;
+                            }, 250);
+                        }
+                    }
+                }
             });
         });
     </script>

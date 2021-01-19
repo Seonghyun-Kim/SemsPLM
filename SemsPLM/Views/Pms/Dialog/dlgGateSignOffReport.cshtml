@@ -214,8 +214,8 @@
                         text: '계획', width: '9%', align: 'center', columnGroup: 'status',
                         cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                             var data = rowData;
-                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
-                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
                                 if (today.getTime() <= data.EstFinDt.getTime()) {
                                     if (dateGap < 7) {
@@ -228,7 +228,7 @@
                                         return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>'; //흰색
                                     }
                                 }
-                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 return '<div style="width:100%;text-align: center;"></div>';
                             }
 
@@ -237,8 +237,8 @@
                     {
                         text: '지연', width: '9%', align: 'center', columnGroup: 'status', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                             var data = rowData;
-                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
-                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED') {
                                 var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
                                 if (today.getTime() <= data.EstFinDt.getTime()) {
                                     if (dateGap < 7) {
@@ -251,7 +251,7 @@
                                         return '<div style="width:100%;text-align: center;"></div>'; //흰색
                                     }
                                 }
-                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 return '<div style="width:100%;text-align: center;"></div>';
                             }
 
@@ -260,8 +260,8 @@
                     {   text: '완료', width: '9%', align: 'center', columnGroup: 'status',
                     cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                             var data = rowData;
-                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
-                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
                                 if (today.getTime() <= data.EstFinDt.getTime()) {
                                     if (dateGap < 7) {
@@ -274,7 +274,7 @@
                                         return '<div style="width:100%;text-align: center;"></div>'; //흰색
                                     }
                                 }
-                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>'; 녹색
                             }
 
@@ -375,8 +375,8 @@
                         text: 'Status', width: '6%', align: 'center',
                         cellsrenderer: function (row, column, value) {
                             var data = $('#issueListGrid').jqxGrid('getrowdata', row);
-                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
-                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
                                 if (today.getTime() <= data.EstFinDt.getTime()) {
                                     if (dateGap < 7) {
@@ -389,7 +389,7 @@
                                         return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>';
                                     }
                                 }
-                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
                             }
                         }
@@ -488,8 +488,8 @@
                         text: 'Status', width: '6%', align: 'center',
                         cellsrenderer: function (row, column, value) {
                             var data = $('#totalIssueListGrid').jqxGrid('getrowdata', row);
-                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED'
-                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+                            if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED'
+                                || data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED') {
                                 var dateGap = fWeekendCalc(data.EstFinDt, moment(today).format('YYYY-MM-DD'), InfoProj.WorkingDay, sHoliday);
                                 if (today.getTime() <= data.EstFinDt.getTime()) {
                                     if (dateGap < 7) {
@@ -502,7 +502,7 @@
                                         return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;"></div></div>';
                                     }
                                 }
-                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+                            } else if (data.BPolicy.Name == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
                                 return '<div style="width:100%;text-align: center;"><div style="margin: 5px;border:1px solid;display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
                             }
                         }

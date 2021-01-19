@@ -265,7 +265,7 @@
     border: none;
 }
 
-.dashboardSelBox, .dashboardStatusSelBox {
+.dashboardSelBox{
     position: absolute;
     right: 6px;
     top: 6px;
@@ -277,7 +277,7 @@
     margin-right:8px;
 }
 
-.dashboardGrids .lGridComponent > input[type=text] {
+.dashboardGrids .lGridComponent > input[type=text], .dashboardGrids .lGridComponent > input[type=number] {
     width: 100px;
     height: 34px;
     margin-right: 8px;
@@ -530,6 +530,22 @@ input[name=rscRadio] {
 
 /* timeline chart */
 
+.pmDsbdLegend{
+    position: absolute;
+    right: 10px;
+    top: 2px;
+    font-weight:normal;
+    font-size:14px;
+}
+
+.timelineLegend > div{
+    width:40px;
+    height:3px;
+    transform:translateY(-3px);
+    display:inline-block;
+    background-color:rgba(0,0,0,.6);
+}
+
 .timeline-chart{
     cursor:pointer;
 }
@@ -538,8 +554,12 @@ path.domain {
     display: none;
 }
 
-.domain, .chart-bounds {
+.domain, .chart-bounds, .delay-box {
     fill: #fff;
+}
+
+.chart-bounds, .delay-box {
+    stroke: #ccc;
 }
 
 .pmProjectList {
@@ -551,7 +571,7 @@ path.domain {
 
 .pmProjectList::-webkit-scrollbar {
     width: 10px;
-    background-color: #fff;
+    background-color: #e6e6e6;
 }
 
 .pmProjectList::-webkit-scrollbar-thumb {
@@ -582,8 +602,12 @@ path.domain {
         stroke: #ccc;
     }
 
+    #pmProjectTimeline line.dotLines{
+        stroke: #f00;
+    }
+
         #pmProjectTimeline line.vertical-marker.now {
-            stroke: #f00;
+            stroke: rgba(0,0,0,.7);
             stroke-width:3px;
         }
 
@@ -617,6 +641,10 @@ g.tick > line, line.group-section:nth-child(2n-1){
     stroke: transparent !important;
 }
 
+g.tick > text{
+    transform:translateY(-7px);
+}
+
 /* Override d3tip */
 
 .d3-tip {
@@ -627,14 +655,14 @@ g.tick > line, line.group-section:nth-child(2n-1){
     box-shadow:0 0 3px #ccc;
 }
 
-
-#tickNow {
-    position: absolute;
-    z-index:9999;
-    opacity:0.8;
-    top: 80px;
-    background-color: #fff;
+.eventTip {
+    stroke-width:1px;
+    stroke:#999;
+    fill: #fff;
+    opacity: .6;
     border-radius: 3px;
-    padding: 10px;
-    box-shadow: 0 0 3px #ccc;
+}
+
+.eventLabel{
+    font-size:12px;
 }

@@ -140,8 +140,25 @@ Standard nvarchar(100) 컬럼 추가
 T_BPOLICY 테이블
 OID 42번에 ActionProgram 컬럼에 Common.Trigger.ReleasedTrigger:ReleasedLatestUpdate 데이터 추가
 
+21-01-15 cskim
+CREATE TABLE T_DEPART_TEMP
+(
+    "OID"        int             NOT NULL, 
+    "Orgin_OID"  int             NOT NULL, 
+    "Type"       nvarchar(50)    NOT NULL, 
+    "CreateDt"   datetime        NOT NULL, 
+    "CreateUs"   int             NOT NULL, 
+    "DeleteDt"   datetime        NULL, 
+    "DeleteUs"   int             NULL, 
+    CONSTRAINT PK_T_DEPART_TEMP PRIMARY KEY (OID)
+)
 
-2021.01.17
+210118 ihjung   -- 적용완료
+
+T_BPOLICY, PROJECT Prepare ActionProgram에 추가 Pms.Trigger.ProjectTrigger:ActionStartetdProjectMailPromote
+T_BPOLICY, TASK Started ActionProgram에 추가 Pms.Trigger.ProcessTrigger:ActionTaskCompleteMailPromote
+T_BPOLICY, TASK Paused ActionProgram에 추가 PmsPms.Trigger.ProcessTrigger:ActionTaskCompleteMailPromote 
+
 T_DQMS_QUICK
 CorrectDecisionLibOID -> null 허용 (사용하지 않음)
 MeasureResponseDt -> null 허용
@@ -152,7 +169,7 @@ LotNo -> null 허용
 InduceLibOID -> null 허용 (사용하지 않음)
 EnrollmentLibOID -> 신규 추가(int, null 허용(임시)) 
 
-데이터 변경
+데이터 변경(라이브러리 관리)
 QMS
 신규 공장구분 추가
 코드 : FACTORY_TYPE, 이름 : 공장구분
@@ -162,7 +179,6 @@ QMS
 코드 : 2, 이름 : 용인본사
 코드 : 3, 이름 : 천안공장
 
--------------------------------------------------------
 발생유형
 코드 : OCCURRENCE -> OCCURRENCE_TYPE로 변경
 
@@ -174,11 +190,10 @@ QMS
 코드 : 1, 이름 : 사내
 코드 : 2, 이름 : 사외
 
--------------------------------------------------------
 기존 발생처
 발생처 -> 발생처(사내) 이름 변경
 코드 : OCCURRENCE_AREA -> OCCURRENCE_AREA_INSIDE로 변경
--------------------------------------------------------
+
 신규 발생처(사외) 추가
 코드 : OCCURRENCE_AREA_OUT
 이름 : 발생처(사외)
@@ -188,7 +203,7 @@ QMS
 코드 : 2, 이름 : O-km
 코드 : 3, 이름 : 고객 In-Line
 코드 : 4, 이름 : 고객 수검
---------------------------------------------------------
+
 신규 등록구분 추가
 코드 : ENROLLMENT_TYPE
 이름 : 등록구분
@@ -196,7 +211,158 @@ QMS
 하위 항목
 코드 : 1, 이름 : 등록
 코드 : 2, 이름 : 미등록
----------------------------------------------------------
 
 귀책구분
 이름 : 자재 -> 자체 로 변경
+
+BDEFINE 추가
+9	BLOCKADE	TYPE	COMMON	6	봉쇄조치	/Qms/InfoMiniBlockade
+10	OCCURRENCE_CAUSE	TYPE	COMMON	7	원인분석	/Qms/InfoMiniOccurrenceCause
+11	IMPROVE_COUNTERMEASURE	TYPE	COMMON	8	개선대책	/Qms/InfoMiniImproveCountermeasure
+12	ERROR_PRROF	TYPE	COMMON	8	Error Prrof	/Qms/InfoMiniErrorProof
+13	LPA_MEASURE	TYPE	COMMON	8	LPA 대책서	/Qms/InfoMiniLpaMeasure
+14	QUICK_RESPONSE_CHECK	TYPE	COMMON	9	유효성 검증	/Qms/InfoMiniQuickValidation
+15	STANDARD_FOLLOW	TYPE	COMMON	9	표준 F/U	/Qms/InfoMiniStandardFollowUp
+16	WORKER_EDU	TYPE	COMMON	10	작업자 교육	/Qms/InfoMiniWorkerEducation
+
+21-01-18
+shkim
+
+T_BPOLICY_AUTH 권한추가 - 추가, 적용완료
+102	16	1	ROLE	Relation	연결	SYSTEM	NULL
+
+T_BPOLICY 수정 - 추가, 적용완료
+127	ISSUE_TASK	BeforeCompleted	127	완료진행중	NULL	Pms.Trigger.IssueTrigger:CheckIssuePromote	4	NULL	NULL	P:129,R:126
+
+21-01-19
+shkim
+T_BSUB_MENU 수정 - 추가, 적용완료
+19	4	ECO 검색	NULL	1	/ChangeOrder/SearchReleaseChangeOrder	1
+
+T_BPOLICY_AUTH 권한삭제 - 추가, 적용완료
+43	121	NULL	OWNER	View	보기	SYSTEM	NULL
+44	121	NULL	OWNER	Modify	수정	SYSTEM	NULL
+45	121	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+46	121	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+47	121	NULL	OWNER	Promote	진행	SYSTEM	NULL
+48	121	NULL	OWNER	Relation	연결	SYSTEM	NULL
+49	122	NULL	OWNER	View	보기	SYSTEM	NULL
+50	122	NULL	OWNER	Modify	수정	SYSTEM	NULL
+51	122	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+52	122	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+53	122	NULL	OWNER	Relation	연결	SYSTEM	NULL
+90	122	NULL	OWNER	Promote	진행	SYSTEM	NULL
+
+T_BPOLICY_AUTH 권한추가  - 추가, 적용완료
+103	38	NULL	PUBLIC	View	보기	SYSTEM	NULL
+104	121	NULL	OWNER	View	보기	SYSTEM	NULL
+105	121	NULL	OWNER	Modify	수정	SYSTEM	NULL
+106	121	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+107	121	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+108	121	NULL	OWNER	Promote	진행	SYSTEM	NULL
+109	121	NULL	OWNER	Relation	연결	SYSTEM	NULL
+110	139	NULL	OWNER	View	보기	SYSTEM	NULL
+111	139	NULL	OWNER	Modify	수정	SYSTEM	NULL
+112	139	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+113	139	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+114	139	NULL	OWNER	Promote	진행	SYSTEM	NULL
+115	139	NULL	OWNER	Relation	연결	SYSTEM	NULL
+116	122	NULL	OWNER	View	보기	SYSTEM	NULL
+117	122	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+118	122	NULL	MANAGER	Promote	진행	SYSTEM	NULL
+119	122	NULL	MANAGER	Modify	수정	SYSTEM	NULL
+120	140	NULL	OWNER	Promote	진행	SYSTEM	NULL
+121	140	1	ROLE	Promote	진행	SYSTEM	NULL
+122	140	NULL	OWNER	View	보기	SYSTEM	NULL
+123	140	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+124	123	NULL	OWNER	View	보기	SYSTEM	NULL
+125	123	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+
+
+T_BPOLICY 수정 - 추가, 적용완료
+121	ISSUE_PROJECT	Prepare	121	등록	NULL	NULL	1	NULL	NULL	P:139
+122	ISSUE_PROJECT	Started	122	처리중	NULL	NULL	3	NULL	NULL	P:140	
+123	ISSUE_PROJECT	Completed	123	완료	NULL	NULL	6	NULL	NULL	NULL										
+139	ISSUE_PROJECT	BeforeStarted	139	처리대기중	NULL	NULL	2	NULL	NULL	P:122
+140	ISSUE_PROJECT	BeforeCompleted	140	완료진행중	NULL	Pms.Trigger.IssueTrigger:CheckIssuePromote	4	NULL	NULL	P:123,R:122
+141	ISSUE_PROJECT	Reject	141	반려	NULL	NULL	5	NULL	NULL	NULL
+
+cskim
+T_BSUB_MENU 수정
+13	3	E-BOM 검색	NULL	3	/EBom/SearchReleaseEPart	1
+
+ihjung
+T_BPOLICY 수정
+3	PROJECT	Paused	3	Pms.Trigger.ProjectTrigger:CheckStartedProjectPromote	- 추가, 적용완료
+
+
+210121
+ihjung  - 적용완료
+
+27	APPROVAL	Started	27  Action -> ,Common.Trigger.ApprovalTrigger:ActionApprovalCompletedMailPromote 추가
+30	APPROVAL_TASK	Prepare	30	Action ->	Common.Trigger.ApprovalTrigger:ActionApprvalTaskStartedMailPromote 추가
+31	APPROVAL_TASK	Started	31	Action ->	Common.Trigger.ApprovalTrigger:ActionApprovalTaskCompletedMailPromote 추가
+
+210125
+shkim
+T_BSUB_MENU 수정  - 적용완료
+27	5	문서 검색	NULL	2	/Document/SearchReleaseDocument	1						
+29	5	작성/반려 문서	NULL	4	/Document/SearchDocument	1
+
+T_BPOLICY_AUTH 권한추가  - 추가  - 적용완료
+126	49	NULL	OWNER	View	보기	SYSTEM	NULL
+127	50	NULL	PUBLIC	View	보기	SYSTEM	NULL
+
+
+210127  - 적용완료
+T_BPOLICY_AUTH 변경요청 및 부품 권한 추가 cskim 
+128	35	NULL	OWNER	View	보기	SYSTEM	NULL
+129	35	NULL	OWNER	Modify	수정	SYSTEM	NULL
+130	35	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+131	35	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+132	35	NULL	OWNER	Promote	진행	SYSTEM	NULL
+133	35	NULL	OWNER	Relation	연결	SYSTEM	NULL
+134	39	NULL	OWNER	View	보기	SYSTEM	NULL
+135	39	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+136	40	NULL	OWNER	View	보기	SYSTEM	NULL
+137	40	NULL	OWNER	Modify	수정	SYSTEM	NULL
+138	40	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+139	40	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+140	40	NULL	OWNER	Promote	진행	SYSTEM	NULL
+141	40	NULL	OWNER	Relation	연결	SYSTEM	NULL
+142	41	NULL	OWNER	View	보기	SYSTEM	NULL
+143	41	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+144	41	NULL	PUBLIC	View	보기	SYSTEM	NULL
+145	7	NULL	OWNER	View	보기	SYSTEM	NULL
+146	7	NULL	OWNER	Modify	수정	SYSTEM	NULL
+147	7	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+148	7	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+149	7	NULL	OWNER	Promote	진행	SYSTEM	NULL
+150	7	NULL	OWNER	Relation	연결	SYSTEM	NULL
+151	43	NULL	OWNER	View	보기	SYSTEM	NULL
+152	43	NULL	OWNER	Modify	수정	SYSTEM	NULL
+153	43	NULL	OWNER	Delete	삭제	SYSTEM	NULL
+154	43	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+155	43	NULL	OWNER	Promote	진행	SYSTEM	NULL
+156	43	NULL	OWNER	Relation	연결	SYSTEM	NULL
+157	44	NULL	OWNER	View	보기	SYSTEM	NULL
+158	44	NULL	OWNER	Download	다운로드	SYSTEM	NULL
+159	44	NULL	PUBLIC	View	보기	SYSTEM	NULL
+
+210127 ihjung  - 적용완료
+17	CFT	ROLE	PMS	0	CFT장	NULL
+
+T_BPOLICY_AUTH
+OID	PolicyOID	AuthTargetOID	AuthTargetDiv	AuthNm	AuthTitle	AuthDiv	AuthObjectOID
+160	2	17	ROLE	View	보기	SYSTEM	NULL
+161	3	17	ROLE	View	보기	SYSTEM	NULL
+162	4	17	ROLE	VIew	보기	SYSTEM	NULL
+
+
+210127 cskim T_BDEFINE  - 적용완료
+18	CHANGE_REQUEST	TYPE	COMMON	14	변경 요청	ChangeRequest/InfoMiniChangeRequest
+
+T_BSUB_MENU  - 적용완료
+OID	MenuOID	Name	Description	Ord	Link	IsUse
+22	4	ECR 검색	NULL	4	/ChangeRequest/SearchReleaseChangeRequest	1
+

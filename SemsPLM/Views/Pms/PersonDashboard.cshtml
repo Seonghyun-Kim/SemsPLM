@@ -4,7 +4,7 @@
 <div class="dashboardTop clearfix">
     <div>
         <p>내 작업<span>@ViewBag.PmMyTask</span></p>
-        <p style="color:#f00;" id="spPmDelayTask">내 지연작업<span>0</span></p>
+        <p style="color:#f00;">내 지연작업<span>@ViewBag.PmMyDelayTask</span></p>
         <button class="btnPsClick" data-info="PmDashboardMyTask" data-title="내 작업">+</button>
     </div>
     <div>
@@ -37,7 +37,7 @@
         <div class="piechart">
             <div class="graphH">
                 프로젝트별 작업진행 상태
-                <div class="dashboardSelBox"></div>
+                <div class="dashboardSelBox" id="totalTaskForChartSelBox"></div>
             </div>
             <div class="chartTotal">작업 총
                 <div id="totalTaskForChart"></div>
@@ -51,7 +51,7 @@
                     <li data="DV">DV현황</li>
                     <li data="PV">PV현황</li>
                 </ul>
-                <div class="dashboardSelBox"></div>
+                <div class="dashboardSelBox" id="totalIssueForChartSelBox"></div>
             </div>
             <div class="chartTotal">이슈 총
                 <div id="totalIssueForChart"></div>    
@@ -95,11 +95,13 @@
         </div>
     </div>
     <script type="text/javascript">
-        var carType;
-        var item;
-        var project;
+        var peCarType;
+        var peItem;
+        var peProject;
+        var totalIssueForChartParam = {};
+        totalIssueForChartParam.Type = 'issue';
         $(function () {
-
+            
             var projList =  @Html.Raw(Json.Encode(ViewBag.PmMyProjectInfo));
             projList.unshift({ 'OID': '', 'Name': '' });
             var dashboardProjSource =
@@ -115,8 +117,15 @@
             var dashboardProjAdapter = new $.jqx.dataAdapter(dashboardProjSource);
             $('.dashboardSelBox').jqxComboBox({ width: 120, height: 32, });
             $('.dashboardSelBox').jqxComboBox({ source: dashboardProjAdapter, displayMember: "Name", valueMember: "OID" });
-
+            $('.dashboardSelBox').find('input, textarea, select').attr('disabled', 'disabled');
             //차트
+            $('#totalTaskForChartSelBox').on('change', function () {
+               callProjectTask($('#totalTaskForChartSelBox').val());
+            });
+            $('#totalIssueForChartSelBox').on('change', function () {
+                totalIssueForChartParam.OID = $('#totalIssueForChartSelBox').val();
+                callIssueDVPV(totalIssueForChartParam);
+            });
 
             //이슈DVPV구분
             $('.issueDVPVLabel').find('[data="issue"]').addClass('activeLabel');
@@ -126,8 +135,9 @@
             });
 
             $('#piechart_label > li').click(function () {
-                var type=$(this).attr('data');
-                callIssueDVPV(type);
+                var type = $(this).attr('data');
+                totalIssueForChartParam.Type = type;
+                callIssueDVPV(totalIssueForChartParam);
             });
 
             $('#barchart_label > li').click(function () {
@@ -137,7 +147,7 @@
 
             //프로젝트별 작업진행 상태 donutchart
             var taskRatePersonData = [0,0,0,0];
-            var taskRatePersonLabels = ['완료', '지연', '준비', '진행'];
+            var taskRatePersonLabels = ['준비', '진행', '지연', '완료'];
             var taskRatePersonDonutSetting = {
                 series: taskRatePersonData,
                 chart: {
@@ -149,7 +159,8 @@
                     horizontalAlign: 'center',
                     floating: false,
                 },
-                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
+                colors: ['#d9d9d9', '#00f','#f00','#9f9'],
+                //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
                 labels:taskRatePersonLabels,
                 responsive: [{
                     breakpoint: 480,
@@ -159,11 +170,13 @@
             taskRatePersonDonut.render();
 
             function callProjectTask(param) {
-                RequestData('/Pms/CallProjectTask', param, function (res) {
+                RequestData('/Pms/CallProjectTask', {OID:param}, function (res) {
                     taskRatePersonData = res;
                     taskRatePersonDonut.updateSeries(res);
                     const totalTaskBox$ = $('#totalTaskForChart');
-                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    const reducer = function (accumulator, currentValue) {
+                        return accumulator + currentValue;
+                    }
 
                     totalTaskBox$.empty();
                     var donutTaskTotal = taskRatePersonData.reduce(reducer);
@@ -173,7 +186,7 @@
                 
             //이슈,DV,PV donutchart
             var issuePersonData = [0,0,0];
-            var issuePersonLabels = ['진행', '완료', '지연'];
+            var issuePersonLabels = ['진행', '지연', '완료'];
 
             var issuePersonDonutSetting = {
                 series: issuePersonData,
@@ -187,7 +200,8 @@
                     horizontalAlign: 'center',
                     floating: false,
                 },
-                colors: ['rgb(0,227,150)', 'rgb(0,143,251)', 'rgb(244,67,54)'],
+                colors: ['#00f','#f00','#9f9'],
+                //colors: ['rgb(0,227,150)', 'rgb(0,143,251)', 'rgb(244,67,54)'],
                 responsive: [{
                     breakpoint: 480,
                 }]
@@ -196,12 +210,14 @@
             issuePersonDonut.render();
 
             function callIssueDVPV(param) {
-                RequestData('/Pms/CallIssueDVPV', { _Type: param }, function (res) {
+                RequestData('/Pms/CallIssueDVPV',param, function (res) {
                     issuePersonData = res;
                     issuePersonDonut.updateSeries(res);
                   
                     const totalIssueBox$ = $('#totalIssueForChart');
-                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    const reducer = function (accumulator, currentValue) {
+                        return accumulator + currentValue;
+                    }
                     totalIssueBox$.empty();
                     var donutIssueTotal = issuePersonData.reduce(reducer);
                     totalIssueBox$.append(donutIssueTotal);
@@ -234,7 +250,8 @@
                         autoSelected: 'pan'
                     }
                 },
-                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
+                colors: ['#d9d9d9', '#00f', '#f00', '#9f9'],
+                //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
                 plotOptions: {
                     bar: {
                         horizontal: false,
@@ -246,7 +263,13 @@
                 },
                 xaxis: {
                     categories:dsbdPersonTaskList,
-                    tickPlacement:'on',
+                    tickPlacement: 'on',
+                    labels: {
+                        show: true,
+                        rotate: 0,
+                        rotateAlways: false,
+                        hideOverlappingLabels: true,
+                    }
                 },
                 legend: {
                     show: true,
@@ -281,7 +304,10 @@
                     dsbdPersonTaskChart.updateSeries(dsbdPersonTaskChartSample);
 
                     const totalTaskSpan$ = $('#totalTasks');
-                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    const reducer = function (accumulator, currentValue) {
+                        return accumulator + currentValue;
+                    }
+
                     var barTaskDataArr = [];
                     dsbdPersonTaskChartSample.forEach(function (e) {
                         barTaskDataArr.push(e.data.reduce(reducer));
@@ -317,7 +343,8 @@
                         autoSelected: 'pan'
                     }
                 },
-                colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
+                colors:['#00f', '#f00', '#9f9'],
+                //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
                 plotOptions: {
                     bar: {
                         horizontal: false,
@@ -330,6 +357,12 @@
                 xaxis: {
                     categories: dsbdPersonIssueChartList,
                     tickPlacement:'on',
+                    labels: {
+                        show: true,
+                        rotate: 0,
+                        rotateAlways: false,
+                        hideOverlappingLabels: true,
+                    }
                 },
                 legend: {
                     show: true,
@@ -365,7 +398,9 @@
                     dsbdPersonIssueChart.updateSeries(dsbdPersonIssueChartSample);
 
                     const totalIssueSpan$ = $('#totalIssues');
-                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                    const reducer = function (accumulator, currentValue) {
+                        return accumulator + currentValue;
+                    }
                     totalIssueSpan$.empty();
                     var barIssueDataArr = [];
                     dsbdPersonIssueChartSample.forEach(function (e) {
@@ -379,7 +414,7 @@
 
             //예정작업, 상세지연현황
             var taskPersonSource = {
-                datatype: 'json',
+                datatype: 'array',
                 dafafields: [
                     { name: 'OID', type: 'number' },
                     { name: 'Name', type: 'string' },
@@ -389,6 +424,9 @@
                     { name: 'EstStartDt', type: 'date' },
                     { name: 'EstEndDt', type: 'date' },
                     { name: 'Delay', type: 'number' },
+                    { name: 'Car_Lib_OID', type: 'number' },
+                    { name: 'RootOID', type: 'number' },
+                    { name: 'ITEM_No', type: 'number' },
                 ],
             }
 
@@ -440,23 +478,68 @@
                 rendertoolbar: function (statusbar) {
                     statusbar.empty();
                     var container = $("<div class='lGridComponent'></div>");
-                     carType = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                     item = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                     project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                    var delay = $("<input type='text' placeholder='지연일수'>");
+                     peCarType = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                     peItem = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                    peProject = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                    peCarType.find('input, textarea, select').attr('disabled', 'disabled');
+                    peItem.find('input, textarea, select').attr('disabled', 'disabled');
+                    peProject.find('input, textarea, select').attr('disabled', 'disabled');
+                    var delay = $("<input type='number' placeholder='지연일수'>");
                     var btnSearch = $("<button class='custom-button'><i class='fas fa-search'></i> 검색</button>");
                     var btnExport = $("<button class='custom-button'>Excel Export</button>");
-                    container.append(carType);
-                    container.append(item);
+                    container.append(peCarType);
+                    container.append(peItem);
                     container.append(delay);
-                    container.append(project);
+                    container.append(peProject);
                     container.append(btnSearch);
                     container.append(btnExport);
                     statusbar.append(container);
+                    btnSearch.on('click', function () {
+                        $('#personalDelayList').jqxGrid('clearfilters');
+                        var selCar = peCarType.val();
+                        var selItem = peItem.val();
+                        var selProj = peProject.val();
+                        var selDelay = delay.val();
+                        var filtertype = 'numericfilter';
+                        var filtergroup = new $.jqx.filter();
+                        var filtercondition = 'equal';
+                        var filter_or_operator = 1;
+                        if (selCar != "" && selCar != null) {
+                            var filter1 = filtergroup.createfilter(filtertype, selCar, filtercondition);
+                            filtergroup.addfilter(filter_or_operator, filter1);
+                            $("#personalDelayList").jqxGrid('addfilter', 'Car_Lib_OID', filtergroup);
+                        }
+                        if (selItem != "" && selItem != null) {
+                            var filter2 = filtergroup.createfilter(filtertype, selItem, filtercondition);
+                            filtergroup.addfilter(filter_or_operator, filter2);
+                            $("#personalDelayList").jqxGrid('addfilter', 'ITEM_No', filtergroup);
+                        }
+                        if (selProj != "" && selProj != null) {
+                            var filter3 = filtergroup.createfilter(filtertype, selProj, filtercondition);
+                            filtergroup.addfilter(filter_or_operator, filter3);
+                            $("#personalDelayList").jqxGrid('addfilter', 'RootOID', filtergroup);
+                        }
+                        if (selDelay != "" && selDelay != null) {
+                            var filter4 = filtergroup.createfilter(filtertype, selDelay, 'LESS_THAN_OR_EQUAL');
+                            filtergroup.addfilter(filter_or_operator, filter4);
+                            $("#personalDelayList").jqxGrid('addfilter', 'Delay', filtergroup);
+                        }
+                        $("#personalDelayList").jqxGrid('applyfilters');
+                    });
+                    btnExport.on('click', function () {
+                        var rows = $("#personalDelayList").jqxGrid('getrows');
+                        for (var i = 0; i < rows.length; i++) {
+                            rows[i].NO = i + 1;
+                            rows[i].EstStartDt = moment(rows[i].EstStartDt).format('YYYY-MM-DD');
+                            rows[i].EstEndDt = moment(rows[i].EstEndDt).format('YYYY-MM-DD');   
+                        }
+                        console.log(rows);
+                        $("#personalDelayList").jqxGrid('exportdata', 'xls','상세지연현황',true,rows);
+                    });
                 },
                 columns: [
                     {
-                        text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        text: 'NO', width: "5%", cellsalign: 'center', datafield: 'NO', columntype: 'number', align: 'center',
                         cellsrenderer: function (row, column, value) {
                             return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                         }
@@ -483,6 +566,9 @@
                         }
                     },
                     { text: '지연일수', width: '10%', datafield: 'Delay', align: 'center', cellsalign: 'center', },
+                    { text: '차', width: '10%', datafield: 'Car_Lib_OID', align: 'center', cellsalign: 'center', hidden: true, },
+                    { text: '프로젝트', width: '10%', datafield: 'RootOID', align: 'center', cellsalign: 'center', hidden: true, },
+                    { text: 'item', width: '10%', datafield: 'ITEM_No', align: 'center', cellsalign: 'center', hidden: true, },
                 ],
             });
 
@@ -502,7 +588,7 @@
                         ]
                 };
                 var carAdapter = new $.jqx.dataAdapter(carSource);
-                carType.jqxComboBox({ source: carAdapter, displayMember: "Name", valueMember: "OID" });
+                peCarType.jqxComboBox({ source: carAdapter, displayMember: "Name", valueMember: "OID" });
                 var itemSource =
                 {
                     localdata: res.itemList,
@@ -514,7 +600,7 @@
                         ]
                 };
                 var itemAdapter = new $.jqx.dataAdapter(itemSource);
-                item.jqxComboBox({ source: itemAdapter, displayMember: "Name", valueMember: "OID" });
+                peItem.jqxComboBox({ source: itemAdapter, displayMember: "Name", valueMember: "OID" });
                 var projSource =
                 {
                     localdata: res.projList,
@@ -526,7 +612,7 @@
                         ]
                 };
                 var projAdapter = new $.jqx.dataAdapter(projSource);
-                project.jqxComboBox({ source: projAdapter, displayMember: "Name", valueMember: "OID" });
+                peProject.jqxComboBox({ source: projAdapter, displayMember: "Name", valueMember: "OID" });
 
                 PrintJqxGrid(taskPersonSource, $('#personalDelayList'), res.Result);
             });
@@ -542,7 +628,7 @@
                 }
             });
 
-            callIssueDVPV('issue');
+            callIssueDVPV(totalIssueForChartParam);
             callProjectIssueDVPV('issue');
             callProjectTask(null);
             callProjectTaskInfo();

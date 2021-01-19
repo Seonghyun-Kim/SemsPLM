@@ -295,7 +295,7 @@ namespace SemsPLM.Controllers
             ViewBag.ItemList = ItemList;
 
             ViewBag.Status = from x in BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE })
-                             where x.Name != "Disposal" 
+                             where x.Name != "Disposal"
                              select x;
 
             return View();
@@ -326,7 +326,7 @@ namespace SemsPLM.Controllers
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
 
-            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE"});
+            Library occurrenceKey = LibraryRepository.SelLibraryObject(new Library { Name = "OCCURRENCE_TYPE" });
             List<Library> occurrenceList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceKey.OID, IsUse = "Y" });  // 발생유형
             ViewBag.occurrenceList = occurrenceList;
 
@@ -1063,7 +1063,7 @@ namespace SemsPLM.Controllers
                 string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
                 string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
                 string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "/" + OID;
-                
+
                 string fileFullDirectory = Path.Combine(StoragePath, imgVaulePath, SavePath, fileName);
 
                 FileInfo fi = new FileInfo(fileFullDirectory);
@@ -1311,7 +1311,7 @@ namespace SemsPLM.Controllers
                 int iRow = 21;
                 #region -- 봉쇄조치
                 int StartModuleRow = 21;
-                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "봉쇄조치");               
+                PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "봉쇄조치");
 
                 iRow = ApprovPrint(ws, BlockadeApprvalData, iRow + 2);
 
@@ -1328,7 +1328,7 @@ namespace SemsPLM.Controllers
                 PrintExcelCell(ws.Cells[iRow, 18, iRow, 19], "TH", "담당자");
                 PrintExcelCell(ws.Cells[iRow, 20, iRow, 24], "TH", "기한");
                 iRow++;
-           
+
                 BlockadeItems.ForEach(v =>
                 {
                     PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", v.Name);
@@ -1341,7 +1341,7 @@ namespace SemsPLM.Controllers
 
                     iRow = iRow + 2;
                 });
-                
+
                 ws.Cells[StartBlockadeItemRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                 iRow++;
@@ -1361,7 +1361,7 @@ namespace SemsPLM.Controllers
                 PrintExcelCell(ws.Cells[iRow, 18, iRow + 1, 24], "TH", "비고");
                 iRow = iRow + 2;
 
-               
+
                 BlockadeItems.ForEach(v =>
                 {
                     PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", v.Name);
@@ -1376,8 +1376,8 @@ namespace SemsPLM.Controllers
                     iRow = iRow + 2;
                 });
 
-                ws.Cells[StartCorrectiveActionRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);   
-                
+                ws.Cells[StartCorrectiveActionRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
                 ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 #endregion
                 iRow = iRow + 2;
@@ -1396,10 +1396,10 @@ namespace SemsPLM.Controllers
                 PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "발생원인");
                 PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TH", "발생원인내역");
                 iRow++;
-                             
+
                 OccurrenceCauseItems.ForEach(v =>
                 {
-                    if(v.OccurrenceWhys.Count() == 0) { return; }
+                    if (v.OccurrenceWhys.Count() == 0) { return; }
 
                     PrintExcelCell(ws.Cells[iRow, 3, iRow + v.OccurrenceWhys.Count() - 1, 5], "TH", v.OccurrenceCauseLibText);
 
@@ -1417,7 +1417,7 @@ namespace SemsPLM.Controllers
                 ws.Cells[StartOccurrenceCauseRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                 iRow++;
-              
+
                 // 검출대책
                 PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "검출대책");
                 iRow++;
@@ -1491,7 +1491,7 @@ namespace SemsPLM.Controllers
 
                 ImproveCounterMeasureItems.ForEach(v =>
                 {
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 11], "TD",  v.RootCause);
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 11], "TD", v.RootCause);
                     PrintExcelCell(ws.Cells[iRow, 12, iRow, 21], "TD", v.ImproveCountermeasure);
                     PrintExcelCell(ws.Cells[iRow, 22, iRow, 24], "TD", v.ProcessDt == null ? "" : ((DateTime)v.ProcessDt).ToString("yyyy-MM-dd"));
                     iRow++;
@@ -1504,7 +1504,7 @@ namespace SemsPLM.Controllers
                 iRow = iRow + 2;
 
                 #region -- Error Prrof
-                if(ErrorProofFl == 1)
+                if (ErrorProofFl == 1)
                 {
                     StartModuleRow = iRow;
                     PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "Error Prrof");
@@ -1537,7 +1537,7 @@ namespace SemsPLM.Controllers
                 iRow = iRow + 2;
 
                 #region -- LPA
-                if(LpaUnfitFl == 1)
+                if (LpaUnfitFl == 1)
                 {
                     StartModuleRow = iRow;
                     PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 부적합현황");
@@ -1577,7 +1577,7 @@ namespace SemsPLM.Controllers
                     iRow++;
 
                     int LpaUnfitCheckItemCount = LpaUnfitCheck.Count();
-                    if(LpaUnfitCheckItemCount == 0)
+                    if (LpaUnfitCheckItemCount == 0)
                     {
                         PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "지적사항");
                         PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", "");
@@ -1649,7 +1649,7 @@ namespace SemsPLM.Controllers
                 iRow = iRow + 2;
 
                 #region -- 유효성검증
-                if(QmsCheckFl == 1)
+                if (QmsCheckFl == 1)
                 {
                     StartModuleRow = iRow;
                     PrintExcelCell(ws.Cells[iRow, 2, iRow, 5], "MODULE", "유효성 검증");
@@ -1745,7 +1745,7 @@ namespace SemsPLM.Controllers
                 iRow = iRow + 2;
 
                 #region -- 표준화 F/U
-                if(StandardDocFl == 1)
+                if (StandardDocFl == 1)
                 {
                     StartModuleRow = iRow;
                     PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "표준화 F/U");
@@ -1764,13 +1764,13 @@ namespace SemsPLM.Controllers
 
                     ws.Cells[StartStandardRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                     ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
-                }                
+                }
                 #endregion
 
                 iRow = iRow + 2;
 
                 #region -- 사용자교육
-                if(WorkerEduFl == 1)
+                if (WorkerEduFl == 1)
                 {
                     StartModuleRow = iRow;
                     PrintExcelCell(ws.Cells[iRow, 2, iRow, 4], "MODULE", "사용자 교육");
@@ -1818,16 +1818,16 @@ namespace SemsPLM.Controllers
             }
         }
 
-        private int ApprovPrint (ExcelWorksheet ws, Approval approv, int iRow)
+        private int ApprovPrint(ExcelWorksheet ws, Approval approv, int iRow)
         {
-            if(approv == null) { return iRow; }
+            if (approv == null) { return iRow; }
             int AppvCol = 23;
             ws.Row(iRow - 1).Height = 2.3;
             List<ApprovalStep> approvalSteps = approv.InboxStep.OrderByDescending(d => d.OID).ToList<ApprovalStep>();
 
             approvalSteps.ForEach(v =>
             {
-                if( AppvCol == 2) { return; }
+                if (AppvCol == 2) { return; }
                 if (v.ApprovalType == Common.Constant.CommonConstant.TYPE_APPROVAL_DIST) { return; }
 
                 ApprovalTask TaskData = v.InboxTask[0];
@@ -1857,7 +1857,7 @@ namespace SemsPLM.Controllers
 
             return iRow + 3;
         }
-            
+
 
         private void PrintExcelCell(ExcelRange range, string Type, string Text)
         {
@@ -1872,7 +1872,7 @@ namespace SemsPLM.Controllers
                 range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
             }
-            else if(Type == "VALUE")
+            else if (Type == "VALUE")
             {
                 range.Style.Font.Size = 9;
                 range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);

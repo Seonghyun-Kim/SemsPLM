@@ -316,7 +316,7 @@
                                 if (('@ViewBag.ProjectDetail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
                                     && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
                                     gPmsModifyHistoryMaster[OID] = { obj: procWbsInfo$, data: processDatas, source: source };
-                                    return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + OID + ")'><i class='fas fa-caret-right'></i> 시작</button>";
+                                    return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fInTaskStart(this, " + ProjectOID + ", " + OID + ")'><i class='fas fa-caret-right'></i> 시작</button>";
                                 }
 
                                 if (cellText == null || cellText == undefined || cellText.length < 1) {
@@ -373,8 +373,8 @@
                         { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
                     ],
                     columnGroups: [
-                        { text: '예상', name: 'Estimated' },
-                        { text: '실제', name: 'Actual' },
+                        { text: '예상', name: 'Estimated', align: "center" },
+                        { text: '실제', name: 'Actual', align: "center" },
                         { text: 'Dependency', name: 'Dependency' },
                     ],
                     showToolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1),
@@ -560,7 +560,7 @@
                                             gPmsModifyDeliveryMaster[row] = { source: deliveriesSource, obj$: deliveriesGrd$ };
                                             btnAddAction = "<img src= '/Images/doc_add.png' alt='생성' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectInfoDoc(" + row + ")'>"
                                             if (rowData.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT") {
-                                                btnSearchAction = "<img src= '/Images/search.png' alt='신뢰성 결과서 추가' style='border:0px;width:17px;cursor:pointer;' onclick='ProjectSearchDoc(" + row + ")'>"
+                                                btnSearchAction = "<img src= '/Images/search.png' alt='신뢰성 결과서 추가' style='border:0px;width:17px;cursor:pointer;' onclick='ProcessSearchDoc(" + row + ")'>"
                                                 return "<div>" + btnSearchAction + "</div>";
                                             }
                                             return "<div>" + btnAddAction + "</div>";
@@ -574,7 +574,7 @@
                         { text: '생성일', width: "8%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
                         { text: '생성자', width: "8%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
                     ],
-                    showtoolbar:@Json.Encode((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    showtoolbar:@Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -800,6 +800,11 @@
                                 alert("선택이 되지 않았습니다.");
                                 return;
                             }
+                            if (delItem[0].CreateUS == '@Session["UserOID"]') {
+                            } else {
+                                alert('권한이 없습니다.');
+                                return;
+                            }
                             delparam.OID = delItem[0].OID;
                             if (confirm('삭제 하시겠습니까?')) {
                                 RequestData("/Pms/DelIssue", delparam, function (res) {
@@ -914,17 +919,17 @@
         }
     }
 
-    function ProjectSearchDoc(_rowData) {
+    function ProcessSearchDoc(_rowData) {
         var row$ = gPmsModifyDeliveryMaster[_rowData];
         var param = {};
         var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
         param.DocType = row.ToOID;
         param.DocType_KorNm = row.DocClassNm;
         param.RootOID = row.RootOID;
+        param.FromOID = row.ToOID;
         if (param.RootOID != param.FromOID) {
             param.TaskOID = row.FromOID;
         }
-        param.FromOID = row.ToOID;
 
         OpenSearchReliabilityReportDialog(function () {
             RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID, FromOID: @ViewBag.OID }, function (res) {

@@ -35,6 +35,7 @@ namespace ChangeRequest.Models
         public DateTime? EBom { get; set; }
         public string DevMP { get; set; }
         public string CarType { get; set; }
+        public string Status { get; set; }
 
         public string DevMPNm
         {
@@ -233,28 +234,55 @@ namespace ChangeRequest.Models
     }
     public static class ECRRepository
     {
-        public static List<ECR> SelChangeRequest(ECR _param)
+        public static List<ECR> SelChangeRequest(HttpSessionStateBase Context, ECR _param)
         {
             _param.Type = EoConstant.TYPE_CHANGE_REQUEST;
             List<ECR> lECR = DaoFactory.GetList<ECR>("ChangeRequest.SelChangeRequest", _param);
+            List<ECR> ViewEPart = new List<ECR>();
+
             lECR.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
 
                 if (obj.ReasonChangeRequest != null)
                 {
-                    obj.ReasonChangeRequestNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ReasonChangeRequest }).KorNm;
+                    obj.ReasonChangeRequestNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.ReasonChangeRequest }).KorNm;
+                }
+
+                if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+                {
+                    if(_param.Status != null)
+                    {
+                        if(obj.BPolicy.Name == EoConstant.POLICY_EO_COMPLETED)
+                        {
+                            ViewEPart.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        if (obj.BPolicy.Name != EoConstant.POLICY_EO_COMPLETED)
+                        {
+                            ViewEPart.Add(obj);
+                        }
+                    }
                 }
             });
-            return lECR;
+            return ViewEPart;
         }
-        public static ECR SelChangeRequestObject(ECR _param)
+        public static ECR SelChangeRequestObject(HttpSessionStateBase Context, ECR _param)
         {
             _param.Type = EoConstant.TYPE_CHANGE_REQUEST;
             ECR lECR = DaoFactory.GetData<ECR>("ChangeRequest.SelChangeRequest", _param);
+
+            lECR.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lECR.Type, OID = lECR.BPolicyOID }).First();
+            lECR.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lECR.CreateUs }).Name;
+            lECR.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lECR, null);
+
             if (lECR.ReasonChangeRequest != null)
             {
-                lECR.ReasonChangeRequestNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lECR.ReasonChangeRequest }).KorNm;
+                lECR.ReasonChangeRequestNm = LibraryRepository.SelLibraryObject(new Library { OID = lECR.ReasonChangeRequest }).KorNm;
             }
             return lECR;
         }

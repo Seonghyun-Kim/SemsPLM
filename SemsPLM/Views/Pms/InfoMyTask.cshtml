@@ -162,23 +162,27 @@
                 <div class='kanban-legend'>
                     <ul>
                         <li>
-                            <div style="background:#ddd;" class="legend-color"></div>
-                            <span>준비</span>
+                            <div style="background:#d9d9d9;" class="legend-color"></div>
+                            <!--준비-->
+                            <span>계획</span>
                         </li>
                         <li>
-                            <div style="background:#5dc3f0;" class="legend-color"></div>
-                            <span>시작</span>
+                            <div style="background:#00f;" class="legend-color"></div>
+                            <!--시작-->
+                            <span>진행</span>
                         </li>
                         <li>
-                            <div style="background:@Common.Constant.PmsConstant.WARNING_COLOR;" class="legend-color"></div>
+                            <div style="background:#f00;" class="legend-color"></div>
+                            <!--초과@Common.Constant.PmsConstant.DELAY_COLOR-->
                             <span>지연</span>
                         </li>
                         <li>
-                            <div style="background:@Common.Constant.PmsConstant.DELAY_COLOR;" class="legend-color"></div>
-                            <span>초과</span>
+                            <div style="background:#ff9;" class="legend-color"></div>
+                            <!--지연@Common.Constant.PmsConstant.WARNING_COLOR-->
+                            <span>지연완료</span>
                         </li>
                         <li>
-                            <div style="background:#6bbd49;" class="legend-color"></div>
+                            <div style="background:#9f9;" class="legend-color"></div>
                             <span>완료</span>
                         </li>
                     </ul>
@@ -217,7 +221,7 @@
             {
                 root: 'Children',
             },
-            id: 'ProjectOID',
+            id: 'OID',
         };
         var projClassdataAdapter = new $.jqx.dataAdapter(projClassSource);
         // create Tree Grid
@@ -240,7 +244,21 @@
             }
         });
         projClassInfo$.jqxTreeGrid('pagerRenderer');
+        projClassInfo$.on('rowSelect',
+            function (event) {
+                var args = event.args;
+                var row = args.row;
+                selProjectOID = row.OID;
 
+                RequestData("/Pms/SelMyTask", { ProjectOID: selProjectOID }, function (res) {
+                    if (res.length < 1) {
+                        res = sample;
+                    }
+                    PrintJqxKanban(kanbanSource, projKanban$, res);
+                });
+
+            });
+       
         var kanbanSource =
         {
             localData: sample,
@@ -348,5 +366,7 @@
             }
             PrintJqxKanban(kanbanSource, projKanban$, res);
         });
+
+        alert('타스크 클릭 후 업무를 진행해주세요');
     });
 </script>

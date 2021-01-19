@@ -85,6 +85,9 @@
         <isNotNull prepend="and" property="Type">
           A.Type = #Type#
         </isNotNull>
+        <isNotNull prepend="and" property="BPolicyOID">
+          A.BPolicyOID = #BPolicyOID#
+        </isNotNull>
         <isNotNull prepend="and" property="OID">
           A.OID = #OID#
         </isNotNull>
@@ -118,7 +121,7 @@
       <dynamic prepend="SET" close=" ">
         <isNotNull prepend="," property="ProjectGrade">
           ProjectGrade = #ProjectGrade#
-        </isNotNull>
+        </isNotNull>   
         <isNotNull prepend="," property="Customer_OID">
           Customer_OID = #Customer_OID#
         </isNotNull>
@@ -676,8 +679,8 @@
         <isNotNull prepend="," property="IsApprovalRequired">
           IsApprovalRequired = #IsApprovalRequired#
         </isNotNull>
-        WHERE OID = #OID#
       </dynamic>
+      WHERE OID = #OID#
     </update>
 
 

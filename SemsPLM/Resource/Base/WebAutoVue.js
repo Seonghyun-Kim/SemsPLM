@@ -1,6 +1,6 @@
 ﻿var WebAutoVue = (function () {
     function WebAutoVue() {
-        this.basedir = "http://192.168.0.38:8080/Autovue/";
+        this.basedir = "http://192.168.10.196:8080/Autovue/";
         //this.fileBaseDir = 
         this.avSamples = this.basedir + 'PlmFileStorage/';
 
@@ -46,5 +46,4 @@ WebAutoVue.prototype.getAutoVue = function () {
 
 WebAutoVue.prototype.CallAutoVue = function (linkFile) {
     this.myAvApp.setFile(this.avSamples + linkFile);
-    
 }

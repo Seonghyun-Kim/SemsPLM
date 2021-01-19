@@ -21,6 +21,7 @@
                 dataFields: [
                     //System Mandatory
                     { name: 'OID', type: 'number' },
+                    { name: 'RootOID', type: 'number' },
                     { name: 'Name', type: 'string' },
                     { name: 'ProjectNm', type: 'string' },
                     { name: 'Type', type: 'string' },
@@ -74,6 +75,30 @@
             });
              RequestData("/Pms/@ViewBag.linker", {}, function (res) {
                  PrintJqxGrid(issueSource, $('#pmMyIssueGrid'), res);
+             });
+            $('#pmMyIssueGrid').on('celldoubleclick', function (e) {
+                const row = e.args.row.bounddata;
+                var param = {};
+                param.OID = row.OID;
+                param.Type = row.Type;
+                param.ProjectNm = row.ProjectNm;
+                param.RootOID = row.RootOID;
+                param.TaskNm = row.TaskNm;
+                if (param.OID == null) {
+                    return;
+                }
+
+                if (gClickDuplication) { return; }
+                gClickDuplication = true;
+                setTimeout(function () {
+                    OpenIssueDialog(
+                        function (res) {
+                            RequestData('/Pms/SelIssue', { 'RootOID': ProjectOID }, function (res) {
+                                PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                            });
+                        }, null, param, '/Pms/InfoIssue', '이슈 상세');
+                    gClickDuplication = false;
+                }, 100);
             });
         });
     </script>

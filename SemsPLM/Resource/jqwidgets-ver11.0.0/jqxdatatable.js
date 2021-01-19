@@ -6273,6 +6273,7 @@ License: https://jqwidgets.com/license/
 							//Started Modify by ihjung
                             if (column.classname == 'datePicker') {
                                 editor.addClass('datePicker');
+                                editor.attr('data-id', row.ToOID);
                                 editor.attr('data-proj-id', row.RootOID);
                                 editor.attr('data-proj-workingday', row.WorkingDay);
                             }

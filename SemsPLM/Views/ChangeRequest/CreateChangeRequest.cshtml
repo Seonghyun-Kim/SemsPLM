@@ -237,6 +237,8 @@
             if (ecrValue == 'ECRProfile') {
 
                 $('#CreateEcrSave').on('click', function () {
+                    if (gClickDuplication) { return; }
+                    gClickDuplication = false;
                     var param = {};
 
                     param.Description = $('#CreateEcrDescription').val();
@@ -270,6 +272,26 @@
 
                     var CreateECRStatementGridData = $('#CreateECRStatementGrid').jqxGrid('getrows');
 
+                    if (param.Title == "" || param.Title == null) {
+                        alert('제목을 입력하여 주세요.');
+                        gClickDuplication = false;
+                        return;
+                    }
+                    if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
+                        alert('설계변경일자를 선택하여 주세요.');
+                        gClickDuplication = false;
+                        return;
+                    }
+                    if (param.ReasonChangeRequest == "" || param.ReasonChangeRequest == null) {
+                        alert('변경요청사유를 선택하여 주세요.');
+                        gClickDuplication = false;
+                        return;
+                    }
+                    if (param.DevMP == "" || param.DevMP == null) {
+                        alert('개발/양산 구분을 선택하여 주세요.');
+                        gClickDuplication = false;
+                        return;
+                    }
 
                     var Files = InfoFiles.Files();
                     var removeFiles = InfoFiles.RemoveFiles();
@@ -285,6 +307,8 @@
                             return;
                         }
                         alert("저장되었습니다.");
+                        gClickDuplication = false;
+                        PageReload();
                     });
 
                 });

@@ -1,7 +1,8 @@
 ﻿@{
     Layout = null;
 }
-<div style="width:100%;text-align:right;padding-right:10px;position:relative;">
+<div style="width:100%;padding-right:10px;position:relative;">
+    <input type="password" id="initPassword" value="" class="pwInput" placeholder="비밀번호"/>
     @if (ViewBag.OID != null)
     {
         <button id="btnDlgPwReset" class="custom-button"><i class="fas fa-sync"></i> 비밀번호 초기화</button>
@@ -125,7 +126,7 @@
             });
 
             $('#btnDlgPwReset').on('click', function () {
-                RequestData('/Manage/UdtPwPerson', { OID: $('#hidPersonOID').val() }, function () {
+                RequestData('/Manage/UdtPwPerson', { OID: $('#hidPersonOID').val(), Password: $('#initPassword').val() }, function () {
                     alert('변경되었습니다.');
                 });
             });

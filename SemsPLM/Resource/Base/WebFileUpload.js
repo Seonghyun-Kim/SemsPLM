@@ -181,7 +181,7 @@
             var DropDiv = this.DropFileContent;
             if (DropDiv.files.length > 0) {
                 DropDiv.files.forEach(function (v, i) {
-                    this.removeFile(v);
+                    DropDiv.removeFile(v);
                 });
             }
         },
@@ -201,7 +201,7 @@
         },
 
         Reload: function () {
-            ClearFile();
+            this.ClearFile();
             $(this.FileGrid).jqxGrid("updatebounddate");
         },
 

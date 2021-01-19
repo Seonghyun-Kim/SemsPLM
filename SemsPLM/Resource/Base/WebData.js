@@ -116,6 +116,7 @@ function objectToFormData(obj, rootName, ignoreList) {
     var formData = new FormData(ff);
 
     function appendFormData(data, root) {
+
         if (!ignore(root)) {
             root = root || '';
             if (data instanceof File) {

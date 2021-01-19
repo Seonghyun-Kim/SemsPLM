@@ -13,7 +13,7 @@
                 </div>
                 <div class="text">
                     <h4>진행 중 업무</h4>
-                    <p><span onclick="OpenPageDialog()" id="spStarted">0</span>건</p>
+                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spStarted">0</span>건</p>
                 </div>
             </div>
             <div>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="text">
                     <h4>완료 업무</h4>
-                    <p><span onclick="OpenPageDialog()" id="spComplete">0</span>건</p>
+                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spComplete">0</span>건</p>
                 </div>
             </div>
             <div>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="text">
                     <h4>진행 예정 업무</h4>
-                    <p><span onclick="OpenPageDialog()" id="spPrepare">0</span>건</p>
+                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spPrepare">0</span>건</p>
                 </div>
             </div>
             <div>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="text">
                     <h4>지연 업무</h4>
-                    <p><span onclick="OpenPageDialog()" id="spDelay">0</span>건</p>
+                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spDelay">0</span>건</p>
                 </div>
             </div>
         </div>
@@ -108,6 +108,7 @@
                 <ul class="mainApprovalList">
                     <li>진행중 결재</li>
                     <li>완료된 결재</li>
+                    <li>처리할 결재</li>
                     <li>반려된 결재</li>
                 </ul>
                 <!--TAB을 이중으로 감싸서 각 Page들의 Div 에 Margin 값이 적용 안되게 처리함-->
@@ -117,6 +118,9 @@
                 </div>
                 <div>
                     <div id="grdApprovalFinishList"></div>
+                </div>
+                <div>
+                    <div id="grdApprovalPrepareList"></div>
                 </div>
                 <div>
                     <div id="grdApprovalRejectList"></div>
@@ -162,7 +166,7 @@
         }
         var processPrdtPieChart = new ApexCharts(document.querySelector('#chartPrjectGroup'), processPrdtSetting);
         processPrdtPieChart.render();
-       
+
 
         //이슈 리스크 현황
         var issueRiskTaskList = [];
@@ -193,7 +197,8 @@
                         autoSelected: 'pan'
                     }
             },
-            colors: ['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
+            //colors: ['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
+            colors: ['#00f', '#f00', '#9f9'],
             plotOptions: {
                 bar: {
                     horizontal: false,
@@ -205,7 +210,13 @@
             },
             xaxis: {
                 categories: issueRiskTaskList,
-                    tickPlacement:'on',
+                tickPlacement: 'on',
+                labels: {
+                    show: true,
+                    rotate: 0,
+                    rotateAlways: false,
+                    hideOverlappingLabels: true,
+                }
             },
             legend: {
                 show: true,
@@ -241,7 +252,9 @@
                 issueRiskChart.updateSeries(issueRiskSample);
 
                 const totalIssueSpan$ = $('#chartMyTask');
-                const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                const reducer = function (accumulator, currentValue) {
+                    return accumulator + currentValue;
+                }
               //  totalIssueSpan$.empty();
                 //var barIssueDataArr = [];
                 //issueRiskSample.forEach(function (e) {
@@ -256,10 +269,11 @@
         //진행중인 프로젝트 진척률
         var prjectTaskList = ['Task1', 'Task2', 'Task3', 'Task4'];
         var prjectTaskSample = [
-            {name:'완료', data:[18,5,12,20]},
-            {name:'지연', data:[10,2,16,10]},
-            {name:'준비', data:[20,10,23,18]},
+            {name:'계획', data:[20,10,23,18]},
             {name:'진행', data:[30,12,18,23]},
+            {name:'지연', data:[10,2,16,10]},
+            {name:'지연완료', data:[4,12,7,6]},
+            {name:'완료', data:[18,5,12,20]},
         ]
         var prjectTaskSetting = {
             series: prjectTaskSample,
@@ -284,7 +298,7 @@
                         autoSelected: 'pan'
                     }
             },
-            colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
+            colors:['#d9d9d9', '#00f', '#f00', '#ff9', '#9f9'],
             plotOptions: {
                 bar: {
                     horizontal: false,
@@ -321,6 +335,7 @@
             datatype: 'json',
             dafafields: [
                 { name: 'OID', type: 'number' },
+                { name: 'ApprovalOID', type: 'number' },
                 { name: 'Name', type: 'string' },
                 { name: 'Description', type: 'string' },
                 { name: 'DocType', type: 'string' },
@@ -355,7 +370,32 @@
             ]
         });
 
+
         $("#grdApprovalFinishList").jqxGrid({
+            width: "100%",
+            height: 280,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '타입', width: "10%", datafield: 'DocType', align: 'center', cellsalign: 'center', },
+                { text: '결재 제목', width: "45%", datafield: 'Description', align: 'center', cellsalign: 'left', },
+                { text: '작성자', width: "10%", datafield: 'DocCreateNm', align: 'center', cellsalign: 'center', },
+                { text: '문서명', width: "20%", datafield: 'DocNm', align: 'center', cellsalign: 'center', cellsformat: 'yyyy-MM-dd HH:mm:ss' },
+                { text: '상태', width: "10%", datafield: 'DocBpolicyNm', align: 'center', cellsalign: 'center' }
+            ]
+        });
+
+        $("#grdApprovalPrepareList").jqxGrid({
             width: "100%",
             height: 280,
             rowsheight: 28,
@@ -403,6 +443,22 @@
             ]
         });
 
+        $('#grdApprovalDemandList,#grdApprovalFinishList,#grdApprovalPrepareList,#grdApprovalRejectList').on('rowdoubleclick', function (event) {
+            var args = event.args;
+            var boundIndex = args.rowindex;
+            var rowData = $(this).jqxGrid('getrowdatabyid', boundIndex);
+            var param = {};
+            param.ApprovalOID = rowData.ApprovalOID;
+            param.DocOID = rowData.DocOID;
+            param.DocType = rowData.DocType;
+            param.DocUrl = rowData.DocUrl;
+            param.BPolicy = rowData.BPolicy;
+            //console.log(event.args.row.bounddata);
+            OpenApprovalContentDialog(function () {
+                $(this).jqxGrid('pagerrenderer');
+            }, null, param, '/Common/ApprovalContent', event.args.row.bounddata.DocNm);
+
+        });
 
         //공지사항
         var selNoticeOID = null;
@@ -504,7 +560,7 @@
             'Approv': {
                 'Target': $('#tabApproval'),
                 'Source': myApprovalSource,
-                'Grid': ($('#tabApproval').jqxTabs('selectedItem') == 0 ? $("#grdApprovalDemandList") : ($('#tabApproval').jqxTabs('selectedItem') == 1 ? $("#grdApprovalFinishList") : $("#grdApprovalRejectList")))
+                'Grid': ($('#tabApproval').jqxTabs('selectedItem') == 0 ? $("#grdApprovalDemandList") : ($('#tabApproval').jqxTabs('selectedItem') == 1 ? $("#grdApprovalFinishList") : ($('#tabApproval').jqxTabs('selectedItem') == 2 ? $("#grdApprovalPrepareList") : $("#grdApprovalRejectList"))))
             }
         }
 
@@ -512,7 +568,7 @@
 
         $('#tabApproval').on('selected', function (event) {
             var clickedItem = event.args.item;
-            dashboardTmpParam['Approv'].Grid = (clickedItem == 0 ? $("#grdApprovalDemandList") : (clickedItem == 1 ? $("#grdApprovalFinishList") : $("#grdApprovalRejectList")))
+            dashboardTmpParam['Approv'].Grid = (clickedItem == 0 ? $("#grdApprovalDemandList") : (clickedItem == 1 ? $("#grdApprovalFinishList") : (clickedItem == 2 ? $("#grdApprovalPrepareList") : $("#grdApprovalRejectList"))))
             getApprovalList(dashboardTmpParam.Approv.Source, dashboardTmpParam.Approv.Target, dashboardTmpParam.Approv.Grid);
         });
     });
@@ -555,16 +611,20 @@
     }
 
     function getApprovalList(_Source, _Target$, _Grid$) {
+        var url = '/Common/ApprvalListDashboard';
         var param = {};
         if (_Target$.jqxTabs('selectedItem') == 0) {
             param.BPolicyNm = '@Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED';
         } else if (_Target$.jqxTabs('selectedItem') == 1) {
             param.BPolicyNm = '@Common.Constant.CommonConstant.POLICY_APPROVAL_COMPLETED';
         } else if (_Target$.jqxTabs('selectedItem') == 2) {
+            url = '/Common/SelMyApprovalDashboard';
+            param.BPolicyNm = '@Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED';
+        } else if (_Target$.jqxTabs('selectedItem') == 3) {
             param.BPolicyNm = '@Common.Constant.CommonConstant.POLICY_APPROVAL_REJECTED';
         }
-        console.log(_Target$.jqxTabs('selectedItem'));
-        RequestData("/Common/ApprvalListDashboard", param, function (res) {
+        
+        RequestData(url, param, function (res) {
             console.log(res);
             PrintJqxGrid(_Source, _Grid$, res);
         });

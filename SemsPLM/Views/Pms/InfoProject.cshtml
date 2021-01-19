@@ -14,6 +14,8 @@
             <li class="tab" info="baseLine"><i class="fas fa-compress-alt"></i> 베이스라인</li>
             <li class="tab" info="gantt"><i class="fas fa-retweet"></i> 간트차트</li>
             <li class="tab" info="Apphis"><i class="fas fa-retweet"></i> 결재이력</li>
+            <li class="tab" info="document"><i class="fas fa-file-alt"></i> 일반 문서</li>
+            <li class="tab" info="epart"><i class="fas fa-dice-d6"></i> 부품</li>
         </ul>
     </div>
 
@@ -48,12 +50,16 @@
                         <tr>
                             <td style="text-align: right;" id="">
                                 @if ((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1
-                                                    && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))&& (ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_PREPARE || ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_PAUSED))
+                                                    && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)) && (ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_PREPARE || ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_PAUSED))
                                 {
+                                    if (ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_PAUSED)
+                                    {
+                                        <button id="projPauseToStartedBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-pen"></i> 진행</button>
+                                    }
                                     <button id="projApprovalBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-pen"></i> 결재</button>
                                 }
                                 @if (((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1
-                                    && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)&&ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_STARTED)
+                                    && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED) && ViewBag.Detail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROJECT_STARTED)
                                 {
                                     <button id="projPauseBtn_@ViewBag.OID" class="custom-button"><i class="fas fa-pen"></i> 일시중지</button>
                                 }
@@ -249,7 +255,7 @@
                                 </thead>
                                 <tbody id="checkMemberList_@ViewBag.OID"></tbody>
                             </table>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -282,6 +288,16 @@
 
         <div id="Apphis" class="basic_grid dective">
             <div id="ApphisInfo_@ViewBag.OID">
+            </div>
+        </div>
+
+        <div id="document" class="basic_grid dective">
+            <div id="documentInfo_@ViewBag.OID">
+            </div>
+        </div>
+
+        <div id="epart" class="basic_grid dective">
+            <div id="epartInfo_@ViewBag.OID">
             </div>
         </div>
     </div>
@@ -326,6 +342,20 @@
                         return;
                     }
                     alert("일시중지 되었습니다.");
+                    PageReload();
+                });
+            }
+        });
+
+        $('#projPauseToStartedBtn_' + ProjectOID).on('click', function () {
+            if (confirm('진행 하시겠습니까?')) {
+                RequestData('Common/PromoteObjectTask',
+                    { Type: '@Common.Constant.PmsConstant.TYPE_PROJECT', Status: current, OID: ProjectOID, }, function (res) {
+                    if (res.isError) {
+                        alert(res.resultMessage);
+                        return;
+                    }
+                    alert("재진행 되었습니다.");
                     PageReload();
                 });
             }
@@ -597,122 +627,122 @@
                 }
 
                 projWbsInfo$.jqxTreeGrid(
-                {
-                    width: screenWidth,
-                    height: screenHeight,
-                    theme: "kdnc",
-                    //source: dataAdapter,
-                    columnsResize: true,
-                    autoRowHeight:false,
-                    sortable: false,
-                    checkboxes: false,
-                    selectionMode: "custom",
-                    editable: false,
-                    pagerButtonsCount: 8,
-                    toolbarHeight: 44,
-                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
-                    showToolbar: true,
-                    ready: function () {
-                        /*
-                        var batch$ = $("#importWbsBatch_" + ProjectOID);
-                        batch$.jqxWindow({
-                            resizable: false,
-                            width: 310,
-                            height: 220,
-                            position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
-                            autoOpen: false,
-                            isModal: true,
-                            modalOpacity: 0.2,
-                        });
+                    {
+                        width: screenWidth,
+                        height: screenHeight,
+                        theme: "kdnc",
+                        //source: dataAdapter,
+                        columnsResize: true,
+                        autoRowHeight: false,
+                        sortable: false,
+                        checkboxes: false,
+                        selectionMode: "custom",
+                        editable: false,
+                        pagerButtonsCount: 8,
+                        toolbarHeight: 44,
+                        editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                        showToolbar: true,
+                        ready: function () {
+                            /*
+                            var batch$ = $("#importWbsBatch_" + ProjectOID);
+                            batch$.jqxWindow({
+                                resizable: false,
+                                width: 310,
+                                height: 220,
+                                position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
+                                autoOpen: false,
+                                isModal: true,
+                                modalOpacity: 0.2,
+                            });
 
-                        batch$.on('close', function () {
-                            $('#importWbsBatchTxt_' + ProjectOID).empty();
-                            hidWbsFileInfo = '';
-                        });
+                            batch$.on('close', function () {
+                                $('#importWbsBatchTxt_' + ProjectOID).empty();
+                                hidWbsFileInfo = '';
+                            });
 
-                        batch$.css('visibility', 'visible');
+                            batch$.css('visibility', 'visible');
 
-                        $("#importWbsBatchSave_" + ProjectOID).mousedown(function () {
-                            RequestData('/Pms/ImportExcelWbs', { OID: ProjectOID, ExcelFile: hidWbsFileInfo }, function (res) {
-                                PrintJqxTreeGrid(source, projWbsInfo$, [res]);
+                            $("#importWbsBatchSave_" + ProjectOID).mousedown(function () {
+                                RequestData('/Pms/ImportExcelWbs', { OID: ProjectOID, ExcelFile: hidWbsFileInfo }, function (res) {
+                                    PrintJqxTreeGrid(source, projWbsInfo$, [res]);
+                                    batch$.jqxWindow('close');
+                                });
+                            });
+
+                            $("#importWbsBatchCancel_" + ProjectOID).mousedown(function () {
                                 batch$.jqxWindow('close');
                             });
-                        });
-
-                        $("#importWbsBatchCancel_" + ProjectOID).mousedown(function () {
-                            batch$.jqxWindow('close');
-                        });
-                        */
-                        var batch$ = $("#exportWbsBatch_" + ProjectOID);
-                        batch$.jqxWindow({
-                            resizable: false,
-                            width: 600,
-                            height: 455,
-                            position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
-                            autoOpen: false,
-                            isModal: true,
-                            modalOpacity: 0.2,
-                        });
-
-                        batch$.css('visibility', 'visible');
-
-                        batch$.on('close', function (event) {
-                            $('.checkExportData > li > div').jqxCheckBox({ checked: false, });
-                            $('.checkExportData > li > .requiredData').jqxCheckBox({ disabled: true, checked: true, });
-                            $("#checkMemberList_" + ProjectOID).empty();
-                        });
-
-                        $("#exportWbsBatchSave_" + ProjectOID).mousedown(function () {
-                            var filterData = '';
-                            _.each($('.checkExportData > li > div'), function (item) {
-                                if (item.getAttribute('checked') != undefined) {
-                                    filterData = filterData + item.getAttribute('data-info') + '|';
-                                }
+                            */
+                            var batch$ = $("#exportWbsBatch_" + ProjectOID);
+                            batch$.jqxWindow({
+                                resizable: false,
+                                width: 600,
+                                height: 455,
+                                position: { left: projWbsInfo$.offset().left + 75, top: projWbsInfo$.offset().top + 35 },
+                                autoOpen: false,
+                                isModal: true,
+                                modalOpacity: 0.2,
                             });
 
-                            var memberData = '';
-                            _.each($("#checkMemberList_" + ProjectOID).find('tr'), function (item) {
-                                memberData = memberData + item.getAttribute('to-oid') + "|";
+                            batch$.css('visibility', 'visible');
+
+                            batch$.on('close', function (event) {
+                                $('.checkExportData > li > div').jqxCheckBox({ checked: false, });
+                                $('.checkExportData > li > .requiredData').jqxCheckBox({ disabled: true, checked: true, });
+                                $("#checkMemberList_" + ProjectOID).empty();
                             });
 
-                            var hiddenFrame$ = $('#hidFrame');
-                            hiddenFrame$.empty();
-                            hiddenFrame$.attr('src', '/Pms/WbsExcelExport?OID=' + ProjectOID + '&Filter=' + filterData + '&Member=' + memberData);
-                            hiddenFrame$.empty();
-                        });
+                            $("#exportWbsBatchSave_" + ProjectOID).mousedown(function () {
+                                var filterData = '';
+                                _.each($('.checkExportData > li > div'), function (item) {
+                                    if (item.getAttribute('checked') != undefined) {
+                                        filterData = filterData + item.getAttribute('data-info') + '|';
+                                    }
+                                });
 
-                        $("#exportWbsBatchMember_" + ProjectOID).mousedown(function () {
-                            if (gClickDuplication) { return; }
-                            gClickDuplication = true;
-                            setTimeout(function () {
-                                OpenAddModifyMemberDialog(function (res) {
-                                    var chkList$ = $("#checkMemberList_" + ProjectOID);
-                                    chkList$.empty();
-                                    _.each(res, function (item, index) {
-                                        var tr = '<tr to-oid=' + item.ToOID + '>';
-                                        tr += '<td>' + (index + 1) + '</td>';
-                                        tr += '<td>' + item.PersonNm + '</td>';
-                                        tr += '<td>' + item.DepartmentNm + '</td></tr>';
-                                        chkList$.append(tr);
-                                    });
-                                }, null, {
-                                    Title: '멤버',
-                                    ProjectOID: ProjectOID
-                                }, '/Pms/AddModifyMemeber', '멤버 등록');
-                                gClickDuplication = false;
-                            }, 250);
-                        });
+                                var memberData = '';
+                                _.each($("#checkMemberList_" + ProjectOID).find('tr'), function (item) {
+                                    memberData = memberData + item.getAttribute('to-oid') + "|";
+                                });
 
-                        $("#exportWbsBatchCancel_" + ProjectOID).mousedown(function () {
-                            batch$.jqxWindow('close');
-                        });
-                    },
-                    columns: [
-                        {
-                            text: '이름', dataField: 'ObjName', width: '20%', align: 'center', pinned: true,
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                const editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT' || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                                var hiddenFrame$ = $('#hidFrame');
+                                hiddenFrame$.empty();
+                                hiddenFrame$.attr('src', '/Pms/WbsExcelExport?OID=' + ProjectOID + '&Filter=' + filterData + '&Member=' + memberData);
+                                hiddenFrame$.empty();
+                            });
+
+                            $("#exportWbsBatchMember_" + ProjectOID).mousedown(function () {
+                                if (gClickDuplication) { return; }
+                                gClickDuplication = true;
+                                setTimeout(function () {
+                                    OpenAddModifyMemberDialog(function (res) {
+                                        var chkList$ = $("#checkMemberList_" + ProjectOID);
+                                        chkList$.empty();
+                                        _.each(res, function (item, index) {
+                                            var tr = '<tr to-oid=' + item.ToOID + '>';
+                                            tr += '<td>' + (index + 1) + '</td>';
+                                            tr += '<td>' + item.PersonNm + '</td>';
+                                            tr += '<td>' + item.DepartmentNm + '</td></tr>';
+                                            chkList$.append(tr);
+                                        });
+                                    }, null, {
+                                        Title: '멤버',
+                                        ProjectOID: ProjectOID
+                                    }, '/Pms/AddModifyMemeber', '멤버 등록');
+                                    gClickDuplication = false;
+                                }, 250);
+                            });
+
+                            $("#exportWbsBatchCancel_" + ProjectOID).mousedown(function () {
+                                batch$.jqxWindow('close');
+                            });
+                        },
+                        columns: [
+                            {
+                                text: '이름', dataField: 'ObjName', width: '20%', align: 'center', pinned: true,
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    const editable = projWbsInfo$.jqxTreeGrid('editable');
+                                    if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT' || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
 
                                     } else {
                                         if (editable) {
@@ -722,463 +752,533 @@
                                             return vText + ' <a href="#" onclick="PmsNewTabClick(' + ProjectOID + ', \'' + ProjectNm + '\', \'/Pms/InfoProcess\', ' + rowData.ToOID + ', \'' + rowData.ObjName + '\')" ><i class="fas fa-window-maximize"></i></a>';
                                         }
                                     }
-                            }
-                        },
-                        { text: '구분', dataField: 'ObjType', width: '5%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
-                        { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
-                        { text: 'NO', dataField: 'No', width: '6%', align: 'center', editable: false, cellsAlign: 'left', },
-                        { text: '레벨', dataField: 'Level', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
-                        {
-                            text: 'Critical Path', dataField: 'isCritical', width: '7%', align: 'center', cellsAlign: 'center', editable: false,
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (cellText == true) {
-                                    return "<i class='fas fa-exclamation-circle'></i>";
-                                } else {
-                                    return "";
                                 }
                             },
-                        },
-                        {
-                            text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '7%', align: 'center', cellsAlign: 'center',
-                            validation: function (cell, value) {
-                                var bResult = true;
-                                if (value == '') {
-                                    return bResult;
-                                }
-
-                                const lParent = fPmsParentArray([projWbsInfo$.jqxTreeGrid('getRow', cell.row)]);
-                                lParent.filter(function (item) { return item.Id == parseInt(value); }).length > 0 ? bResult = false : bResult = true;
-                                if (!bResult) {
-                                    return { message: "사용할 수 없는 Dependency 입니다.", result: false };
-                                }
-
-                                const allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
-                                allDatas.filter(function (item) { return item.Id == parseInt(value); }).length < 1 ? bResult = false : bResult = true;
-                                if (!bResult) {
-                                    return { message: "사용할 수 없는 Dependency 입니다.", result: false };
-                                }
-
-                                return bResult;
-                            },
-                            cellsRenderer: function (row, dataField, cellValue, rowData) {
-                                var editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (editable) {
-                                    if (cellValue == "") {
-                                        return "<div class='editableCell' style='height:30px;'><div></div></div>";
+                            { text: '구분', dataField: 'ObjType', width: '5%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
+                            { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
+                            { text: 'NO', dataField: 'No', width: '6%', align: 'center', editable: false, cellsAlign: 'left', },
+                            { text: '레벨', dataField: 'Level', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                            {
+                                text: 'Critical Path', dataField: 'isCritical', width: '7%', align: 'center', cellsAlign: 'center', editable: false,
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    if (cellText == true) {
+                                        return "<i class='fas fa-exclamation-circle'></i>";
+                                    } else {
+                                        return "";
                                     }
-                                    return "<div class='editableCell'><div></div></div>" + cellValue;
-                                }
+                                },
                             },
-                        },
+                            {
+                                text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '7%', align: 'center', cellsAlign: 'center',
+                                validation: function (cell, value) {
+                                    var bResult = true;
+                                    if (value == '') {
+                                        return bResult;
+                                    }
+
+                                    const lParent = fPmsParentArray([projWbsInfo$.jqxTreeGrid('getRow', cell.row)]);
+                                    lParent.filter(function (item) { return item.Id == parseInt(value); }).length > 0 ? bResult = false : bResult = true;
+                                    if (!bResult) {
+                                        return { message: "사용할 수 없는 Dependency 입니다.", result: false };
+                                    }
+
+                                    const allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                                    allDatas.filter(function (item) { return item.Id == parseInt(value); }).length < 1 ? bResult = false : bResult = true;
+                                    if (!bResult) {
+                                        return { message: "사용할 수 없는 Dependency 입니다.", result: false };
+                                    }
+
+                                    return bResult;
+                                },
+                                cellsRenderer: function (row, dataField, cellValue, rowData) {
+                                    var editable = projWbsInfo$.jqxTreeGrid('editable');
+                                    if (editable) {
+                                        if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                            _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                            return "<span style='color: #999999;'>" + cellValue + "</span>";
+                                        }
+                                        if (cellValue == "") {
+                                            return "<div class='editableCell' style='height:30px;'><div></div></div>";
+                                        }
+                                        return "<div class='editableCell'><div></div></div>" + cellValue;
+                                    }
+                                },
+                            },
                         @*{ text: '산출물', dataField: 'Deliveries', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },*@
-                        { text: '상태', dataField: 'ObjStNm', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
-                        {
-                            text: '진행', dataField: 'Delay', width: '4%', align: 'center', editable: false, cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (('@ViewBag.Detail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
-                                    && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
-                                    gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
-                                    return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + row + ")'><i class='fas fa-caret-right'></i> 시작</button>";
-                                }
+                            { text: '상태', dataField: 'ObjStNm', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                            {
+                                text: '진행', dataField: 'Delay', width: '4%', align: 'center', editable: false, cellsAlign: 'center',
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    if (('@ViewBag.Detail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
+                                        && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
+                                        gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
+                                        return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + row + ")'><i class='fas fa-caret-right'></i> 시작</button>";
+                                    }
 
-                                if (cellText == null || cellText == undefined || cellText.length < 1) {
-                                    return "";
-                                }
+                                    if (cellText == null || cellText == undefined || cellText.length < 1) {
+                                        return "";
+                                    }
 
-                                var targetDelay = @Common.Constant.PmsConstant.DELAY;
-                                var iCellText = parseInt(cellText);
-                                if (iCellText >= 1 && iCellText <= targetDelay) {
-                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
-                                } else if (iCellText > targetDelay) {
-                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
-                                } else {
-                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
-                                }
-                                return cellText;
+                                    var targetDelay = @Common.Constant.PmsConstant.DELAY;
+                                    var iCellText = parseInt(cellText);
+                                    if (iCellText >= 1 && iCellText <= targetDelay) {
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    } else if (iCellText > targetDelay) {
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                                    }
+                                    return cellText;
+                                },
                             },
-                        },
-                        { text: '% 완료', dataField: 'Complete', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
-                        {
-                            text: '멤버', dataField: 'Members', width: '14%', align: 'center', editable: false, autoCellHeight:false,
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if (row == ProjectOID) {
-                                    return;
+                            { text: '% 완료', dataField: 'Complete', width: '4%', align: 'center', editable: false, cellsAlign: 'center', },
+                            {
+                                text: '멤버', dataField: 'Members', width: '14%', align: 'center', editable: false, autoCellHeight: false,
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    if (rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT' ||
+                                        rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PHASE' ||
+                                        rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                                        var disableDiv = "<div style=text-align:center;color:#ccc;'>시스템</div>";
+                                        return disableDiv;
+;                                       return;
+                                    }
+                                    if (cellValue != null && cellValue != undefined) {
+                                        if (cellValue.length > 0) {
+                                            var tmpTag = "<div style='text-align: center;width:100%;height:20px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;height:20px;'>";
+                                            for (var index = 0; index < cellValue.length; index++) {
+                                                if (cellValue[index].Thumbnail != null) {
+                                                    tmpTag += "<div class='wbsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + cellValue[index].Thumbnail + "'></div>" + cellValue[index].PersonNm + "&nbsp;</div>";
+                                                } else {
+                                                    tmpTag += "<div class='wbsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + cellValue[index].PersonNm + "</div>";
+                                                }
+                                            }
+                                            tmpTag += "</div></div>";
+                                            return tmpTag;
+                                        }
+                                    }
                                 }
-                                if (cellValue != null && cellValue != undefined) {
-                                    if (cellValue.length > 0) {
-                                        var tmpTag = "<div style='text-align: center;width:100%;height:20px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;height:20px;'>";
-                                        for (var index = 0; index < cellValue.length; index++) {
-                                            if (cellValue[index].Thumbnail != null) {
-                                                tmpTag += "<div class='wbsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + cellValue[index].Thumbnail + "'></div>" + cellValue[index].PersonNm +"&nbsp;</div>";
+                            },
+                            {
+                                text: '지연일수', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    return (rowData.Delay == null || rowData.Delay == undefined || rowData.Delay.length < 1 ? "" : rowData.Delay);
+                                }
+                            },
+                            {
+                                text: '기간', dataField: 'EstDuration', columnGroup: 'Estimated', width: '4%', align: 'center', cellsAlign: 'center',
+                                validation: function (cell, value) {
+                                    var bResult = true;
+                                    if (value == '' || value == '0') {
+                                        bResult = false;
+                                    }
+                                    return bResult;
+                                },
+                                cellsRenderer: function (row, dataField, cellValue, rowData) {
+                                    var editable = projWbsInfo$.jqxTreeGrid('editable');
+                                    if (editable) {
+                                        if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                            _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                            return "<span style='color: #999999;'>" + cellValue + "</span>";
+                                        }
+                                        return "<div class='editableCell'><div></div></div>" + cellValue;
+                                    }
+                                }
+                            },
+                            {
+                                text: '시작일', dataField: 'EstStartDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                                validation: function (cell, value) {
+                                    var bResult = true;
+                                    if (value == '') {
+                                        bResult = false;
+                                    }
+                                    return bResult;
+                                },
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
+                                    var editable = projWbsInfo$.jqxTreeGrid('editable');
+                                    if (editable) {
+                                        if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                            _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                            return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                        }
+                                        return "<div class='editableCell'><div></div></div>" + cellsFormat;
+                                    }
+                                },
+                            },
+                            {
+                                text: '완료일', dataField: 'EstEndDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                                validation: function (cell, value) {
+                                    var bResult = true;
+                                    if (value == '') {
+                                        bResult = false;
+                                    }
+                                    return bResult;
+                                },
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
+                                    var editable = projWbsInfo$.jqxTreeGrid('editable');
+                                    if (editable) {
+                                        if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                            _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                            return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                        }
+                                        return "<div class='editableCell'><div></div></div>" + cellsFormat;
+                                    }
+                                },
+                            },
+                            {
+                                text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '4%', align: 'center', editable: false, cellsAlign: 'center',
+                                cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                    if ((rowData.ActStartDt == null && rowData.ActEndDt == null) || (rowData.ActStartDt != null && rowData.ActEndDt != null)) {
+                                        return cellText;
+                                    } else if (rowData.ActStartDt != null && rowData.ActEndDt == null) {
+                                        //return weekendCalc(rowData.ActStartDt, today.getFullYear() + "-" + ((today.getMonth() + 1).toString().length === 1 ? "0" + (today.getMonth() + 1) : (today.getMonth() + 1)) + "-" + (today.getDate().toString().length === 1 ? "0" + (today.getDate()) : today.getDate()), workingDay, sHoliday);
+                                    }
+                                }
+                            },
+                            { text: '시작일', dataField: 'ActStartDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
+                            { text: '완료일', dataField: 'ActEndDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
+                            { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
+                        ],
+                        columnGroups: [
+                            { text: '예상', name: 'Estimated', align: "center" },
+                            { text: '실제', name: 'Actual', align: "center" },
+                            { text: 'Dependency', name: 'Dependency' },
+                        ],
+                        renderToolbar: function (toolBar) {
+                            const editable = projWbsInfo$.jqxTreeGrid('editable');
+                            if (!editable && toolBar[0].children.length > 0) {
+                                if (toolBar[0].children[0].children[14] != undefined) {
+                                    toolBar[0].children[0].children[14].click();
+                                }
+                                return;
+                            }
+
+                            var modifyFlag = false;
+                            var container = $("<div class='lGridComponent' ></div>");
+                            var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
+                            var importExcelButton = $("<button class='custom-button'><i class='fas fa-file-import'></i> Import</button>").jqxButton();
+                            var exprtExcelButton = $("<button class='custom-button'><i class='fas fa-file-import'></i> Export</button>").jqxButton();
+                            var expandButton = $("<button class='custom-button'><i class='fas fa-caret-down'></i> 펼치기</button>").jqxButton();
+                            var collapseButton = $("<button class='custom-button'><i class='fas fa-caret-up'></i> 접기</button>").jqxButton();
+                            var gateAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Gate추가</button>").jqxButton();
+                            var phaseAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Phase추가</button>").jqxButton();
+                            var taskAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Task추가</button>").jqxButton();
+                            var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
+                            var modifyMemberButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-right'></i> 담당자 변경</button>").jqxButton();
+                            var moveUpButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-up'></i> 위로</button>").jqxButton();
+                            var moveDownButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-down'></i> 아래로</button>").jqxButton();
+                            var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
+                            var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
+                            gateAddButton.jqxButton({ disabled: true });
+                            phaseAddButton.jqxButton({ disabled: true });
+                            taskAddButton.jqxButton({ disabled: true });
+                            deleteButton.jqxButton({ disabled: true });
+                            moveUpButton.jqxButton({ disabled: true });
+                            moveDownButton.jqxButton({ disabled: true });
+                            modifyMemberButton.jqxButton({ disabled: true });
+                            saveButton.jqxButton({ disabled: true });
+                            cancelButton.jqxButton({ disabled: true });
+                            var modifyAuth = @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED));
+                            if (modifyAuth) {
+                                container.append(modifyButton);
+                                container.append('<span class="buttonSeparator"></span>');
+                                //container.append(importExcelButton);
+                                //container.append('<span class="buttonSeparator"></span>');
+                            }
+                            container.append(exprtExcelButton);
+                            container.append('<span class="buttonSeparator"></span>');
+                            container.append(expandButton);
+                            container.append(collapseButton);
+                            container.append('<span class="buttonSeparator"></span>');
+                            if (modifyAuth) {
+                                container.append(gateAddButton);
+                                container.append(phaseAddButton);
+                                container.append(taskAddButton);
+                                container.append(deleteButton);
+                                container.append('<span class="buttonSeparator"></span>');
+                                //container.append(modifyMemberButton);
+                                //container.append('<span class="buttonSeparator"></span>');
+                                container.append(moveUpButton);
+                                container.append(moveDownButton);
+                                container.append('<span class="buttonSeparator"></span>');
+                                container.append(saveButton);
+                                container.append(cancelButton);
+                            }
+                            toolBar.append(container);
+                            var actionContent = function (action) {
+                                switch (action.toUpperCase()) {
+                                    case "MODIFY":
+                                    case "CANCEL":
+                                        modifyFlag = !modifyFlag;
+                                        modifyButton.jqxButton({ disabled: modifyFlag });
+                                        gateAddButton.jqxButton({ disabled: !modifyFlag });
+                                        phaseAddButton.jqxButton({ disabled: !modifyFlag });
+                                        saveButton.jqxButton({ disabled: !modifyFlag });
+                                        cancelButton.jqxButton({ disabled: !modifyFlag });
+                                        modifyMemberButton.jqxButton({ disabled: !modifyFlag });
+                                        projWbsInfo$.jqxTreeGrid({ editable: modifyFlag, checkboxes: modifyFlag, });
+                                        if (action.toUpperCase() == 'CANCEL') {
+                                            taskAddButton.jqxButton({ disabled: !modifyFlag });
+                                            deleteButton.jqxButton({ disabled: !modifyFlag });
+                                            projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
+                                        }
+                                        break;
+                                    case "PROJECT":
+                                        taskAddButton.jqxButton({ disabled: false });
+                                        break;
+                                    case "GATE":
+                                        gateAddButton.jqxButton({ disabled: true });
+                                        phaseAddButton.jqxButton({ disabled: true });
+                                        deleteButton.jqxButton({ disabled: false });
+                                        break;
+                                    case "PHASE":
+                                    case "TASK":
+                                        gateAddButton.jqxButton({ disabled: true });
+                                        phaseAddButton.jqxButton({ disabled: true });
+                                        taskAddButton.jqxButton({ disabled: false });
+                                        deleteButton.jqxButton({ disabled: false });
+                                        break;
+                                    case "UNSELECT":
+                                        gateAddButton.jqxButton({ disabled: false });
+                                        phaseAddButton.jqxButton({ disabled: false });
+                                        taskAddButton.jqxButton({ disabled: true });
+                                        deleteButton.jqxButton({ disabled: true });
+                                        moveUpButton.jqxButton({ disabled: true });
+                                        moveDownButton.jqxButton({ disabled: true });
+                                        break;
+                                }
+                            };
+
+                            var rowKey = null;
+                            projWbsInfo$.on('rowCheck', function (event) {
+                                var previousRowKey = null;
+                                var checkRows = projWbsInfo$.jqxTreeGrid('getCheckedRows');
+                                if (checkRows != null && checkRows.length > 0) {
+                                    previousRowKey = checkRows.filter(function (item) {
+                                        return item.ToOID != rowKey
+                                    });
+                                    if (previousRowKey.length > 0) {
+                                        previousRowKey = previousRowKey[0].ToOID;
+                                    } else {
+                                        previousRowKey = rowKey;
+                                    }
+                                }
+                                var args = event.args;
+                                if (previousRowKey != rowKey) {
+                                    projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
+                                }
+                                rowKey = args.key;
+                                actionContent(args.row.ObjType);
+                                moveUpButton.jqxButton({ disabled: false });
+                                moveDownButton.jqxButton({ disabled: false });
+                            });
+
+                            projWbsInfo$.on('rowUncheck', function (event) {
+                                actionContent('unSelect');
+                                rowKey = null;
+                            });
+
+                            modifyButton.click(function (event) {
+                                maxId = 0;
+                                actionContent('modify');
+                            });
+
+                            expandButton.click(function (event) {
+                                projWbsInfo$.jqxTreeGrid('expandAll');
+                            });
+
+                            collapseButton.click(function (event) {
+                                projWbsInfo$.jqxTreeGrid('collapseAll');
+                            });
+
+                            gateAddButton.click(function (event) {
+                                if (!gateAddButton.jqxButton('disabled')) {
+                                    // add new empty row.
+                                    const parentData = projWbsInfo$.jqxTreeGrid('getRow', ProjectOID);
+                                    const NoData = fPmsLoadProperties(projWbsInfo$.jqxTreeGrid('getRows'), 'No');
+                                    var maxData;
+                                    if (parentData.No == null || parentData.No == undefined) {
+                                        if (NoData == null || NoData == undefined || NoData.length < 1) {
+                                            maxData = '#10';
+                                        } else {
+                                            maxData = _.max(NoData, function (item) { return item != undefined && parseInt(item.replace('#', '')) });
+                                            if (maxData == null || maxData == undefined) {
+                                                maxData = '#10';
                                             } else {
-                                                tmpTag += "<div class='wbsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + cellValue[index].PersonNm + "</div>";
+                                                maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
                                             }
                                         }
-                                        tmpTag += "</div></div>";
-                                        return tmpTag;
+                                    } else {
+                                        var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
+                                        if (getNoData.length < 1) {
+                                            maxData = parentData.No + '-1';
+                                        } else {
+                                            maxData = _.max(getNoData, function (item) { return item != undefined && parseInt(item.replace(parentData.No + '-', '')) });
+                                            maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
+                                        }
                                     }
-                                }
-                            }
-                        },
-                        {
-                            text: '지연일수', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                return (rowData.Delay == null || rowData.Delay == undefined || rowData.Delay.length < 1 ? "" : rowData.Delay );
-                            }
-                        },
-                        {
-                            text: '기간', dataField: 'EstDuration', columnGroup: 'Estimated', width: '4%', align: 'center', cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData) {
-                                var editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (editable) {
-                                    return "<div class='editableCell'><div></div></div>" + cellValue;
-                                }
-                            }
-                        },
-                        {
-                            text: '시작일', dataField: 'EstStartDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
-                                var editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (editable) {
-                                    return "<div class='editableCell'><div></div></div>"+cellsFormat;
-                                }
-                            },
-                        },
-                        {
-                            text: '완료일', dataField: 'EstEndDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', className: 'datePicker', cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
-                                var editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (editable) {
-                                    return "<div class='editableCell'><div></div></div>"+cellsFormat;
-                                }
-                            },
-                        },
-                        {
-                            text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '4%', align: 'center', editable: false, cellsAlign: 'center',
-                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                                if ((rowData.ActStartDt == null && rowData.ActEndDt == null) || (rowData.ActStartDt != null && rowData.ActEndDt != null)) {
-                                    return cellText;
-                                } else if (rowData.ActStartDt != null && rowData.ActEndDt == null) {
-                                    //return weekendCalc(rowData.ActStartDt, today.getFullYear() + "-" + ((today.getMonth() + 1).toString().length === 1 ? "0" + (today.getMonth() + 1) : (today.getMonth() + 1)) + "-" + (today.getDate().toString().length === 1 ? "0" + (today.getDate()) : today.getDate()), workingDay, sHoliday);
-                                }
-                            }
-                        },
-                        { text: '시작일', dataField: 'ActStartDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
-                        { text: '완료일', dataField: 'ActEndDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '7%', align: 'center', editable: false, cellsAlign: 'center', },
-                        { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
-                    ],
-                    columnGroups: [
-                        { text: '예상', name: 'Estimated' },
-                        { text: '실제', name: 'Actual' },
-                        { text: 'Dependency', name: 'Dependency' },
-                    ],
-                    renderToolbar: function (toolBar) {
-                        const editable = projWbsInfo$.jqxTreeGrid('editable');
-                        if (!editable && toolBar[0].children.length > 0) {
-                            if (toolBar[0].children[0].children[14] != undefined) {
-                                toolBar[0].children[0].children[14].click();
-                            }
-                            return;
-                        }
 
-                        var modifyFlag = false;
-                        var container = $("<div class='lGridComponent' ></div>");
-                        var modifyButton = $("<button class='custom-button'><i class='fas fa-edit'></i> 수정</button>").jqxButton();
-                        var importExcelButton = $("<button class='custom-button'><i class='fas fa-file-import'></i> Import</button>").jqxButton();
-                        var exprtExcelButton = $("<button class='custom-button'><i class='fas fa-file-import'></i> Export</button>").jqxButton();
-                        var expandButton = $("<button class='custom-button'><i class='fas fa-caret-down'></i> 펼치기</button>").jqxButton();
-                        var collapseButton = $("<button class='custom-button'><i class='fas fa-caret-up'></i> 접기</button>").jqxButton();
-                        var gateAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Gate추가</button>").jqxButton();
-                        var phaseAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Phase추가</button>").jqxButton();
-                        var taskAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Task추가</button>").jqxButton();
-                        var deleteButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 선택삭제</button>").jqxButton();
-                        var modifyMemberButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-right'></i> 담당자 변경</button>").jqxButton();
-                        var moveUpButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-up'></i> 위로</button>").jqxButton();
-                        var moveDownButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-down'></i> 아래로</button>").jqxButton();
-                        var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
-                        var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
-                        gateAddButton.jqxButton({ disabled: true });
-                        phaseAddButton.jqxButton({ disabled: true });
-                        taskAddButton.jqxButton({ disabled: true });
-                        deleteButton.jqxButton({ disabled: true });
-                        moveUpButton.jqxButton({ disabled: true });
-                        moveDownButton.jqxButton({ disabled: true });
-                        modifyMemberButton.jqxButton({ disabled: true });
-                        saveButton.jqxButton({ disabled: true });
-                        cancelButton.jqxButton({ disabled: true });
-                        var modifyAuth = @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED));
-                        if (modifyAuth) {
-                            container.append(modifyButton);
-                            container.append('<span class="buttonSeparator"></span>');
-                            //container.append(importExcelButton);
-                            //container.append('<span class="buttonSeparator"></span>');
-                        }
-                        container.append(exprtExcelButton);
-                        container.append('<span class="buttonSeparator"></span>');
-                        container.append(expandButton);
-                        container.append(collapseButton);
-                        container.append('<span class="buttonSeparator"></span>');
-                        if (modifyAuth) {
-                            container.append(gateAddButton);
-                            container.append(phaseAddButton);
-                            container.append(taskAddButton);
-                            container.append(deleteButton);
-                            container.append('<span class="buttonSeparator"></span>');
-                            //container.append(modifyMemberButton);
-                            //container.append('<span class="buttonSeparator"></span>');
-                            container.append(moveUpButton);
-                            container.append(moveDownButton);
-                            container.append('<span class="buttonSeparator"></span>');
-                            container.append(saveButton);
-                            container.append(cancelButton);
-                        }
-                        toolBar.append(container);
-                        var actionContent = function (action) {
-                            switch (action.toUpperCase()) {
-                                case "MODIFY":
-                                case "CANCEL":
-                                    modifyFlag = !modifyFlag;
-                                    modifyButton.jqxButton({ disabled: modifyFlag });
-                                    gateAddButton.jqxButton({ disabled: !modifyFlag });
-                                    phaseAddButton.jqxButton({ disabled: !modifyFlag });
-                                    saveButton.jqxButton({ disabled: !modifyFlag });
-                                    cancelButton.jqxButton({ disabled: !modifyFlag });
-                                    modifyMemberButton.jqxButton({ disabled: !modifyFlag });
-                                    projWbsInfo$.jqxTreeGrid({ editable: modifyFlag, checkboxes: modifyFlag, });
-                                    if (action.toUpperCase() == 'CANCEL') {
-                                        taskAddButton.jqxButton({ disabled: !modifyFlag });
-                                        deleteButton.jqxButton({ disabled: !modifyFlag });
-                                        projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
+                                    projWbsInfo$.jqxTreeGrid('addRow', null,
+                                        {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": ProjectOID,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_GATE",
+                                            "ObjStNm": "준비중",
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.level) + 1,
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "No": maxData
+                                        },
+                                        'last', ProjectOID);
+                                }
+                            });
+
+                            phaseAddButton.click(function (event) {
+                                if (!phaseAddButton.jqxButton('disabled')) {
+                                    // add new empty row.
+                                    const parentData = projWbsInfo$.jqxTreeGrid('getRow', ProjectOID);
+                                    projWbsInfo$.jqxTreeGrid('addRow', null,
+                                        {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": ProjectOID,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_PHASE",
+                                            "ObjStNm": "준비중",
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.level) + 1,
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt']
+                                        },
+                                        'last', ProjectOID);
+                                }
+                            });
+
+                            taskAddButton.click(function (event) {
+                                if (!taskAddButton.jqxButton('disabled')) {
+                                    projWbsInfo$.jqxTreeGrid('expandRow', rowKey);
+                                    // add new empty row.
+                                    const parentData = projWbsInfo$.jqxTreeGrid('getRow', rowKey);
+                                    const NoData = fPmsLoadProperties(projWbsInfo$.jqxTreeGrid('getRows'), 'No');
+                                    var maxData;
+                                    if (parentData.No == null || parentData.No == undefined) {
+                                        if (NoData == null || NoData == undefined || NoData.length < 1) {
+                                            maxData = '#10';
+                                        } else {
+                                            maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                            if (maxData == null || maxData == undefined) {
+                                                maxData = '#10';
+                                            } else {
+                                                maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
+                                            }
+                                        }
+                                    } else {
+                                        var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
+                                        if (getNoData.length < 1) {
+                                            maxData = parentData.No + '-1';
+                                        } else {
+                                            maxData = _.max(getNoData, function (item) { return item != undefined && item.replace(parentData.No + '-', '') });
+                                            maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
+                                        }
                                     }
-                                    break;
-                                case "PROJECT":
-                                    taskAddButton.jqxButton({ disabled: false });
-                                    break;
-                                case "GATE":
-                                    gateAddButton.jqxButton({ disabled: true });
-                                    phaseAddButton.jqxButton({ disabled: true });
-                                    deleteButton.jqxButton({ disabled: false });
-                                    break;
-                                case "PHASE":
-                                case "TASK":
-                                    gateAddButton.jqxButton({ disabled: true });
-                                    phaseAddButton.jqxButton({ disabled: true });
-                                    taskAddButton.jqxButton({ disabled: false });
-                                    deleteButton.jqxButton({ disabled: false });
-                                    break;
-                                case "UNSELECT":
-                                    gateAddButton.jqxButton({ disabled: false });
-                                    phaseAddButton.jqxButton({ disabled: false });
-                                    taskAddButton.jqxButton({ disabled: true });
-                                    deleteButton.jqxButton({ disabled: true });
-                                    moveUpButton.jqxButton({ disabled: true });
-                                    moveDownButton.jqxButton({ disabled: true });
-                                    break;
-                            }
-                        };
 
-                        var rowKey = null;
-                        projWbsInfo$.on('rowCheck', function (event) {
-                            var previousRowKey = null;
-                            var checkRows = projWbsInfo$.jqxTreeGrid('getCheckedRows');
-                            if (checkRows != null && checkRows.length > 0) {
-                                previousRowKey = checkRows.filter(function (item) {
-                                    return item.ToOID != rowKey
+                                    projWbsInfo$.jqxTreeGrid('addRow', null,
+                                        {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": rowKey,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_TASK",
+                                            "ObjStNm": "준비중",
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.Level) + 1,
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "No": maxData
+                                        },
+                                        'last', rowKey);
+                                }
+                            });
+
+                            deleteButton.click(function (event) {
+                                if (!deleteButton.jqxButton('disabled')) {
+                                    projWbsInfo$.jqxTreeGrid('expandRow', rowKey);
+                                    projWbsInfo$.jqxTreeGrid('deleteRow', rowKey);
+                                    projWbsInfo$.jqxTreeGrid('clearSelection');
+                                    actionContent('unSelect');
+                                }
+                            });
+
+                            moveUpButton.click(function (event) {
+                                if (rowKey == ProjectOID) {
+                                    return;
+                                }
+                                const wbsDataSource = projWbsInfo$.jqxTreeGrid("source").loadedData;
+                                fMoveRecusive(wbsDataSource, rowKey, 'UP');
+                                projWbsInfo$.jqxTreeGrid('updateBoundData');
+                            });
+
+                            moveDownButton.click(function (event) {
+                                if (rowKey == ProjectOID) {
+                                    return;
+                                }
+                                const wbsDataSource = projWbsInfo$.jqxTreeGrid("source").loadedData;
+                                fMoveRecusive(wbsDataSource, rowKey, 'DOWN');
+                                projWbsInfo$.jqxTreeGrid('updateBoundData');
+                            });
+
+                            saveButton.click(function (event) {
+                                if (confirm('저장하시겠습니까?')) {
+                                    console.log(fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration']).concat(deleteData));
+                                    RequestData('/Pms/InsWbs',
+                                        fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration', 'WorkingDay', 'Deliveries', 'Delay']).concat(deleteData),
+                                        function (res) {
+                                            deleteData = [];
+                                            cancelButton.click();
+                                        }
+                                    );
+                                }
+                            });
+
+                            cancelButton.click(function (event) {
+                                actionContent('cancel');
+                                RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
+                                    projectDatas = [];
+                                    projectDatas.push(res);
+                                    var arrData = fPmsArrayTasks(projectDatas);
+                                    var masterlink = fMasterLink(arrData);
+                                    fComputeCriticalPath(arrData, masterlink);
+                                    PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
                                 });
-                                if (previousRowKey.length > 0) {
-                                    previousRowKey = previousRowKey[0].ToOID;
-                                } else {
-                                    previousRowKey = rowKey;
+                            });
+
+                            importExcelButton.click(function (event) {
+                                var batch$ = $("#importWbsBatch_" + ProjectOID);
+                                if (WebUtils.isPopupOpen("wbsBatch_" + ProjectOID)) {
+                                    return;
                                 }
-                            }
-                            var args = event.args;
-                            if (previousRowKey != rowKey) {
-                                projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
-                            }
-                            rowKey = args.key;
-                            actionContent(args.row.ObjType);
-                            moveUpButton.jqxButton({ disabled: false });
-                            moveDownButton.jqxButton({ disabled: false });
-                        });
+                                batch$.jqxWindow('open');
+                            });
 
-                        projWbsInfo$.on('rowUncheck', function (event) {
-                            actionContent('unSelect');
-                            rowKey = null;
-                        });
-
-                        modifyButton.click(function (event) {
-                            maxId = 0;
-                            actionContent('modify');
-                        });
-
-                        expandButton.click(function (event) {
-                            projWbsInfo$.jqxTreeGrid('expandAll');
-                        });
-
-                        collapseButton.click(function (event) {
-                            projWbsInfo$.jqxTreeGrid('collapseAll');
-                        });
-
-                        gateAddButton.click(function (event) {
-                            if (!gateAddButton.jqxButton('disabled')) {
-                                // add new empty row.
-                                const parentData = projWbsInfo$.jqxTreeGrid('getRow', ProjectOID);
-                                const NoData = fPmsLoadProperties(projWbsInfo$.jqxTreeGrid('getRows'), 'No');
-                                var maxData;
-                                if (parentData.No == null || parentData.No == undefined) {
-                                    if (NoData == null || NoData == undefined || NoData.length < 1) {
-                                        maxData = '#10';
-                                    } else {
-                                        maxData = _.max(NoData, function (item) { return item != undefined && parseInt(item.replace('#', '')) });
-                                        if (maxData == null || maxData == undefined) {
-                                            maxData = '#10';
-                                        } else {
-                                            maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
-                                        }
-                                    }
-                                } else {
-                                    var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
-                                    if (getNoData.length < 1) {
-                                        maxData = parentData.No + '-1';
-                                    } else {
-                                        maxData = _.max(getNoData, function (item) { return item != undefined && parseInt(item.replace(parentData.No + '-', '')) });
-                                        maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
-                                    }
+                            exprtExcelButton.click(function (event) {
+                                var batch$ = $("#exportWbsBatch_" + ProjectOID);
+                                if (WebUtils.isPopupOpen("wbsBatch_" + ProjectOID)) {
+                                    return;
                                 }
+                                batch$.jqxWindow('open');
+                            })
+                        },
 
-                                projWbsInfo$.jqxTreeGrid('addRow', null,
-                                    {
-                                        "RootOID": ProjectOID,
-                                        "FromOID": ProjectOID,
-                                        "ObjType": "@Common.Constant.PmsConstant.TYPE_GATE",
-                                        "ObjStNm": "준비중",
-                                        "Complete": '0',
-                                        "EstDuration": 1,
-                                        "EstStartDt": parentData.EstStartDt,
-                                        "EstEndDt": parentData.EstStartDt,
-                                        "Level": parseInt(parentData.level) + 1,
-                                        "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
-                                        "expanded": "true",
-                                        "WorkingDay": workingDay,
-                                        "No": maxData
-                                    },
-                                    'last', ProjectOID);
-                            }
-                        });
-
-                        phaseAddButton.click(function (event) {
-                            if (!phaseAddButton.jqxButton('disabled')) {
-                                // add new empty row.
-                                const parentData = projWbsInfo$.jqxTreeGrid('getRow', ProjectOID);
-                                projWbsInfo$.jqxTreeGrid('addRow', null,
-                                    {
-                                        "RootOID": ProjectOID,
-                                        "FromOID": ProjectOID,
-                                        "ObjType": "@Common.Constant.PmsConstant.TYPE_PHASE",
-                                        "ObjStNm": "준비중",
-                                        "Complete": '0',
-                                        "EstDuration": 1,
-                                        "EstStartDt": parentData.EstStartDt,
-                                        "EstEndDt": parentData.EstStartDt,
-                                        "Level": parseInt(parentData.level) + 1,
-                                        "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
-                                        "expanded": "true",
-                                        "WorkingDay": workingDay
-                                    },
-                                    'last', ProjectOID);
-                            }
-                        });
-
-                        taskAddButton.click(function (event) {
-                            if (!taskAddButton.jqxButton('disabled')) {
-                                projWbsInfo$.jqxTreeGrid('expandRow', rowKey);
-                                // add new empty row.
-                                const parentData = projWbsInfo$.jqxTreeGrid('getRow', rowKey);
-                                const NoData = fPmsLoadProperties(projWbsInfo$.jqxTreeGrid('getRows'), 'No');
-                                var maxData;
-                                if (parentData.No == null || parentData.No == undefined) {
-                                    if (NoData == null || NoData == undefined || NoData.length < 1) {
-                                        maxData = '#10';
-                                    } else {
-                                        maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
-                                        if (maxData == null || maxData == undefined) {
-                                            maxData = '#10';
-                                        } else {
-                                            maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
-                                        }
-                                    }
-                                } else {
-                                    var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
-                                    if (getNoData.length < 1) {
-                                        maxData = parentData.No + '-1';
-                                    } else {
-                                        maxData = _.max(getNoData, function (item) { return item != undefined && item.replace(parentData.No + '-', '') });
-                                        maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
-                                    }
-                                }
-
-                                projWbsInfo$.jqxTreeGrid('addRow', null,
-                                    {
-                                        "RootOID": ProjectOID,
-                                        "FromOID": rowKey,
-                                        "ObjType": "@Common.Constant.PmsConstant.TYPE_TASK",
-                                        "ObjStNm": "준비중",
-                                        "Complete": '0',
-                                        "EstDuration": 1,
-                                        "EstStartDt": parentData.EstStartDt,
-                                        "EstEndDt": parentData.EstStartDt,
-                                        "Level": parseInt(parentData.Level) + 1,
-                                        "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
-                                        "expanded": "true",
-                                        "WorkingDay": workingDay,
-                                        "No": maxData
-                                    },
-                                    'last', rowKey);
-                            }
-                        });
-
-                        deleteButton.click(function (event) {
-                            if (!deleteButton.jqxButton('disabled')) {
-                                projWbsInfo$.jqxTreeGrid('expandRow', rowKey);
-                                projWbsInfo$.jqxTreeGrid('deleteRow', rowKey);
-                                projWbsInfo$.jqxTreeGrid('clearSelection');
-                                actionContent('unSelect');
-                            }
-                        });
-
-                        moveUpButton.click(function (event) {
-                            if (rowKey == ProjectOID) {
-                                return;
-                            }
-                            const wbsDataSource = projWbsInfo$.jqxTreeGrid("source").loadedData;
-                            fMoveRecusive(wbsDataSource, rowKey, 'UP');
-                            projWbsInfo$.jqxTreeGrid('updateBoundData');
-                        });
-
-                        moveDownButton.click(function (event) {
-                            if (rowKey == ProjectOID) {
-                                return;
-                            }
-                            const wbsDataSource = projWbsInfo$.jqxTreeGrid("source").loadedData;
-                            fMoveRecusive(wbsDataSource, rowKey, 'DOWN');
-                            projWbsInfo$.jqxTreeGrid('updateBoundData');
-                        });
-
-                        saveButton.click(function (event) {
-                            if (confirm('저장하시겠습니까?')) {
-                                console.log(fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration']).concat(deleteData));
-                                RequestData('/Pms/InsWbs',
-                                    fPmsArrayDataRecusive(projWbsInfo$.jqxTreeGrid('getRows'), source.dataFields, ['Children', 'expanded', 'diseditable', 'isCritical', 'ActStartDt', 'ActEndDt', 'ActDuration', 'WorkingDay', 'Deliveries', 'Delay']).concat(deleteData),
-                                    function (res) {
-                                        deleteData = [];
-                                        cancelButton.click();
-                                    }
-                                );
-                            }
-                        });
-
-                        cancelButton.click(function (event) {
-                            actionContent('cancel');
+                        pagerRenderer: function () {
                             RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
                                 projectDatas = [];
                                 projectDatas.push(res);
@@ -1186,37 +1286,10 @@
                                 var masterlink = fMasterLink(arrData);
                                 fComputeCriticalPath(arrData, masterlink);
                                 PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
+                                gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
                             });
-                        });
-
-                        importExcelButton.click(function (event) {
-                            var batch$ = $("#importWbsBatch_" + ProjectOID);
-                            if (WebUtils.isPopupOpen("wbsBatch_" + ProjectOID)) {
-                                return;
-                            }
-                            batch$.jqxWindow('open');
-                        });
-
-                        exprtExcelButton.click(function (event) {
-                            var batch$ = $("#exportWbsBatch_" + ProjectOID);
-                            if (WebUtils.isPopupOpen("wbsBatch_" + ProjectOID)) {
-                                return;
-                            }
-                            batch$.jqxWindow('open');
-                        })
-                    },
-
-                    pagerRenderer: function () {
-                        RequestData('/Pms/SelWbs', { 'OID': ProjectOID }, function (res) {
-                            projectDatas = [];
-                            projectDatas.push(res);
-                            var arrData = fPmsArrayTasks(projectDatas);
-                            var masterlink = fMasterLink(arrData);
-                            fComputeCriticalPath(arrData, masterlink);
-                            PrintJqxTreeGrid(source, projWbsInfo$, projectDatas);
-                        });
-                    }
-                });
+                        }
+                    });
 
                 projWbsInfo$.jqxTreeGrid('pagerRenderer');
 
@@ -1282,9 +1355,17 @@
                                     const selDep = arrRows.filter(function (item) {
                                         return item.Id == records[i].Dependency;
                                     });
+                                    if (selDep == null || selDep.length < 1) {
+                                        return;
+                                    }
                                     projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, 2, workingDay, sHoliday));
                                 } else {
-                                    projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                    if (records[i].records != null && records[i].records.length > 0) {
+                                        const minEstStartDt = moment(fMinDate(fPmsLoadProperties(records[i].records, 'EstStartDt'))).format('YYYY-MM-DD');
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', minEstStartDt);
+                                    } else {
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                    }
                                 }
                             }
                         }
@@ -1317,6 +1398,7 @@
                     var rowKey = args.key;
                     var dataField = args.dataField;
                     var records = row.records;
+                    var parent = row.parent;
                     var allDatas = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
 
                     if (dataField == 'EstStartDt') {
@@ -1328,7 +1410,40 @@
                             }
                         }
                     }
+
                     fDependencyRescureControl(ProjectOID, row);
+
+                    if (dataField == 'EstStartDt' || dataField == 'Dependency') {
+                        if (parent) {
+                            _.each(fPmsParentArray([parent]), function (item) {
+                                if (item.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT') {
+                                    return;
+                                }
+                                const arrRows = fPmsArrayTasks(item.records);
+                                if (arrRows != null && arrRows.length > 0) {
+                                    const minEstStartDt = moment(fMinDate(fPmsLoadProperties(arrRows, 'EstStartDt'))).format('YYYY-MM-DD');
+                                    projWbsInfo$.jqxTreeGrid('setCellValue', item.ToOID, 'EstStartDt', minEstStartDt);
+                                }
+                            });
+                        }
+                    } else {
+                        const arrRows = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                        const targetData = fListMatch(arrRows, function (x) { return fGettingDependData(x.Dependency).hasOwnProperty(row.Id); });
+                        if (targetData != null && targetData.length > 0) {
+                            _.each(targetData, function (target) {
+                                _.each(fPmsParentArray([target.parent]), function (item) {
+                                    if (item.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT') {
+                                        return;
+                                    }
+                                    const arrRows = fPmsArrayTasks(item.records);
+                                    if (arrRows != null && arrRows.length > 0) {
+                                        const minEstStartDt = moment(fMinDate(fPmsLoadProperties(arrRows, 'EstStartDt'))).format('YYYY-MM-DD');
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', item.ToOID, 'EstStartDt', minEstStartDt);
+                                    }
+                                });
+                            });
+                        }
+                    }
                 });
 
                 //wbs Export
@@ -1348,6 +1463,7 @@
                         { name: 'OID', type: 'number' },
                         { name: 'Ord', type: 'number' },
                         { name: 'RoleOID', type: 'number' },
+                        { name: 'RoleOrd', type: 'number' },
                         { name: 'RoleOIDNm', type: 'string' },
                         { name: 'Description', type: 'string' },
                         { name: 'PersonNm', type: 'string' },
@@ -1375,187 +1491,219 @@
                 const resourceGrd$ = $("#resourceInfo_" + ProjectOID);
                 resourceGrd$.jqxTreeGrid('render');
                 resourceGrd$.jqxTreeGrid(
-                {
-                    width: screenWidth,
-                    height: screenHeight,
-                    theme: "kdnc",
-                    source: resourceAdapter,
-                    columnsResize: true,
-                    sortable: false,
-                    checkboxes: false,
-                    selectionMode: "custom",
-                    editable: false,
-                    pagerButtonsCount: 8,
-                    toolbarHeight: 44,
-                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
-                    showToolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
-                    ready: function () {
+                    {
+                        width: screenWidth,
+                        height: screenHeight,
+                        theme: "kdnc",
+                        source: resourceAdapter,
+                        columnsResize: true,
+                        sortable: false,
+                        checkboxes: false,
+                        selectionMode: "custom",
+                        editable: false,
+                        pagerButtonsCount: 8,
+                        toolbarHeight: 44,
+                        editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                        showToolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                        ready: function () {
 
-                    },
-                    columns: [
-                        {
-                            text: '멤버', width: "15%", datafield: 'PersonNm', align: 'center', editable: false,
-                            cellsrenderer: function (row, column, value) {
-                                var rowData = resourseData.filter(function (item) {
-                                    return item.ToOID == row;
-                                });
-                                if (rowData.length < 1 || rowData[0].Thumbnail == null) {
-                                   return "<div class='pmsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value + "</div>";
-                                } else {
-                                   return "<div class='pmsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData[0].Thumbnail + "'></div>" + value + "</div>";
-                                }
-                            }
                         },
-                        { text: '역할', datafield: 'RoleOIDNm', width: "15%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, columnType: "template", },
-                        { text: '부서', datafield: 'DepartmentNm', width: "15%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, editable: false, },
-                        { text: '설명', datafield: 'Description', width: "55%", align: 'center', cellsalign: 'left', cellsrenderer: renderWord },
-                    ],
-                    rendertoolbar: function (statusbar) {
-                        if (statusbar[0].children.length > 0) {
-                            return;
-                        }
-                        var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
-                        var btnModify = $("<button class='custom-button'><i class='fas fa-plus'></i> 수정</button>").jqxButton();
-                        var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 멤버 추가</button>").jqxButton();
-                        var btnGuestAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 참조자 추가</button>").jqxButton();
-                        var btnDelete = $("<button class='custom-button'><i class='fas fa-minus'></i> 선택 삭제</button>").jqxButton();
-                        var btnSave = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
-                        var btnCancel = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
-                        btnAdd.jqxButton({ disabled: true });
-                        btnGuestAdd.jqxButton({ disabled: true });
-                        btnDelete.jqxButton({ disabled: true });
-                        btnSave.jqxButton({ disabled: true });
-                        btnCancel.jqxButton({ disabled: true });
-                        container.append(btnModify);
-                        container.append(btnAdd);
-                        container.append(btnGuestAdd);
-                        container.append(btnDelete);
-                        container.append(btnSave);
-                        container.append(btnCancel);
-                        statusbar.append(container);
-
-                        var resourceContent = function (action) {
-                            switch (action.toUpperCase()) {
-                                case "MODIFY":
-                                    btnModify.jqxButton({ disabled: true });
-                                    btnAdd.jqxButton({ disabled: false });
-                                    btnGuestAdd.jqxButton({ disabled: false });
-                                    btnSave.jqxButton({ disabled: false });
-                                    btnCancel.jqxButton({ disabled: false });
-                                    btnDelete.jqxButton({ disabled: false });
-                                    resourceGrd$.jqxTreeGrid({ editable: true, checkboxes: true });
-                                    break;
-                                case "CANCEL":
-                                    btnModify.jqxButton({ disabled: false });
-                                    btnAdd.jqxButton({ disabled: true });
-                                    btnGuestAdd.jqxButton({ disabled: true });
-                                    btnDelete.jqxButton({ disabled: true });
-                                    btnSave.jqxButton({ disabled: true });
-                                    btnCancel.jqxButton({ disabled: true });
-                                    btnDelete.jqxButton({ disabled: true });
-                                    resourceGrd$.jqxTreeGrid({ editable: false, checkboxes: false });
-                                    break;
-                            }
-                        };
-
-                        btnModify.click(function (event) {
-                            resourceContent("MODIFY");
-                            resourceGrd$.jqxTreeGrid('updateBoundData');
-                        });
-
-                        btnAdd.click(function (event) {
-                            OpenApprovalPersonDialog(function (res) {
-                                var tmpGetRows = resourceGrd$.jqxTreeGrid('getRows');
-                                for (var obj in res) {
-                                    if (tmpGetRows.filter(function (item) { return item.ToOID == res[obj].OID;}).length < 1) {
-                                        resourceGrd$.jqxTreeGrid('addRow', null,
-                                        {
-                                            'RootOID': ProjectOID,
-                                            'FromOID': ProjectOID,
-                                            'ToOID': res[obj].OID,
-                                            'RoleOIDNm': '프로젝트 멤버',
-                                            'PersonNm': res[obj].Name,
-                                            'DepartmentNm': res[obj].Depart,
-                                            'Action': '@Common.Constant.PmsConstant.ACTION_ADD',
-                                        },
-                                        'last', null);
+                        columns: [
+                            {
+                                text: '멤버', width: "15%", datafield: 'PersonNm', align: 'center', editable: false,
+                                cellsrenderer: function (row, column, value) {
+                                    var rowData = resourseData.filter(function (item) {
+                                        return item.ToOID == row;
+                                    });
+                                    if (rowData.length < 1 || rowData[0].Thumbnail == null) {
+                                        return "<div class='pmsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + value + "</div>";
+                                    } else {
+                                        return "<div class='pmsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + rowData[0].Thumbnail + "'></div>" + value + "</div>";
                                     }
                                 }
-                            }, null, null, '/Common/ApprovalPerson', '멤버 추가');
-                        });
-
-                        btnGuestAdd.click(function (event) {
-                            OpenApprovalPersonDialog(function (res) {
-                                var tmpGetRows = resourceGrd$.jqxTreeGrid('getRows');
-                                for (var obj in res) {
-                                    if (tmpGetRows.filter(function (item) { return item.ToOID == res[obj].OID; }).length < 1) {
-                                        resourceGrd$.jqxTreeGrid('addRow', null,
-                                        {
-                                            'RootOID': ProjectOID,
-                                            'FromOID': ProjectOID,
-                                            'ToOID': res[obj].OID,
-                                            'RoleOIDNm': '참조자',
-                                            'PersonNm': res[obj].Name,
-                                            'DepartmentNm': res[obj].Depart,
-                                            'Action': '@Common.Constant.PmsConstant.ACTION_ADD',
-                                        },
-                                        'last', null);
-                                    }
-                                }
-                            }, null, null, '/Common/ApprovalPerson', '멤버 추가');
-                        });
-
-                        btnDelete.click(function (event) {
-                            var selection = resourceGrd$.jqxTreeGrid('getCheckedRows');
-                            if (selection.length < 1) {
-                                alert('멤버를 선택해주세요.');
+                            },
+                            { text: '역할', datafield: 'RoleOIDNm', width: "15%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, columnType: "template", },
+                            { text: '부서', datafield: 'DepartmentNm', width: "15%", align: 'center', cellsalign: 'center', cellsrenderer: renderWord, editable: false, },
+                            { text: '설명', datafield: 'Description', width: "55%", align: 'center', cellsalign: 'left', cellsrenderer: renderWord },
+                        ],
+                        rendertoolbar: function (statusbar) {
+                            if (statusbar[0].children.length > 0) {
                                 return;
                             }
+                            var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
+                            var btnModify = $("<button class='custom-button'><i class='fas fa-plus'></i> 수정</button>").jqxButton();
+                            var btnCFTAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> CFT장 추가</button>").jqxButton();
+                            var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 멤버 추가</button>").jqxButton();
+                            var btnGuestAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 참조자 추가</button>").jqxButton();
+                            var btnDelete = $("<button class='custom-button'><i class='fas fa-minus'></i> 선택 삭제</button>").jqxButton();
+                            var btnSave = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
+                            var btnCancel = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
+                            btnCFTAdd.jqxButton({ disabled: true });
+                            btnAdd.jqxButton({ disabled: true });
+                            btnGuestAdd.jqxButton({ disabled: true });
+                            btnDelete.jqxButton({ disabled: true });
+                            btnSave.jqxButton({ disabled: true });
+                            btnCancel.jqxButton({ disabled: true });
+                            container.append(btnModify);
+                            container.append(btnCFTAdd);
+                            container.append(btnAdd);
+                            container.append(btnGuestAdd);
+                            container.append(btnDelete);
+                            container.append(btnSave);
+                            container.append(btnCancel);
+                            statusbar.append(container);
 
-                            var Pm = PmsRole.filter(function (value) {
-                                return value.Name == '@Common.Constant.PmsConstant.ROLE_PM';
-                            })[0];
-
-                            var keys = [];
-                            for (var i = 0; i < selection.length; i++) {
-                                if (selection[i].RoleOID == Pm.OID) {
-                                    keys = [];
-                                    alert('PM은 삭제할 수 없습니다.');
-                                    break;
+                            var resourceContent = function (action) {
+                                switch (action.toUpperCase()) {
+                                    case "MODIFY":
+                                        btnModify.jqxButton({ disabled: true });
+                                        btnCFTAdd.jqxButton({ disabled: false });
+                                        btnAdd.jqxButton({ disabled: false });
+                                        btnGuestAdd.jqxButton({ disabled: false });
+                                        btnSave.jqxButton({ disabled: false });
+                                        btnCancel.jqxButton({ disabled: false });
+                                        btnDelete.jqxButton({ disabled: false });
+                                        resourceGrd$.jqxTreeGrid({ editable: true, checkboxes: true });
+                                        break;
+                                    case "CANCEL":
+                                        btnModify.jqxButton({ disabled: false });
+                                        btnAdd.jqxButton({ disabled: true });
+                                        btnGuestAdd.jqxButton({ disabled: true });
+                                        btnDelete.jqxButton({ disabled: true });
+                                        btnSave.jqxButton({ disabled: true });
+                                        btnCancel.jqxButton({ disabled: true });
+                                        btnDelete.jqxButton({ disabled: true });
+                                        resourceGrd$.jqxTreeGrid({ editable: false, checkboxes: false });
+                                        break;
                                 }
-                                keys.push(resourceGrd$.jqxTreeGrid('getKey', selection[i]));
-                            }
-                            resourceGrd$.jqxTreeGrid('deleteRow', keys);
-                        });
+                            };
 
-                        btnSave.click(function (event) {
-                            if (confirm('저장하시겠습니까?')) {
-                                const rowData = resourceGrd$.jqxTreeGrid('getRows');
-                                for (var _row in rowData) {
-                                    rowData[_row].RoleOID = (PmsRole.filter(function (item) { return item.Description == rowData[_row].RoleOIDNm })[0]).OID;
+                            btnModify.click(function (event) {
+                                resourceContent("MODIFY");
+                                resourceGrd$.jqxTreeGrid('updateBoundData');
+                            });
+
+                            btnCFTAdd.click(function (event) {
+                                OpenApprovalPersonDialog(function (res) {
+                                    var tmpGetRows = resourceGrd$.jqxTreeGrid('getRows');
+                                    for (var obj in res) {
+                                        if (tmpGetRows.filter(function (item) { return item.ToOID == res[obj].OID; }).length < 1) {
+                                            resourceGrd$.jqxTreeGrid('addRow', null,
+                                                {
+                                                    'RootOID': ProjectOID,
+                                                    'FromOID': ProjectOID,
+                                                    'ToOID': res[obj].OID,
+                                                    'RoleOIDNm': 'CFT장',
+                                                    'PersonNm': res[obj].Name,
+                                                    'DepartmentNm': res[obj].Depart,
+                                                    'Action': '@Common.Constant.PmsConstant.ACTION_ADD',
+                                                },
+                                                'last', null);
+                                        }
+                                    }
+                                }, null, null, '/Common/ApprovalPerson', 'CFT장 추가');
+                            });
+
+                            btnAdd.click(function (event) {
+                                OpenApprovalPersonDialog(function (res) {
+                                    var tmpGetRows = resourceGrd$.jqxTreeGrid('getRows');
+                                    for (var obj in res) {
+                                        if (tmpGetRows.filter(function (item) { return item.ToOID == res[obj].OID; }).length < 1) {
+                                            resourceGrd$.jqxTreeGrid('addRow', null,
+                                                {
+                                                    'RootOID': ProjectOID,
+                                                    'FromOID': ProjectOID,
+                                                    'ToOID': res[obj].OID,
+                                                    'RoleOIDNm': '프로젝트 멤버',
+                                                    'PersonNm': res[obj].Name,
+                                                    'DepartmentNm': res[obj].Depart,
+                                                    'Action': '@Common.Constant.PmsConstant.ACTION_ADD',
+                                                },
+                                                'last', null);
+                                        }
+                                    }
+                                }, null, null, '/Common/ApprovalPerson', '멤버 추가');
+                            });
+
+                            btnGuestAdd.click(function (event) {
+                                OpenApprovalPersonDialog(function (res) {
+                                    var tmpGetRows = resourceGrd$.jqxTreeGrid('getRows');
+                                    for (var obj in res) {
+                                        if (tmpGetRows.filter(function (item) { return item.ToOID == res[obj].OID; }).length < 1) {
+                                            resourceGrd$.jqxTreeGrid('addRow', null,
+                                                {
+                                                    'RootOID': ProjectOID,
+                                                    'FromOID': ProjectOID,
+                                                    'ToOID': res[obj].OID,
+                                                    'RoleOIDNm': '참조자',
+                                                    'PersonNm': res[obj].Name,
+                                                    'DepartmentNm': res[obj].Depart,
+                                                    'Action': '@Common.Constant.PmsConstant.ACTION_ADD',
+                                                },
+                                                'last', null);
+                                        }
+                                    }
+                                }, null, null, '/Common/ApprovalPerson', '참조자 추가');
+                            });
+
+                            btnDelete.click(function (event) {
+                                var selection = resourceGrd$.jqxTreeGrid('getCheckedRows');
+                                if (selection.length < 1) {
+                                    alert('멤버를 선택해주세요.');
+                                    return;
                                 }
-                                RequestData('/Pms/InsertMembers', rowData.concat(deleteResourceData), function (res) {
-                                    //deleteResourceData = [];
-                                    //btnCancel.click();
-                                });
 
-                                deleteResourceData = [];
+                                var Pm = PmsRole.filter(function (value) {
+                                    return value.Name == '@Common.Constant.PmsConstant.ROLE_PM';
+                                })[0];
+
+                                var keys = [];
+                                for (var i = 0; i < selection.length; i++) {
+                                    if (selection[i].RoleOID == Pm.OID) {
+                                        keys = [];
+                                        alert('PM은 삭제할 수 없습니다.');
+                                        break;
+                                    }
+                                    keys.push(resourceGrd$.jqxTreeGrid('getKey', selection[i]));
+                                }
+                                resourceGrd$.jqxTreeGrid('deleteRow', keys);
+                            });
+
+                            btnSave.click(function (event) {
+                                if (confirm('저장하시겠습니까?')) {
+                                    const rowData = resourceGrd$.jqxTreeGrid('getRows');
+                                    for (var _row in rowData) {
+                                        rowData[_row].RoleOID = (PmsRole.filter(function (item) { return item.Description == rowData[_row].RoleOIDNm })[0]).OID;
+                                    }
+                                    RequestData('/Pms/InsertMembers', rowData.concat(deleteResourceData), function (res) {
+                                        //deleteResourceData = [];
+                                        //btnCancel.click();
+                                    });
+
+                                    deleteResourceData = [];
+                                    resourceGrd$.jqxTreeGrid('pagerRenderer');
+                                }
+                            });
+
+                            btnCancel.click(function (event) {
+                                resourceContent("CANCEL");
                                 resourceGrd$.jqxTreeGrid('pagerRenderer');
-                            }
-                        });
-
-                        btnCancel.click(function (event) {
-                            resourceContent("CANCEL");
-                            resourceGrd$.jqxTreeGrid('pagerRenderer');
-                        });
-                    },
-                    pagerRenderer: function () {
-                        RequestData("/Pms/SelMembers", { 'FromOID': ProjectOID }, function (res) {
-                            resourseData = res;
-                            PrintJqxTreeGrid(resourceSource, resourceGrd$, res);
-                        });
-                    }
-                });
+                            });
+                        },
+                        pagerRenderer: function () {
+                            RequestData("/Pms/SelMembers", { 'FromOID': ProjectOID }, function (res) {
+                                resourseData = res;
+                                for (var _row in resourseData) {
+                                    resourseData[_row].RoleOrd = (PmsRole.filter(function (item) { return item.Description == resourseData[_row].RoleOIDNm })[0]).Ord;
+                                }
+                                resourseData.sort(function (a, b) {
+                                    return a.RoleOrd - b.RoleOrd;
+                                });
+                                console.log(resourseData);
+                                PrintJqxTreeGrid(resourceSource, resourceGrd$, resourseData);
+                            });
+                        }
+                    });
 
                 resourceGrd$.jqxTreeGrid('pagerRenderer');
 
@@ -1600,14 +1748,14 @@
                         { name: 'ModifyUsNm', type: 'date' },
                         { name: 'FromNm', type: 'string' },
                         { name: 'BPolicyAuths', type: 'Array' },
-                        { name: 'OID'},
+                        { name: 'OID' },
                         { name: 'FromOID', type: 'number' },
                         { name: 'ToOID', type: 'number' },
                         { name: 'RootOID', type: 'number' },
                         { name: 'ProjectNm', type: 'string' },
                         { name: 'DocClassNm', type: 'string' },
                         { name: 'TaskNm', type: 'string' },
-                        { name: 'TaskOID'}
+                        { name: 'TaskOID' }
                     ],
                     hierarchy:
                     {
@@ -1660,7 +1808,7 @@
                             },
                         },
                         { text: '리비전', width: "4%", datafield: 'DocRev', align: 'center', cellsalign: 'center' },
-                        { text: '상태', width: "5%", datafield:   'DocStNm', align: 'center', cellsalign: 'center' },
+                        { text: '상태', width: "5%", datafield: 'DocStNm', align: 'center', cellsalign: 'center' },
                         { text: '생성일', width: "8%", datafield: 'CreateDt', align: 'center', cellsFormat: 'yyyy-MM-dd', cellsalign: 'center' },
                         { text: '생성자', width: "8%", datafield: 'CreateUsNm', align: 'center', cellsalign: 'center' },
                     ],
@@ -1714,7 +1862,7 @@
                                 }
                             }
 
-                            RequestData("/Pms/DelProjectDocumentClassification", { _param : delparam }, function (res) {
+                            RequestData("/Pms/DelProjectDocumentClassification", { _param: delparam }, function (res) {
                                 getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
                                 deliveriesGrd$.jqxTreeGrid('expandAll');
                             });
@@ -1770,13 +1918,23 @@
                             }, 250);
                         } else {
                             if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
-                                OpenInfoReliabilityDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
-                                }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
+                                if (gClickDuplication) { return; }
+                                gClickDuplication = true;
+                                setTimeout(function () {
+                                    OpenInfoReliabilityDialog(function (res) {
+                                        getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
+                                    gClickDuplication = false;
+                                }, 250);
                             } else {
-                                OpenInfoReliabilityReportDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
-                                }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
+                                if (gClickDuplication) { return; }
+                                gClickDuplication = true;
+                                setTimeout(function () {
+                                    OpenInfoReliabilityReportDialog(function (res) {
+                                        getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
+                                    gClickDuplication = false;
+                                }, 250);
                             }
                         }
                     }
@@ -1794,21 +1952,21 @@
                 const issueRiskSource = {
                     datatype: 'json',
                     datafields: [
-                        { name: 'OID',              type: 'number' },
-                        { name: 'Name',             type: 'string' },
-                        { name: 'ProjectNm',        type: 'string' },
-                        { name: 'Type',             type: 'string' },
-                        { name: 'Description',      type: 'string' },
-                        { name: 'CreateUs',         type: 'number' },
-                        { name: 'CreateUsNm',       type: 'string' },
-                        { name: 'TaskNm',           type: 'string' },
-                        { name: 'IssueType',        type: 'string' },
-                        { name: 'IssueTypeNm',      type: 'string' },
-                        { name: 'CreateDt',         type: 'date' },
-                        { name: 'EstFinDt',         type: 'date' },
-                        { name: 'Importance',       type: 'number' },
-                        { name: 'ImportanceNm',     type: 'string' },
-                        { name: 'BPolicy',          type: 'Array' },
+                        { name: 'OID', type: 'number' },
+                        { name: 'Name', type: 'string' },
+                        { name: 'ProjectNm', type: 'string' },
+                        { name: 'Type', type: 'string' },
+                        { name: 'Description', type: 'string' },
+                        { name: 'CreateUs', type: 'number' },
+                        { name: 'CreateUsNm', type: 'string' },
+                        { name: 'TaskNm', type: 'string' },
+                        { name: 'IssueType', type: 'string' },
+                        { name: 'IssueTypeNm', type: 'string' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'EstFinDt', type: 'date' },
+                        { name: 'Importance', type: 'number' },
+                        { name: 'ImportanceNm', type: 'string' },
+                        { name: 'BPolicy', type: 'Array' },
                     ],
                     id: 'OID',
                     addRow: function (rowID, rowData, position, parentID, commit) {
@@ -1888,6 +2046,11 @@
                                 alert("선택이 되지 않았습니다.");
                                 return;
                             }
+                            if (delItem[0].CreateUS == '@Session["UserOID"]') {
+                            } else {
+                                alert('권한이 없습니다.');
+                                return;
+                            }
                             delparam.OID = delItem[0].OID;
                             if (confirm('삭제 하시겠습니까?')) {
                                 RequestData("/Pms/DelIssue", delparam, function (res) {
@@ -1945,7 +2108,7 @@
                                         RequestData('/Pms/SelIssue', { 'RootOID': ProjectOID }, function (res) {
                                             PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
                                         });
-                                    }, null, param ,'/Pms/InfoIssue', '이슈 상세');
+                                    }, null, param, '/Pms/InfoIssue', '이슈 상세');
                                 gClickDuplication = false;
                             }, 100);
                         });
@@ -2025,7 +2188,7 @@
                         { text: '생성자', cellsalign: 'center', align: 'center', datafield: 'CreateUsNm', width: '8%' },
                         { text: '설명', cellsalign: 'left', align: 'center', datafield: 'Description', width: '28%' },
                     ],
-                    columnGroups: [ 
+                    columnGroups: [
                         { text: '예상', name: 'Estimated' },
                     ],
                     showtoolbar: @Json.Encode(Convert.ToInt32(ViewBag.Detail.PMOID) == Convert.ToInt32(Session["UserOID"])),
@@ -2045,7 +2208,7 @@
                         statusbar.append(container);
 
                         btnNewAdd.on('click', function () {
-                            RequestData('/Pms/InsBaseLineProject', { ProjectOID: ProjectOID } ,function (res) {
+                            RequestData('/Pms/InsBaseLineProject', { ProjectOID: ProjectOID }, function (res) {
                                 alert('저장되었습니다.');
                                 baseLineGrd$.jqxTreeGrid('pagerRenderer');
                             });
@@ -2123,6 +2286,252 @@
                 RequestHtml('/Common/ApprovalHistory', { OID: ProjectOID }, function (res) {
                     $('#ApphisInfo_' + ProjectOID).html(res);
                 });
+            } else if (infoValue === 'document') {
+                const documentSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'DocType' },
+                        { name: 'DocType_KorNm' },
+                        { name: 'Name' },
+                        { name: 'BPolicy' },
+                        { name: 'BPolicyOID' },
+                        { name: 'Title' },
+                        { name: 'Revision' },
+                        { name: 'Eo_No' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'CreateUs' },
+                        { name: 'CreateUsNm' },
+                        { name: 'Description' },
+                    ],
+                    addRow: function (rowID, rowData, position, parentID, commit) {
+                        commit(true);
+                    },
+                    deleteRow: function (rowID, commit) {
+                        commit(true);
+                    },
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+                    }
+                };
+
+                var documentAdapter = new $.jqx.dataAdapter(documentSource);
+                const documentGrd$ = $("#documentInfo_" + ProjectOID);
+                documentGrd$.jqxTreeGrid('render');
+                documentGrd$.jqxTreeGrid({
+                    theme: "kdnc",
+                    width: screenWidth,
+                    pagerButtonsCount: 8,
+                    toolbarHeight: 44,
+                    height: screenHeight,
+                    source: documentAdapter,
+                    sortable: false,
+                    pageable: false,
+                    selectionMode: "custom",
+                    editable: false,
+                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                    columnsResize: true,
+                    checkboxes: true,
+                    columns: [
+                        //{
+                        //    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        //    cellsrenderer: function (row, column, value) {
+                        //        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        //    }
+                        //},
+                        { text: '문서 분류', datafield: 'DocType_KorNm', width: "22%", align: 'center', cellsalign: 'left', },
+                        { text: '제목', datafield: 'Title', width: "30%", align: 'center', cellsalign: 'center', },
+
+                        { text: '문서번호', datafield: 'Name', width: "22%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                        { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center' },
+                        { text: '작성일', datafield: 'CreateDt', width: "12%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+                    ],
+                    showtoolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    rendertoolbar: function (statusbar) {
+                        if (statusbar[0].children.length > 0) {
+                            return;
+                        }
+                        var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
+                        var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                        var btnDelete = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+                        container.append(btnAdd);
+                        container.append(btnDelete);
+                        statusbar.append(container);
+
+                        btnAdd.on('click', function () {
+                            var param = {};
+                            param.RootOID = ProjectOID;
+                            param.Data = documentGrd$.jqxTreeGrid('getRows');
+                            OpenPmsCommonDocumentDialog(function (res) {
+                                documentGrd$.jqxTreeGrid('pagerRenderer');
+                            }, null, param, '/Pms/SearchDocument', '문서 검색 추가', null);
+                        });
+                        btnDelete.on('click', function () {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                var data = documentGrd$.jqxTreeGrid('getCheckedRows');
+                                RequestData("/Pms/DelPmsDocumentRelation", data, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    documentGrd$.jqxTreeGrid('pagerRenderer');
+                                });
+                            }
+                        });
+                        var rowKey = null;
+
+                    },
+                    pagerRenderer: function () {
+                        RequestData("/Pms/SelPmsDocument", { RootOID: ProjectOID }, function (res) {
+                            PrintJqxTreeGrid(documentSource, documentGrd$, res);
+                            documentGrd$.jqxTreeGrid('updateBoundData');
+                        });
+                    }
+                });
+
+                documentGrd$.jqxTreeGrid('pagerRenderer');
+
+            } else if (infoValue === 'epart') {
+                var EPartParam = {};
+                EPartParam.RootOID = ProjectOID;
+
+                var EPartSource =
+                {
+                    dataType: "json",
+                    dataFields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'BPolicyOID' },
+                        { name: 'BPolicy' },
+                        { name: 'CreateUsNm' },
+                        { name: 'CreateDt', type: 'date' },
+
+                        { name: 'Title' },
+
+                        { name: 'Oem_Lib_OID' },
+                        { name: 'Oem_Lib_Nm' },
+                        { name: 'Sel_Revision' },
+                        { name: 'Division' },
+                        { name: 'DivisionNm' },
+                        { name: 'Standard' },
+
+                        { name: 'Car_Lib_OID' },
+                        { name: 'Car_Lib_Nm' },
+                        { name: 'ITEM_No' },
+                        { name: 'ITEM_NoNm' },
+                        { name: 'Block_No' },
+                        { name: 'Block_NoNm' },
+                        { name: 'Material_OID' },
+                        { name: 'Material_Nm' },
+                        { name: 'EPartType' },
+                        { name: 'Sel_Eo' },
+                        { name: 'Sel_Eo_Dt', type: 'date' },
+                        { name: 'Thumbnail' },
+                        { name: 'Revision' },
+                    ],
+                    id: 'OID',
+                    addRow: function (rowID, rowData, position, parentID, commit) {
+                        newRowID = rowID;
+                        commit(true);
+                    },
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+                    }
+                };
+                var EPartdataAdapter = new $.jqx.dataAdapter(EPartSource);
+                const epartInfoGrid$ = $('#epartInfo_' + ProjectOID);
+                epartInfoGrid$.jqxGrid('render');
+                epartInfoGrid$.jqxGrid({
+                    width: "100%",
+                    theme: "kdnc",
+                    height: 650,
+                    sortable: true,
+                    showToolbar: @Json.Encode(((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1 && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    toolbarHeight: 44,
+                    editable: false,
+                    selectionmode: 'checkbox',
+                    source: EPartdataAdapter,
+                    ready: function () {
+
+                    },
+                    columns: [
+                        { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '차종', datafield: 'Car_Lib_Nm', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '구분', datafield: 'DivisionNm', width: "7%", align: 'center', cellsalign: 'center', },
+                        { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "11%", align: 'center', cellsalign: 'center', },
+                        { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
+                        { text: '규격', datafield: 'Standard', width: "6%", align: 'center', cellsalign: 'center', },
+                        { text: '고객리비전', datafield: 'Sel_Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                        { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                        { text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            }
+                        },
+                    ],
+                    rendertoolbar: function (toolBar) {
+                        var container = $("<div class='lGridComponent' ></div>");
+                        var AddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                        var DelButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+
+                        container.append(AddButton);
+                        container.append(DelButton);
+                        toolBar.append(container);
+                        AddButton.click(function (event) {
+                            var param = {};
+                            param.RootOID = ProjectOID;
+                            param.PartData = epartInfoGrid$.jqxGrid('getrows');
+                            OpenPmsEPartDialog(function (res) {
+                                RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                                    PrintJqxGrid(EPartSource, epartInfoGrid$, res);
+                                });
+                            }, null, param, '/EBom/dlgSearchEPart', '부품 추가');
+                        });
+
+                        DelButton.click(function (event) {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                var rows = epartInfoGrid$.jqxGrid('selectedrowindexes');
+
+                                var delRecords = [];
+
+                                for (var m = 0; m < rows.length; m++) {
+                                    var row = epartInfoGrid$.jqxGrid('getrowdata', rows[m]);
+                                    var delparam = {};
+                                    delparam.RootOID = ProjectOID;
+                                    delparam.FromOID = ProjectOID;
+                                    delparam.ToOID = row.OID;
+                                    delRecords[m] = delparam;
+                                }
+
+                                RequestData("/Pms/DelEPartRelation", delRecords, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                                        PrintJqxGrid(EPartSource, epartInfoGrid$, res);
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+
+                RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                    PrintJqxGrid(EPartSource, epartInfoGrid$, res);
+                });
             }
         });
     });
@@ -2131,13 +2540,14 @@
         var row$ = gPmsModifyDeliveryMaster[_rowData];
         var param = {};
         var row = row$.obj$.jqxTreeGrid('getRow', _rowData);
-        param.DocType = row.ToOID;
+        param.DocType = parseInt(row.ToOID);
         param.DocType_KorNm = row.DocClassNm;
-        param.RootOID = row.RootOID;
+        param.RootOID = parseInt(row.RootOID);
+        param.FromOID = parseInt(row.ToOID);
         if (param.RootOID != param.FromOID) {
-            param.TaskOID = row.FromOID;
+            param.TaskOID = parseInt(row.FromOID);
         }
-        param.FromOID = row.ToOID;
+
 
         if (row.ViewUrl != null) {
             if (row.DocClassNm == "@Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY") {
@@ -2167,10 +2577,10 @@
         param.DocType = row.ToOID;
         param.DocType_KorNm = row.DocClassNm;
         param.RootOID = row.RootOID;
+        param.FromOID = row.ToOID;
         if (param.RootOID != param.FromOID) {
             param.TaskOID = row.FromOID;
         }
-        param.FromOID = row.ToOID;
 
         OpenSearchReliabilityReportDialog(function () {
             RequestData("/Pms/SelPmsDocumentClassification", { RootOID: param.RootOID }, function (res) {

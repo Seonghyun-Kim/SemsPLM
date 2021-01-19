@@ -31,29 +31,26 @@ namespace EBom.Models
         public int? Prod_Lib_Lev1_OID { get; set; }
         public int? Prod_Lib_Lev2_OID { get; set; }
         public int? Prod_Lib_Lev3_OID { get; set; }
-        public int? Material_OID { get; set; }
         public string CO { get; set; }
         public string Etc_Delivery { get; set; }
         public string Pms_NM { get; set; }
         public string Prod_Lib_Lev1_NM { get; set; }
         public string Prod_Lib_Lev2_NM { get; set; }
         public string Prod_Lib_Lev3_NM { get; set; }
-        public string Material_Nm { get; set; }
+
+
 
 
         public string Title { get; set; }
-
         public int? EPartType { get; set; } //제품 구분
         public int? Oem_Lib_OID { get; set; }
         public int? Car_Lib_OID { get; set; } //차종
         public string Oem_Lib_Nm { get; set; }
         public string Car_Lib_Nm { get; set; }
-
-
-
+        public int? Material_OID { get; set; }
+        public string Material_Nm { get; set; }
         public string Division { get; set; } //구분
         public string DivisionNm { get; set; } //구분 한글명
-
         public int? ITEM_No { get; set; } //ITEM_NO
         public string ITEM_NoNm { get; set; } //ITEM_NO
         public int? ITEM_Middle { get; set; } //ITEM_Middle
@@ -66,22 +63,16 @@ namespace EBom.Models
         public string Sel_Revision { get; set; } //고객 리비전
         public string Standard { get; set; } //규격
         public string EPartTypeNm { get; set; }
-
-
-
         public int? RootOID { get; set; }
         public int? FromOID { get; set; }
         public int? ToOID { get; set; }
         public List<HttpPostedFileBase> Files { get; set; }
         public List<HttpFile> delFiles { get; set; }
-
         public int? isDuplicate { get; set; }
-
         public string StartCreateDt { get; set; }
         public string EndCreateDt { get; set; }
-
-
-
+        public int? Orgin_OID { get; set; }
+        public string NewCheck { get; set; }
     }
 
     public static class EPartRepository
@@ -91,6 +82,7 @@ namespace EBom.Models
         {
             _param.Type = EBomConstant.TYPE_PART;
             List<EPart> lEPart = DaoFactory.GetList<EPart>("EBom.SelEPart", _param);
+            List<EPart> ViewEPart = new List<EPart>();
             lEPart.ForEach(obj =>
             {
                 if (obj.Car_Lib_OID != null)
@@ -106,7 +98,7 @@ namespace EBom.Models
                     }
                     else
                     {
-                        if(obj.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                        if (obj.Division == Common.Constant.EBomConstant.DIV_SINGLE)
                         {
                             obj.DivisionNm = Common.Constant.EBomConstant.DIV_SINGLE_NM;
                         }
@@ -133,8 +125,13 @@ namespace EBom.Models
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
                 obj.BPolicyNm = obj.BPolicy.Name;
                 obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
+
+                if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+                {
+                    ViewEPart.Add(obj);
+                }
             });
-            return lEPart;
+            return ViewEPart;
         }
         #endregion
 
@@ -156,7 +153,7 @@ namespace EBom.Models
             {
                 lEPart.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_Middle }).KorNm;
             }
-            if(lEPart.EPartType != null)
+            if (lEPart.EPartType != null)
             {
                 lEPart.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = Convert.ToInt32(lEPart.EPartType) }).KorNm;
             }
@@ -234,6 +231,7 @@ namespace EBom.Models
             getStructure.TimeOID = 0;
 
             EPart PataData = SelEPartObject(Context, new EPart { OID = _rootOID });
+            getStructure.OID = 0;
             getStructure.ToData = PataData;
             getStructure.Description = PataData.Description;
             getStructure.ObjName = PataData.Name;
@@ -265,6 +263,7 @@ namespace EBom.Models
             getStructure.ObjOem_Lib_Nm = PataData.Oem_Lib_Nm;
 
             getStructure.BPolicy = PataData.BPolicy;
+            getStructure.BPolicyNm = PataData.BPolicy.StatusNm;
 
             getStructure.diseditable = EBomConstant.DISEDITABLE;
 
@@ -272,11 +271,11 @@ namespace EBom.Models
             return getStructure;
         }
 
-        public static void getEbomStructure(HttpSessionStateBase Context, EBOM _relData, int _rootOID, int? TimeOID) 
+        public static void getEbomStructure(HttpSessionStateBase Context, EBOM _relData, int _rootOID, int? TimeOID)
         {
-            
+
             _relData.Children = getEbom(Context, new EBOM { Type = EBomConstant.TYPE_PART, FromOID = _relData.ToOID }, _rootOID, TimeOID);
-            
+
             _relData.Children.ForEach(item =>
             {
                 item.Level = _relData.Level + 1;
@@ -297,50 +296,13 @@ namespace EBom.Models
 
             foreach (EBOM Obj in EBom)
             {
-                if(PataData != null)
+                if (PataData != null)
                 {
                     PataData = null;
                 }
-                if(callStruct != null && callStruct.Count > 0)
-                {
-                    callStruct = null;
-                }
-                if(callObj != null)
-                {
-                    callObj = null;
-                }
-
                 PataData = SelEPartObject(Context, new EPart { OID = Obj.ToOID });
                 Obj.ObjRevision = PataData.Revision;
                 Obj.ObjTdmxOID = PataData.TdmxOID;
-
-                appyStruct.Clear();
-
-                callStruct = EBom.FindAll(value => value.ObjTdmxOID == Obj.ObjTdmxOID && value.ObjRevision != Obj.ObjRevision);
-
-                foreach (EBOM appy in callStruct)
-                {
-                    if (appyStruct.FindIndex(value => value.ObjTdmxOID == appy.ObjTdmxOID && value.ObjRevision == appy.ObjRevision) < 0)
-                    {
-                        appyStruct.Add(appy);
-                    }
-                }
-
-                callObj = callStruct.Find(value => value.ObjTdmxOID == Obj.ObjTdmxOID && value.ObjRevision != Obj.ObjRevision);
-
-                if(callObj != null)
-                {
-                    appyStruct.Add(callObj);
-                }
-                appyStruct = appyStruct.OrderByDescending(revVal => revVal.ObjRevision).ToList();
-
-                for (int j = 1; j < appyStruct.Count(); j++)
-                {
-                    if (!childTempList.Contains(appyStruct[j]))
-                    {
-                        childTempList.Add(appyStruct[j]);
-                    }
-                }
 
                 TimeOID = TimeOID + 1;
                 Obj.TimeOID = TimeOID;
@@ -375,27 +337,46 @@ namespace EBom.Models
                 Obj.ObjOem_Lib_Nm = PataData.Oem_Lib_Nm;
 
                 Obj.BPolicy = PataData.BPolicy;
+                Obj.BPolicyNm = PataData.BPolicy.StatusNm;
 
                 Obj.diseditable = EBomConstant.FLOWEDITABLE;
             }
 
+            foreach (EBOM Obj in EBom)
+            {
+                if (callStruct != null && callStruct.Count > 0)
+                {
+                    callStruct = null;
+                }
+                if (callObj != null)
+                {
+                    callObj = null;
+                }
+
+                callStruct = appyStruct.FindAll(value => value.ObjTdmxOID == Obj.ObjTdmxOID && value.ObjRevision != Obj.ObjRevision);
+
+                if (callStruct.Count > 0)
+                {
+                    callStruct = callStruct.OrderByDescending(revVal => revVal.ObjRevision).ToList();
+                    if(callStruct[0].ToOID < Obj.ToOID)
+                    {
+                        appyStruct.RemoveAll(v => v.OID == callStruct[0].OID);
+                        appyStruct.Add(Obj);
+                    }
+                }
+                else
+                {
+                    appyStruct.Add(Obj);
+                }
+            }
+
             foreach (EBOM i in childTempList)
             {
-                EBom.RemoveAll(value => value.ToOID == i.ToOID);
+                EBom.RemoveAll(value => value.OID == i.OID);
             }
 
 
-            //foreach (EBOM Obj in EBom)
-            //{
-            //    
-            //    if (PataData != null)
-            //    {
-            //        PataData = null;
-            //    }
-            //    PataData = SelEPartObject(Context, new EPart { OID = Obj.ToOID });
-            //}
-
-            return EBom;
+            return appyStruct;
         }
         #endregion
 
@@ -440,14 +421,15 @@ namespace EBom.Models
             getStructure.ObjCar_Lib_OID = PataData.Car_Lib_OID;
             getStructure.ObjPms_OID = PataData.Pms_OID;
 
-            
+
             getStructure.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
 
             getStructure.ObjSel_Revision = PataData.Sel_Revision;
-            getStructure.ObjStandard    = PataData.Standard;
+            getStructure.ObjStandard = PataData.Standard;
             getStructure.ObjOem_Lib_Nm = PataData.Oem_Lib_Nm;
 
             getStructure.BPolicy = PataData.BPolicy;
+            getStructure.BPolicyNm = PataData.BPolicy.StatusNm;
 
             getReverseEbomStructure(Context, getStructure, _rootOID);
             return getStructure;
@@ -509,6 +491,7 @@ namespace EBom.Models
                 Obj.ObjOem_Lib_Nm = PataData.Oem_Lib_Nm;
 
                 Obj.BPolicy = PataData.BPolicy;
+                Obj.BPolicyNm = PataData.BPolicy.StatusNm;
             }
             return EBom;
         }
@@ -558,6 +541,11 @@ namespace EBom.Models
         {
             List<EPart> EPartList = EPartRepository.SelEPart(Context, _Param);
 
+            if(_Param.NewCheck != null)
+            {
+                EPartList = EPartList.FindAll(value => (value.BPolicy.Name == EBomConstant.POLICY_EPART_PREPARE) || (value.BPolicy.Name == EBomConstant.POLICY_EPART_REJECT) || (value.BPolicy.Name == EBomConstant.POLICY_EPART_COMPLETED && value.IsReleasedLatest == 1));
+            }
+
             List<EBOM> getStructureList = new List<EBOM>();
 
             int? TimeOID = Convert.ToInt32(DateTimeOffset.Now.ToUnixTimeSeconds());
@@ -601,6 +589,7 @@ namespace EBom.Models
                 getStructure.ObjOem_Lib_Nm = obj.Oem_Lib_Nm;
 
                 getStructure.BPolicy = obj.BPolicy;
+                getStructure.BPolicyNm = obj.BPolicy.StatusNm;
 
 
                 getEbomStructure(Context, getStructure, Convert.ToInt32(obj.OID), TimeOID);
@@ -637,9 +626,27 @@ namespace EBom.Models
             List<EBOM> lSelRootChildList = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { Type = EBomConstant.TYPE_PART, ToOID = _param.ToOID });
             List<EPart> SelChildTopParentList = new List<EPart>();
 
-            lSelRootChildList.ForEach(item => {
+            lSelRootChildList.ForEach(item =>
+            {
                 getParentStructure(Context, item, SelChildTopParentList, _param.ToOID);
             });
+
+            SelChildTopParentList.ForEach(v =>
+            {
+                var Tdmx = SelEPart(Context, new EPart { TdmxOID = v.TdmxOID });
+
+                if (Tdmx[0].OID > v.OID)
+                {
+                    v.isDuplicate = 1;
+                }
+
+                if (v.BPolicyNm == CommonConstant.POLICY_APPROVAL_PREPARE || v.BPolicyNm == CommonConstant.POLICY_APPROVAL_REJECTED)
+                {
+                    v.isDuplicate = 1;
+                }
+
+            });
+
             return SelChildTopParentList;
         }
 
@@ -647,7 +654,7 @@ namespace EBom.Models
         {
             EPart ParentData = getParentEbom(Context, new EBOM { Type = EBomConstant.TYPE_PART, ToOID = _relData.ToOID, FromOID = _relData.FromOID }, SelChildTopParentList, RootOID);
 
-            if(ParentData != null)
+            if (ParentData != null)
             {
                 SelChildTopParentList.Add(ParentData);
             }
@@ -685,7 +692,7 @@ namespace EBom.Models
             List<EBOM> ParentList = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { Type = EBomConstant.TYPE_PART, ToOID = RootOID });
             ParentList.ForEach(item =>
             {
-                if(getStructure != null)
+                if (getStructure != null)
                 {
                     getStructure = new List<EBOM>();
                 }
@@ -693,7 +700,7 @@ namespace EBom.Models
                 getStructure.Add(item);
 
                 getReverseStructure(Context, param, RootOID, getStructure, Structure, item);
-                
+
             });
 
             return Structure;
@@ -712,7 +719,7 @@ namespace EBom.Models
                         getStructure.ForEach(val =>
                         {
                             val.Action = "U";
-                            if(val.FromOID == item.FromOID)
+                            if (val.FromOID == item.FromOID)
                             {
                                 val.Action = "ENDU";
                             }
@@ -745,6 +752,13 @@ namespace EBom.Models
             List<EBOM> lSelAllParentStructure = DaoFactory.GetList<EBOM>("EBom.SelAllParentStructure", _param);
 
             return lSelAllParentStructure;
+        }
+        #endregion
+
+        #region Temp EPart 오브젝트 검색
+        public static EPart SelTempEPartObject(HttpSessionStateBase Context, EPart _param)
+        {
+            return DaoFactory.GetData<EPart>("EBom.SelTempEPartObject", new EPart { Type = EBomConstant.TYPE_PART, Orgin_OID = _param.OID });
         }
         #endregion
     }

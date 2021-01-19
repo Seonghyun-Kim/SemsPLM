@@ -1,0 +1,254 @@
+﻿
+@{
+    Layout = null;
+}
+<div id="listView">
+    <div style="width:100%; margin-right:20px;">
+        <!--검색창-->
+        <div class="searchBox">
+            <div class="searchTitle">
+                <label><i class="fas fa-folder-open"></i> &nbsp;ECO 검색</label>
+            </div>
+            <div class="searchContent">
+                <div class="searchData">
+                    <div>구분</div>
+                    <div>
+                        <div id="SearchReleaseChangeOrder_devMP"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>품번</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseChangeOrder_Name" />
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>제목</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseChangeOrder_Title" />
+                    </div>
+                </div>
+                @*<div class="searchData">
+                        <div class="comboBoxLabel">OEM</div>
+                        <div>
+                            <div id="SearchReleaseChangeOrder_Oem_Lib"></div>
+                        </div>
+                    </div>
+                    <div class="searchData">
+                        <div class="comboBoxLabel">차종</div>
+                        <div>
+                            <div id="SearchReleaseChangeOrder_Car_Lib"></div>
+                        </div>
+                    </div>
+                    <div class="searchData">
+                        <div class="comboBoxLabel">프로젝트</div>
+                        <div>
+                            <div id="SearchReleaseChangeOrder_Pms_Lib"></div>
+                        </div>*@
+                <div class="searchData">
+                    <div>설계변경일자</div>
+                    <div>
+                        <div id="SearchReleaseChangeOrder_DesignChangeDt"></div>
+                    </div>
+                </div>
+                <div class="searchData">
+                    <div>작성자</div>
+                    <div>
+                        <input type="text" class="txtBox" id="SearchReleaseChangeOrder_CreatUs" />
+                    </div>
+                </div>
+                <div class="searchButton">
+                    <button id="SearchReleaseChangeOrder_btnSearch" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="SearchReleaseChangeOrder_Grid"></div>
+</div>
+
+<script>
+   // var SearchRealseECO_OemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+    //var SearchRealseECO_OemLib$ = $('#SearchReleaseChangeOrder_Oem_Lib');
+    //var SearchRealseECO_CarLib$ = $('#SearchReleaseChangeOrder_Car_Lib');
+    //var SearchRealseECO_PmsLib$ = $('#SearchReleaseChangeOrder_Pms_Lib');
+    var SearchRealseECO_serchbtn$ = $('#SearchReleaseChangeOrder_btnSearch');
+    var SearchRealseECO_DesignChangeDt$ = $('#SearchReleaseChangeOrder_DesignChangeDt');
+    var SearchRealseECODevMP$ = $('#SearchReleaseChangeOrder_devMP');
+    var SearchRealseECOBPolicyList$ =  @Html.Raw(Json.Encode(ViewBag.BPolicies));
+    $(function () {
+        SearchRealseECO_DesignChangeDt$.jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        var DevTypeList = [{type: "", value : null},{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+        { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
+        var DevTypeSource =
+        {
+            localdata: DevTypeList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'type', type: 'string' },
+                    { name: 'value', type: 'string' },
+                ]
+        };
+                var devAdapter = new $.jqx.dataAdapter(DevTypeSource);
+        SearchRealseECODevMP$.jqxComboBox({ width: 100, height: 32, source: devAdapter, displayMember: "type", valueMember: "value" });
+
+
+        var SearchRealseECOGrdSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'ItemGroup' },
+                { name: 'Title' },
+                { name: 'ReasonChange' },
+                { name: 'ReasonChangeNm' },
+                { name: 'DevMP' },
+                { name: 'DevMPNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'CreateUs' },
+                { name: 'CreateUsNm' },
+                { name: 'Description' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyOID' },
+                { name: 'ApprovDt' },
+            ],
+        }
+
+        const SearchRealseECOGrd$ = $('#SearchReleaseChangeOrder_Grid');
+        SearchRealseECOGrd$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 675,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source: ProjectSource,
+            sortable: false,
+            pageable: true,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '구분', datafield: 'DevMPNm', width: "9%", align: 'center', cellsalign: 'center', },
+                { text: '품번', datafield: 'Name', width: "9%", align: 'center', cellsalign: 'center', },
+                { text: '제목', datafield: 'Title', width: "30%", align: 'center', cellsalign: 'center', },
+                { text: '품목 그룹', datafield: 'ItemGroup', width: "10%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    },
+                },
+                { text: '작성자', datafield: 'CreateUsNm', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '승인일', datafield: 'ApprovDt', width: "9%", align: 'center', cellsalign: 'center', },
+                //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+        });
+
+        SearchRealseECOGrd$.on('celldoubleclick', function (e) {
+            const linkUrl = '/ChangeOrder/InfoChangeOrder?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+
+        getSearchRealseECOList(SearchRealseECOGrdSource, SearchRealseECOGrd$, null);
+
+        SearchRealseECO_serchbtn$.on('click', function () {
+            var SearchRealseECODesignDt = SearchRealseECO_DesignChangeDt$.val();
+            var SearchRealseECODesignDtArray = SearchRealseECODesignDt.split('-');
+            var param = {};
+            param.DevMP = SearchRealseECODevMP$.val();
+            param.Name = $('#SearchReleaseChangeOrder_Name').val();
+            param.Title = $('#SearchReleaseChangeOrder_Title').val();
+            param.StartDesignChangeDt = SearchRealseECODesignDtArray[0];
+            param.EndDesignChangeDt = SearchRealseECODesignDtArray[1] + " 23:59:59";
+            getSearchRealseECOList(SearchRealseECOGrdSource, SearchRealseECOGrd$, param);
+
+        });
+
+
+    });
+
+    function getSearchRealseECOList(_Source, _Grid$, _param) {
+        RequestData("/ChangeOrder/SelChangeOrder", _param, function (res) {
+            var completeIdx = SearchRealseECOBPolicyList$.findIndex(function (item) {
+                return item.Name == '@Common.Constant.EoConstant.POLICY_EO_COMPLETED';
+            });
+            var result = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].BPolicy.Name == SearchRealseECOBPolicyList$[completeIdx].Name) {
+                    result.push(res[i]);
+                } else {
+                    
+                }
+            }
+            PrintJqxGrid(_Source, _Grid$, result);
+        });
+    }
+
+    function changeSearchRealseECOComboBox(ID, OID) {
+        var ChangeECOComboBox$ = SearchRealseECO_CarLib$
+        var param = {};
+        param.fromOID = OID;
+        var ChangeECOComboSource;
+        RequestData("/Manage/SelLibrary", param, function (res) {
+            if (res.length > 0) {
+                ChangeECOComboSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID"});
+            } else {
+                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
+                var ChangeECOComboAdapter = new $.jqx.dataAdapter(ChangeECOComboSource);
+                ChangeECOComboBox$.jqxComboBox({ source: ChangeECOComboAdapter, displayMember: "KorNm", valueMember: "OID"});
+                ChangeECOComboBox$.jqxComboBox({ selectedIndex: 0 });
+            }
+        });
+    }
+
+</script>

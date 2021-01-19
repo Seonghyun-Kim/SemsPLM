@@ -75,6 +75,7 @@
     var SearchECO_serchbtn$ = $('#SearchChangeOrder_btnSearch');
     var SearchECO_DesignChangeDt$ = $('#SearchChangeOrder_DesignChangeDt');
     var SearchECODevMP$ = $('#SearchChangeOrder_devMP');
+    var SearchECOBPolicyList$ =  @Html.Raw(Json.Encode(ViewBag.BPolicies));
     $(function () {
         SearchECO_DesignChangeDt$.jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
@@ -107,7 +108,7 @@
                 { name: 'DevMPNm' },
                 { name: 'CreateDt', type: 'date' },
                 { name: 'CreateUs' },
-                { name: 'CreateNm' },
+                { name: 'CreateUsNm' },
                 { name: 'Description' },
                 { name: 'BPolicy' },
                 { name: 'BPolicyOID' },
@@ -142,7 +143,7 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                     },
                 },
-                { text: '작성자', datafield: 'CreatUsNm', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성자', datafield: 'CreateUsNm', width: "10%", align: 'center', cellsalign: 'center' },
                 { text: '작성일', datafield: 'CreateDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                 { text: '승인일', datafield: 'ApprovDt', width: "9%", align: 'center', cellsalign: 'center', },
                 //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
@@ -207,7 +208,18 @@
 
     function getSearchECOList(_Source, _Grid$, _param) {
         RequestData("/ChangeOrder/SelChangeOrder", _param, function (res) {
-            PrintJqxGrid(_Source, _Grid$, res);
+            var completeIdx = SearchECOBPolicyList$.findIndex(function (item) {
+                return item.Name == '@Common.Constant.EoConstant.POLICY_EO_COMPLETED';
+            });
+            var result = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].BPolicy.Name == SearchECOBPolicyList$[completeIdx].Name) {
+
+                } else {
+                    result.push(res[i]);
+                }
+            }
+            PrintJqxGrid(_Source, _Grid$, result);
         });
     }
 

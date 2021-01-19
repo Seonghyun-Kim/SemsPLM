@@ -48,6 +48,7 @@ namespace Common.Constant
         public static string RELATIONSHIP_DOC_CLASS = "DOC_CLASS";
         public static string RELATIONSHIP_DOC_MASTER = "DOC_MASTER";
         public static string RELATIONSHIP_PROJECT_EPART = "PROJECT_EPART";
+        public static string RELATIONSHIP_EPART = "EPART";
 
         public static string ROLE_PM = "PM";
         public static string ROLE_PE = "PE";
@@ -65,8 +66,8 @@ namespace Common.Constant
 
         public static int PREPARE = 5;
         public static int DELAY = 3;
-        public static string WARNING_COLOR = "#fbd46d";
-        public static string DELAY_COLOR = "#c70039";
+        public static string WARNING_COLOR = "#00f";
+        public static string DELAY_COLOR = "#f00";
 
         //상태
         public static string POLICY_PROJECT_PREPARE = "Prepare";
@@ -83,16 +84,12 @@ namespace Common.Constant
         public static string POLICY_PROCESS_PAUSED = "Paused";
         public static string POLICY_PROCESS_COMPLETED = "Completed";
 
-        public static string POLICY_ISSUE_PROJECT_PREPARE = "Prepare";
-        public static string POLICY_ISSUE_PROJECT_STARTED = "Started";
-        public static string POLICY_ISSUE_PROJECT_COMPLETED = "Completed";
-
-        public static string POLICY_ISSUE_TASK_PREPARE = "Prepare";
-        public static string POLICY_ISSUE_TASK_BEFORE_STARTED = "BeforeStarted";
-        public static string POLICY_ISSUE_TASK_STARTED = "Started";
-        public static string POLICY_ISSUE_TASK_BEFORE_COMPLETED = "BeforeCompleted";
-        public static string POLICY_ISSUE_TASK_REJECT = "Reject";
-        public static string POLICY_ISSUE_TASK_COMPLETED = "Completed";
+        public static string POLICY_ISSUE_PREPARE = "Prepare";
+        public static string POLICY_ISSUE_BEFORE_STARTED = "BeforeStarted";
+        public static string POLICY_ISSUE_STARTED = "Started";
+        public static string POLICY_ISSUE_BEFORE_COMPLETED = "BeforeCompleted";
+        public static string POLICY_ISSUE_REJECT = "Reject";
+        public static string POLICY_ISSUE_COMPLETED = "Completed";
 
 
         //ACTION
