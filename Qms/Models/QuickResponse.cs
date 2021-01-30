@@ -27,7 +27,9 @@ namespace Qms.Models
         public string OccurrenceNm { get; set; }
 
         // 품목
-        public int? ItemGroup { get; set; }
+        public int? ItemLibOID { get; set; }
+        public string ItemLibNm { get; set; }
+        
         public string ItemNm { get; set; }
         // 품번 
         public int? PartOID { get; set; }
@@ -40,7 +42,7 @@ namespace Qms.Models
 
         public string PartGrpNm { get; set; }
 
-        // LOT NO 
+        // 발생Lot 
         public string LotNo { get; set; }
 
         // 고객사 
@@ -144,6 +146,9 @@ namespace Qms.Models
         // 고품사진 
         public string PoorPicture { get; set; }
 
+        // 양품사진 
+        public string GoodPicture { get; set; }
+
         public DateTime? FinishDt { get; set; }
 
         // 등록구분
@@ -181,7 +186,7 @@ namespace Qms.Models
         public string SearchPlanUsNm { get; set; }
 
         // 품목 OID
-        public int? SearchItemGroup { get; set; }
+        public int? SearchItemLibOID { get; set; }
         #endregion
 
         #region -- File
@@ -218,7 +223,7 @@ namespace Qms.Models
 
         public string PlanUserNm { get; set; }
 
-        // LOT NO 
+        // 발생Lot 
         public string LotNo { get; set; }
 
         // 고객사 
@@ -397,7 +402,8 @@ namespace Qms.Models
         public DateTime? CreateDt { get; set; }
 
         // 품목
-        public int? ItemGroup { get; set; }
+        public int? ItemLibOID { get; set; }
+        public string ItemLibNm { get; set; }
         public string ItemNm { get; set; }
         public QuickResponseView(QuickResponse response)
         {
@@ -422,8 +428,8 @@ namespace Qms.Models
             this.EnrollmentLibNm = response.EnrollmentLibNm;
             this.ImputeLibOID = response.ImputeLibOID;
             this.ImputeNm = response.ImputeNm;
-            this.ItemGroup = response.ItemGroup;
-            this.ItemNm = response.ItemNm;
+            this.ItemLibOID = response.ItemLibOID;
+            this.ItemLibNm = response.ItemLibNm;
             this.CreateDt = response.CreateDt;
             this.Title = response.Title;
             this.CreateUsNm = response.CreateUsNm;

@@ -32,7 +32,7 @@
                 <div class="searchData">
                     <div>품목</div>
                     <div>
-                        <div id="SearchQuick_ItemNo" style="margin-left:5px;"></div>
+                        <div id="SearchQuick_Item" style="margin-left:5px;"></div>
                     </div>
                 </div>
 
@@ -124,6 +124,8 @@
             { name: 'WorkUserNm', type: 'string' },
             { name: 'EnrollmentLibOID', type: 'string' },
             { name: 'EnrollmentLibNm', type: 'string' },
+            { name: 'ItemLibOID', type: 'string' },
+            { name: 'ItemLibNm', type: 'string' },
             { name: 'ImputeLibOID', type: 'string' },
             { name: 'ImputeNm', type: 'string' },
             { name: 'PartGrpNm', type: 'string' },
@@ -210,7 +212,7 @@
     $(document).ready(function () {
         $("#SearchQuick_cbOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#SearchQuick_Status").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.Status)), "OID", "StatusNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#SearchQuick_ItemNo").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
+        $("#SearchQuick_Item").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
 
         $("#SearchQuick_sDt").jqxDateTimeInput(DateFormat);
         $("#SearchQuick_sDt").val(WebUtils.GetDate(-1, "m", "-"));
@@ -259,7 +261,7 @@
                         return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OpenQuickResonse(\"#SearchQuickResponse_Grid\"," + rowData.uid + ")'>" + (value) + "</a></div></div>";
                     }
                 },
-                { text: '품목', dataField: 'ItemGroup', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품목', dataField: 'ItemLibNm', width: '10%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '고객사', dataField: 'OemNm', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
@@ -267,7 +269,7 @@
                 { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생처', dataField: 'OccurrenceAreaNm', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생장소', dataField: 'OccurrencePlace', width: '6%', align: 'center', cellsalign: 'center' },
-                { text: 'Lot No', dataField: 'LotNo', width: '6%', align: 'center', cellsalign: 'center' },
+                { text: '발생Lot', dataField: 'LotNo', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생수량', dataField: 'PoorCnt', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '접수자', dataField: 'WorkUserNm', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생일자', dataField: 'OccurrenceDt', width: '6%', align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
@@ -433,7 +435,7 @@
             SearchCreateSDt: $("#SearchQuick_CreateSDt").jqxDateTimeInput('val'),
             SearchCreateEDt: $("#SearchQuick_CreateEDt").jqxDateTimeInput('val'),
             SearchStatusOID: WebUtils.GetComboValue("SearchQuick_Status"),
-            SearchItemGroup: WebUtils.GetComboValue("SearchQuick_ItemNo"),
+            SearchItemLibOID: WebUtils.GetComboValue("SearchQuick_Item"),
             SearchOemNm: $("#SearchQuick_OEM").val(),
             SearchCarCode: $("#SearchQuick_CarCode").val(),
             SearchPartNo: $("#SearchQuick_PartNo").val(),

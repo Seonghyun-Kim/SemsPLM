@@ -81,12 +81,18 @@
                         </td>
                     </tr>
                     <tr>
+                        <th><label class="lbText">교육인원</label></th>
+                        <td><input class="Modifiable_@ViewBag.WorkerEdu.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduPersonnel_@ViewBag.WorkerEdu.OID" value="@ViewBag.WorkerEdu.EduPersonnel" /></td>
+                        <th><label class="lbText">교육장소</label></th>
+                        <td><input class="Modifiable_@ViewBag.WorkerEdu.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduPlace_@ViewBag.WorkerEdu.OID" value="@ViewBag.WorkerEdu.EduPlace" /></td>
+                    </tr>
+                    @*<tr>
+                        <th><label class="lbText">교육계획</label></th>
+                        <td><input class="Modifiable_@ViewBag.WorkerEdu.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduPlan_@ViewBag.WorkerEdu.OID" value="@ViewBag.WorkerEdu.EduPlan" /></td>
+                    </tr>*@
+                    <tr>
                         <th><label class="lbText">교육내용</label></th>
                         <td colspan="3"><input class="Modifiable_@ViewBag.WorkerEdu.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduDetail_@ViewBag.WorkerEdu.OID" value="@ViewBag.WorkerEdu.EduDetail" /></td>
-                    </tr>
-                    <tr>
-                        <th><label class="lbText">교육계획</label></th>
-                        <td colspan="3"><input class="Modifiable_@ViewBag.WorkerEdu.OID" type="text" AttrType="TEXT" readonly="readonly" id="InfoWorkerEducation_txtEduPlan_@ViewBag.WorkerEdu.OID" value="@ViewBag.WorkerEdu.EduPlan" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -201,9 +207,26 @@
                 param.OID = WorkerEduOID;
                 param.ModuleOID = "@ViewBag.WorkerEdu.ModuleOID";
                 param.EduDetail = $("#InfoWorkerEducation_txtEduDetail_" + WorkerEduOID).val();
-                param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduOID).val();
+                @*param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduOID).val();*@
+                param.EduPersonnel = $("#InfoWorkerEducation_txtEduPersonnel_" + WorkerEduOID).jqxDateTimeInput("val");
+                param.EduPlace = $("#InfoWorkerEducation_txtEduPlace_" + WorkerEduOID).jqxDateTimeInput("val");
                 param.EduDt = $("#InfoWorkerEducation_txtEduDt_" + WorkerEduOID).jqxDateTimeInput("val");
                 param.EduUserOID = $("#InfoWorkerEducation_txtEduUser_" + WorkerEduOID).attr("EduUserOID");
+
+                if (WebUtils.isEmpty(param.EduDt)) {
+                    alert("교육일자를 선택해주세요.");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(param.EduUserOID)) {
+                    alert("교육담당자를 선택해주세요.");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(param.EduPersonnel)) {
+                    alert("교육인원을 입력해주세요.");
+                    return;
+                }
 
                 var Files = fileUpload.Files();
 

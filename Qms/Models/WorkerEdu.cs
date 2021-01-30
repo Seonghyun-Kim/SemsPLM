@@ -24,6 +24,8 @@ namespace Qms.Models
 
         // 강사(담당자) 
         public int? EduUserOID { get; set; }
+        public int? EduPersonnel { get; set; }
+        public string EduPlace { get; set; }
 
         public string EduUserNm { get; set; }
 

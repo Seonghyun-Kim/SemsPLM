@@ -81,7 +81,7 @@
                         <th>대상수량</th>
                         <th>조치부서</th>
                         <th>담당자</th>
-                        <th>기한</th>
+                        <th>기한설정</th>
                     </tr>
                 </table>
 
@@ -220,6 +220,31 @@
                 data.SpecialCnt = $($(trCorrectiveAction$).find("[name='SpecialCnt']")[0]).val();
                 data.EtcCnt = $($(trCorrectiveAction$).find("[name='EtcCnt']")[0]).val();
                 data.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
+
+                if (WebUtils.isEmpty(data.TargetScope)) {
+                    alert("대상범위를 선택해주세요");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(data.Act)) {
+                    alert("조치방법를 선택해주세요");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(data.TargetCnt)) {
+                    alert("대상수량을 입력해주세요");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(data.ActUserOID)) {
+                    alert("담당자를 선택해주세요");
+                    return;
+                }
+
+                if (WebUtils.isEmpty(data.ActStartDt) || WebUtils.isEmpty(data.ActEndDt)) {
+                    alert("기한을 선택해주세요");
+                    return;
+                }
 
                 param.BlockadeItems.push(data);
             });
