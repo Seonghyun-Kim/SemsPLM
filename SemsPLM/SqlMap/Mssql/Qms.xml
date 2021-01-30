@@ -62,7 +62,9 @@
       PlanUserOID,
       PoorPicture,
       CarCode,
-      EnrollmentLibOID)
+      EnrollmentLibOID,
+      GoodPicture,
+      ItemLibOID)
       VALUES
       (#OID#,
       #PlantLibOID#,
@@ -97,7 +99,9 @@
       #PlanUserOID#,
       #PoorPicture#,
       #CarCode#,
-      #EnrollmentLibOID#)
+      #EnrollmentLibOID#,
+      #GoodPicture#,
+      #ItemLibOID#)
 
     </insert>
 
@@ -241,6 +245,14 @@
         EnrollmentLibOID = #EnrollmentLibOID#
       </isNotNull>
 
+      <isNotNull prepend="," property="GoodPicture">
+        GoodPicture = #GoodPicture#
+      </isNotNull>
+
+      <isNotNull prepend="," property="ItemLibOID">
+        ItemLibOID = #ItemLibOID#
+      </isNotNull>
+
       WHERE OID = #OID#
     </update>
 
@@ -250,10 +262,10 @@
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
-      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm, P.StatusOID, P.StatusNm
+      , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.GoodPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm, P.StatusOID, P.StatusNm
       , A.OemLibOID, E.KorNm AS OemLibNm
       , AO.CreateDt, A.EnrollmentLibOID, Q.KorNm AS EnrollmentLibNm, A.CarCode
-      , R.ITEM_No AS ItemGroup, S.KorNm AS ItemNm
+      , R.ITEM_No AS ItemGroup, S.KorNm AS ItemNm, A.ItemLibOID, Y.KorNm AS ItemLibNm
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
       LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID
@@ -275,6 +287,7 @@
       LEFT JOIN T_DLIBRARY Q ON A.EnrollmentLibOID = Q.OID
       LEFT JOIN T_DEPART R ON B.OID = R.OID
       LEFT JOIN T_DCODELIBRARY S ON R.ITEM_No = S.OID
+      LEFT JOIN T_DCODELIBRARY Y ON A.ItemLibOID = Y.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="OID">
           A.OID = #OID#
@@ -322,8 +335,8 @@
           B.Name  LIKE '%' + #SearchPartNo# + '%'
         </isNotNull>
 
-        <isNotNull prepend="and" property="SearchItemGroup">
-          R.ITEM_No  = #SearchItemGroup#
+        <isNotNull prepend="and" property="SearchItemLibOID">
+          R.ITEM_No  = #SearchItemLibOID#
         </isNotNull>
 
         <isNotNull prepend="and" property="SearchCreateUsNm">
@@ -693,13 +706,17 @@
       EduDetail,
       EduPlan,
       EduDt,
-      EduUserOID)
+      EduUserOID,
+      EduPersonnel,
+      EduPlace)
       VALUES
       (#ModuleOID#,
       #EduDetail#,
       #EduPlan#,
       #EduDt#,
-      #EduUserOID#)
+      #EduUserOID#,
+      #EduPersonnel#,
+      #EduPlace#)
     </insert>
 
     <update id="UdtWorkerEdu" parameterClass="WorkerEdu">
@@ -708,7 +725,9 @@
       EduDetail = #EduDetail#,
       EduPlan = #EduPlan#,
       EduDt = #EduDt#,
-      EduUserOID = #EduUserOID#
+      EduUserOID = #EduUserOID#,
+      EduPersonnel = #EduPersonnel#,
+      EduPlace = #EduPlace#
       WHERE ModuleOID = #ModuleOID#
     </update>
 

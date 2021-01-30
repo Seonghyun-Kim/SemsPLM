@@ -291,7 +291,7 @@ namespace SemsPLM.Controllers
             ViewBag.occurrenceList = occurrenceList;
 
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
-            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  // 품목
             ViewBag.ItemList = ItemList;
                       
 
@@ -360,6 +360,10 @@ namespace SemsPLM.Controllers
             List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
             ViewBag.EnrollmentTypeList = EnrollmentTypeList;
 
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  // 품목
+            ViewBag.ItemList = ItemList;
+
             return View();
         }
 
@@ -410,6 +414,9 @@ namespace SemsPLM.Controllers
             List<Library> occurrenceAreaList = LibraryRepository.SelLibrary(new Library { FromOID = occurrenceAreaKey.OID });  // 발생처
             ViewBag.occurrenceAreaList = occurrenceAreaList;
 
+            Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
+            List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  // 품목
+            ViewBag.ItemList = ItemList;
 
             return View();
         }
@@ -875,27 +882,37 @@ namespace SemsPLM.Controllers
                 WorkerEduRepository.InsWorkerEdu(new WorkerEdu() { ModuleOID = WorkerEduOID });
 
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+                string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+                string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
+                
+                di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
+
+                if (!di.Exists)
+                {
+                    di.Create();
+                }
+
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
                 {
-                    string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
-                    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
-                    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
-
-                    string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
-                    string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
-
-                    di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
-
-                    if (!di.Exists)
-                    {
-                        di.Create();
-                    }
-
                     FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
 
                     if (FileInfo.Exists)
                     {
                         FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(_param.GoodPicture))
+                {
+                    FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.GoodPicture);
+
+                    if (FileInfo.Exists)
+                    {
+                        FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.GoodPicture);
                     }
                 }
 
@@ -956,27 +973,37 @@ namespace SemsPLM.Controllers
                 }
 
                 // DB작업이 끝나면 고품 사진 Temp -> Vault로 이동
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
+                string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
+                string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
+
+                string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
+                string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
+
+                di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
+
+                if (!di.Exists)
+                {
+                    di.Create();
+                }
+
                 if (!string.IsNullOrEmpty(_param.PoorPicture))
                 {
-                    string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
-                    string imgTempPath = System.Configuration.ConfigurationManager.AppSettings["ImageTempPath"];
-                    string TempPath = QmsConstant.TYPE_QUICK_RESPONSE;
-
-                    string imgVaulePath = System.Configuration.ConfigurationManager.AppSettings["ImageValutPath"];
-                    string SavePath = QmsConstant.TYPE_QUICK_RESPONSE + "\\" + _param.OID;
-
-                    di = new DirectoryInfo(StoragePath + "/" + imgVaulePath + "/" + SavePath);
-
-                    if (!di.Exists)
-                    {
-                        di.Create();
-                    }
-
                     FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.PoorPicture);
 
                     if (FileInfo.Exists)
                     {
                         FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.PoorPicture);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(_param.GoodPicture))
+                {
+                    FileInfo FileInfo = new FileInfo(StoragePath + "\\" + imgTempPath + "\\" + TempPath + "\\" + _param.GoodPicture);
+
+                    if (FileInfo.Exists)
+                    {
+                        FileInfo.MoveTo(StoragePath + "\\" + imgVaulePath + "\\" + SavePath + "\\" + _param.GoodPicture);
                     }
                 }
 
