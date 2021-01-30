@@ -18,7 +18,7 @@
                     <h2><i class="fas fa-edit"></i> 신속대응 등록</h2>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btnDlgSave" onclick="" class="custom-button" style="margin-right:20px;"><i class="fas fa-plus-square"></i> 등록</button>
+                    <button id="btnDlgQuickResponseSave" onclick="" class="custom-button"><i class="fas fa-plus-square"></i> 등록</button>
                     @*<button id="btnDlgCancle" onclick="" class="custom-button"><i class="fas fa-window-close"></i> 취소</button>*@
                 </td>
             </tr>
@@ -261,7 +261,8 @@
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
         @*$("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });*@
         $("#cbDlgItem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
-        $("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: null, displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        
+        $("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeDeptList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
 
         // 발생유형에 따라 발생처 변경
         $("#cbDlgOccurrence").on('select', function (event) {
@@ -346,10 +347,10 @@
         // 제품 검색
         var btnDlgPartSearch$ = $("#btnEditPartSearch").jqxButton();
         btnDlgPartSearch$.on("click", function () {
-            OpenSearchEPartAssyDialog(function (res) {
-                $("#txtDlgPartNo").val(res[0].Name);
-                $("#txtDlgPartNm").val(res[0].Title);
-                $("#txtDlgPartNo").attr("PartOID", res[0].OID);
+            OpenSearchEPartDataDialog(function (res) {
+                $("#txtDlgPartNo").val(res.Name);
+                $("#txtDlgPartNm").val(res.Title);
+                $("#txtDlgPartNo").attr("PartOID", res.OID);
             }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
         });
 
@@ -428,7 +429,7 @@
         });
 
 
-        var btnDlgSave$ = $("#btnDlgSave").jqxButton();
+        var btnDlgSave$ = $("#btnDlgQuickResponseSave");
         btnDlgSave$.on("click", function () {
             var param = {};
 
@@ -591,7 +592,11 @@
                     return;
                 }
                 alert("저장되었습니다.");
+
                 PageReload();
+                //var linkName = "[신속대응상세] " + response.Title;
+                //var linkUrl = '/Qms/InfoQuickResponseDetail?OID=' + response.OID;
+                //TabPageLoad(linkName, linkUrl)
             });
         });
 

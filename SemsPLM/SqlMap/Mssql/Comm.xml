@@ -546,6 +546,10 @@
       <isNotNull prepend="AND" property="FileOID">
         A.FileOID = #FileOID#
       </isNotNull>
+
+      <isNotNull prepend="AND" property="Type">
+        A.Type = #Type#
+      </isNotNull>
     </select>
 
     <update id="DelFile" parameterClass="HttpFile">

@@ -185,6 +185,19 @@ namespace SemsPLM.Controllers
             if (_param.TargetOID != null)
             {
                 ViewBag.TargetOID = _param.TargetOID;
+
+                // 2021.01.30 김성현
+                // QMS 경우  '품질책임자에게 결재 바랍니다.' 라는 문구가 필요하다라고 요청해서 TYPE 추가함.
+
+                DObject dObject = DObjectRepository.SelDObject(Session, new DObject() { OID = _param.TargetOID });
+                if(dObject.Type == QmsConstant.TYPE_BLOCKADE || dObject.Type == QmsConstant.TYPE_QUICK_RESPONSE || dObject.Type == QmsConstant.TYPE_OCCURRENCE_CAUSE || dObject.Type == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE
+                    || dObject.Type == QmsConstant.TYPE_ERROR_PRROF || dObject.Type == QmsConstant.TYPE_LPA_UNFIT || dObject.Type == QmsConstant.TYPE_LPA_MEASURE || dObject.Type == QmsConstant.TYPE_QUICK_RESPONSE_CHECK
+                    || dObject.Type == QmsConstant.TYPE_STANDARD || dObject.Type == QmsConstant.TYPE_WORKER_EDU)
+                {
+                    ViewBag.IsQms = "Y";
+                }
+
+                    
             }
             ViewBag.SelApproval = ApprovalRepository.SelSaveApprovalsNonStep(Session, new Approval{Type = Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL });
             return PartialView("Dialog/dlgApproval");

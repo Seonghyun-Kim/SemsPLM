@@ -257,7 +257,7 @@
     </update>
 
     <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
-      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm
+      SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, B0.Title AS PartNm, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm
       , A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
       , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
@@ -268,7 +268,8 @@
       , R.ITEM_No AS ItemGroup, S.KorNm AS ItemNm, A.ItemLibOID, Y.KorNm AS ItemLibNm
       FROM T_DQMS_QUICK A
       LEFT JOIN V_DOBJECT AO ON A.OID = AO.OID
-      LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID AND B.Type = 'PART'
+      LEFT JOIN V_DOBJECT B ON A.PartOID = B.OID
+      LEFT JOIN T_DEPART B0 ON B.OID = B0.OID
       LEFT JOIN T_DLIBRARY C ON A.PlantLibOID = C.OID
       LEFT JOIN T_DLIBRARY D ON A.OccurrenceLibOID = D.OID
       LEFT JOIN T_DCODELIBRARY E ON A.OemLibOID = E.OID
@@ -316,8 +317,14 @@
           A.OccurrenceDt BETWEEN CONVERT(DATETIME, #SearchOccurrenceSDt# + ' 00:00:00') AND CONVERT(DATETIME, #SearchOccurrenceEDt#+ ' 23:59:59')
         </isNotNull>
 
-        <isNotNull prepend="and" property="SearchStatusOID">
-          AO.BPolicyOID = #SearchStatusOID#
+        <isNotNull property="SearchStatusNm">
+          <isEqual prepend="and" property="SearchStatusNm" compareValue="WORK">
+            AO.BPolicyOID IN (53, 54)
+          </isEqual>
+
+          <isEqual prepend="and" property="SearchStatusNm" compareValue="FINISH">
+            AO.BPolicyOID = 55
+          </isEqual>
         </isNotNull>
 
         <isNotNull prepend="and" property="SearchOemNm">

@@ -316,7 +316,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    var fileUpload = $("#InfoQuickResponse_fileList_@ViewBag.QuickDetail.OID").FileUpload({ OID: "@ViewBag.QuickDetail.OID" });
+    var fileUpload = $("#InfoQuickResponse_fileList_@ViewBag.QuickDetail.OID").FileUpload({ OID: "@ViewBag.QuickDetail.OID", Type : "@QmsConstant.TYPE_QUICK_RESPONSE" });
 
     $(document).ready(function () {
         const QuickDetailOID = '@ViewBag.QuickDetail.OID';

@@ -40,6 +40,12 @@ function addDays(date, days) {
     return result;
 }
 
+function addDateDays(dt, days) {
+    var result = new Date();
+    result.setDate(dt.getDate() + days);
+    return result;
+}
+
 var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
     var retJson = {};
     var BackgroundColor = "white";
@@ -49,8 +55,9 @@ var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
     var CompareEstDate = addDays(EstDate, 1);
     var nowDate = new Date();
 
+
     if (!ModuleFl) {
-        BackgroundColor = "lightgreen";
+        BackgroundColor = "lightgray";
     } else if (BPolicyNm === "Completed") {
         BackgroundColor = "lightgreen";
         ChargeUserText = "(완료) " + ChargeUserText;
@@ -58,7 +65,7 @@ var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
         BackgroundColor = "Yellow";
         ChargeUserText = "(실행전) " + ChargeUserText;
     } else if (BPolicyNm === "Prepare" && CompareEstDate >= nowDate) {
-        BackgroundColor = "white";
+        BackgroundColor = "Yellow";
     } else if (BPolicyNm === "Confirm" && CompareEstDate >= nowDate) {
         BackgroundColor = "Yellow";
     } else if (BPolicyNm === "Review" && CompareEstDate >= nowDate) {
@@ -68,6 +75,26 @@ var GridStatus = function (ModuleFl, BPolicyNm, EstEndDt, ChargeUserNm) {
         BackgroundColor = "red";
         ChargeUserText = "(실행전) " + ChargeUserText;
     }
+
+    //if (!ModuleFl) {
+    //    BackgroundColor = "lightgreen";
+    //} else if (BPolicyNm === "Completed") {
+    //    BackgroundColor = "lightgreen";
+    //    ChargeUserText = "(완료) " + ChargeUserText;
+    //} else if (BPolicyNm === "Started" && CompareEstDate >= nowDate) {
+    //    BackgroundColor = "Yellow";
+    //    ChargeUserText = "(실행전) " + ChargeUserText;
+    //} else if (BPolicyNm === "Prepare" && CompareEstDate >= nowDate) {
+    //    BackgroundColor = "white";
+    //} else if (BPolicyNm === "Confirm" && CompareEstDate >= nowDate) {
+    //    BackgroundColor = "Yellow";
+    //} else if (BPolicyNm === "Review" && CompareEstDate >= nowDate) {
+    //    BackgroundColor = "Yellow";
+    //    ChargeUserText = "(결재중) " + ChargeUserText;
+    //} else {
+    //    BackgroundColor = "red";
+    //    ChargeUserText = "(실행전) " + ChargeUserText;
+    //}
 
     retJson.BackgroundColor = BackgroundColor;
     retJson.ChargeUserText = ChargeUserText;
