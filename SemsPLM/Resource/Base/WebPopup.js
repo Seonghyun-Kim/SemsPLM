@@ -780,26 +780,82 @@ function OpenApprovalContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
             $('#btnApprov').on('click', function () {
                 _Param.ActionType = 'P';
-                RequestData("/Common/PromoteApprovalTask", _Param, function (res) {
-                    alert('결재 되었습니다.');
-                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                        _CallBackFunction();
-                    }
-                    $(popLayer).jqxWindow('modalDestory');
-                });
+                OpenApprovalCommentContentDialog(function (resCommmentParam) {
+                    RequestData("/Common/PromoteApprovalTask", resCommmentParam, function (res) {
+                        alert('결재 되었습니다.');
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction();
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
+                }, null, _Param, '/Common/ApprovalComment', '승인');
             });
 
             $('#btnReject').on('click', function () {
                 _Param.ActionType = 'R';
-                RequestData("/Common/PromoteApprovalTask", _Param, function (res) {
-                    alert('반려 되었습니다.');
-                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                        _CallBackFunction();
-                    }
-                    $(popLayer).jqxWindow('modalDestory');
-                });
+                OpenApprovalCommentContentDialog(function (resCommmentParam) {
+                    RequestData("/Common/PromoteApprovalTask", resCommmentParam, function (res) {
+                        alert('반려 되었습니다.');
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction();
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
+                }, null, _Param, '/Common/ApprovalComment', '반려');
             });
+        }
+    });
 
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        if (_Wrap === undefined || _Wrap === null) {
+            $(popLayer).jqxWindow('modalDestory');
+        }
+    });
+}
+
+function OpenApprovalCommentContentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        _Wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (300 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 500, maxWidth: 500, height: 300, minHeight: 300, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            $('#btnApprovComment').on('click', function () {
+                _Param.Comment = $('#txtApprovComment').val();
+                if (_Param.Comment == '') {
+                    alert('내용을 입력해주세요.');
+                    return;
+                }
+                if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                    _CallBackFunction(_Param);
+                }
+                $(popLayer).jqxWindow('modalDestory');
+            });
         }
     });
 
@@ -922,6 +978,7 @@ function OpenDashboardPageDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title)
     $(popLayer).jqxWindow({
         width: 1800, maxWidth: 1800, height: 900, minHeight: 900, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
+            selDashBoardDialog = this;
             if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
                 _CallBackFunction();
             }
@@ -967,6 +1024,7 @@ function OpenDashboardDefaultPageDialog(_CallBackFunction, _Wrap, _Param, _Url, 
     $(popLayer).jqxWindow({
         width: 1200, maxWidth: 1200, height: 650, minHeight: 650, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
+            selDashBoardDialog = this;
             if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
                 _CallBackFunction();
             }

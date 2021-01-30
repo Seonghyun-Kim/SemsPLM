@@ -310,6 +310,10 @@ namespace Pms.Models
 
                 if (_proj.BPolicy.Name == PmsConstant.POLICY_PROJECT_PREPARE || _proj.BPolicy.Name == PmsConstant.POLICY_PROJECT_PAUSED || _proj.BPolicy.Name == PmsConstant.POLICY_PROJECT_TEMP_EXIST || _proj.BPolicy.Name == PmsConstant.POLICY_PROJECT_TEMP_DISPOSAL)
                 {
+                    if (item.ObjType.Equals(PmsConstant.TYPE_PHASE))
+                    {
+                        item.diseditable = PmsConstant.FLOWEDITABLE;
+                    }
                 }
                 else
                 {
@@ -769,7 +773,7 @@ namespace Pms.Models
 
         #endregion
 
-        #region -- API : WBS LIST OID, TYPE ROOT
+        #region -- API : WBS LIST Mini Data ROOT
 
         public static List<PmsRelationship> GetProjWbsTypeOidList(HttpSessionStateBase Context, string OID)
         {
@@ -801,6 +805,8 @@ namespace Pms.Models
                 item.EstEndDt = tmpProcess.EstEndDt;
                 item.ActStartDt = tmpProcess.ActStartDt;
                 item.ActEndDt = tmpProcess.ActEndDt;
+                item.Id = tmpProcess.Id;
+                item.Dependency = tmpProcess.Dependency;
                 _ldStructure.Add(item);
                 GetWbsChildTypeOidList(Context, item, _ldStructure);
             });

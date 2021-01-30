@@ -1,5 +1,6 @@
 ﻿using Common.Constant;
 using Common.Models;
+using Common.Utils;
 using DocumentClassification.Models;
 using Pms.Models;
 using System;
@@ -54,6 +55,33 @@ namespace Pms.Trigger
             {
                 DObjectRepository.UdtDObject(Context, new DObject { OID = Convert.ToInt32(oid) });
                 PmsProjectRepository.UdtPmsProject(Context, new PmsProject { OID = Convert.ToInt32(oid), ActStartDt = DateTime.Now });
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
+        public string ActionStartetdProjectMailPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iUser = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            try
+            {
+                PmsProject tmpProj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = Convert.ToInt32(oid) });
+                SemsSmtp smtp = new SemsSmtp();
+                PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_MEMBER, FromOID = Convert.ToInt32(oid) }).ForEach(member =>
+                {
+                    Person tmpPerson = PersonRepository.SelPerson(Context, new Person { OID = member.ToOID });
+                    ProjApprovMailContent projMail = new ProjApprovMailContent(Context, tmpProj, tmpPerson);
+                    smtp.SetMailInfo(projMail);
+                });
+                smtp.SendMail();
             }
             catch (Exception ex)
             {

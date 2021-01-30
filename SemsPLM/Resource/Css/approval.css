@@ -50,11 +50,12 @@
 .approvalDocument .info_menubar > ul > li{
     padding:2px;
 }
-.approvalDocument .project_content{
-    left:165px;
-    width:1623px;
-    height:818px;
-}
+
+    .approvalDocument .project_content, .approvalDocument .doc_content {
+        left: 165px;
+        width: 1623px;
+        height: 818px;
+    }
 
 .approvalDocument .changeOrder_content{
     left:255px;

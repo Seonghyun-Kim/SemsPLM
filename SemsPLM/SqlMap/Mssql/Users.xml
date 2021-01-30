@@ -77,6 +77,14 @@
       WHERE OID = #OID#
     </update>
 
+    <update id="UdtIpPwPerson" parameterClass="Person">
+      UPDATE T_DPERSON SET
+      <![CDATA[
+      Password = #Password#
+      ]]>
+      WHERE OID = #OID#
+    </update>
+
     <select id="SelPerson" parameterClass="Person" resultClass="Person">
       SELECT *
       FROM T_DOBJECT A

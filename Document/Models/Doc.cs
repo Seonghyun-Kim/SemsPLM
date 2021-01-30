@@ -39,14 +39,20 @@ namespace Document.Models
         public static List<Doc> SelDoc(HttpSessionStateBase Context, Doc _param)
         {
             _param.Type = DocumentConstant.TYPE_DOCUMENT;
+            List<Doc> lDocs = new List<Doc>();
             List<Doc> lDoc = DaoFactory.GetList<Doc>("Doc.SelDoc", _param);
             lDoc.ForEach(obj =>
             {
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
                 obj.DocType_KorNm = DObjectRepository.SelDObject(Context, new DObject { OID = obj.DocType }).Name;
                 obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
+                if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+                {
+                    lDocs.Add(obj);
+                }
             });
-            return lDoc;
+            return lDocs;
         }
 
         public static Doc SelDocObject(HttpSessionStateBase Context, Doc _param)

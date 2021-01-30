@@ -54,6 +54,7 @@ namespace Common.Constant
 
         public static string INIT_REVISION = "00";
         public static int MAX_NUMBER = 1155;
+        public static int SINGLE_MAX_NUMBER = 34;
         public static string REVISION_PREFIX = "";
 
         public static string ACTION_YES = "Y";

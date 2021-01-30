@@ -42,6 +42,7 @@ namespace Common.Utils
             string authUserID = System.Configuration.ConfigurationManager.AppSettings["SmtpUserID"];
             //string authPassword = SemsEncrypt.AESDecrypte256Text(System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"], Define.ConstDefine.LoginKey);
             string authPassword = System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"];
+            string smtpID = System.Configuration.ConfigurationManager.AppSettings["SmtpID"];
             bool isAuthLogin = System.Configuration.ConfigurationManager.AppSettings["IsAuthLogin"] == "Y" ? true : false;
             bool isPasswordSecurity = System.Configuration.ConfigurationManager.AppSettings["IsPasswordSecurity"] == "Y" ? true : false;
 
@@ -100,7 +101,7 @@ namespace Common.Utils
             foreach (IMailContent mailInfo in MailList)
             {
                 MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(m_AuthUserID, "우리산업 PLM");
+                mail.From = new MailAddress(m_AuthUserID, "PLM 시스템 관리자");
 
                 mail.To.Add(new MailAddress(mailInfo.SendUserAddress, mailInfo.SendUserName));
 

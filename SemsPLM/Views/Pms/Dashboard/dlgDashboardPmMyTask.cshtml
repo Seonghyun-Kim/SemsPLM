@@ -20,6 +20,7 @@
     </div>
 
     <script type="text/javascript">
+        var selDashBoardDialog;
         $(function () {
 
             var taskSource =
@@ -125,8 +126,16 @@
             RequestData("/Pms/@ViewBag.linker", {}, function (res) {
                 PrintJqxGrid(taskSource, $('#pmMyTaskGrid'), res.started);
                 PrintJqxGrid(taskSource, $('#pmMyDelayTaskGrid'), res.delay);
-                console.log(res);
             });
+
+            $('#pmMyTaskGrid,#pmMyDelayTaskGrid').on('celldoubleclick', function (e) {
+                var data = e.args.row.bounddata;
+                PmsNewTabClick(data.RootOID, data.RootNm,'/Pms/InfoProcess', data.OID, data.Name);
+                selDashBoardDialog.close();
+            });
+
+
+
         });
     </script>
 </body>

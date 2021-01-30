@@ -21,6 +21,7 @@ namespace EBom.Models
         public string Description { get; set; }
         public int? BPolicyOID { get; set; }
         public BPolicy BPolicy { get; set; }
+        public string BPolicyNm { get; set; }
         public List<BPolicyAuth> BPolicyAuths { get; set; }
         public string ObjRevision { get; set; }
         public string ObjTdmxOID { get; set; }
@@ -100,11 +101,11 @@ namespace EBom.Models
         }
         #endregion
 
-        #region EBom Ru
-        public static int RuAction(HttpSessionStateBase Context, EBOM _param)
+        #region EBom Re
+        public static int ReAction(HttpSessionStateBase Context, EBOM _param)
         {
             _param.CreateUs = Convert.ToInt32(Context["UserOID"]);
-            int OID = DaoFactory.SetUpdate("EBom.RuEBomStructure", _param);
+            int OID = DaoFactory.SetUpdate("EBom.ReEBomStructure", _param);
             return OID;
         }
         #endregion

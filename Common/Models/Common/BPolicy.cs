@@ -37,7 +37,7 @@ namespace Common.Models
     {
         public static List<BPolicy> SelBPolicy(BPolicy _param)
         {
-            return DaoFactory.GetList<BPolicy>("Comm.SelBPolicy", _param).OrderBy(d => d.StatusOID).ToList();
+            return DaoFactory.GetList<BPolicy>("Comm.SelBPolicy", _param).OrderBy(d => d.StatusOrd).ToList();
         } 
 
         public static List<Dictionary<string, string>> SelCheckProgram(BPolicy _param)

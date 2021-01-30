@@ -55,7 +55,7 @@
                 <div id="issueEstimatedFinDate"></div>
             </td>
         </tr>
-        <tr class="TaskVal">
+        <tr class="">
             <th><i class="fa fa-caret-right"></i> 처리자</th>
             <td>
                 <input type="hidden" id="dlgMangerOID" />
@@ -110,7 +110,7 @@
             OpenIssueManagerDialog(function (res) {
             }, null, {
                 ProjectOID: '@ViewBag.Detail.RootOID',
-            }, '/Pms/dlgSelectAssessManager', '처리자 등록');
+            }, '/Pms/dlgSelectIssueManager', '처리자 등록');
         });
 
         $('#IsApprovalRequired').on('change', function (e) {

@@ -29,6 +29,11 @@ namespace Common.Constant
         public static string TYPE_ECO_RELATION = "ECO_RELATION"; //연관 ECO
         public static string TYPE_ECR_RELATION = "ECR_RELATION"; //연관 ECR
 
+        //상태
+        public static string POLICY_EO_PREPARE = "Prepare";
+        public static string POLICY_EO_REVIEW = "Review";
+        public static string POLICY_EO_REJECT = "Reject";
+        public static string POLICY_EO_COMPLETED = "Completed";
 
         //개발 양산 구분
         public static string TYPE_DEV_KorNm = "개발";

@@ -101,7 +101,7 @@
                 </div>
             </td>
         </tr>
-        <tr class="TaskVal">
+        <tr class="">
             <th><i class="fa fa-caret-right"></i> 처리자</th>
             <td>
                 <input type="hidden" id="dlgMangerOID" value="@ViewBag.Detail.Manager_OID" />
@@ -157,7 +157,7 @@
             width: '100%',
             height: 200,
         });
-        $('#dlgDescription').jqxEditor({ disabled: true }); 
+        $('#dlgDescription').jqxEditor({ disabled: true });
         fileUpload.ReadOnlyMode();
         $('.issueRadioBtn').jqxRadioButton({ width: 100, height: 32 });
        // $('#importance_Poor').jqxRadioButton({ checked: true});
@@ -172,9 +172,9 @@
             $('.TaskVal').attr('hidden', true);
         } else if('@ViewBag.Detail.Type' == '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK'){
             $('#dlgTaskNm').val('@ViewBag.Detail.TaskNm');
-            if ('@ViewBag.Detail.Manager_OID' == null || '@ViewBag.Detail.Manager_OID' == "") {
-                $('#dlgProcessIssue').attr('hidden', true);
-            }
+        }
+        if ('@ViewBag.Detail.Manager_OID' == null || '@ViewBag.Detail.Manager_OID' == "") {
+            $('#dlgProcessIssue').attr('hidden', true);
         }
         if ('@ViewBag.Detail.Importance' != null) {
             switch (@ViewBag.Detail.Importance) {
@@ -183,20 +183,20 @@
                 case 3: $('#importance_Good').jqxRadioButton('check'); break;
             }
         }
-        if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_STARTED') {
+        if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED') {
             $('.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
             fileUpload.EditMode();
-        }else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_TASK_BEFORE_COMPLETED') {
+        }else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED') {
             $('tr.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
             $('.BeforeCompleted').attr('hidden', false);
-            $('#dlgContents').jqxEditor({ disabled: true }); 
-        } else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED') {
+            $('#dlgContents').jqxEditor({ disabled: true });
+        } else if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_COMPLETED') {
             $('.Finish').attr('hidden', false);
             $('tr.Process').attr('hidden', false);
             $('.Prepare').attr('hidden', true);
-            $('#dlgContents').jqxEditor({ disabled: true }); 
+            $('#dlgContents').jqxEditor({ disabled: true });
 
         }
         if ('@ViewBag.Detail.IsApprovalRequired' == '@Common.Constant.CommonConstant.ACTION_YES') {
@@ -212,7 +212,7 @@
             $('.ModifiableEditCustomBox').attr('hidden', false);
             $('.issueRadioBtn').jqxRadioButton('enable');
             $('.issueCheckBox').jqxCheckBox({ locked: false });
-            $('#dlgDescription').jqxEditor({ disabled: false }); 
+            $('#dlgDescription').jqxEditor({ disabled: false });
             var IssueType = "@ViewBag.Detail.IssueType";
             _.each($('div[name="IssueType"]'), function (item) {
                 if (IssueType.indexOf(',') > -1) {
@@ -245,7 +245,7 @@
             $('.ModifiableEditCustomBox').attr('hidden', true);
             $('.issueRadioBtn').jqxRadioButton('disable');
             $('.issueCheckBox').jqxCheckBox({ locked: true });
-            $('#dlgDescription').jqxEditor({ disabled: true }); 
+            $('#dlgDescription').jqxEditor({ disabled: true });
             $('#dlgIssueNm').val('@ViewBag.Detail.Name');
             var description = @Html.Raw(Json.Encode(@ViewBag.Detail.Description));
             $('#dlgDescription').val(description);
@@ -287,9 +287,13 @@
                         alert(response.resultMessage);
                         return;
                     }
-                    alert("처리 되었습니다.");
-                    selInfoDialog.CallBackFunction();
-                    selInfoDialog.close();
+                    if ('@ViewBag.Detail.BPolicy.Name' == '@Common.Constant.PmsConstant.POLICY_ISSUE_STARTED') {
+                        $('#dlgSaveContents').trigger('click');
+                    } else {
+                        alert("처리 되었습니다.");
+                        selInfoDialog.CallBackFunction();
+                        selInfoDialog.close();
+                    }
 
                 });
             }

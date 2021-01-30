@@ -27,10 +27,6 @@
         width: 1400, maxWidth: 1400, height: 750, minHeight: 750, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
-            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                _CallBackFunction();
-            }
-
             var dlgSearchECOSource =
             {
                 dataType: "json",
@@ -82,7 +78,13 @@
                     { name: 'Name', dataField: 'Name', type: 'text', align: 'center', cellsalign: 'center', text: 'ECO', width: '56%' },
                     { name: 'DesignChangeDt', dataField: 'DesignChangeDt', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd', width: '15%' },
                     { name: 'CreateDt', dataField: 'CreateDt', type: 'text', align: 'center', cellsalign: 'center', text: '작성일', cellsFormat: 'yyyy-MM-dd', width: '15%' },
-                    { name: 'BPolicyOID', dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '5.9%' },
+                    {
+                        text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                        }
+                    },
+                    //{ name: 'BPolicyOID', dataField: 'BPolicyOID', type: 'text', align: 'center', cellsalign: 'center', text: '상태', width: '5.9%' },
 
                 ],
                 rendertoolbar: function (toolBar) {
@@ -92,12 +94,6 @@
                     toolBar.append(container);
 
                     AddButton.click(function (event) {
-                        
-                        //const SelectData = dlgSearchECOgrid$.jqxGrid('getrowdata', rowKey);
-                        //if (SelectData == null || SelectData == undefined) {
-                        //    alert('하나이상 설계 변경을 선택해주세요');
-                        //    return;
-                        //}
                         var SelectAllRow = [];
 
                         var SelectData = dlgSearchECOgrid$.jqxGrid('selectedrowindexes');

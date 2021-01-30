@@ -87,7 +87,7 @@
                 { text: '제목', datafield: 'Title', width: "15%", align: 'center', cellsalign: 'center' },
                 { text: '설계변경일자', datafield: 'DesignChangeDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd' },
                 { text: '품목그룹', datafield: 'ItemGroup', width: "15%", align: 'center', cellsalign: 'center' },
-                { text: '작성자', datafield: 'CreateUs', width: "10%", align: 'center', cellsalign: 'center' },
+                { text: '작성자', datafield: 'CreateUsNm', width: "10%", align: 'center', cellsalign: 'center' },
                 {
                     text: '상태', datafield: 'BPolicy', width: "10%", align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, column, value) {
@@ -148,7 +148,7 @@
             SecarchEcrParam.Name = $('#SearchEcrName').val();
             SecarchEcrParam.Title = $('#SearchEcrTitle').val();
             //SecarchEcrParam.DesignChangeDt = $('#SearchEcrDesignChangeDt').val();
-            
+
             SecarchEcrParam.StartDesignChangeDt = SecarchEcrDesignChangeDtArray[0];
             SecarchEcrParam.EndDesignChangeDt = SecarchEcrDesignChangeDtArray[1] + " 23:59:59";
 

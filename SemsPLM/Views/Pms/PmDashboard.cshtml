@@ -38,10 +38,12 @@
     <div style="width:100%;">
         <div class="graphH">
             프로젝트 진행 상태
-            <div class="dashboardStatusSelBox"></div>
+            <div class="pmDsbdLegend">
+                <div class="timelineLegend"><div></div> 현재</div>
+                @*<div class="dashboardStatusSelBox"></div>*@
+            </div>
         </div>
         <div class="pmProjectList">
-            <div id="tickNow">현재</div>
             <div id="pmProjectTimeline">
             </div>
         </div>
@@ -72,14 +74,14 @@
 <script src="~/Resource/d3-timeline-master/dist/timeline-chart_custom.js"></script>
 
 <script type="text/javascript">
-    var carType;
-    var item;
-    var project;
+    var pmCarType;
+    var pmItem;
+    var pmProject;
     $(function () {
 
         var projList =  @Html.Raw(Json.Encode(ViewBag.PmMyProjectStatus));
-        console.log(projList);
         projList.unshift({ 'OID': '', 'Name': '' });
+        @*
         var dashboardProjSource =
         {
             localdata: projList,
@@ -94,9 +96,14 @@
         var dashboardProjAdapter = new $.jqx.dataAdapter(dashboardProjSource);
         $('.dashboardStatusSelBox').jqxComboBox({ width: 110, height: 32, });
         $('.dashboardStatusSelBox').jqxComboBox({ source: dashboardProjAdapter, displayMember: "StatusNm", valueMember: "OID" });
-
+        $('.dashboardStatusSelBox').find('input, textarea, select').attr('disabled', 'disabled');
+        $('.dashboardStatusSelBox').on('change', function () {
+            console.log($('.dashboardStatusSelBox').val());
+            PmTimelineChart($('.dashboardStatusSelBox').val());
+        });
+        *@
         var taskSource = {
-            datatype: 'json',
+            datatype: 'Array',
             dafafields: [
                 { name: 'OID', type: 'number' },
                 { name: 'Name', type: 'string' },
@@ -106,6 +113,9 @@
                 { name: 'EstStartDt', type: 'date' },
                 { name: 'EstEndDt', type: 'date' },
                 { name: 'Delay', type: 'number' },
+                { name: 'Car_Lib_OID', type: 'number' },
+                { name: 'RootOID', type: 'number' },
+                { name: 'ITEM_No', type: 'number' },
             ],
         }
 
@@ -158,24 +168,70 @@
                 statusbar.empty();
                 var container = $("<div class='lGridComponent'></div>");
 
-                 carType = $("<div></div>").jqxComboBox({ width: 150, height: 32,});
-                 item = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                 project = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
-                var delay = $("<input type='text' placeholder='지연일수'>");
+                 pmCarType = $("<div></div>").jqxComboBox({ width: 150, height: 32,});
+                 pmItem = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                pmProject = $("<div></div>").jqxComboBox({ width: 150, height: 32 });
+                pmCarType.find('input, textarea, select').attr('disabled', 'disabled');
+                pmItem.find('input, textarea, select').attr('disabled', 'disabled');
+                pmProject.find('input, textarea, select').attr('disabled', 'disabled');
+                var delay = $("<input type='number' placeholder='지연일수'>");
                 var btnSearch = $("<button class='custom-button'><i class='fas fa-search'></i> 검색</button>");
                 var btnExport = $("<button class='custom-button'>Excel Export</button>");
 
-                container.append(carType);
-                container.append(item);
+                container.append(pmCarType);
+                container.append(pmItem);
                 container.append(delay);
-                container.append(project);
+                container.append(pmProject);
                 container.append(btnSearch);
                 container.append(btnExport);
                 statusbar.append(container);
+
+                btnSearch.on('click', function () {
+                    $('#pmDelayList').jqxGrid('clearfilters');
+                    var selCar = pmCarType.val();
+                    var selItem = pmItem.val();
+                    var selProj = pmProject.val();
+                    var selDelay = delay.val();
+                    var filtertype = 'numericfilter';
+                    var filtergroup = new $.jqx.filter();
+                    var filtercondition = 'equal';
+                    var filter_or_operator = 1;
+                    if (selCar != "" && selCar != null) {
+                        var filter1 = filtergroup.createfilter(filtertype, selCar, filtercondition);
+                        filtergroup.addfilter(filter_or_operator, filter1);
+                        $("#pmDelayList").jqxGrid('addfilter', 'Car_Lib_OID', filtergroup);
+                    }
+                    if (selItem != "" && selItem != null) {
+                        var filter2 = filtergroup.createfilter(filtertype, selItem, filtercondition);
+                        filtergroup.addfilter(filter_or_operator, filter2);
+                        $("#pmDelayList").jqxGrid('addfilter', 'ITEM_No', filtergroup);
+                    }
+                    if (selProj != "" && selProj != null) {
+                        var filter3 = filtergroup.createfilter(filtertype, selProj, filtercondition);
+                        filtergroup.addfilter(filter_or_operator, filter3);
+                        $("#pmDelayList").jqxGrid('addfilter', 'RootOID', filtergroup);
+                    }
+                    if (selDelay != "" && selDelay != null) {
+                        var filter4 = filtergroup.createfilter(filtertype, selDelay, 'LESS_THAN_OR_EQUAL');
+                        filtergroup.addfilter(filter_or_operator, filter4);
+                        $("#pmDelayList").jqxGrid('addfilter', 'Delay', filtergroup);
+                    }
+                    $("#pmDelayList").jqxGrid('applyfilters');
+                });
+                btnExport.on('click', function () {
+                    var rows = $("#pmDelayList").jqxGrid('getrows');
+                    for (var i = 0; i < rows.length; i++) {
+                        rows[i].NO = i + 1;
+                        rows[i].EstStartDt = moment(rows[i].EstStartDt).format('YYYY-MM-DD');
+                        rows[i].EstEndDt = moment(rows[i].EstEndDt).format('YYYY-MM-DD');
+                    }
+                    console.log(rows);
+                    $("#pmDelayList").jqxGrid('exportdata', 'xls', '상세지연현황', true, rows);
+                });
             },
             columns: [
                 {
-                    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    text: 'NO', width: "5%", cellsalign: 'center', datafield: 'NO', columntype: 'number', align: 'center',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
@@ -202,7 +258,12 @@
                     }
                 },
                 { text: '지연일수', width: '10%', datafield: 'Delay', align: 'center', cellsalign: 'center', },
+                { text: '차', width: '10%', datafield: 'Car_Lib_OID', align: 'center', cellsalign: 'center',hidden:true, },
+                { text: '프로젝트', width: '10%', datafield: 'RootOID', align: 'center', cellsalign: 'center', hidden: true,},
+                { text: 'item', width: '10%', datafield: 'ITEM_No', align: 'center', cellsalign: 'center', hidden: true, },
             ],
+
+
         });
 
         RequestData("/Pms/PmDashboardPrepareTaskList", {}, function (res) {
@@ -221,7 +282,7 @@
                         ]
                 };
                 var carAdapter = new $.jqx.dataAdapter(carSource);
-            carType.jqxComboBox({ source: carAdapter, displayMember: "Name", valueMember: "OID" });
+            pmCarType.jqxComboBox({ source: carAdapter, displayMember: "Name", valueMember: "OID" });
             var itemSource =
             {
                 localdata: res.itemList,
@@ -233,7 +294,7 @@
                     ]
             };
             var itemAdapter = new $.jqx.dataAdapter(itemSource);
-            item.jqxComboBox({ source: itemAdapter, displayMember: "Name", valueMember: "OID" });
+            pmItem.jqxComboBox({ source: itemAdapter, displayMember: "Name", valueMember: "OID" });
             var projSource =
             {
                 localdata: res.projList,
@@ -245,7 +306,7 @@
                     ]
             };
             var projAdapter = new $.jqx.dataAdapter(projSource);
-            project.jqxComboBox({ source: projAdapter, displayMember: "Name", valueMember: "OID" });
+            pmProject.jqxComboBox({ source: projAdapter, displayMember: "Name", valueMember: "OID" });
             PrintJqxGrid(taskSource, $('#pmDelayList'), res.Result);
         });
 
@@ -281,7 +342,8 @@
 
                 //console.log(d);
                 //return d.at || `${d.from}<br>${d.to}`;
-                return `${Syear}.${Smonth}.${Sdate} - ${Fyear}.${Fmonth}.${Fdate}`;
+                //return `${Syear}.${Smonth}.${Sdate} - ${Fyear}.${Fmonth}.${Fdate}`;
+                return Syear + '.' + Smonth + '.' + Sdate + '-' + Fyear + '.' + Fmonth + '.' + Fdate;
             }
         }).onVizChange(function (e) {
             //console.log(e);
@@ -291,19 +353,21 @@
             let scrollY = this.scrollTop;
             const rect = document.querySelector('rect.chart-bounds');
             const g = document.querySelector('g.axis');
-            var rectY = scrollY - 21;
+            const rect2 = document.querySelector('rect.delay-box');
+            const delay = document.querySelector('text.delay-axis');
+            var rectY = scrollY - 31;
 
             rect.setAttribute('y', rectY);
+            rect2.setAttribute('y', rectY);
             g.setAttribute('transform', 'translate(0,' + scrollY + ')');
+            delay.setAttribute('transform', 'translate(0,' + scrollY + ')');
         });
 
-        PmTimelineChart();
+        PmTimelineChart(null);
 
-        function PmTimelineChart() {
-            RequestData('/Pms/PmTimelineChart', {}, function (res) {
-
+        function PmTimelineChart(BPolicyOID) {
+            RequestData('/Pms/PmTimelineChart', { BPolicyOID: BPolicyOID}, function (res) {
                 console.log(res);
-
                 _.each(res, function (item) {
                     _.each(item.data, function (innerItem) {
                         if (innerItem.type == 'point') {
@@ -318,7 +382,7 @@
                 });
 
                 timelineData = res;
-                timelineHeight = 20 + timelineData.length * 60;
+                timelineHeight = 30 + timelineData.length * 50;
                 $('#pmProjectTimeline').css('height', timelineHeight);
                 timelineBox$.innerHTML = '';
                 timeline = new TimelineChart(timelineBox$, timelineData, {
@@ -326,35 +390,26 @@
                     intervalMinWidth: 100,
                     hideGroupLabels: false,
                     tip: function (d) {
-                        var Syear = d.from.getFullYear();
-                        var Smonth = d.from.getMonth() + 1;
-                        var Sdate = d.from.getDate();
-                        var Fyear = d.to.getFullYear();
-                        var Fmonth = d.to.getMonth() + 1;
-                        var Fdate = d.to.getDate();
-
-                        //console.log(d);
+                        if ('at' in d) {
+                        } else {
+                            var Syear = d.from.getFullYear();
+                            var Smonth = d.from.getMonth() + 1;
+                            var Sdate = d.from.getDate();
+                            var Fyear = d.to.getFullYear();
+                            var Fmonth = d.to.getMonth() + 1;
+                            var Fdate = d.to.getDate();
+                            var tipContent = Syear + '.' + Smonth + '.' + Sdate + '-' + Fyear + '.' + Fmonth + '.' + Fdate;
+                            return tipContent;
+                        }
                         //return d.at || `${d.from}<br>${d.to}`;
-                        return `${Syear}.${Smonth}.${Sdate} - ${Fyear}.${Fmonth}.${Fdate}`;
                     }
                 }).onVizChange(function (e) {
                     //console.log(e);
-                });
-                const tickNow$ = $('#tickNow');
-                tickNow$.hide();
-                $('line.vertical-marker').on('mouseover', function () {
-                    var lineX = $('line.now').attr('x2');
-                    tickNow$.css('left', lineX + 'px');
-                    tickNow$.show();
-                });
-                $('line.vertical-marker').on('mouseleave', function () {
-                    tickNow$.hide();
+                }).ondbClickEvent(function (e) {
+                    OpenDashboardPageDialog(null, null, { 'ProjectOID': e.proj, 'GateOID': e.oid }, '/Pms/PmDashboardTimeLineTask', e.label);
                 });
             });
-
         }
-
-
     });
 
 </script>

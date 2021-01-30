@@ -22,6 +22,19 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult InfoMiniChangeRequest(int OID)
+        {
+            ECR ECRDetail = ECRRepository.SelChangeRequestObject(Session, new ECR { OID = OID });
+            ViewBag.ECRDetail = ECRDetail;
+            ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_REQUEST });
+
+            Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
+            List<Library> ECRreasonList = LibraryRepository.SelLibrary(new Library { FromOID = ECRreasonKey.OID });
+            ViewBag.ECRreasonList = ECRreasonList;
+
+            return PartialView("InfoChangeRequest");
+        }
+
         public ActionResult CreateChangeRequest()
         {
             Library ECRreasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
@@ -38,9 +51,14 @@ namespace SemsPLM.Controllers
             return View();
         }
 
+        public ActionResult SearchReleaseChangeRequest()
+        {
+            return View();
+        }
+
         public ActionResult InfoChangeRequest(int OID)
         {
-            ECR ECRDetail = ECRRepository.SelChangeRequestObject(new ECR { OID = OID });
+            ECR ECRDetail = ECRRepository.SelChangeRequestObject(Session, new ECR { OID = OID });
             ViewBag.ECRDetail = ECRDetail;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_REQUEST });
 
@@ -79,7 +97,7 @@ namespace SemsPLM.Controllers
                 var selName = "WR" + YYYY + MM +  dd + "-001";
                 var NewName = "WR" + YYYY + MM +  dd;
 
-                var LateName = ECRRepository.SelChangeRequest(new ECR { Name = NewName });
+                var LateName = ECRRepository.SelChangeRequest(Session, new ECR { Name = NewName });
 
                 if(LateName.Count == 0)
                 {
@@ -152,7 +170,7 @@ namespace SemsPLM.Controllers
         #region 변경요청 검색
         public JsonResult SelChangeRequest(ECR _param)
         {
-            List<ECR> lECR = ECRRepository.SelChangeRequest(_param);
+            List<ECR> lECR = ECRRepository.SelChangeRequest(Session, _param);
             return Json(lECR);
         }
         #endregion

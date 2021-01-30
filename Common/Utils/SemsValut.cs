@@ -143,16 +143,30 @@ namespace Common.Utils
         {
             try
             {
-                //string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
-                string StoragePath = "";
+                string StoragePath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["FileStorage"]);
                 string ValutPath = System.Configuration.ConfigurationManager.AppSettings["ValutPath"];
-                string TempPath = System.Configuration.ConfigurationManager.AppSettings["TempPath"];
+                //string TempPath = System.Configuration.ConfigurationManager.AppSettings["AutoVueTempPath"];
+                string AutoVueTempPath = System.Configuration.ConfigurationManager.AppSettings["AutoVueTempPath"];
+                string fileTempPath = System.Configuration.ConfigurationManager.AppSettings["TempPath"];
 
                 string SavePath = fileModel.Type + "/" + fileModel.OID.ToString();
 
                 string fileFullDirectory = Path.Combine(StoragePath, ValutPath, SavePath, fileModel.ConvNm);
 
-                return fileFullDirectory;
+                FileInfo fi = new FileInfo(fileFullDirectory);
+
+                /*폴더생성*/
+                DirectoryInfo di = new DirectoryInfo(AutoVueTempPath + "/" + fileTempPath);
+
+                if (!di.Exists) { di.Create(); }
+
+                FileInfo downloadFi = new FileInfo(Path.Combine(AutoVueTempPath, fileTempPath, fileModel.OrgNm));
+
+                fi.CopyTo(downloadFi.FullName, true);
+
+                SemsEncrypt.AESDecrypt256File(fi, downloadFi.FullName, CommonConstant.FILE_ENCRYPT_KEY);
+
+                return downloadFi.FullName.Replace(AutoVueTempPath, "");
             }
             catch (Exception ex)
             {

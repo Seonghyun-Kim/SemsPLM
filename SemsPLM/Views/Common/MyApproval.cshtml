@@ -148,6 +148,7 @@
             });
 
             myApprovalList$.on('celldoubleclick', function (e) {
+                console.log(e.args.row.bounddata);
                 OpenApprovalContentDialog(function () {
                     myApprovalList$.jqxGrid('pagerrenderer');
                 }, null, e.args.row.bounddata, '/Common/ApprovalContent', e.args.row.bounddata.DocNm);

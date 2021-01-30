@@ -52,6 +52,9 @@ namespace Pms.Models
         public int? Delay { get; set; }
 
         public string ApprovStatus { get; set; }
+        public int? ITEM_No { get; set; }
+        public int? Oem_Lib_OID { get; set; }
+        public int? Car_Lib_OID { get; set; }
     }
 
     public static class PmsProcessRepository

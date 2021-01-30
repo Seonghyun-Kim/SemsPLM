@@ -89,8 +89,9 @@
         var ChangeECOComboBox$ = dlgSearchECOCarLib$
         var param = {};
         param.fromOID = OID;
+        param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
         var ChangeECOComboSource;
-        RequestData("/Manage/SelCodeLibrary", param, function (res) {
+        RequestData("/Manage/SelCodeLibraryChild", param, function (res) {
             if (res.length > 0) {
                 ChangeECOComboSource =
                 {

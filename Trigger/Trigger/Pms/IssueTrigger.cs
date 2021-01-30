@@ -23,7 +23,7 @@ namespace Pms.Trigger
             try
             {
                 PmsIssue issue = PmsIssueRepository.SelIssue(Context, new PmsIssue { OID = Convert.ToInt32(oid) });
-                if (issue.BPolicy.Name == PmsConstant.POLICY_ISSUE_PROJECT_COMPLETED)
+                if (issue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
                 {
                     issue.FinDt = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                     PmsIssueRepository.UdtIssue(Context, issue);

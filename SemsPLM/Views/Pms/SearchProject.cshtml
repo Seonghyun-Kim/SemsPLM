@@ -29,6 +29,12 @@
                     </div>
                 </div>
                 <div class="searchData">
+                    <div>상태</div>
+                    <div>
+                        <div id="projStatus" style="margin-left:5px;"></div>
+                    </div>
+                </div>
+                <div class="searchData">
                     <div>내용</div>
                     <div>
                         <input type="text" class="txtBox" id="txtContent" />
@@ -107,7 +113,10 @@
                 if (parentval != null) {
                     selOemText = parentval.label;
                 }
+
+                param.Oem_Lib_OID = selOemOID;
                 param.Car_Lib_OID = selCarOID;
+
                 getPmsProjectList(ProjectSource, Grd$, param);
                 Grd$.jqxGrid('clearselection');
                 selProjOID = null;
@@ -123,6 +132,7 @@
             columnsheight: 30,
             sortable: false,
             pageable: true,
+            pagesize: 20,
             selectionmode: 'singlerow',
             columnsresize: true,
             columns: [
@@ -183,6 +193,7 @@
                         getPmsProjectList(ProjectSource, Grd$, param);
                     }, null, { ProjectOID: selProjOID }, '/Pms/ModifyProject?OID=' + selProjOID, '프로젝트 수정');
                 });
+
                 btnDelete.on('click', function () {
                     if (selProjOID == null || selProjOID == "") {
                         alert('프로젝트를 선택하여주세요.');
@@ -206,11 +217,13 @@
                             }
                         } else {
                             alert('권한이 없습니다.');
+                            return;
                         }
                     }
                 });
             },
         });
+
         Grd$.on('rowselect', function (event) {
             var args = event.args;
             var rowData = args.row;
@@ -255,6 +268,23 @@
         });
 
         $('#projType').jqxComboBox({ source: ['', '선행', '개발', '양산'], selectedIndex: 0, width: 170, height: 32, });
+
+        var projStatusList =  @Html.Raw(Json.Encode(ViewBag.BPolicies));
+        projStatusList.unshift({ 'OID': '', 'Name': '' });
+        var spProjSource =
+        {
+            localdata: projStatusList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'OID', type: 'int' },
+                    { name: 'Name', type: 'string' },
+                    { name: 'StatusNm', type: 'string' },
+                ]
+        };
+        var spProjAdapter = new $.jqx.dataAdapter(spProjSource);
+        $('#projStatus').jqxComboBox({ source: spProjAdapter, displayMember: "StatusNm", valueMember: "OID", selectedIndex: 0, width: 170, height: 32, });
+        $('#projStatus').find('input, textarea, select').attr('disabled', 'disabled');
         getPmsProjectList(ProjectSource, Grd$, null);
 
         $('#btnSearch').on('click', function () {
@@ -264,6 +294,7 @@
             searchParam.Description = $('#txtContent').val();
             searchParam.Car_Lib_OID = selCarOID;
             searchParam.Oem_Lib_OID = selOemOID;
+            searchParam.BPolicyOID = $('#projStatus').val();
             getPmsProjectList(ProjectSource, Grd$, searchParam);
         });
 

@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
     <title>우리산업 PLM</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -27,7 +28,7 @@
 </head>
 <body>
     <header>
-        <h1><a href="/" title="main"><img src="~/images/logo.png" alt="logo"></a></h1>
+        <h1><a href="/" title="main"><img src="~/images/PLM_logo_c.png" alt="logo"></a></h1>
 
         <nav>
             <ul class="gnb">
@@ -38,7 +39,14 @@
         <div class="lnb">
             <div class="btn_user">
                 <div class="img">
-                    <i class="fas fa-user"></i> <!--이미지 없을 경우-->
+                    @if (Session["Thumbnail"] != null && Session["Thumbnail"].ToString().Length > 0)
+                    {
+                        <img src="@Session["Thumbnail"]" />
+                    }
+                    else
+                    {
+                        <i class="fas fa-user"></i> <!--이미지 없을 경우-->
+                    }
                 </div>
                 <span><!--접속자명-->@Session["UserNm"]</span>
             </div>
@@ -153,8 +161,8 @@
     <script defer type="text/javascript" src=@Url.Content("~/Resource/apexcharts-bundle/dist/apexcharts.js")></script>
     <!--AutoVue-->
     <!--
-    <script defer type="text/javascript" src="http://192.168.0.38:8080/Autovue/AutoVueClient/autovue.js"></script>
-    <script defer type="text/javascript" src="http://192.168.0.38:8080/Autovue/servlet/VueKeyPairServlet"></script>
+    <script defer type="text/javascript" src="http://192.168.10.196:8080/Autovue/AutoVueClient/autovue.js"></script>
+    <script defer type="text/javascript" src="http://192.168.10.196:8080/Autovue/servlet/VueKeyPairServlet"></script>
     <script defer type="text/javascript" src=@Url.Content("~/Resource/Base/WebAutoVue.js")></script>
     -->
 
@@ -377,6 +385,11 @@
                 }
             });
         }
+
+         $('.btn_user').on('click', function () {
+            OpenPersonDialog(function () {
+            }, null, { OID: @Session["UserOID"] }, '/Manage/EditPerson', '사용자 수정');
+        });
     </script>
 </body>
 </html>

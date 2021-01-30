@@ -33,11 +33,20 @@ namespace SemsPLM.Controllers
         {
             DocClass Document = DocClassRepository.SelDocClassObject(Session, new DocClass { Name = CommonConstant.ATTRIBUTE_DOCUMENT });
             List<DocClass> docTypeList = DocClassRepository.SelDocClass(Session,new DocClass { FromOID = Document.OID});
+            ViewBag.BPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
             ViewBag.docTypeList = docTypeList;
             
             return View();
         }
+        public ActionResult SearchReleaseDocument()
+        {
+            DocClass Document = DocClassRepository.SelDocClassObject(Session, new DocClass { Name = CommonConstant.ATTRIBUTE_DOCUMENT });
+            List<DocClass> docTypeList = DocClassRepository.SelDocClass(Session, new DocClass { FromOID = Document.OID });
+            ViewBag.BPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
+            ViewBag.docTypeList = docTypeList;
 
+            return View();
+        }
         public JsonResult SelDocClassTree()
         {
             return Json(DocClassRepository.SelDocClassTree(Session, CommonConstant.ATTRIBUTE_DOCUMENT));

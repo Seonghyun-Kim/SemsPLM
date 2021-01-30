@@ -314,9 +314,7 @@ function fPmsWokingDay(_validaciton, _param) {
         if (_param == 0 || _param == 6) {
             result = true;
         }
-    } else if (_validaciton == 7) {
-        result = true;
-    }
+    } 
     return result;
 }
 
@@ -375,6 +373,18 @@ function fMaxDate(all_dates) {
         }
     });
     return max_dt;
+}
+
+function fMinDate(all_dates) {
+    var min_dt = all_dates[0],
+        min_dtObj = new Date(all_dates[0]);
+    all_dates.forEach(function (dt, index) {
+        if (new Date(dt) < min_dtObj) {
+            min_dt = dt;
+            min_dtObj = new Date(dt);
+        }
+    });
+    return min_dt;
 }
 
 function fDependencyRescureControl(_projOid, _selData) {
@@ -476,6 +486,14 @@ function fTaskStart(_this, proj, idx) {
         alert('타스크가 진행되었습니다.');
         gPmsModifyHistoryMaster[proj].obj.jqxTreeGrid('pagerRenderer');
     });
+}
+
+function fInTaskStart(_this, proj, idx) {
+    RequestData('Common/PromoteObjectTask',
+        { Type: _this.getAttribute('data-Type'), Status: _this.getAttribute('data-Status'), OID: idx, RootOID: proj }, function () {
+            alert('타스크가 진행되었습니다.');
+            gPmsModifyHistoryMaster[idx].obj.jqxTreeGrid('pagerRenderer');
+        });
 }
 
 function fGettingDependData(depends) {

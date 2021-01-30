@@ -1,6 +1,7 @@
 ﻿
 @{
     Layout = null;
+    //프로젝트에서 ASSY 만 검색
 }
 <div style="width:100%; margin-right:20px;">
     <div class="searchBox">
@@ -66,12 +67,13 @@
                 ]
         };
         var oemAdapter = new $.jqx.dataAdapter(oemSource);
-        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
-        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 200, height: 32 });
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 200, height: 32 });
         dlgSearchEPartOemLib$.on('change', function (evt) {
             var param = {};
             param.fromOID = dlgSearchEPartOemLib$.val();
-            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
                 var CarSource =
                 {
                     localdata: res,
@@ -97,7 +99,7 @@
                 ]
         };
         var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
-        dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        dlgSearchEPartItemLib$.jqxComboBox({ width: 200, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
 
         //$('#dlgSearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 33, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 

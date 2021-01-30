@@ -1,0 +1,177 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="searchBox">
+    <div class="searchTitle">
+        <label><i class="fas fa-folder-open"></i> &nbsp;일반 문서 검색</label>
+    </div>
+    <div class="searchContent">
+        <div class="searchData">
+            <div class="searchData">
+                <div>문서번호</div>
+                <div>
+                    <input type="text" class="txtBox" id="dlgDocumentName" />
+                </div>
+            </div>
+            <div class="searchData">
+                <div>제목</div>
+                <div>
+                    <input type="text" class="txtBox" id="dlgDocumentTitle" />
+                </div>
+            </div>
+        </div>
+        <div class="searchButton">
+            <button id="dlgDocumentSearchBtn" class="searchBtn custom-button" onclick=""><i class="fas fa-search"></i> 검색</button>
+        </div>
+    </div>
+</div>
+<div id="dlgDocumentGrid"></div>
+
+<script>
+    var param = {};
+    var selDocumentDialog;
+    var TypeDocument = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+    console.log(selDocumentDialog);
+    var dlgDocumentSource =
+    {
+        dataType: "json",
+        datafields: [
+            { name: 'OID' },
+            { name: 'DocType' },
+            { name: 'DocType_KorNm' },
+            { name: 'Name' },
+            { name: 'BPolicy' },
+            { name: 'BPolicyOID' },
+            { name: 'Title', type:'string'},
+            { name: 'Revision' },
+            { name: 'Eo_No' },
+            { name: 'CreateDt', type: 'date' },
+            { name: 'CreateUs' },
+            { name: 'CreateUsNm' },
+            { name: 'Description' },
+        ],
+        hierarchy:
+        {
+            keyDataField: { name: 'OID' },
+        },
+        id: 'OID',
+        addRow: function (rowID, rowData, IsUse, parentID, commit) {
+            commit(true);
+        },
+    };
+
+    var dlgDocumentGrid$ = $('#dlgDocumentGrid');
+    dlgDocumentGrid$.jqxGrid({
+        width: "100%",
+        height: 590,
+        theme: "kdnc",
+        sortable: true,
+        selectionmode: 'checkbox',
+        columns: [
+            { text: '문서 분류', datafield: 'DocType_KorNm', width: "21%", align: 'center', cellsalign: 'center', },
+            { text: '제목', datafield: 'Title', width: "30%", align: 'center', cellsalign: 'center', },
+
+            { text: '문서번호', datafield: 'Name', width: "22%", align: 'center', cellsalign: 'center', },
+            {
+                text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                cellsrenderer: function (row, column, value) {
+                    return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                },
+            },
+            { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center' },
+            { text: '작성일', datafield: 'CreateDt', width: "10.5%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+        ],
+        editable: false,
+        showToolbar: true,
+        toolbarHeight: 45,
+        renderToolbar: function (toolbar) {
+            toolbar.empty();
+            var container = $("<div class='lGridComponent'></div>");
+            var btnAdd = $("<button id=''><i class='fas fa-plus'></i> 선택</button>").jqxButton();
+            container.append(btnAdd);
+            toolbar.append(container);
+
+            btnAdd.on('click', function () {
+
+                var selectedRecords = new Array();
+                var checkedRows = dlgDocumentGrid$.jqxGrid('getselectedrowindexes');
+                console.log(checkedRows);
+                for (var i = 0; i < checkedRows.length; i++) {
+                    var data = dlgDocumentGrid$.jqxGrid('getrowdata', checkedRows[i]);
+                    var param = {};
+                    param.RootOID = selDocumentDialog.Data.RootOID;
+                    param.FromOID = selDocumentDialog.Data.RootOID;
+                    param.ToOID = data.OID;
+                    selectedRecords[selectedRecords.length] = param;
+                }
+                if (selectedRecords.length == 0) {
+                    alert("문서가 선택이 되지 않았습니다");
+                    return false;
+                }
+                RequestData("/Pms/InsPmsDocumentRelation", selectedRecords, function (res) {
+                    if (res.isError) {
+                        alert(res.resultMessage);
+                        return;
+                    }
+                    alert('저장되었습니다.');
+                    selDocumentDialog.CallBackFunction();
+                    selDocumentDialog.close();
+                    selDocumentDialog = null;
+                });
+
+            });
+        }
+    });
+    dlgDocumentGrid$.on('rowselect', function (event) {
+        var rowObj = event.args;
+        var disChk = [];
+        if (selDocumentDialog.Data.Data != null && selDocumentDialog.Data.Data != undefined) {
+            selDocumentDialog.Data.Data.filter(function (item) {
+                if (typeof rowObj.rowindex == 'number') {
+                    if (item.OID == rowObj.row.OID) {
+                        disChk.push(rowObj.rowindex);
+                    }
+                } else if (typeof rowObj.rowindex == 'object') {
+                    dlgDocumentGrid$.jqxGrid('getrows').filter(function (innerItem) {
+                        if (item.OID == innerItem.OID) {
+                            disChk.push(innerItem.boundindex);
+                        }
+                    });
+                }
+            });
+        }
+        if (disChk != null && disChk != undefined && disChk.length > 0) {
+            for (var index = 0; index < disChk.length; index++) {
+                dlgDocumentGrid$.jqxGrid('unselectrow', disChk[index]);
+            }
+        }
+    });
+
+    GetDocumentList();
+
+    $('#dlgDocumentSearchBtn').on('click', function () {
+        var param = {};
+        param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+        param.Name = $('#dlgDocumentName').val();
+        param.Title = $('#dlgDocumentTitle').val();
+        RequestData("/Document/SelDoc", param, function (res) {
+            PrintJqxGrid(dlgDocumentSource, dlgDocumentGrid$, res);
+        });
+    });
+
+    $('#dlgDocumentName, #dlgDocumentTitle').keydown(function (key) {
+        if (key.keyCode == 13) {
+            $('#dlgDocumentSearchBtn').trigger('click');
+        }
+    });
+
+    function GetDocumentList() {
+        param.Name = $('#dlgDocClassName').val();
+        param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+        RequestData("/Document/SelDoc", param, function (res) {
+            PrintJqxGrid(dlgDocumentSource, dlgDocumentGrid$, res);
+        });
+    }
+
+</script>

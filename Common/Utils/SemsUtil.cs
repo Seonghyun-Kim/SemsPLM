@@ -110,7 +110,7 @@ namespace Common
             {
                 sR = str;
             }
-            string newR = SingleNumberToletters((CurrentLettersToNumber(sR) + 1));
+            string newR = SingleNumberToletters((SingleCurrentLettersToNumber(sR) + 1));
             return newR;
         }
 
@@ -129,6 +129,20 @@ namespace Common
                 x -= threshold * index;
             }
             return new string(result);
+        }
+
+        public static int SingleCurrentLettersToNumber(string str)
+        {
+            int result = 0;
+            for (int i = 0; i < CommonConstant.SINGLE_MAX_NUMBER; i++)
+            {
+                if (str.Equals(SingleNumberToletters(i)))
+                {
+                    result = i;
+                    break;
+                }
+            }
+            return result;
         }
     }
 

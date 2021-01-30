@@ -276,12 +276,11 @@ WebUtils.GetGrdSearchData = function (callBackFunction, source, grdId, pagenum, 
     $("#" + grdId).jqxGrid({ source: new $.jqx.dataAdapter(source) });
 }
 
-WebUtils.CallAutoVue = function () {
-    gAutoVue = new WebAutoVue();
-}
-
 WebUtils.CallAutoVueFile = function (FileOID) {
     RequestData('/Common/CommonFilePath', { 'FileOID': FileOID }, function (res) {
+        if (gAutoVue == null || gAutoVue == undefined) {
+            gAutoVue = new WebAutoVue();
+        }
         gAutoVue.CallAutoVue(res);
     });
 }

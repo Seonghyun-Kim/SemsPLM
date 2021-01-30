@@ -64,6 +64,7 @@
 </div>
 <script>
     var docType$;
+    var SearchDocBPolicyList$ =  @Html.Raw(Json.Encode(ViewBag.BPolicies));
     $(function () {
         var param = {};
         param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
@@ -104,9 +105,9 @@
         SearchDocumentTree$.on('select', function (event) {
             var args = event.args;
             var item = SearchDocumentTree$.jqxTree('getItem', args.element);
-            var param = {};
             if (item.type == "@Common.Constant.CommonConstant.ATTRIBUTE_DOCUMENT") {
-                getSearchDocList(DocumentSource, DocGrd$, null);
+                param.DocType = null;
+                getSearchDocList(DocumentSource, DocGrd$, param);
                 DocGrd$.jqxGrid('clearselection');
             } else if (item.type == "@Common.Constant.DocClassConstant.TYPE_DOCCLASS") {
                 param.DocType = item.id;
@@ -221,7 +222,18 @@
     });
     function getSearchDocList(_Source, _Grid$,_param) {
         RequestData("/Document/SelDoc", _param, function (res) {
-            PrintJqxGrid(_Source, _Grid$, res);
+             var completeIdx = SearchDocBPolicyList$.findIndex(function (item) {
+                return item.Name == '@Common.Constant.DocumentConstant.POLICY_DOCUMENT_COMPLETED';
+            });
+            var result = [];
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].BPolicy.Name == SearchDocBPolicyList$[completeIdx].Name) {
+
+                } else {
+                    result.push(res[i]);
+                }
+            }
+            PrintJqxGrid(_Source, _Grid$, result);
         });
     }
 

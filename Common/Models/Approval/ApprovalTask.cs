@@ -51,6 +51,8 @@ namespace Common.Models
 
         public BPolicy ApprovalBPolicy { get; set; }
 
+        public string DocBpolicyNm { get; set; }
+
     }
 
     public static class ApprovalTaskRepository

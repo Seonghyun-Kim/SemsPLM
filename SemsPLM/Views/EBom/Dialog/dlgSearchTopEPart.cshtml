@@ -1,7 +1,7 @@
 ﻿
 @{
     Layout = null;
-    ViewBag.Title = "역전개 시 최상위 검색";
+    ViewBag.UrlTitle = "역전개 시 최상위 검색";
 }
 
 <div id="dlgSelTopEPartGrid"></div>
@@ -40,6 +40,8 @@
                 { name: 'Sel_Eo_Dt', type: 'date' },
                 { name: 'Thumbnail' },
                 { name: 'Revision' },
+
+                { name: 'isDuplicate'},
             ],
             id: 'OID',
         };
@@ -79,6 +81,7 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                     }
                 },
+                { text: '존재함', datafield: 'isDuplicate', width: "6%", align: 'center', cellsalign: 'center', hidden: true  },
 
             ],
             rendertoolbar: function (toolBar) {
@@ -90,6 +93,12 @@
 
                 SelRevButton.click(function (event) {
                     var rowindexes = dlgSelTopEPartGrid$.jqxGrid('getselectedrowindexes');
+
+                    if (rowindexes.length == 0) {
+                        alert("선택하여 주세요");
+                        return;
+                    }
+
                     var TopEPartList = [];
 
                     for (var i = 0; i < rowindexes.length; i++) {
@@ -98,11 +107,45 @@
                         TopEPartList.push(data);
                     }
 
-                    RequestData('/EBom/ReverseStructure', { _param: TopEPartList, RootOID : @ViewBag.OID }, function (res) {
-                        alert('개정 되었습니다.');
-                    });
+                    if ("@ViewBag.Division" == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+                        if (!confirm("스탠다드는 대체 해야합니다. 대체 할 품번을 생성하시겟습니까?")) {
+                            return;
+                        }
+                        OpenInfoEPartCreateDialog(
+                            function (res) {
+                                console.log(res);
+                                RequestData('/EBom/ReverseStructure', { _param: TopEPartList, RootOID: @ViewBag.OID, NewDataOID : res }, function (respon) {
+                                    alert('개정 되었습니다.');
+                                });
+                            }
+                            , null, { Division : "@Common.Constant.EBomConstant.DIV_STANDARD"}, '/EBom/dlgCreateEPart', 'EPART 등록');
+                    } else {
+                        RequestData('/EBom/ReverseStructure', { _param: TopEPartList, RootOID: @ViewBag.OID, NewData : null }, function (res) {
+                            alert('개정 되었습니다.');
+                        });
+                    }
+
                 });
             },
+        });
+
+        dlgSelTopEPartGrid$.on('rowselect', function (event) {
+            var rowObj = event.args;
+            var disChk = [];
+
+            var NotCheckList = dlgSelTopEPartGrid$.jqxGrid('getrows');
+            NotCheckList.filter(function (innerItem) {
+                if (innerItem.isDuplicate == 1) {
+                    disChk.push(innerItem.uid);
+                }
+            });
+
+            if (disChk != null && disChk != undefined && disChk.length > 0) {
+                for (var index = 0; index < disChk.length; index++) {
+                    var data = dlgSelTopEPartGrid$.jqxGrid('getrowboundindexbyid', disChk[index]);
+                    dlgSelTopEPartGrid$.jqxGrid('unselectrow', data);
+                }
+            }
         });
 
         var param = {};

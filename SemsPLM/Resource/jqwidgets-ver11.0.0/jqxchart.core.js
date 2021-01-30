@@ -9528,7 +9528,9 @@ License: https://jqwidgets.com/license/
             { name: 'scheme24', colors: ['#7B1A25', '#BF5322', '#9DA860', '#CEA457', '#B67818'] },
             { name: 'scheme25', colors: ['#0081DA', '#3AAFFF', '#99C900', '#FFEB3D', '#309B46'] },
             { name: 'scheme26', colors: ['#0069A5', '#0098EE', '#7BD2F6', '#FFB800', '#FF6800'] },
-            { name: 'scheme27', colors: ['#FF6800', '#A0A700', '#FF8D00', '#678900', '#0069A5'] }
+            { name: 'scheme27', colors: ['#FF6800', '#A0A700', '#FF8D00', '#678900', '#0069A5'] },
+            { name: 'scheme28', colors: ['#0000FF', '#99FF99', '#D9D9D9', '#FF8D00','#FF8D00'] }
+            /* modify by LHW 210127 */    
         ],
 
         /********** END OF COLOR SCHEMES ********/

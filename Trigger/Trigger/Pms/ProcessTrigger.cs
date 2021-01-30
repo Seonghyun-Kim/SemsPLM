@@ -1,5 +1,6 @@
 ﻿using Common.Constant;
 using Common.Models;
+using Common.Utils;
 using Pms.Models;
 using System;
 using System.Collections.Generic;
@@ -296,6 +297,99 @@ namespace Pms.Trigger
                 }
             }
             catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
+        public string ActionTaskCompleteMailPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iUser = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
+            try
+            {
+                PmsRelationship parent = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, ToOID = Convert.ToInt32(oid) }).First();
+                int RootOID = Convert.ToInt32(parent.RootOID);
+                PmsProject tmpProj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = RootOID });
+                PmsProcess proc = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = Convert.ToInt32(oid) });
+
+                SemsSmtp smtp = new SemsSmtp();
+                if (proc.BPolicy.Name.Equals(PmsConstant.POLICY_PROCESS_COMPLETED))
+                {
+                    PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_MEMBER, FromOID = Convert.ToInt32(oid) }).ForEach(member =>
+                    {
+                        Person tmpPerson = PersonRepository.SelPerson(Context, new Person { OID = member.ToOID });
+                        ProcApprovCompleteMailContent procMail = new ProcApprovCompleteMailContent(Context, tmpProj, proc, tmpPerson);
+                        smtp.SetMailInfo(procMail);
+                    });
+
+                   
+                    PmsRelationshipRepository.GetProjWbsTypeOidList(Context, Convert.ToString(RootOID)).FindAll(item => {
+                        if (item.Dependency == null)
+                        {
+                            return false;
+                        }
+                        if (item.Dependency.IndexOf(",") > -1)
+                        {
+                            string[] aDepends = item.Dependency.Split(',');
+                            foreach (string dep in aDepends)
+                            {
+                                if (dep.IndexOf(":") > -1)
+                                {
+                                    string[] ds = dep.Split(':');
+                                    if (Convert.ToInt32(ds[0]) == proc.Id)
+                                    {
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (Convert.ToInt32(dep) == proc.Id)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (item.Dependency.IndexOf(":") > -1)
+                            {
+                                string[] ds = proc.Dependency.Split(':');
+                                if (Convert.ToInt32(ds[0]) == proc.Id)
+                                {
+                                    return true;
+                                }
+                            }
+                            else
+                            {
+                                if (Convert.ToInt32(item.Dependency) == proc.Id)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }).ForEach(item =>
+                    {
+                        PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_MEMBER, FromOID = Convert.ToInt32(item.ToOID) }).ForEach(member =>
+                        {
+                            PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = Convert.ToInt32(item.ToOID) });
+                            Person tmpPerson = PersonRepository.SelPerson(Context, new Person { OID = member.ToOID });
+                            ProcApprovPrepareMailContent procMail = new ProcApprovPrepareMailContent(Context, tmpProj, tmpProc, tmpPerson);
+                            smtp.SetMailInfo(procMail);
+                        });
+                    });
+                }
+                smtp.SendMail();
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }

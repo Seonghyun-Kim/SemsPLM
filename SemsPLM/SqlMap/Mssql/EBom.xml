@@ -55,6 +55,9 @@
       <isNotNull property="Title">
         AND B.Title like '%' + #Title# + '%'
       </isNotNull>
+      <isNotNull property="ITEM_Middle">
+        AND B.ITEM_Middle = #ITEM_Middle#
+      </isNotNull>
       ORDER BY A.CreateDt DESC
     </select>
 
@@ -201,10 +204,18 @@
     <delete id="delEBomStructure" parameterClass="EBom" >
       DELETE FROM T_DEBOM_RELATIONSHIP
       WHERE 1 = 1
-      AND OID = #OID#
+      <isNotNull property="OID">
+        AND OID = #OID#
+      </isNotNull>
+      <isNotNull property="FromOID">
+        AND FromOID = #FromOID#
+      </isNotNull>
+    <isNotNull property="ToOID">
+        AND ToOID = #ToOID#
+      </isNotNull>
     </delete>
 
-    <update id="RuEBomStructure" parameterClass="EBom">
+    <update id="ReEBomStructure" parameterClass="EBom">
       UPDATE T_DEBOM_RELATIONSHIP
       SET
       FromOID = #FromOID#
@@ -275,7 +286,33 @@
       FROM RECURSIVE_QUERY D
     </select>
 
+    <select id="SelTempEPartObject" parameterClass="EPart" resultClass="EPart">
+      SELECT *
+      FROM T_DEPART_TEMP
+      WHERE DeleteDt IS NULL
+      AND Type = #Type#
+      AND Orgin_OID = #Orgin_OID#
+    </select>
+
+    <insert id="InsTempEPart" parameterClass="EPart" >
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DEPART_TEMP
+      </selectKey>
+      INSERT INTO T_DEPART_TEMP
+      ( OID
+      , Orgin_OID
+      , Type
+      , CreateDt
+      , CreateUs
+      )
+      VALUES
+      ( #OID#
+      , #Orgin_OID#
+      , 'PART'
+      , GETDATE()
+      , #CreateUs#
+      )
+    </insert>
 
   </statements>
-  
 </sqlMap>

@@ -6,6 +6,7 @@ var gPmsModifyHistoryHoliday = {};
 var gPmsModifyDeliveryMaster = {};
 
 $(document).on('focus', '.datePicker', function () {
+    const selId = $(this).attr('data-id');
     const projId = $(this).attr('data-proj-id');
     const working = $(this).attr('data-proj-workingday');
     const holiday = gPmsModifyHistoryHoliday[projId];
@@ -22,13 +23,25 @@ $(document).on('focus', '.datePicker', function () {
         changeYear: true,
         changeMonth: true,
         beforeShowDay: function (date) {
+            var projDate = moment(gPmsModifyHistoryMaster[projId].data[0]['EstStartDt']);
+            var gapData = moment.duration(projDate.diff(date)).asDays();
             var day = date.getDay();
-            if (working == 6) {
-                return [(day != 0 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
-            } else if (working == 5) {
-                return [(day != 0 && day != 6 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
-            } else if (working == 7) {
-                return [(holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
+            if (projId == selId) {
+                if (working == 6) {
+                    return [(day != 0 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
+                } else if (working == 5) {
+                    return [(day != 0 && day != 6 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
+                } else if (working == 7) {
+                    return [(holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0)];
+                }
+            } else {
+                if (working == 6) {
+                    return [(day != 0 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0 && gapData < 1)];
+                } else if (working == 5) {
+                    return [(day != 0 && day != 6 && holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0 && gapData < 1)];
+                } else if (working == 7) {
+                    return [(holiday.indexOf('#' + moment(date).format('YYYY-MM-DD') + '#') < 0 && gapData < 1)];
+                }
             }
         },
         onSelect: function (dateText, inst) {

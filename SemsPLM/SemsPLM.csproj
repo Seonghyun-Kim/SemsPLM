@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44330</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -185,6 +186,7 @@
     <Content Include="images\login_img3.jpg" />
     <Content Include="images\logo_.png" />
     <Content Include="images\logo_big.png" />
+    <Content Include="images\PLM_logo_c.png" />
     <Content Include="images\report.png" />
     <Content Include="images\right_arrow.png" />
     <Content Include="images\status_h.png" />
@@ -3882,7 +3884,6 @@
     <Content Include="Views\Pms\Dialog\dlgInfoDocument.cshtml" />
     <Content Include="Views\Pms\InfoTmpProcess.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgInfoReliabilityForm.cshtml" />
-    <Content Include="Views\Common\Dialog\dlgApprovalContent _201223.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgSearchReliabilityReport.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgCreateProjectContentTemplate.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgInfoReliabilityReport.cshtml" />
@@ -3900,6 +3901,14 @@
     <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyIssue.cshtml" />
     <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyDvStatus.cshtml" />
     <Content Include="Views\Pms\Dashboard\dlgDashboardPmMyPvStatus.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgModifyTmpProject.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardPmTimelineTask.cshtml" />
+    <Content Include="Views\ChangeOrder\SearchReleaseChangeOrder.cshtml" />
+    <Content Include="Views\Common\Dialog\dlgApprovalComment.cshtml" />
+    <Content Include="Views\EBom\SearchReleaseEPart.cshtml" />
+    <Content Include="Views\Document\SearchReleaseDocument.cshtml" />
+    <Content Include="Views\Pms\Dialog\dlgSearchDocument.cshtml" />
+    <Content Include="Views\ChangeRequest\SearchReleaseChangeRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,13 +1,192 @@
 ﻿
 @{
     Layout = null;
+    ViewBag.UrlTitle = "추가";
 }
+
+<div style="width:100%; margin-right:20px;">
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;EPART 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div>품번</div>
+                <div><input id="SearchEBomStructureName" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div>품명</div>
+                <div><input id="SearchEBomStructureTitle" type="text" class="txtBox" value="" /></div>
+            </div>
+            <div class="searchData">
+                <div class="checkBoxLabel">구분</div>
+                <div>
+                    <div id="SearchEBomStructureAssemble" class="custom-checkbox">
+                        조립도
+                    </div>
+                    <div id="SearchEBomStructureSingle" class="custom-checkbox">
+                        단품도
+                    </div>
+                    <div id="SearchEBomStructureStandard" class="custom-checkbox">
+                        스탠다드
+                    </div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_NO</div>
+                <div> <div id="SearchEBomStructureItemNo" class="SearchEBomStructureComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">ITEM_Middle</div>
+                <div> <div id="SearchEBomStructureItemMiddle" class="SearchEBomStructureComboBox"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchEBomStructureOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="SearchEBomStructureCar" class="SearchEBomStructureComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">작성일</div>
+                <div><div id="SearchEBomStructureCreateDt" class="SearchEBomStructureDateTimeInput"></div></div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">최신</div>
+                <div>
+                <div id="SearchEBomStructureNew" class="SearchEBomStructureCheckBox"></div>
+                </div>
+            </div>
+            <div class="searchButton">
+                <button id="SearchEBomStructurebtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="dlgSetSearchEBomStructureGrid"></div>
 
 <script>
+var EPartDivision;
+    var checked;
     $(function () {
-        
+        var SearchEBomStructureOemLib$ = $('#SearchEBomStructureOem');
+        var SearchEBomStructureItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
+        var SearchEBomStructureOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var SearchEBomStructureItemLib$ = $('#SearchEBomStructureItemNo');
+        var SearchEBomStructureCarLib$ = $('#SearchEBomStructureCar');
+
+        var SearchEBomStructureItemMiddleLib$ = $('#SearchEBomStructureItemMiddle');
+        var SearchEBomStructureNew$ = $('#SearchEBomStructureNew');
+
+        var oemSource =
+        {
+            localdata: SearchEBomStructureOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchEBomStructureOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width:200, height: 32 });
+        SearchEBomStructureCarLib$.jqxComboBox({ width: 200, height: 32 });
+        SearchEBomStructureOemLib$.on('change', function (evt) {
+            var param = {};
+            param.FromOID = SearchEBomStructureOemLib$.val();
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchEBomStructureCarLib$.jqxComboBox({source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
+
+        var ItemSource =
+        {
+            localdata: SearchEBomStructureItemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                ]
+        };
+        var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
+        SearchEBomStructureItemLib$.jqxComboBox({ width: 200, height: 32, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+
+        SearchEBomStructureItemMiddleLib$.jqxComboBox({ width: 200, height: 32 });
+        SearchEBomStructureItemLib$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = SearchEBomStructureItemLib$.val();
+            param.Code1 = 'CLASS';
+            itemno = SearchEBomStructureItemList[idx].Code1;
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var middleSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                        ]
+                };
+                var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                SearchEBomStructureItemMiddleLib$.jqxComboBox({ width: 200, height: 32, source: middleAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+            
+        });
+
+        $('#SearchEBomStructureAssemble').jqxRadioButton({ width: 100, height: 32, checked: false });
+        $('#SearchEBomStructureSingle').jqxRadioButton({ width: 120, height: 32, checked: false });
+        $('#SearchEBomStructureStandard').jqxRadioButton({ width: 120, height: 32, checked: false });
+        $('#SearchEBomStructureCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+        SearchEBomStructureNew$.jqxCheckBox({ width: 25, height: 32, checked: true });
+
+        $('#SearchEBomStructureAssemble').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
+            }
+        });
+        $('#SearchEBomStructureSingle').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_SINGLE";
+            }
+        });
+        $('#SearchEBomStructureStandard').on('change', function (event) {
+            checked = event.args.checked;
+            if (checked) {
+                EPartDivision = "@Common.Constant.EBomConstant.DIV_STANDARD";
+            }
+        });
+
 
     });
+
 </script>

@@ -40,21 +40,27 @@ namespace SemsPLM.Controllers
 
                 item.CheckData = checkData;  //체크리스트 검색
             });
+
             Approval approv = ApprovalRepository.SelApprovalNonStep(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
             Approval tempApprov = ApprovalRepository.SelApproval(Session, new Approval { TargetOID = Convert.ToInt32(OID) });
-            List<ApprovalTask> curApprov = tempApprov.InboxStep[Convert.ToInt32(tempApprov.CurrentNum - 1)].InboxTask;
-            var ApprovFlag =CommonConstant.ACTION_NO;
-            if(curApprov != null)
+            string ApprovFlag = CommonConstant.ACTION_NO;
+            if (tempApprov.ApprovalCount < tempApprov.CurrentNum){}
+            else
             {
-                curApprov.ForEach(app =>
+                List<ApprovalTask> curApprov = tempApprov.InboxStep[Convert.ToInt32(tempApprov.CurrentNum - 1)].InboxTask;
+
+                if (curApprov != null)
                 {
-                    if ((Convert.ToInt32(Session["UserOID"]) == app.PersonOID))
+                    curApprov.ForEach(app =>
                     {
-                        ApprovFlag = CommonConstant.ACTION_YES;
-                    }
-                });
+                        if ((Convert.ToInt32(Session["UserOID"]) == app.PersonOID))
+                        {
+                            ApprovFlag = CommonConstant.ACTION_YES;
+                        }
+                    });
+                }
             }
-           
+
             if (approv != null)
             {
                 ViewBag.ApprovStatus = DObjectRepository.SelDObject(Session, new DObject { OID = approv.OID }).BPolicy.Name;
@@ -119,10 +125,18 @@ namespace SemsPLM.Controllers
         {
             Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
             List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            ViewBag.BPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_ORDER });
             ViewBag.reasonList = reasonList;
             return View();
         }
-
+        public ActionResult SearchReleaseChangeOrder()
+        {
+            Library reasonKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_REASONCHANGE });
+            List<Library> reasonList = LibraryRepository.SelLibrary(new Library { FromOID = reasonKey.OID });  //변경 사유 부분
+            ViewBag.BPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = EoConstant.TYPE_CHANGE_ORDER });
+            ViewBag.reasonList = reasonList;
+            return View();
+        }
         public ActionResult InfoChangeOrder(int OID)
         {
             ECO ECODetail = ECORepository.SelChangeOrderObject(Session, new ECO { OID = OID });

@@ -110,7 +110,7 @@ h1 {
     padding-top: 8px;
 }
 
-input[type=text]{
+input[type=text], input[type=number], input[type=password]{
     border:1px solid #bbb;
     border-radius:3px;
 }
@@ -658,10 +658,20 @@ button > .fas{
     top:22px;
 }
 
-#btnDlgPwReset{
-    position:absolute;
-    left:10px;
+.pwInput{
+    width:110px;
+    height:33px;
+    text-indent:8px;
 }
+
+#btnDlgSave {
+    position: absolute;
+    right: 10px;
+}
+/*#btnDlgPwReset {
+    position: absolute;
+    left: 10px;
+}*/
 /* searchBox */
 .searchBox {
     width: 100%;

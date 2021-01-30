@@ -7,11 +7,11 @@
         <!--검색창-->
         <div class="searchBox">
             <div class="searchTitle">
-                <label><i class="fas fa-folder-open"></i> &nbsp;프로젝트 검색</label>
+                <label><i class="fas fa-folder-open"></i> &nbsp;템플릿 검색</label>
             </div>
             <div class="searchContent">
                 <div class="searchData">
-                    <div>프로젝트명</div>
+                    <div>템플릿명</div>
                     <div>
                         <input type="text" class="txtBox" id="txtTmpProjName" />
                     </div>
@@ -33,7 +33,8 @@
 
 <script type="text/javascript">
     $(function () {
-
+        var selTmpRowKey;
+        var selTmpProjOID;
         var TmpProjectSource = {
             datatype: 'json',
             datafields: [
@@ -41,7 +42,9 @@
                 { name: 'Name' },
                 { name: 'ProjectType' },
                 { name: 'BPolicy' },
+                { name: 'BPolicyAuths', type: 'Array' },
                 { name: 'BPolicyOID' },
+                { name: 'CreateUs' },
                 { name: 'CreateUsNm' },
                 { name: 'EstStartDt', type: "date" },
                 { name: 'EstEndDt', type: "date" },
@@ -68,7 +71,7 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '프로젝트명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '템플릿명', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
                 { text: '구분', datafield: 'ProjectType', width: "10%", align: 'center', cellsalign: 'center', },
                 {
                     text: '상태', datafield: 'BPolicy', width: "5%", align: 'center', cellsalign: 'center',
@@ -86,8 +89,8 @@
             toolbarheight: 45,
             rendertoolbar: function (statusbar) {
                 var container = $("<div class='rGridComponent'></div>");
-                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 프로젝트 등록</button>").jqxButton();
-                var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 프로젝트 수정</button>").jqxButton();
+                var btnAdd = $("<button class='custom-button'><i class='fas fa-plus-square'></i> 템플릿 등록</button>").jqxButton();
+                var btnMod = $("<button class='custom-button'><i class='fas fa-edit'></i> 템플릿 수정</button>").jqxButton();
                 var btnDelete = $("<button class='custom-button'><i class='fas fa-minus-square'></i> 선택 삭제</button>").jqxButton();
 
                 container.append(btnAdd);
@@ -98,11 +101,54 @@
                 btnAdd.on('click', function () {
                     OpenPmsTmpCreateDialog(function () {
                         TmpGrd$.jqxGrid('pagerrenderer');
-                    }, null, null, '/Pms/CreateTmpProject', '프로젝트 템플릿 등록');
+                    }, null, null, '/Pms/CreateTmpProject', '템플릿 등록');
                 });
 
                 btnMod.on('click', function () {
+                    if (selTmpProjOID == null || selTmpProjOID == "") {
+                        alert('템플릿을 선택하여주세요.');
+                        return;
+                    }
 
+                    if (TmpGrd$.jqxGrid('getrowdatabyid', selTmpRowKey).CreateUs != '@Session["UserOID"]') {
+                        alert('권한이 없습니다.');
+                        return;
+                    }
+
+                    OpenPmsTmpCreateDialog(function () {
+                        TmpGrd$.jqxGrid('pagerrenderer');
+                    }, null, { OID: selTmpProjOID }, '/Pms/ModifyTmpProject', '템플릿 수정');
+                });
+
+                btnDelete.on('click', function () {
+                    debugger;
+                    if (selTmpProjOID == null || selTmpProjOID == "") {
+                        alert('템플릿을 선택하여주세요.');
+                        return;
+                    }
+                    var data = TmpGrd$.jqxGrid('getrowdata', selTmpRowKey);
+                    console.log(data);
+                    if (data.BPolicyAuths != null) {
+                        var chkAuths = data.BPolicyAuths.findIndex(function (item) {
+                            return item.AuthNm == '@Common.Constant.CommonConstant.AUTH_DELETE';
+                        });
+                        if (chkAuths > -1) {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                RequestData('/Pms/DelProject', { OID: selTmpProjOID }, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    alert("삭제 되었습니다.");
+                                    TmpGrd$.jqxGrid('pagerrenderer');
+                                    selTmpProjOID = null;
+                                });
+                            }
+                        } else {
+                            alert('권한이 없습니다.');
+                            return;
+                        }
+                    }
                 });
             },
             pagerrenderer: function () {
@@ -110,6 +156,13 @@
                     PrintJqxGrid(TmpProjectSource, TmpGrd$, res);
                 });
             },
+        });
+
+        TmpGrd$.on('rowselect', function (event) {
+            var args = event.args;
+            var rowData = args.row;
+            selTmpRowKey = rowData.uid;
+            selTmpProjOID = rowData.OID;
         });
 
         TmpGrd$.on('celldoubleclick', function (e) {

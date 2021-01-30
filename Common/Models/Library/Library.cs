@@ -79,8 +79,11 @@ namespace Common.Models
         public static List<Library> SelCodeLibraryChild(Library _param)
         {
             Library temp = DaoFactory.GetData<Library>("Library.SelCodeLibrary", _param);
-
-            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.SelCodeLibrary", new Library { FromOID = temp.OID });
+            List<Library> lLibrary = new List<Library>();
+            if (temp != null)
+            {
+                 lLibrary = DaoFactory.GetList<Library>("Library.SelCodeLibrary", new Library { FromOID = temp.OID });
+            }
             return lLibrary;
         }
         #endregion

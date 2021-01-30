@@ -175,7 +175,10 @@ namespace Common.Models
         {
             int result = -1;
             _param.ModifyUs = Convert.ToInt32(Context["UserOID"]);
-            result = DaoFactory.SetUpdate("Comm.UdtDObject", _param);
+            if (_param.OID != null && _param.OID > 0)
+            {
+                result = DaoFactory.SetUpdate("Comm.UdtDObject", _param);
+            }
             return result;
         }
 
@@ -183,13 +186,16 @@ namespace Common.Models
         {
             int result = -1;
             _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
-            result = DaoFactory.SetUpdate("Comm.DelDObject", _param);
-            if (_delQuery != null && _delQuery.Count > 0)
+            if (_param.OID != null && _param.OID > 0)
             {
-                _delQuery.ForEach(query =>
+                result = DaoFactory.SetUpdate("Comm.DelDObject", _param);
+                if (_delQuery != null && _delQuery.Count > 0)
                 {
-                    DaoFactory.SetUpdate(query, new DRelationship { ToOID = _param.OID, DeleteUs = _param.DeleteUs });
-                });
+                    _delQuery.ForEach(query =>
+                    {
+                        DaoFactory.SetUpdate(query, new DRelationship { ToOID = _param.OID, DeleteUs = _param.DeleteUs });
+                    });
+                }
             }
             return result;
         }

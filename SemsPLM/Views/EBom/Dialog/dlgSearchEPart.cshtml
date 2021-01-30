@@ -1,7 +1,7 @@
 ﻿
 @{
     Layout = null;
-    ViewBag.Title = "비교시 검색";
+    ViewBag.UrlTitle = "비교시 검색 및 부품 추가검색";
 }
 
 <div style="width:100%; margin-right:20px;">
@@ -37,6 +37,10 @@
                 <div> <div id="dlgSearchEPartItemNo" class="dlgSearchEPartComboBox"></div></div>
             </div>
             <div class="searchData">
+                <div class="comboBoxLabel">ITEM_Middle</div>
+                <div> <div id="dlgSearchEPartItemMiddle" class="dlgSearchEPartComboBox"></div></div>
+            </div>
+            <div class="searchData">
                 <div class="comboBoxLabel">고객사</div>
                 <div>
                     <div id="dlgSearchEPartOem" class="dlgSearchEPartComboBox"></div>
@@ -59,12 +63,13 @@
     </div>
 </div>
 
-
 <div id="digSearchEPartGrid"></div>
 
 <script>
     var EPartDivision = null;
     $(function () {
+        var dlgSearchEPartItemMiddleLib$ = $('#dlgSearchEPartItemMiddle');
+
         var dlgSearchEPartOemLib$ = $('#dlgSearchEPartOem');
         var dlgSearchEPartItemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ItemList))');
         var dlgSearchEPartOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
@@ -84,8 +89,8 @@
                 ]
         };
         var oemAdapter = new $.jqx.dataAdapter(oemSource);
-        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
-        dlgSearchEPartCarLib$.jqxComboBox({ width: 250, height: 32 });
+        dlgSearchEPartOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 200, height: 32 });
+        dlgSearchEPartCarLib$.jqxComboBox({ width: 200, height: 32 });
         dlgSearchEPartOemLib$.on('change', function (evt) {
             var param = {};
             param.fromOID = dlgSearchEPartOemLib$.val();
@@ -116,7 +121,32 @@
                 ]
         };
         var ItemdataAdapter = new $.jqx.dataAdapter(ItemSource);
-        dlgSearchEPartItemLib$.jqxComboBox({ width: 250, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+        dlgSearchEPartItemLib$.jqxComboBox({ width: 200, height: 33, source: ItemdataAdapter, displayMember: "KorNm", valueMember: "OID", });
+
+        dlgSearchEPartItemMiddleLib$.jqxComboBox({ width: 200, height: 32 });
+        dlgSearchEPartItemLib$.on('change', function (evt) {
+            var idx = evt.args.index;
+            var param = {};
+            param.fromOID = dlgSearchEPartItemLib$.val();
+            param.Code1 = 'CLASS';
+            itemno = dlgSearchEPartItemList[idx].Code1;
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+                var middleSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                        ]
+                };
+                var middleAdapter = new $.jqx.dataAdapter(middleSource);
+                dlgSearchEPartItemMiddleLib$.jqxComboBox({ source: middleAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
 
         $('#dlgSearchEPartAssemble').jqxRadioButton({ width: 100, height: 33, checked: false });
         $('#dlgSearchEPartSingle').jqxRadioButton({ width: 120, height: 33, checked: false });

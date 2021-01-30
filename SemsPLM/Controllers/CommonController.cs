@@ -71,9 +71,9 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                ApprovalTaskRepository.UdtInboxTask(new ApprovalTask { ActionType = _param.ActionType, Comment = _param.Comment, OID = _param.OID });
                 TriggerUtil.StatusPromote(Session, false, CommonConstant.TYPE_APPROVAL_TASK, Convert.ToString(_param.BPolicyOID), Convert.ToInt32(_param.OID), Convert.ToInt32(_param.OID), _param.ActionType, "");
-                ApprovalTaskRepository.UdtInboxTask(new ApprovalTask { ActionType = _param.ActionType, Comment = _param.Comment, OID =  _param.OID});
-
+                
                 if (_param.ActionType == CommonConstant.ACTION_REJECT)
                 {
                     Approval tmpApproval = ApprovalRepository.SelApprovalNonStep(Session, new Approval { OID = _param.ApprovalOID });
@@ -294,6 +294,11 @@ namespace SemsPLM.Controllers
             return Json(result);
         }
 
+        public ActionResult ApprovalComment(ApprovalTask _param)
+        {
+            return PartialView("Dialog/dlgApprovalComment");
+        }
+
         #region -- 김창수 결재선 저장 인원 검색
         public JsonResult SelApprovalPersonHistory(DObject _param)
         {
@@ -348,7 +353,21 @@ namespace SemsPLM.Controllers
         #region -- Approval Content
         public ActionResult ApprovalContent(ApprovalTask _param)
         {
-            ViewBag.ApprvalData = ApprovalRepository.SelApproval(Session, new Approval { OID = _param.ApprovalOID });
+            Approval approval = ApprovalRepository.SelApproval(Session, new Approval { OID = _param.ApprovalOID });
+            string ApprovFlag = CommonConstant.ACTION_NO;
+            if (approval.ApprovalCount < approval.CurrentNum) { }
+            else {
+                approval.InboxStep[Convert.ToInt32(approval.CurrentNum) -1].InboxTask.ForEach(task =>
+                {
+                    if ((Convert.ToInt32(Session["UserOID"]) == task.PersonOID))
+                    {
+                        ApprovFlag = CommonConstant.ACTION_YES;
+                    }
+                });
+            }
+            
+            ViewBag.ApprvalData = approval;
+            ViewBag.ApprovFlag = ApprovFlag;
             ViewBag.ApprovalTaskData = _param;
             return PartialView("Dialog/dlgApprovalContent");
         }
@@ -683,6 +702,10 @@ namespace SemsPLM.Controllers
                 }
                 approv.DocType = lBDefine.Find(define => define.Name == dobj.Type).Description;
                 approv.DocNm = dobj.Name;
+                approv.DocOID = dobj.OID;
+                approv.DocUrl = BDefineRepository.SelDefine( new BDefine { Name = dobj.Type }).Link;
+                approv.ApprovalOID = approv.OID;
+                approv.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { OID = approv.BPolicyOID }).First();
                 approv.DocCreateUs = dobj.CreateUs;
                 approv.DocCreateNm = PersonRepository.SelPerson(Session, new Person { OID = dobj.CreateUs }).Name;
                 approv.DocBpolicyNm = dobj.BPolicy.StatusNm;
@@ -701,6 +724,27 @@ namespace SemsPLM.Controllers
                     myApproval.Add(approv);
                 }
 
+            });
+            return Json(myApproval);
+        }
+
+        public JsonResult SelMyApprovalDashboard(ApprovalTask _param)
+        {
+            List<BDefine> lBDefine = BDefineRepository.SelDefines(new BDefine { Type = CommonConstant.DEFINE_TYPE });
+            List<BPolicy> lTaskPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = CommonConstant.TYPE_APPROVAL_TASK });
+            _param.BPolicyOID = lTaskPolicy.Find(item => item.Name == CommonConstant.POLICY_APPROVAL_TASK_STARTED).OID;
+
+            List<ApprovalTask> myApproval = new List<ApprovalTask>();
+            ApprovalTaskRepository.SelInboxMyTasks(Session, _param).ForEach(approv =>
+            {
+                approv.DocType = lBDefine.Find(define => define.Name == approv.DocType).Description;
+                approv.DocUrl = approv.DocUrl;
+                approv.ApprovalBPolicy = DObjectRepository.SelDObject(Session, new DObject { OID = approv.ApprovalOID }).BPolicy;
+                approv.DocBpolicyNm = approv.ApprovalBPolicy.StatusNm;
+                if (approv.BPolicy.Name == approv.ApprovalBPolicy.Name)
+                {
+                    myApproval.Add(approv);
+                }
             });
             return Json(myApproval);
         }
