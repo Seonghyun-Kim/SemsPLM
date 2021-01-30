@@ -97,6 +97,19 @@
             </div>         
         </div>
     </div>
+    <div style="display:flex;flex-direction:row;justify-content:flex-end;align-items:center;">
+
+        <label>Warning 색상표시(</label>
+
+        <div style="width:13px;height:13px;background-color:yellow;"></div>
+        <label>:일정 이전</label>
+        &nbsp;
+        <div style="width:13px;height:13px;background-color:red;"></div>
+        <label>:일정 경과</label>
+        &nbsp;
+        <div style="width:13px;height:13px;background-color:lightgreen;"></div>
+        <label>:일정내 완료)</label>
+    </div>
     <div id="SearchQuickResponse_Grid"></div>
 </div>
 
@@ -208,8 +221,15 @@
     var nowDate = new Date();
 
     $(document).ready(function () {
+        var Status = [
+            { value : null, text :" "},
+            { value : "WORK", text :"미결"},
+            { value : "FINISH", text :"완료"}
+        ];
+
         $("#SearchQuick_cbOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#SearchQuick_Status").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.Status)), "OID", "StatusNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        //$("#SearchQuick_Status").jqxComboBox({ selectedIndex: 2, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.Status)), "OID", "StatusNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#SearchQuick_Status").jqxComboBox({ selectedIndex: 1, source: Status, displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#SearchQuick_ItemNo").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
 
         $("#SearchQuick_sDt").jqxDateTimeInput(DateFormat);
@@ -261,8 +281,8 @@
                 },
                 { text: '품목', dataField: 'ItemGroup', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '고객사', dataField: 'OemNm', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
-                { text: '품번', dataField: 'PartNo', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
-                { text: '품명', dataField: 'PartNm', width: '7%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품번', dataField: 'PartNo', width: '9%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품명', dataField: 'PartNm', width: '10%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '차종', dataField: 'CarCode', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생처', dataField: 'OccurrenceAreaNm', width: '6%', align: 'center', cellsalign: 'center' },
@@ -432,7 +452,9 @@
             SearchOccurrenceEDt: $("#SearchQuick_eDt").jqxDateTimeInput('val'),
             SearchCreateSDt: $("#SearchQuick_CreateSDt").jqxDateTimeInput('val'),
             SearchCreateEDt: $("#SearchQuick_CreateEDt").jqxDateTimeInput('val'),
-            SearchStatusOID: WebUtils.GetComboValue("SearchQuick_Status"),
+            //SearchStatusOID: WebUtils.GetComboValue("SearchQuick_Status"),
+
+            SearchStatusNm: WebUtils.GetComboValue("SearchQuick_Status"),
             SearchItemGroup: WebUtils.GetComboValue("SearchQuick_ItemNo"),
             SearchOemNm: $("#SearchQuick_OEM").val(),
             SearchCarCode: $("#SearchQuick_CarCode").val(),

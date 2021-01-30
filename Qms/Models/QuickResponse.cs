@@ -167,6 +167,7 @@ namespace Qms.Models
 
         // 상태
         public int? SearchStatusOID { get; set; }
+        public int? SearchStatusNm { get; set; }
 
         public string SearchOemNm { get; set; }
 
@@ -183,6 +184,9 @@ namespace Qms.Models
         // 품목 OID
         public int? SearchItemGroup { get; set; }
         #endregion
+
+
+        public List<QuickResponseModule> Modules { get; set; }
 
         #region -- File
         public List<HttpPostedFileBase> Files { get; set; }
@@ -203,7 +207,9 @@ namespace Qms.Models
         // 발생유형 
         public int? OccurrenceLibOID { get; set; }
         public string OccurrenceNm { get; set; }
-        
+
+        public string PartNo { get; set; }
+
         public string PartNm { get; set; }
 
         public string CarCode { get; set; }
@@ -406,6 +412,7 @@ namespace Qms.Models
             this.OccurrenceDt = response.OccurrenceDt;
             this.OccurrenceNm = response.OccurrenceNm;
             this.PoorCnt = response.PoorCnt;
+            this.PartNo = response.PartNo;
             this.PartNm = response.PartNm;
             this.CarCode = response.CarCode;
             this.PartGrpNm = response.PartGrpNm;

@@ -293,10 +293,11 @@ namespace SemsPLM.Controllers
             Library ItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_ITEM });
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  //OEM 목록
             ViewBag.ItemList = ItemList;
+                      
 
-            ViewBag.Status = from x in BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE })
-                             where x.Name != "Disposal"
-                             select x;
+            //ViewBag.Status = from x in BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_QUICK_RESPONSE })
+            //                 where x.Name != "Disposal"
+            //                 select x;
 
             return View();
         }
@@ -342,9 +343,13 @@ namespace SemsPLM.Controllers
             List<Library> defectDegreeList = LibraryRepository.SelLibrary(new Library { FromOID = defectDegreeKey.OID });  // 결함정도
             ViewBag.defectDegreeList = defectDegreeList;
 
-            Library imputeKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE" });
+            Library imputeKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE_TYPE" });
             List<Library> imputeList = LibraryRepository.SelLibrary(new Library { FromOID = imputeKey.OID });  // 귀책구분
             ViewBag.imputeList = imputeList;
+
+            Library imputeDeptKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE_DEPART" });
+            List<Library> imputeDeptList = LibraryRepository.SelLibrary(new Library { FromOID = imputeDeptKey.OID });  // 귀책구분
+            ViewBag.imputeDeptList = imputeDeptList;
 
             Library correctDecisionKey = LibraryRepository.SelLibraryObject(new Library { Name = "CORRECT_DECISION" });
             List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
@@ -918,7 +923,7 @@ namespace SemsPLM.Controllers
                 }
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
-            return Json(result);
+            return Json(QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = result }));
         }
 
         public JsonResult UdtQuickResponse(QuickResponse _param)
@@ -2020,20 +2025,20 @@ namespace SemsPLM.Controllers
             return View("Dialog/dlgEditQuickResponsePlan", QuickResponseRepository.SelQuickResponse(quickResponse));
         }
 
-        public JsonResult SaveQuickResponseModule(List<QuickResponseModule> _params)
+        public JsonResult SaveQuickResponseModule(QuickResponse _param)
         {
             try
             {
                 DaoFactory.BeginTransaction();
 
-                QuickResponseModule blockade = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = _params[0].QuickOID, ModuleType = QmsConstant.TYPE_BLOCKADE });
+                QuickResponseModule blockade = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule() { QuickOID = _param.OID, ModuleType = QmsConstant.TYPE_BLOCKADE });
 
                 if (!(blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_PREPARE || blockade.BPolicyNm == QmsConstant.POLICY_QMS_MODULE_STARTED))
                 {
                     throw new Exception("봉쇄조치가 진행중인관계로 일정을 수정 할 수 없습니다.");
                 }
 
-                _params.ForEach(v =>
+                _param.Modules.ForEach(v =>
                 {
                     QuickResponseModuleRepository.UdtQuickResponseModule(v);
 
@@ -2051,7 +2056,7 @@ namespace SemsPLM.Controllers
 
                     if (dObject.Type == QmsConstant.TYPE_BLOCKADE && dObject.BPolicyOID == 57 && v.EstEndDt != null && v.ChargeUserOID != null)
                     {
-                        dObject.BPolicyOID = 58; // 작성중으로 변경
+                        dObject.BPolicyOID =  58; // 작성중으로 변경
                         DObjectRepository.UdtDObject(Session, dObject);
 
                         DRelationship dRelModule = new DRelationship();
@@ -2065,6 +2070,19 @@ namespace SemsPLM.Controllers
                         DObjectRepository.UdtDObject(Session, quick);
                     }
                 });
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
 
                 DaoFactory.Commit();
                 return Json("1");
@@ -2090,7 +2108,7 @@ namespace SemsPLM.Controllers
             return View();
         }
 
-        public ActionResult InfoMiniBlockade(int OID)
+        public PartialViewResult InfoMiniBlockade(int OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
             ViewBag.Blockade = Module;

@@ -14,6 +14,8 @@ namespace Common.Constant
 
         public static string TYPE_QUICK_RESPONSE { get { return "QUICK_RESPONSE"; } }
 
+        public static string TYPE_QUICK_RESPONSE_PLAN { get { return "QUICK_RESPONSE_PLAN"; } }
+
         // 봉쇄조치
         public static string TYPE_BLOCKADE { get { return "BLOCKADE"; } }
 

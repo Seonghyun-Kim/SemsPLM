@@ -366,3 +366,32 @@ T_BSUB_MENU  - 적용완료
 OID	MenuOID	Name	Description	Ord	Link	IsUse
 22	4	ECR 검색	NULL	4	/ChangeRequest/SearchReleaseChangeRequest	1
 
+
+
+
+
+
+2021.01.03 김성현
+라이브러리 관리 항목 추가 
+
+QMS 아래 
+
+IMPUTE >> IMPUTE_TYPE 으로 변경
+
+
+IMPUTE_DEPART > 귀책처 부서  추가
+해당 코드 아래 
+1 제조기술1부문
+2 제조기술2부문
+3 제조기술3부문
+4 연구소
+5 품질부문
+6 구매
+
+
+BPOLICY 
+추가
+142	QUICK_RESPONSE_PLAN	Exist	142	존재함	NULL	NULL	1	NULL	NULL	NULL 
+
+
+

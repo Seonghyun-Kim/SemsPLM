@@ -1,6 +1,7 @@
 ﻿(function ($) {
     var defaults = {
         OID: null,
+        Type: null,
         module: null,
         submodule: null,
         targetoid: null,
@@ -59,6 +60,7 @@
             var CellButton = 65;
             var CellFileOrdNm = $(wrap).width() - (CellNoWidth + CellCreateUsNm + CellCreateDt + CellButton + 20);
             var OID = this.options.OID;
+            var Type = this.options.Type;
             var SelectionMode = "checkbox";
 
             this.DropFileContent = new Dropzone(drop, {
@@ -99,7 +101,8 @@
                 id: 'FileOID',
                 url: "/Common/GetFileList",
                 data: {
-                    OID: OID
+                    OID: OID,
+                    Type: Type
                 },
                 type: "POST"
             };
