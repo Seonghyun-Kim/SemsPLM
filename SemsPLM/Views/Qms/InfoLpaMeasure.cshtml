@@ -190,15 +190,15 @@
                 data.ModuleOID = "@ViewBag.LpaUnfitOID";
                 data.CheckPoin = $($(v).find("[name='CheckPoin']")[0]).val();
                 data.CauseAnalysis = $($(v).find("[name='CauseAnalysis']")[0]).val();
-                data.ImproveCountermeasure = $($(v).find("[name='ImproveCountermeasure']")[0]).val();
+                data.ImproveCountermeasureUserOID = $($(v).find("[name='ImproveCountermeasure']")[0]).attr("ImproveCountermeasureUserOID");
 
                 if (WebUtils.isBlank(data.CauseAnalysis)) {
                     errMsg += "[" + (i + 1).toString() + "] 행의 원인분석 내용이 입력되지 않았습니다..\n";
                 }
 
-                if (WebUtils.isBlank(data.ImproveCountermeasure)) {
+                @*if (WebUtils.isBlank(data.ImproveCountermeasureUserOID)) {
                     errMsg += "[" + (i + 1).toString() + "] 행의 개선대책 내용이 입력되지 않았습니다..\n";
-                }
+                }*@
 
                 param.LpaUnfitChecks.push(data);
             });
@@ -290,10 +290,12 @@
         txtImproveCountermeasurePoin$.setAttribute("type", "text");
         txtImproveCountermeasurePoin$.setAttribute("name", "ImproveCountermeasure");
         txtImproveCountermeasurePoin$.style.width = "100%";
+        txtImproveCountermeasurePoin$.setAttribute("readonly", "readonly");
         if (data !== null) {
-	        txtImproveCountermeasurePoin$.value = data.ImproveCountermeasure;
+            txtImproveCountermeasurePoin$.value = data.ImproveCountermeasure;
+            txtImproveCountermeasurePoin$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
         }
-        txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";
+        @*txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";*@
         txtImproveCountermeasurePoin$.setAttribute("AttrType", "TEXT");     
         tdImproveCountermeasurePoin$.appendChild(txtImproveCountermeasurePoin$);
 
