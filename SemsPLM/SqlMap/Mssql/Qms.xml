@@ -255,12 +255,13 @@
 
       WHERE OID = #OID#
     </update>
-
+    <!--, L.Name AS ImputeDepartmentNm-->
+    <!--LEFT JOIN T_DOBJECT L ON A.ImputeDepartmentOID = L.OID AND L.Type = 'DEPARTMENT'-->
     <select id="SelQuickResponse" parameterClass="QuickResponse" resultClass="QuickResponse">
       SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, B0.Title AS PartNm, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm
       , A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
-      , L.Name AS ImputeDepartmentNm, A.ImputeSupplierOID, L.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
+      , L.KorNm AS ImputeDepartmentNm, A.ImputeSupplierOID, M.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
       , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.GoodPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm, P.StatusOID, P.StatusNm
       , A.OemLibOID, E.KorNm AS OemLibNm
@@ -278,8 +279,8 @@
       LEFT JOIN T_DLIBRARY H ON A.DefectDegreeLibOID = H.OID
       LEFT JOIN T_DLIBRARY I ON A.ImputeLibOID = I.OID
       LEFT JOIN T_DLIBRARY J ON A.OccurrencePlace = J.OID
-      LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID
-      LEFT JOIN T_DOBJECT L ON A.ImputeDepartmentOID = L.OID AND L.Type = 'DEPARTMENT'
+      LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID     
+      LEFT JOIN T_DLIBRARY L ON A.ImputeDepartmentOID = L.OID
       LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
       LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
