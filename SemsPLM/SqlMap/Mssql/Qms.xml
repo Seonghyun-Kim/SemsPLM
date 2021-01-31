@@ -923,7 +923,8 @@
       PartOID,
       LpaUserOID,
       FinishRequestDt,
-      MeasureUserOID)
+      MeasureUserOID,
+      CheckLine)
       VALUES
       (#ModuleOID#,
       #LayerLibOID#,
@@ -937,7 +938,8 @@
       #PartOID#,
       #LpaUserOID#,
       #FinishRequestDt#,
-      #MeasureUserOID#)
+      #MeasureUserOID#,
+      #CheckLine#)
     </insert>
 
     <update id="UdtLpaUnfit" parameterClass="LpaUnfit">
@@ -954,7 +956,8 @@
       PartOID = #PartOID#,
       LpaUserOID = #LpaUserOID#,
       FinishRequestDt = #FinishRequestDt#,
-      MeasureUserOID = #MeasureUserOID#
+      MeasureUserOID = #MeasureUserOID#,
+      CheckLine = #CheckLine#
       WHERE ModuleOID = #ModuleOID#
     </update>
 

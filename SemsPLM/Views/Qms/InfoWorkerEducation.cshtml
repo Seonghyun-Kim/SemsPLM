@@ -137,6 +137,10 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
+        $("#InfoWorkerEducation_txtEduPersonnel_" + WorkerEduOID).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
+
         const WorkerEduDiv$ = $('#InfoWorkerEducation_' + WorkerEduOID);
         $('#InfoWorkerEducation_' + WorkerEduOID + ' .tab').on('click', function () {
             const self$ = $(this);
@@ -208,8 +212,8 @@
                 param.ModuleOID = "@ViewBag.WorkerEdu.ModuleOID";
                 param.EduDetail = $("#InfoWorkerEducation_txtEduDetail_" + WorkerEduOID).val();
                 @*param.EduPlan = $("#InfoWorkerEducation_txtEduPlan_" + WorkerEduOID).val();*@
-                param.EduPersonnel = $("#InfoWorkerEducation_txtEduPersonnel_" + WorkerEduOID).jqxDateTimeInput("val");
-                param.EduPlace = $("#InfoWorkerEducation_txtEduPlace_" + WorkerEduOID).jqxDateTimeInput("val");
+                param.EduPersonnel = $("#InfoWorkerEducation_txtEduPersonnel_" + WorkerEduOID).val();
+                param.EduPlace = $("#InfoWorkerEducation_txtEduPlace_" + WorkerEduOID).val();
                 param.EduDt = $("#InfoWorkerEducation_txtEduDt_" + WorkerEduOID).jqxDateTimeInput("val");
                 param.EduUserOID = $("#InfoWorkerEducation_txtEduUser_" + WorkerEduOID).attr("EduUserOID");
 
