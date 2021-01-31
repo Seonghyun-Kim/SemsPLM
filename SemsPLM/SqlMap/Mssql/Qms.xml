@@ -963,7 +963,7 @@
 
     <!-- LPA Check SQL -->
     <select id="SelLpaUnfitCheck" parameterClass="LpaUnfitCheck" resultClass="LpaUnfitCheck">
-      SELECT A.*, B.Name, B.Description, C.Name AS ImproveCountermeasure
+      SELECT A.*, B.Name, B.Description, C.Name AS ImproveCountermeasureUserNm
       FROM T_DQMS_LPA_UNFIT_CHECK A
       LEFT JOIN T_DOBJECT B ON A.ModuleOID = B.OID
       LEFT JOIN T_DOBJECT C ON A.ImproveCountermeasureUserOID = C.OID
@@ -993,7 +993,7 @@
       SET
       CheckPoin = #CheckPoin#,
       CauseAnalysis = #CauseAnalysis#,
-      ImproveCountermeasureUserOID = #ImproveCountermeasureUserOID#
+      ImproveCountermeasure = #ImproveCountermeasure#
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
 
