@@ -416,6 +416,7 @@
             @*var LpaCheckProcessLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID);*@
             var LpaCheckUserOID = $("#txtDlgEditLPAIncongruityLpaCheckUser_" + LpaUnfitOID).attr("LpaCheckUserOID");
             var LpaCheckDt = dtDlgEditLPAIncongruityLpaCheckDt$.val();
+            var CheckLine = $("#txtDlgEditLPACheckLine_@ViewBag.LpaUnfit.OID").val();
 
             if (WebUtils.isEmpty(LpaGrpLibOID)) {
                 alert("그룹군을 선택 해주세요.");
@@ -437,7 +438,7 @@
                 return;
             }*@
 
-            if (WebUtils.isEmpty(param.CheckLine)) {
+            if (WebUtils.isEmpty(CheckLine)) {
                 alert("점검라인을 입력 해주세요.");
                 return;
             }
@@ -468,8 +469,6 @@
                 if (WebUtils.isBlank(data.ImproveCountermeasureUserOID) && data.IsRemove != "Y") {
                     errMsg += "[" + (i + 1).toString() + "] 행의 개선대책 담당자가 선택되지 않았습니다..\n";
                 }
-
-                param.LpaUnfitChecks.push(data);
             });
 
             if (errMsg.length != 0) {
@@ -686,7 +685,7 @@
         var tdImproveCountermeasure$ = document.createElement("td");
         var txtImproveCountermeasureUser$ = document.createElement("input");
         txtImproveCountermeasureUser$.setAttribute("type", "text");
-        txtImproveCountermeasureUser$.style.width = "120px";
+        txtImproveCountermeasureUser$.style.width = "100px";
         txtImproveCountermeasureUser$.style.height = "100%";
         txtImproveCountermeasureUser$.className = "txtbox";
         txtImproveCountermeasureUser$.setAttribute("name", "ImproveCountermeasureUser");
@@ -696,17 +695,20 @@
             txtImproveCountermeasureUser$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
         }
 
-        tdImproveCountermeasure$.appendChild(txtImproveCountermeasureUser$);
-
         var btnImproveCountermeasureUserSearch$ = document.createElement("button");
         btnImproveCountermeasureUserSearch$.style.float = "right";
         btnImproveCountermeasureUserSearch$.className = "Modifiable_@ViewBag.LpaUnfit.OID";
         btnImproveCountermeasureUserSearch$.setAttribute("AttrType", "BUTTON");
-        var iSearch = document.createElement("i");
-        iSearch.className = "fas fa-search";
+        var isearch$ = document.createElement("i");
+        isearch$.innerText = "검색";
+        isearch$.className = "fas fa-search";
 
-        btnImproveCountermeasureUserSearch$.appendChild(iSearch);
-        btnImproveCountermeasureUserSearch$.innerText = "검색";
+        var divUser$ = document.createElement("div");
+        divUser$.style.width = "100%";
+        divUser$.style.height = "100%";
+        $(divUser$).css("display", "flex");
+
+        $(btnImproveCountermeasureUserSearch$).jqxButton();
         $(btnImproveCountermeasureUserSearch$).on("click", function () {
             OpenApprovalPersonDialog(function (res) {
                 if (res.length > 1) {
@@ -719,7 +721,10 @@
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
         });
 
-        tdImproveCountermeasure$.appendChild(btnImproveCountermeasureUserSearch$);
+        divUser$.appendChild(txtImproveCountermeasureUser$);
+        divUser$.appendChild(btnImproveCountermeasureUserSearch$);
+        btnImproveCountermeasureUserSearch$.appendChild(isearch$);
+        tdImproveCountermeasure$.appendChild(divUser$);
 
         var tdBtn$ = document.createElement("td");
         tdBtn$.style.textAlign = "center";
