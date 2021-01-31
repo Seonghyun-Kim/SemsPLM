@@ -395,3 +395,83 @@ BPOLICY
 
 
 
+T_DQMS_LPA_UNFIT_CHECK TABLE 
+ImproveCountermeasureUserOID smallint 개선대책담당자 추가
+
+
+T_DQMS_QUICK
+CorrectDecisionLibOID -> null 허용 (사용하지 않음)
+MeasureResponseDt -> null 허용
+Qa -> null 허용 (사용하지 않음)
+OemLibOID -> null 허용
+CarCode -> 신규 추가(nvarchar(100), null 허용(임시)) 
+LotNo -> null 허용
+InduceLibOID -> null 허용 (사용하지 않음)
+EnrollmentLibOID -> 신규 추가(int, null 허용(임시)) 
+
+데이터 변경
+QMS
+신규 공장구분 추가
+코드 : FACTORY_TYPE, 이름 : 공장구분
+
+하위항목
+코드 : 1, 이름 : 평택공장
+코드 : 2, 이름 : 용인본사
+코드 : 3, 이름 : 천안공장
+
+-------------------------------------------------------
+발생유형
+코드 : OCCURRENCE -> OCCURRENCE_TYPE로 변경
+
+하위항목
+비활성화
+개발품질, 완성품질, 외주품질
+
+추가
+코드 : 1, 이름 : 사내
+코드 : 2, 이름 : 사외
+
+-------------------------------------------------------
+기존 발생처
+발생처 -> 발생처(사내) 이름 변경
+코드 : OCCURRENCE_AREA -> OCCURRENCE_AREA_INSIDE로 변경
+-------------------------------------------------------
+신규 발생처(사외) 추가
+코드 : OCCURRENCE_AREA_OUT
+이름 : 발생처(사외)
+
+하위 항목
+코드 : 1, 이름 : 필드
+코드 : 2, 이름 : O-km
+코드 : 3, 이름 : 고객 In-Line
+코드 : 4, 이름 : 고객 수검
+--------------------------------------------------------
+신규 등록구분 추가
+코드 : ENROLLMENT_TYPE
+이름 : 등록구분
+
+하위 항목
+코드 : 1, 이름 : 등록
+코드 : 2, 이름 : 미등록
+---------------------------------------------------------
+
+귀책구분
+이름 : 자재 -> 자체 로 변경
+
+
+
+
+
+
+
+21.01.30 DB 로그 ---------------------------------------------
+T_DQMS_QUICK
+GoodPicture -> 신규 추가(nvarchar(255), null 허용) 
+ItemLibOID -> 신규 추가(int, null 허용(임시)) 
+
+T_DQMS_WORKER_EDU
+EduPersonnel -> 신규 추가(int, null 허용(임시)) 
+EduPlace -> 신규 추가(nvarchar(500), null 허용) 
+
+T_DQMS_LPA_UNFIT
+CheckLine -> 신규 추가(nvarchar(255), null 허용(임시)) 

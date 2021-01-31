@@ -1690,7 +1690,7 @@ namespace SemsPLM.Controllers
                     int iLpaUnfitCheck = 0;
                     LpaUnfitCheck.ForEach(v =>
                     {
-                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 6], "TD", iLpaUnfitCheck.ToString());
+                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 6], "TD", (iLpaUnfitCheck + 1).ToString());
                         PrintExcelCell(ws.Cells[iRow, 7, iRow, 11], "TD", v.CheckPoin);
                         PrintExcelCell(ws.Cells[iRow, 12, iRow, 18], "TD", v.CauseAnalysis);
                         PrintExcelCell(ws.Cells[iRow, 19, iRow, 24], "TD", v.ImproveCountermeasure);
@@ -1852,13 +1852,17 @@ namespace SemsPLM.Controllers
                     PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", WorkerEdu.EduUserNm);
                     iRow++;
 
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육인원");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", WorkerEdu.EduPersonnel == null ? "0" : WorkerEdu.EduPersonnel.ToString());
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "교육장소");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", WorkerEdu.EduPlace);
+                    iRow++;
+
                     PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육내용");
                     PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", WorkerEdu.EduDetail);
                     iRow++;
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "교육계획");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", WorkerEdu.EduPlan);
-                    iRow++;
+                  
 
                     ws.Cells[StartEduRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                     ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
@@ -3126,7 +3130,7 @@ namespace SemsPLM.Controllers
 
             return View();
         }
-        public ActionResult InfoMiniStandardFollowUp(int? OID)
+        public PartialViewResult InfoMiniStandardFollowUp(int? OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
             StandardDoc standardDoc = StandardDocRepository.SelStandardDoc(new StandardDoc() { ModuleOID = OID });
@@ -3147,7 +3151,7 @@ namespace SemsPLM.Controllers
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_STANDARD });
 
-            return PartialView("InfoMiniStandardFollowUp");
+            return PartialView("InfoStandardFollowUp");
         }
         #endregion
 
