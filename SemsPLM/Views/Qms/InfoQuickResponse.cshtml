@@ -109,14 +109,14 @@
                             <th><label class="lbText">품번</label></th>
                             <td>
                                 <div style="display:flex;">
-                                    <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" PartOID="@ViewBag.QuickDetail.PartOID" value="@ViewBag.QuickDetail.PartNo" style="width:100px; margin-right:5px;" />
+                                    <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID" PartOID="@ViewBag.QuickDetail.PartOID" value="@ViewBag.QuickDetail.PartNo" style="width:180px; margin-right:5px;" />
                                     <button class="Modifiable_@ViewBag.QuickDetail.OID custom-button" AttrType="BUTTON" id="InfoQuickResponse_btnPartSearch_@ViewBag.QuickDetail.OID" style="display:none;"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
                             <th><label class="lbText">품명</label></th>
                             <td>
                                 <div style="display:flex;">
-                                    <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNm_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" style="width:100px; margin-right:5px;" />
+                                    <input type="text" readonly="readonly" id="InfoQuickResponse_txtPartNm_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PartNo" style="width:180px; margin-right:5px;" />
                                 </div>
                             </td>
                         </tr>
@@ -491,10 +491,10 @@
         // 제품 검색
         var btnDlgPartSearch$ = $("#InfoQuickResponse_btnPartSearch_@ViewBag.QuickDetail.OID").jqxButton();
         btnDlgPartSearch$.on("click", function () {
-            OpenSearchEPartAssyDialog(function (res) {
-                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").val(res[0].Name);
-                $("#InfoQuickResponse_txtPartNm_@ViewBag.QuickDetail.OID").val(res[0].Title);
-                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").attr("PartOID", res[0].OID);
+            OpenSearchEPartDataDialog(function (res) {
+                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").val(res.Name);
+                $("#InfoQuickResponse_txtPartNm_@ViewBag.QuickDetail.OID").val(res.Title);
+                $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").attr("PartOID", res.OID);
             }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
         });
 

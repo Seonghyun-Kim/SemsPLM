@@ -276,15 +276,15 @@
                     }
                 },
                 {
-                    text: '신속대응NO', dataField: 'Name', width: '11%', align: 'center', cellsalign: 'center', pinned: true,
+                    text: '신속대응NO', dataField: 'Name', width: '12%', align: 'center', cellsalign: 'center', pinned: true,
                     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowData) {
                         return "<div style='display:flex;align-items:center;width:100%;height:100%;'><div style='width:calc(100%- 10px);margin-left:5px;'><a href='javascript:OpenQuickResonse(\"#SearchQuickResponse_Grid\"," + rowData.uid + ")'>" + (value) + "</a></div></div>";
                     }
                 },
                 { text: '품목', dataField: 'ItemLibNm', width: '10%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '고객사', dataField: 'OemNm', width: '6%', align: 'center', cellsalign: 'center', pinned: true },
-                { text: '품번', dataField: 'PartNo', width: '9%', align: 'center', cellsalign: 'center', pinned: true },
-                { text: '품명', dataField: 'PartNm', width: '10%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품번', dataField: 'PartNo', width: '13%', align: 'center', cellsalign: 'center', pinned: true },
+                { text: '품명', dataField: 'PartNm', width: '13%', align: 'center', cellsalign: 'center', pinned: true },
                 { text: '차종', dataField: 'CarCode', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생유형', dataField: 'OccurrenceNm', width: '6%', align: 'center', cellsalign: 'center' },
                 { text: '발생처', dataField: 'OccurrenceAreaNm', width: '6%', align: 'center', cellsalign: 'center' },
