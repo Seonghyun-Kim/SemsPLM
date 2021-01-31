@@ -3256,6 +3256,8 @@ namespace SemsPLM.Controllers
                     EduDetail = param.EduDetail,
                     EduPlan = param.EduPlan,
                     EduDt = param.EduDt,
+                    EduPersonnel = param.EduPersonnel,
+                    EduPlace = param.EduPlace,
                     EduUserOID = param.EduUserOID
                 };
 
