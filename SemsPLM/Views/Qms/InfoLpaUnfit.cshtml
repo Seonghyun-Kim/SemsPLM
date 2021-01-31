@@ -79,7 +79,7 @@
                         <col style="width:auto;" />
                     </colgroup>
                     <tbody>
-                        <tr>
+                        @*<tr>
                             <th>Layer</th>
                             <td>
                                 <div id="comboDlgEditLPAIncongruityLayerLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
@@ -88,8 +88,8 @@
                             <td>
                                 <div id="comboDlgEditLPAIncongruityAuditLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
                             </td>
-                        </tr>
-                        <tr>
+                        </tr>*@
+                        @*<tr>
                             <th>그룹군</th>
                             <td>
                                 <div id="comboDlgEditLPAIncongruityLpaGrpLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
@@ -98,8 +98,12 @@
                             <td>
                                 <div id="comboDlgEditLPAIncongruityLpaUseLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
                             </td>
-                        </tr>
+                        </tr>*@
                         <tr>
+                            <th>그룹군</th>
+                            <td>
+                                <div id="comboDlgEditLPAIncongruityLpaGrpLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
+                            </td>
                             <th>심사자</th>
                             <td>
                                 <div style="display:flex;">
@@ -107,12 +111,31 @@
                                     <button id="btnDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
-                            <th>확인공정</th>
+                        </tr>
+                        @*<tr>
+                            <th>심사자</th>
+                            <td>
+                                <div style="display:flex;">
+                                    <input type="text" id="txtDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID" style="width:120px;" readonly="readonly" LpaCheckUserOID="@ViewBag.LpaUnfit.LpaCheckUserOID" value="@ViewBag.LpaUnfit.LpaCheckUserNm" />
+                                    <button id="btnDlgEditLPAIncongruityLpaCheckUser_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
+                                </div>
+                            </td>
+                            <th>점검라인</th>
+                            <td>
+                                <div id="comboDlgEditLPAIncongruityLpaCheckProcessLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
+                            </td>
+                        </tr>*@
+                        <tr>
+                            <th>심사일자</th>
+                            <td>
+                                <div id="dtDlgEditLPAIncongruityLpaCheckDt_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="DATE"></div>
+                            </td>
+                            <th>점검라인</th>
                             <td>
                                 <div id="comboDlgEditLPAIncongruityLpaCheckProcessLib_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="COMBO"></div>
                             </td>
                         </tr>
-                        <tr>
+                        @*<tr>
                             <th>심사일자</th>
                             <td>
                                 <div id="dtDlgEditLPAIncongruityLpaCheckDt_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="DATE"></div>
@@ -121,8 +144,8 @@
                             <td>
                                 <input type="text" id="txtDlgEditLPAIncongruityEquipmentNm_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="TEXT" readonly="readonly" style="width:100%;" value="@ViewBag.LpaUnfit.EquipmentNm" />
                             </td>
-                        </tr>
-                        <tr>
+                        </tr>*@
+                        @*<tr>
                             <th>품번/품명</th>
                             <td colspan="3">
                                 <div style="display:flex;">
@@ -131,20 +154,22 @@
                                     <button id="btnDlgEditLPAIncongruityPart_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
                                 </div>
                             </td>
-                        </tr>
+                        </tr>*@
                         <tr>
                             <th>지적사항</th>
                             <td colspan="3" style="margin:0px;padding:0px;">
                                 <table id="tbLpaUnfitCheck_@ViewBag.LpaUnfit.OID" class="infoTable" style="table-layout:fixed;">
                                     <colgroup>
                                         <col style="width:4%" />
-                                        <col style="width:89%" />
+                                        <col style="width:75%" />
+                                        <col style="width:14%;text-align:center;" />
                                         <col style="width:7%;text-align:center;" />
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th>NO</th>
                                             <th>지적사항</th>
+                                            <th>개선대책 담당자</th>
                                             <th style="text-align:center;"><button id="btnLpaUnfitCheckAdd_@ViewBag.LpaUnfit.OID" class="Modifiable_@ViewBag.LpaUnfit.OID" AttrType="BUTTON">추가</button></th>
                                         </tr>
                                     </thead>
@@ -153,7 +178,7 @@
                                 </table>
                             </td>
                         </tr>
-                        <tr>
+                        @*<tr>
                             <th>LPA 담당자</th>
                             <td>
                                 <div style="display:flex;">
@@ -176,7 +201,7 @@
                             </td>
                             <td colspan="2">
                             </td>
-                        </tr>
+                        </tr>*@
 
                     </tbody>
                 </table>
@@ -194,7 +219,7 @@
     </div>
 </div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function () {
         const LpaUnfitOID = '@ViewBag.LpaUnfit.OID';
         const LpaMeasureOID = "@(ViewBag.LpaMeasureOID == null ? "" : ViewBag.LpaMeasureOID)";
@@ -220,7 +245,7 @@
                 }
             });
         }
-        
+
         $('#InfoLpaUnfit_EditBtn_' + LpaUnfitOID).on('click', function () {
             var ModifyAttr = $('.Modifiable_' + LpaUnfitOID);
 
@@ -264,20 +289,20 @@
 
             param.OID = "@ViewBag.LpaUnfit.OID";
             param.ModuleOID = "@ViewBag.LpaUnfit.OID";
-            param.LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
-            param.AuditLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID);
+            @*param.LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
+            param.AuditLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID);*@
             param.LpaGrpLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID);
-            param.LpaUseLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID);
+            @*param.LpaUseLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID);*@
             param.LpaCheckProcessLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID);
             param.LpaCheckUserOID = $("#txtDlgEditLPAIncongruityLpaCheckUser_" + LpaUnfitOID).attr("LpaCheckUserOID");
             param.LpaCheckDt = dtDlgEditLPAIncongruityLpaCheckDt$.val();
-            param.EquipmentNm = $("#txtDlgEditLPAIncongruityEquipmentNm_" + LpaUnfitOID).val();
-            param.PartOID = $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID");
-            param.LpaUserOID = $("#txtDlgEditLPAIncongruityLpaUser_" + LpaUnfitOID).attr("LpaUserOID");
-            param.FinishRequestDt = dtDlgEditLPAIncongruityEstDt$.val();
-            param.MeasureUserOID = $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID");
+            @*param.EquipmentNm = $("#txtDlgEditLPAIncongruityEquipmentNm_" + LpaUnfitOID).val();*@
+            @*param.PartOID = $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID");*@
+            @*param.LpaUserOID = $("#txtDlgEditLPAIncongruityLpaUser_" + LpaUnfitOID).attr("LpaUserOID");*@
+            @*param.FinishRequestDt = dtDlgEditLPAIncongruityEstDt$.val();*@
+            @*param.MeasureUserOID = $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID");*@
 
-            if (param.LayerLibOID == undefined || param.LayerLibOID == null) {
+            @*if (param.LayerLibOID == undefined || param.LayerLibOID == null) {
                 alert("레이어를 선택 해주세요.");
                 return;
             }
@@ -285,27 +310,37 @@
             if (param.AuditLibOID == undefined || param.AuditLibOID == null) {
                 alert("감사주기를 선택 해주세요.");
                 return;
-            }
+            }*@
 
-            if (param.LpaGrpLibOID == undefined || param.LpaGrpLibOID == null) {
+            if (WebUtils.isEmpty(param.LpaGrpLibOID)) {
                 alert("그룹군을 선택 해주세요.");
                 return;
             }
 
-            if (param.LpaUseLibOID == undefined || param.LpaUseLibOID == null) {
+            if (WebUtils.isEmpty(param.LpaCheckUserOID)) {
+                alert("심사자를 선택 해주세요.");
+                return;
+            }
+
+            @*if (param.LpaUseLibOID == undefined || param.LpaUseLibOID == null) {
                 alert("사용구분을 선택 해주세요.");
                 return;
-            }
+            }*@
 
-            if (param.LpaCheckProcessLibOID == undefined || param.LpaCheckProcessLibOID == null) {
-                alert("확인공정을 선택 해주세요.");
+            if (WebUtils.isEmpty(param.LpaCheckDt)) {
+                alert("심사일자를 선택 해주세요.");
                 return;
             }
 
-            if(param.MeasureUserOID  == undefined || param.MeasureUserOID == null) {
+            if (WebUtils.isEmpty(param.LpaCheckProcessLibOID)) {
+                alert("점검라인을 선택 해주세요.");
+                return;
+            }
+
+            @*if (param.MeasureUserOID == undefined || param.MeasureUserOID == null) {
                 alert("대책서 담당자를 선택 해주세요.");
                 return;
-            }
+            }*@
 
             var trLpaUnfitCheck$ = $("#tbLpaUnfitCheck_@ViewBag.LpaUnfit.OID tr[Data='Y']");
             var errMsg = "";
@@ -315,6 +350,7 @@
                 data.OID = $(v).attr("OID") === "null" ? null : $(v).attr("OID");
                 data.ModuleOID = LpaUnfitOID;
                 data.CheckPoin = $($(v).find("[name='CheckPoin']")[0]).val();
+                data.ImproveCountermeasureUserOID = $($(v).find("[name='ImproveCountermeasureUser']")[0]).attr("ImproveCountermeasureUserOID");
 
                 if ($(v).attr("Remove") === "Y") {
                     data.IsRemove = "Y";
@@ -322,6 +358,10 @@
 
                 if (WebUtils.isBlank(data.CheckPoin) && data.IsRemove != "Y") {
                     errMsg += "[" + (i + 1).toString() + "] 행의 지적사항 내용이 입력되지 않았습니다..\n";
+                }
+
+                if (WebUtils.isBlank(data.ImproveCountermeasureUserOID) && data.IsRemove != "Y") {
+                    errMsg += "[" + (i + 1).toString() + "] 행의 개선대책 담당자가 선택되지 않았습니다..\n";
                 }
 
                 param.LpaUnfitChecks.push(data);
@@ -352,44 +392,37 @@
         });
 
         $("#InfoLpaUnfit_ConfirmBtn_" + LpaUnfitOID).on("click", function () {
-            var LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
+            @*var LayerLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID);
             var AuditLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID);
-            var LpaGrpLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID);
             var LpaUseLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID);
+            var MeasureUserOID = $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID");*@
+
+            var LpaGrpLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID);
             var LpaCheckProcessLibOID = WebUtils.GetComboValue("comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID);
-            var MeasureUserOID = $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID");
+            var LpaCheckUserOID = $("#txtDlgEditLPAIncongruityLpaCheckUser_" + LpaUnfitOID).attr("LpaCheckUserOID");
+            var LpaCheckDt = dtDlgEditLPAIncongruityLpaCheckDt$.val();
 
-            if (LayerLibOID == undefined || LayerLibOID == null) {
-                alert("레이어를 선택 해주세요.");
-                return;
-            }
-
-            if (AuditLibOID == undefined || AuditLibOID == null) {
-                alert("감사주기를 선택 해주세요.");
-                return;
-            }
-
-            if (LpaGrpLibOID == undefined || LpaGrpLibOID == null) {
+            if (WebUtils.isEmpty(LpaGrpLibOID)) {
                 alert("그룹군을 선택 해주세요.");
                 return;
             }
 
-            if (LpaUseLibOID == undefined || LpaUseLibOID == null) {
-                alert("사용구분을 선택 해주세요.");
+            if (WebUtils.isEmpty(LpaCheckUserOID)) {
+                alert("심사자를 선택 해주세요.");
                 return;
             }
 
-            if (LpaCheckProcessLibOID == undefined || LpaCheckProcessLibOID == null) {
-                alert("확인공정을 선택 해주세요.");
+            if (WebUtils.isEmpty(LpaCheckDt)) {
+                alert("심사일자를 선택 해주세요.");
                 return;
             }
 
-            if(MeasureUserOID  == undefined || MeasureUserOID == null) {
-                alert("대책서 담당자를 선택 해주세요.");
+            if (WebUtils.isEmpty(LpaCheckProcessLibOID)) {
+                alert("점검라인을 선택 해주세요.");
                 return;
             }
 
-             RequestData('/Qms/ConfirmQuickLpaUnfit', { ModuleOID: LpaUnfitOID, OID: LpaUnfitOID }, function (response) {
+            RequestData('/Qms/ConfirmQuickLpaUnfit', { ModuleOID: LpaUnfitOID, OID: LpaUnfitOID }, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
@@ -412,12 +445,12 @@
         }
 
         // Combo Widget
-        var comboLayerLib$ = $("#comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LayerLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
-        var comboAuditLib$ = $("#comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.AuditLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
+        @*var comboLayerLib$ = $("#comboDlgEditLPAIncongruityLayerLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LayerLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
+        var comboAuditLib$ = $("#comboDlgEditLPAIncongruityAuditLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.AuditLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });*@
         var comboLpaGrpLib$ = $("#comboDlgEditLPAIncongruityLpaGrpLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LpaGrpLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
-        var comboLpaUseLib$ = $("#comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LpaUseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });
+        @*var comboLpaUseLib$ = $("#comboDlgEditLPAIncongruityLpaUseLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LpaUseLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30, disabled: true  });*@
         var comboLpaCheckProcessLib$ = $("#comboDlgEditLPAIncongruityLpaCheckProcessLib_" + LpaUnfitOID).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.LpaCheckProcessLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: "100%", height: 30 , disabled: true });
-        @if(ViewBag.LpaUnfit.LayerLibOID != null)
+        @*@if(ViewBag.LpaUnfit.LayerLibOID != null)
         {
         <text>
         comboLayerLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.LayerLibOID");
@@ -429,7 +462,7 @@
         <text>
         comboAuditLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.AuditLibOID");
         </text>
-        }
+        }*@
 
         @if(ViewBag.LpaUnfit.LpaGrpLibOID != null)
         {
@@ -438,12 +471,12 @@
         </text>
         }
 
-        @if(ViewBag.LpaUnfit.LpaUseLibOID != null)
+        @*@if(ViewBag.LpaUnfit.LpaUseLibOID != null)
         {
         <text>
         comboLpaUseLib$.jqxComboBox('selectItem', "@ViewBag.LpaUnfit.LpaUseLibOID");
         </text>
-        }
+        }*@
 
         @if(ViewBag.LpaUnfit.LpaCheckProcessLibOID != null)
         {
@@ -454,7 +487,7 @@
 
         // Date Widget
         var dtDlgEditLPAIncongruityLpaCheckDt$ = $("#dtDlgEditLPAIncongruityLpaCheckDt_" + LpaUnfitOID);
-        var dtDlgEditLPAIncongruityEstDt$ = $("#dtDlgEditLPAIncongruityEstDt_" + LpaUnfitOID);
+        @*var dtDlgEditLPAIncongruityEstDt$ = $("#dtDlgEditLPAIncongruityEstDt_" + LpaUnfitOID);*@
 
         // 심사일자
         dtDlgEditLPAIncongruityLpaCheckDt$.jqxDateTimeInput(DateFormat);
@@ -473,21 +506,21 @@
         }
 
         // 완료예정일
-        dtDlgEditLPAIncongruityEstDt$.jqxDateTimeInput(DateFormat);
+        @*dtDlgEditLPAIncongruityEstDt$.jqxDateTimeInput(DateFormat);
         dtDlgEditLPAIncongruityEstDt$.jqxDateTimeInput({ width: 150, height: 32, disabled: true  });
         dtDlgEditLPAIncongruityEstDt$.val(WebUtils.GetDate(-1, "m", "-"));
         @if(ViewBag.LpaUnfit.FinishRequestDt == null)
         {
         <text>
-        dtDlgEditLPAIncongruityLpaCheckDt$.val(WebUtils.GetDate(0, "d", "-"));
+        dtDlgEditLPAIncongruityEstDt$.val(WebUtils.GetDate(0, "d", "-"));
         </text>
         }
         else
         {
         <text>
-        dtDlgEditLPAIncongruityLpaCheckDt$.val("@ViewBag.LpaUnfit.FinishRequestDt.ToString("yyyy-MM-dd")");
+        dtDlgEditLPAIncongruityEstDt$.val("@ViewBag.LpaUnfit.FinishRequestDt.ToString("yyyy-MM-dd")");
         </text>
-        }
+        }*@
          // 심사자 검색
         var btnDlgUserLpaCheckUser$ = $("#btnDlgEditLPAIncongruityLpaCheckUser_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgUserLpaCheckUser$.on("click", function () {
@@ -504,7 +537,7 @@
         });
 
         // 담당자 검색
-        var btnDlgUserSearch$ = $("#btnDlgEditLPAIncongruityLpaUser_" + LpaUnfitOID).jqxButton({ disabled: true });
+        @*var btnDlgUserSearch$ = $("#btnDlgEditLPAIncongruityLpaUser_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgUserSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
                 if (res.length > 1) {
@@ -516,10 +549,10 @@
                 $("#txtDlgEditLPAIncongruityLpaUser_" + LpaUnfitOID).attr("LpaUserOID", res[0].OID);
 
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
-        });
+        });*@
 
         // 대책서담당 검색
-        var btnDlgUserMeasureSearch$ = $("#btnDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).jqxButton({ disabled: true });
+        @*var btnDlgUserMeasureSearch$ = $("#btnDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgUserMeasureSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
                 if (res.length > 1) {
@@ -531,16 +564,16 @@
                 $("#txtDlgEditLPAIncongruityMeasureUser_" + LpaUnfitOID).attr("MeasureUserOID", res[0].OID);
 
             }, null, null, '/Common/ApprovalPerson', '사용자 검색');
-        });
+        });*@
 
-        var btnDlgPart$ = $("#btnDlgEditLPAIncongruityPart_" + LpaUnfitOID).jqxButton({ disabled: true });
+        @*var btnDlgPart$ = $("#btnDlgEditLPAIncongruityPart_" + LpaUnfitOID).jqxButton({ disabled: true });
         btnDlgPart$.on("click", function () {
             OpenSearchEPartAssyDialog(function (res) {
                 $("#txtDlgEditLPAIncongruityPartNm_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).val(res.Name);
                 $("#txtDlgEditLPAIncongruityPartCd_" + LpaUnfitOID).attr("PartOID", res.OID);
             }, null, null, '/EBom/dlgSearchEPartAssy', 'EPART 검색');
-        });
+        });*@
 
         $("#btnLpaUnfitCheckAdd_" + LpaUnfitOID).jqxButton({ disabled: true });
         $("#btnLpaUnfitCheckAdd_" + LpaUnfitOID).on("click", function () {
@@ -589,12 +622,50 @@
         txtCheckPoin$.setAttribute("type", "text");
         txtCheckPoin$.setAttribute("name", "CheckPoin");
         txtCheckPoin$.style.width = "100%";
-         if (data !== null) {
+        if (data !== null) {
             txtCheckPoin$.value = data.CheckPoin;
         }
         txtCheckPoin$.className = "Modifiable_@ViewBag.LpaUnfit.OID";
         txtCheckPoin$.setAttribute("AttrType", "TEXT");
         tdCheckPoin$.appendChild(txtCheckPoin$);
+
+        var tdImproveCountermeasure$ = document.createElement("td");
+        var txtImproveCountermeasureUser$ = document.createElement("input");
+        txtImproveCountermeasureUser$.setAttribute("type", "text");
+        txtImproveCountermeasureUser$.style.width = "120px";
+        txtImproveCountermeasureUser$.style.height = "100%";
+        txtImproveCountermeasureUser$.className = "txtbox";
+        txtImproveCountermeasureUser$.setAttribute("name", "ImproveCountermeasureUser");
+        txtImproveCountermeasureUser$.setAttribute("readonly", "readonly");
+        if (data !== null) {
+            txtImproveCountermeasureUser$.value = WebUtils.isEmpty(data.ImproveCountermeasure) === true ? "" : data.ImproveCountermeasure;
+            txtImproveCountermeasureUser$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
+        }
+
+        tdImproveCountermeasure$.appendChild(txtImproveCountermeasureUser$);
+
+        var btnImproveCountermeasureUserSearch$ = document.createElement("button");
+        btnImproveCountermeasureUserSearch$.style.float = "right";
+        btnImproveCountermeasureUserSearch$.className = "Modifiable_@ViewBag.LpaUnfit.OID";
+        btnImproveCountermeasureUserSearch$.setAttribute("AttrType", "BUTTON");
+        var iSearch = document.createElement("i");
+        iSearch.className = "fas fa-search";
+
+        btnImproveCountermeasureUserSearch$.appendChild(iSearch);
+        btnImproveCountermeasureUserSearch$.innerText = "검색";
+        $(btnImproveCountermeasureUserSearch$).on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                txtImproveCountermeasureUser$.value = res[0].Name;
+                txtImproveCountermeasureUser$.setAttribute("ImproveCountermeasureUserOID", res[0].OID);
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        tdImproveCountermeasure$.appendChild(btnImproveCountermeasureUserSearch$);
 
         var tdBtn$ = document.createElement("td");
         tdBtn$.style.textAlign = "center";
@@ -612,8 +683,9 @@
 
         tr$.appendChild(tdNo);
         tr$.appendChild(tdCheckPoin$);
+        tr$.appendChild(tdImproveCountermeasure$);
         tr$.appendChild(tdBtn$);
 
         table$.append(tr$);
     }
-    </script>
+</script>

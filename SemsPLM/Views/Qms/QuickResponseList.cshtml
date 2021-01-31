@@ -232,7 +232,6 @@
         $("#SearchQuick_cbOccurrence").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.occurrenceList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         //$("#SearchQuick_Status").jqxComboBox({ selectedIndex: 2, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.Status)), "OID", "StatusNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
         $("#SearchQuick_Status").jqxComboBox({ selectedIndex: 1, source: Status, displayMember: "text", valueMember: "value", width: 160, height: 30 });
-        $("#SearchQuick_ItemNo").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
         $("#SearchQuick_Item").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
 
         $("#SearchQuick_sDt").jqxDateTimeInput(DateFormat);
@@ -458,7 +457,6 @@
             //SearchStatusOID: WebUtils.GetComboValue("SearchQuick_Status"),
 
             SearchStatusNm: WebUtils.GetComboValue("SearchQuick_Status"),
-            SearchItemGroup: WebUtils.GetComboValue("SearchQuick_ItemNo"),
             SearchItemLibOID: WebUtils.GetComboValue("SearchQuick_Item"),
             SearchOemNm: $("#SearchQuick_OEM").val(),
             SearchCarCode: $("#SearchQuick_CarCode").val(),
