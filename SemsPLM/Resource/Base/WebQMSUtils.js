@@ -269,11 +269,11 @@ function OpenDlgQuickResponsePlan(QuickResponseOID) {
         var winHeight = $(window).height();
         var winWidth = $(window).width();
 
-        var posX = (winWidth / 2) - (1100 / 2) + $(window).scrollLeft();
+        var posX = (winWidth / 2) - (1300 / 2) + $(window).scrollLeft();
         var posY = (winHeight / 2) - (900 / 2) + $(window).scrollTop();
 
         $(dlgDivWrap).jqxWindow({
-            width: 1100, height: 900, minWidth: 1100, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+            width: 1300, height: 900, minWidth: 1300, maxWidth: 1300, minHeight: 900, draggable: true, resizable: true, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
             initContent: function () {
 
             }

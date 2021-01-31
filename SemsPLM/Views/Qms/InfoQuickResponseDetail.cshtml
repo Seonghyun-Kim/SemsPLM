@@ -28,11 +28,11 @@
     <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
@@ -47,36 +47,105 @@
             <tr>
                 <th><label class="lbText">고객사</label></th>
                 <td>@ViewBag.QuickResponse.OemNm</td>
-                <th><label class="lbText">품번/품명</label></th>
-                <td>@ViewBag.QuickResponse.PartNo / @ViewBag.QuickResponse.PartNm</td>
-                <th><label class="lbText">LOT번호</label></th>
-                <td>@ViewBag.QuickResponse.LotNo</td>
-
+                <th><label class="lbText">품목</label></th>
+                <td>@ViewBag.QuickResponse.ItemLibNm</td>
+                <th><label class="lbText">품번</label></th>
+                <td>@ViewBag.QuickResponse.PartNo</td>
             </tr>
             <tr>
-                <th><label class="lbText">품질담당자</label></th>
-                <td>@ViewBag.QuickResponse.WorkUserNm</td>
-                <th><label class="lbText">작성일시</label></th>
-                <td>@(ViewBag.QuickResponse.WriteDt == null ? "" : ViewBag.QuickResponse.WriteDt.ToString("yyyy-MM-dd"))</td>
-                <th><label class="lbText">불량수량</label></th>
-                <td>@ViewBag.QuickResponse.PoorCnt</td>
+                <th><label class="lbText">품명</label></th>
+                <td>@ViewBag.QuickResponse.PartNm</td>
+                <th><label class="lbText">차종</label></th>
+                <td>@ViewBag.QuickResponse.CarCode</td>
+                <th><label class="lbText">발생Lot</label></th>
+                <td>@ViewBag.QuickResponse.LotNo</td>
             </tr>
+            <tr>
+                <th><label class="lbText">발생수량</label></th>
+                <td>@ViewBag.QuickResponse.PoorCnt</td>
+                <th><label class="lbText">작성일자</label></th>
+                <td>@(ViewBag.QuickResponse.WriteDt == null ? "" : ViewBag.QuickResponse.WriteDt.ToString("yyyy-MM-dd"))</td>
+                <th><label class="lbText">접수자</label></th>
+                <td>@ViewBag.QuickResponse.WorkUserNm</td>
+            </tr>
+            @*<tr>
+                <th><label class="lbText">신속대응 No</label></th>
+                <td>@ViewBag.QuickResponse.Name</td>
+                <th><label class="lbText">공장 구분</label></th>
+                <td>@ViewBag.QuickResponse.PlantNm</td>
+                <th><label class="lbText">발생유형</label></th>
+                <td>@ViewBag.QuickResponse.OccurrenceNm</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">고객사</label></th>
+                <td>@ViewBag.QuickResponse.OemNm</td>
+                <th><label class="lbText">품목</label></th>
+                <td>@ViewBag.QuickResponse.ItemLibNm</td>
+                <th><label class="lbText">품번</label></th>
+                <td>@ViewBag.QuickResponse.PartNo</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">품명</label></th>
+                <td>@ViewBag.QuickResponse.PartNm</td>
+                <th><label class="lbText">차종</label></th>
+                <td>@ViewBag.QuickResponse.CarCode</td>
+                <th><label class="lbText">발생Lot</label></th>
+                <td>@ViewBag.QuickResponse.LotNo</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">발생수량</label></th>
+                <td>@ViewBag.QuickResponse.PoorCnt</td>
+                <th><label class="lbText">작성일자</label></th>
+                <td>@(ViewBag.QuickResponse.WriteDt == null ? "" : ViewBag.QuickResponse.WriteDt.ToString("yyyy-MM-dd"))</td>
+                <th><label class="lbText">접수자</label></th>
+                <td>@ViewBag.QuickResponse.WorkUserNm</td>
+            </tr>*@
         </tbody>
-
     </table>
 
     <label><i class="fas fa-caret-square-down"></i> 문제요약</label>
     <table class="infoTable" style="table-layout:fixed;">
         <colgroup>
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
-            <col style="width:190px;" />
+            <col style="width:210px;" />
             <col style="width:auto;" />
         </colgroup>
         <tbody>
             <tr>
+                <th><label class="lbText">불량내용(문제점 요약)</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.Title</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">발생처</label></th>
+                <td>@ViewBag.QuickResponse.OccurrenceAreaNm</td>
+                <th><label class="lbText">발생장소</label></th>
+                <td>@ViewBag.QuickResponse.OccurrencePlace</td>
+                <th><label class="lbText">귀책구분</label></th>
+                <td>@ViewBag.QuickResponse.ImputeNm</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">재발여부</label></th>
+                <td>@(ViewBag.QuickResponse.RecurrenceFl == true ? "Y" : "N")</td>
+                <th><label class="lbText">발생일자</label></th>
+                <td>@(ViewBag.QuickResponse.OccurrenceDt == null ? "" : ViewBag.QuickResponse.OccurrenceDt.ToString("yyyy-MM-dd"))</td>
+                <th><label class="lbText">결함정도</label></th>
+                <td>@ViewBag.QuickResponse.DefectDegreeNm</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">불량 상세 내용</label></th>
+                <td colspan="3">@ViewBag.QuickResponse.PoorDetail</td>
+                <th><label class="lbText">대책서회신요구일자</label></th>
+                <td>@(ViewBag.QuickResponse.MeasureResponseDt == null ? "" : ViewBag.QuickResponse.MeasureResponseDt.ToString("yyyy-MM-dd"))</td>
+            </tr>
+            <tr>
+                <th><label class="lbText">등록구분</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.EnrollmentLibNm</td>
+            </tr>
+
+            @*<tr>
                 <th><label class="lbText">제목</label></th>
                 <td colspan="5">@ViewBag.QuickResponse.Title</td>
             <tr>
@@ -111,10 +180,27 @@
             <tr>
                 <th><label class="lbText">QA</label></th>
                 <td colspan="5">@ViewBag.QuickResponse.Qa</td>
-            </tr>
+            </tr>*@
         </tbody>
     </table>
 
+    <label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:210px;" />
+            <col style="width:auto;" />
+            <col style="width:210px;" />
+            <col style="width:auto;" />
+            <col style="width:210px;" />
+            <col style="width:auto;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <th><label class="lbText">일정계획담당자</label></th>
+                <td colspan="5">@ViewBag.QuickResponse.PlanUserNm</td>
+            </tr>
+        </tbody>
+    </table>
 
     <div style="width:100%;display:flex;flex-direction:row;margin-top:10px;">
         <div style="width:100%;">
@@ -375,7 +461,7 @@
                 </div>
             </div>
 
-            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> LPA 부적합현황</label>
+            <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> LPA 점검 변경</label>
             <table width="100%" class="infoTable" style="table-layout:fixed;">
                 <colgroup>
                     <col style="width:180px;" />
@@ -384,7 +470,7 @@
                     <col style="width:auto;" />
                 </colgroup>
                 <tbody>
-                    <tr>
+                    @*<tr>
                         <th>Layer</th>
                         <td>@ViewBag.LpaUnfit.LayerLibNm</td>
                         <th>감사주기</th>
@@ -411,6 +497,28 @@
                     <tr>
                         <th>품번/품명</th>
                         <td colspan="3">@(ViewBag.LpaUnfit.PartCd + "/" + ViewBag.LpaUnfit.PartNm)</td>
+                    </tr>*@
+                    <tr>
+                        <th>그룹군</th>
+                        <td>@ViewBag.LpaUnfit.LpaGrpLibNm</td>
+                        <th>심사자</th>
+                        <td>@ViewBag.LpaUnfit.LpaCheckUserNm</td>
+                    </tr>
+                    <tr>
+                        <th>심사일자</th>
+                        <td>
+                            @(ViewBag.LpaUnfit.LpaCheckDt == null ? "" : ViewBag.LpaUnfit.LpaCheckDt.ToString("yyyy-MM-dd"))
+                        </td>
+                        <th>점검라인</th>
+                        <td>
+                            @ViewBag.LpaUnfit.LpaCheckProcessLibNm
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>대책서 담당자</th>
+                        <td colspan="3">
+                            @ViewBag.LpaUnfit.MeasureUserNm
+                        </td>
                     </tr>
                     <tr>
                         <th>지적사항</th>
@@ -418,12 +526,14 @@
                             <table id="tbLpaUnfitCheck_@Model" class="infoTable" style="table-layout:fixed;">
                                 <colgroup>
                                     <col style="width:4%" />
-                                    <col style="width:96%" />
+                                    <col style="width:86%" />
+                                    <col style="width:10%" />
                                 </colgroup>
                                 <thead>
                                     <tr>
                                         <th>NO</th>
                                         <th>지적사항</th>
+                                        <th>개선대책 담당자</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -431,7 +541,7 @@
                             </table>
                         </td>
                     </tr>
-                    <tr>
+                    @*<tr>
                         <th>LPA 담당자</th>
                         <td>@ViewBag.LpaUnfit.LpaUserNm</td>
                         <th>대책서 담당자</th>
@@ -440,7 +550,7 @@
                     <tr>
                         <th>완료예정일</th>
                         <td colspan="3">@(ViewBag.LpaUnfit.FinishRequestDt == null ? "" : ViewBag.LpaUnfit.FinishRequestDt.ToString("yyyy-MM-dd"))</td>
-                    </tr>
+                    </tr>*@
                 </tbody>
             </table>
 
@@ -620,13 +730,19 @@
                         <td>@ViewBag.WorkerEdu.EduUserNm</td>
                     </tr>
                     <tr>
+                        <th><label class="lbText">교육인원</label></th>
+                        <td>@ViewBag.WorkerEdu.EduPersonnel</td>
+                        <th><label class="lbText">교육장소</label></th>
+                        <td>@ViewBag.WorkerEdu.EduPlace</td>
+                    </tr>
+                    <tr>
                         <th><label class="lbText">교육내용</label></th>
                         <td colspan="3">@ViewBag.WorkerEdu.EduDetail</td>
                     </tr>
-                    <tr>
-                        <th><label class="lbText">교육계획</label></th>
-                        <td colspan="3">@ViewBag.WorkerEdu.EduPlan</td>
-                    </tr>
+                    @*<tr>
+            <th><label class="lbText">교육계획</label></th>
+            <td colspan="3">@ViewBag.WorkerEdu.EduPlan</td>
+        </tr>*@
                 </tbody>
             </table>
 
@@ -975,8 +1091,12 @@
         var tdCheckPoin$ = document.createElement("td");
         tdCheckPoin$.innerText = data.CheckPoin;
 
+        var tdImproveCountermeasure$ = document.createElement("td");
+        tdImproveCountermeasure$.innerText = WebUtils.isEmpty(data) === true ? "" : WebUtils.isEmpty(data.ImproveCountermeasure) == true ? "" : data.ImproveCountermeasure;
+
         tr$.appendChild(tdNo);
         tr$.appendChild(tdCheckPoin$);
+        tr$.appendChild(tdImproveCountermeasure$);
 
         table$.append(tr$);
     }

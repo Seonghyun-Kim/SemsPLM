@@ -1572,11 +1572,11 @@ namespace SemsPLM.Controllers
                 if (LpaUnfitFl == 1)
                 {
                     StartModuleRow = iRow;
-                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 부적합현황");
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 점검 변경");
 
                     iRow = ApprovPrint(ws, LpaMeasureApprvalData, iRow + 2);
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 부적합현황");
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 점검 변경");
                     iRow++;
                     int StartLpaUnfitRow = iRow;
 
@@ -2557,7 +2557,7 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-        #region -- LPA 부적합현황 
+        #region -- LPA 점검 변경 
         public ActionResult InfoLpaUnfit(int OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });

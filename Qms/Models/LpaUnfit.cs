@@ -34,6 +34,9 @@ namespace Qms.Models
         public int LpaCheckProcessLibOID { get; set; }
         public string LpaCheckProcessLibNm { get; set; }
 
+        // 점검라인
+        public string CheckLine { get; set; }
+
         // 심사자(LPA 담당자) 
         public int? LpaCheckUserOID { get; set; }
 
