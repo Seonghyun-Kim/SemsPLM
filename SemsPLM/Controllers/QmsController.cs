@@ -1617,7 +1617,7 @@ namespace SemsPLM.Controllers
                     PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사일자");
                     PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckDt == null ? "" : ((DateTime)LpaUnfit.LpaCheckDt).ToString("yyyy-MM-dd"));
                     PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "점검라인");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckUserNm);
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.CheckLine);
                     iRow++;
 
                     //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사자");
@@ -1657,15 +1657,15 @@ namespace SemsPLM.Controllers
                         });
                     }
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "LPA 담당자");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaUserNm);
-                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "대책서담당자");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.MeasureUserNm);
-                    iRow++;
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "LPA 담당자");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaUserNm);
+                    //PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "대책서담당자");
+                    //PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.MeasureUserNm);
+                    //iRow++;
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "완료예정일");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.FinishRequestDt == null ? "" : ((DateTime)LpaUnfit.FinishRequestDt).ToString("yyyy-MM-dd"));
-                    iRow++;
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "완료예정일");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.FinishRequestDt == null ? "" : ((DateTime)LpaUnfit.FinishRequestDt).ToString("yyyy-MM-dd"));
+                    //iRow++;
 
                     ws.Cells[StartLpaUnfitRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
