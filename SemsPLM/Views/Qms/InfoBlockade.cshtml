@@ -196,6 +196,7 @@
             var param = {};
             param.OID =  '@ViewBag.Blockade.OID';
             param.BlockadeItems = [];
+            var errMsg = "";
 
             var tr$ = $("#tbBlockadeList tr[Data='Y']");
 
@@ -221,32 +222,36 @@
                 data.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
 
                 if (WebUtils.isEmpty(data.TargetScope)) {
-                    alert("대상범위를 선택해주세요");
+                    errMsg = "대상범위를 선택해주세요";
                     return;
                 }
 
                 if (WebUtils.isEmpty(data.Act)) {
-                    alert("조치방법를 선택해주세요");
+                    errMsg = "조치방법를 선택해주세요";
                     return;
                 }
 
                 if (WebUtils.isEmpty(data.TargetCnt)) {
-                    alert("대상수량을 입력해주세요");
+                    errMsg = "대상수량을 입력해주세요";
                     return;
                 }
 
                 if (WebUtils.isEmpty(data.ActUserOID)) {
-                    alert("담당자를 선택해주세요");
+                    errMsg = "담당자를 선택해주세요";
                     return;
                 }
 
                 if (WebUtils.isEmpty(data.ActStartDt) || WebUtils.isEmpty(data.ActEndDt)) {
-                    alert("기한을 선택해주세요");
+                    errMsg = "기한을 선택해주세요";
                     return;
                 }
 
                 param.BlockadeItems.push(data);
             });
+
+            if (errMsg.length != 0) {
+                alert(errMsg); return;
+            }
 
             var Files = fileUpload.Files();
 

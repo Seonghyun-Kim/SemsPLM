@@ -119,6 +119,9 @@ namespace Qms.Models
         // 개선대책 
         public string ImproveCountermeasure { get; set; }
 
+        // 개선대책 담당자
+        public int? ImproveCountermeasureUserOID { get; set; }
+
         public string IsRemove { get; set; }
 
     }
