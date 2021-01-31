@@ -354,7 +354,7 @@ namespace SemsPLM.Controllers
             Library correctDecisionKey = LibraryRepository.SelLibraryObject(new Library { Name = "CORRECT_DECISION" });
             List<Library> correctDecisionList = LibraryRepository.SelLibrary(new Library { FromOID = correctDecisionKey.OID });  // 시정판정
             ViewBag.correctDecisionList = correctDecisionList;
-            ViewBag.ProjectOID = ProjectOID;
+      
 
             Library EnrollmentTypeKey = LibraryRepository.SelLibraryObject(new Library { Name = "ENROLLMENT_TYPE" });
             List<Library> EnrollmentTypeList = LibraryRepository.SelLibrary(new Library { FromOID = EnrollmentTypeKey.OID });  // 등록구분
@@ -364,6 +364,11 @@ namespace SemsPLM.Controllers
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  // 품목
             ViewBag.ItemList = ItemList;
 
+            PmsProject pmsProject = PmsProjectRepository.SelPmsObject(Session, new PmsProject() { OID = ProjectOID });
+
+            ViewBag.ProjectOID = ProjectOID;
+            ViewBag.CarLibOID = pmsProject.Car_Lib_OID;
+            ViewBag.CarLibNm = pmsProject.Car_Lib_Nm;
             return View();
         }
 
