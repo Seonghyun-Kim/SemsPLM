@@ -70,8 +70,9 @@
                             <colgroup>
                                 <col style="width:4%" />
                                 <col style="width:22%" />
-                                <col style="width:37%" />
-                                <col style="width:37%" />
+                                <col style="width:32%" />
+                                <col style="width:32%" />
+                                <col style="width:10%" />
                             </colgroup>
                             <thead>
                                 <tr>
@@ -79,6 +80,7 @@
                                     <th>지적사항</th>
                                     <th>원인분석</th>
                                     <th>개선대책</th>
+                                    <th>담당자</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -190,7 +192,8 @@
                 data.ModuleOID = "@ViewBag.LpaUnfitOID";
                 data.CheckPoin = $($(v).find("[name='CheckPoin']")[0]).val();
                 data.CauseAnalysis = $($(v).find("[name='CauseAnalysis']")[0]).val();
-                data.ImproveCountermeasureUserOID = $($(v).find("[name='ImproveCountermeasure']")[0]).attr("ImproveCountermeasureUserOID");
+                data.ImproveCountermeasure = $($(v).find("[name='ImproveCountermeasure']")[0]).val();
+                //data.ImproveCountermeasureUserOID = $($(v).find("[name='ImproveCountermeasureUserOID']")[0]).val();
 
                 if (WebUtils.isBlank(data.CauseAnalysis)) {
                     errMsg += "[" + (i + 1).toString() + "] 행의 원인분석 내용이 입력되지 않았습니다..\n";
@@ -293,16 +296,33 @@
         txtImproveCountermeasurePoin$.setAttribute("readonly", "readonly");
         if (data !== null) {
             txtImproveCountermeasurePoin$.value = data.ImproveCountermeasure;
-            txtImproveCountermeasurePoin$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
+            //txtImproveCountermeasurePoin$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
         }
-        @*txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";*@
+        txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";
         txtImproveCountermeasurePoin$.setAttribute("AttrType", "TEXT");     
         tdImproveCountermeasurePoin$.appendChild(txtImproveCountermeasurePoin$);
+
+        
+        var tdImproveCountermeasurePoinUserOID$ = document.createElement("td");
+        var txtImproveCountermeasurePoinUser$ = document.createElement("input");
+        txtImproveCountermeasurePoinUser$.setAttribute("type", "text");
+        txtImproveCountermeasurePoinUser$.setAttribute("name", "ImproveCountermeasureUserOID");
+        txtImproveCountermeasurePoinUser$.style.width = "100%";
+        txtImproveCountermeasurePoinUser$.setAttribute("readonly", "readonly");
+        if (data !== null) {
+            txtImproveCountermeasurePoinUser$.value = data.ImproveCountermeasureUserNm;
+            //txtImproveCountermeasurePoin$.setAttribute("ImproveCountermeasureUserOID", WebUtils.isEmpty(data.ImproveCountermeasureUserOID) === true ? "" : data.ImproveCountermeasureUserOID);
+        }
+        @*txtImproveCountermeasurePoin$.className = "Modifiable_@ViewBag.LpaMeasure.OID";*@
+        txtImproveCountermeasurePoinUser$.setAttribute("AttrType", "TEXT");     
+        tdImproveCountermeasurePoinUserOID$.appendChild(txtImproveCountermeasurePoinUser$);
+
 
         tr$.appendChild(tdNo);
         tr$.appendChild(tdCheckPoin$);
         tr$.appendChild(tdCauseAnalysisPoin$);
         tr$.appendChild(tdImproveCountermeasurePoin$);
+          tr$.appendChild(tdImproveCountermeasurePoinUserOID$);
 
         table$.append(tr$);
     }
