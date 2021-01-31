@@ -1292,53 +1292,73 @@ namespace SemsPLM.Controllers
                 PrintExcelCell(ws.Cells[6, 14, 6, 16], "TH", "고객사");
                 PrintExcelCell(ws.Cells[6, 17, 6, 24], "TD", QuickResponse.OemNm);
 
-                PrintExcelCell(ws.Cells[7, 3, 7, 5], "TH", "품번/품명");
-                PrintExcelCell(ws.Cells[7, 6, 7, 13], "TD", QuickResponse.PartNo + "/" + QuickResponse.PartNm);
-                PrintExcelCell(ws.Cells[7, 14, 7, 16], "TH", "고객사");
-                PrintExcelCell(ws.Cells[7, 17, 7, 24], "TD", QuickResponse.OemNm);
+                PrintExcelCell(ws.Cells[7, 3, 7, 5], "TH", "품목");
+                PrintExcelCell(ws.Cells[7, 6, 7, 13], "TD", QuickResponse.ItemLibNm);
+                PrintExcelCell(ws.Cells[7, 14, 7, 16], "TH", "품번");
+                PrintExcelCell(ws.Cells[7, 17, 7, 24], "TD", QuickResponse.PartNo);
 
-                PrintExcelCell(ws.Cells[8, 3, 8, 5], "TH", "품질담당자");
-                PrintExcelCell(ws.Cells[8, 6, 8, 13], "TD", QuickResponse.WorkUserNm);
-                PrintExcelCell(ws.Cells[8, 14, 8, 16], "TH", "작성일시");
-                PrintExcelCell(ws.Cells[8, 17, 8, 24], "TD", QuickResponse.WriteDt == null ? "" : ((DateTime)QuickResponse.WriteDt).ToString("yyyy-MM-dd"));
+                PrintExcelCell(ws.Cells[8, 3, 8, 5], "TH", "품명");
+                PrintExcelCell(ws.Cells[8, 6, 8, 13], "TD", QuickResponse.PartNm);
+                PrintExcelCell(ws.Cells[8, 14, 8, 16], "TH", "차종");
+                PrintExcelCell(ws.Cells[8, 17, 8, 24], "TD", QuickResponse.CarCode);
 
-                PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "불량수량");
-                PrintExcelCell(ws.Cells[9, 6, 9, 24], "TD", QuickResponse.PoorCnt.ToString());
+                PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "발생LOT");
+                PrintExcelCell(ws.Cells[9, 6, 9, 13], "TD", QuickResponse.LotNo);
+                PrintExcelCell(ws.Cells[9, 14, 9, 16], "TH", "불량수량");
+                PrintExcelCell(ws.Cells[9, 17, 9, 24], "TD", QuickResponse.PoorCnt.ToString());
 
-                ws.Cells[5, 3, 9, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                PrintExcelCell(ws.Cells[10, 3, 10, 5], "TH", "작성일자");
+                PrintExcelCell(ws.Cells[10, 6, 10, 13], "TD", QuickResponse.WriteDt == null ? "" : ((DateTime)QuickResponse.WriteDt).ToString("yyyy-MM-dd"));
+                PrintExcelCell(ws.Cells[10, 14, 10, 16], "TH", "품질담당자");
+                PrintExcelCell(ws.Cells[10, 17, 10, 24], "TD", QuickResponse.WorkUserNm);
+
+
+                //PrintExcelCell(ws.Cells[7, 3, 7, 5], "TH", "품번/품명");
+                //PrintExcelCell(ws.Cells[7, 6, 7, 13], "TD", QuickResponse.PartNo + "/" + QuickResponse.PartNm);
+                //PrintExcelCell(ws.Cells[7, 14, 7, 16], "TH", "고객사");
+                //PrintExcelCell(ws.Cells[7, 17, 7, 24], "TD", QuickResponse.OemNm);
+
+                //PrintExcelCell(ws.Cells[8, 3, 8, 5], "TH", "품질담당자");
+                //PrintExcelCell(ws.Cells[8, 6, 8, 13], "TD", QuickResponse.WorkUserNm);
+                //PrintExcelCell(ws.Cells[8, 14, 8, 16], "TH", "작성일시");
+                //PrintExcelCell(ws.Cells[8, 17, 8, 24], "TD", QuickResponse.WriteDt == null ? "" : ((DateTime)QuickResponse.WriteDt).ToString("yyyy-MM-dd"));
+
+                //PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "불량수량");
+                //PrintExcelCell(ws.Cells[9, 6, 9, 13], "TD", QuickResponse.PoorCnt.ToString());
+                //PrintExcelCell(ws.Cells[9, 3, 9, 5], "TH", "불량수량");
+                //PrintExcelCell(ws.Cells[9, 6, 9, 13], "TD", QuickResponse.PoorCnt.ToString());
+
+                ws.Cells[5, 3, 10, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                 // 문제요약
-                PrintExcelCell(ws.Cells[11, 3, 11, 5], "TITLE", "문제요약");
-                PrintExcelCell(ws.Cells[12, 3, 12, 5], "TH", "발생처");
-                PrintExcelCell(ws.Cells[12, 6, 12, 13], "TD", QuickResponse.OccurrenceAreaNm);
-                PrintExcelCell(ws.Cells[12, 14, 12, 16], "TH", "결함정도");
-                PrintExcelCell(ws.Cells[12, 17, 12, 24], "TD", QuickResponse.DefectDegreeNm);
+                PrintExcelCell(ws.Cells[12, 3, 12, 5], "TITLE", "문제요약");
+                PrintExcelCell(ws.Cells[13, 3, 13, 5], "TH", "발생처");
+                PrintExcelCell(ws.Cells[13, 6, 13, 13], "TD", QuickResponse.OccurrenceAreaNm);
+                PrintExcelCell(ws.Cells[13, 14, 13, 16], "TH", "발생장소");
+                PrintExcelCell(ws.Cells[13, 17, 13, 24], "TD", QuickResponse.OccurrencePlace);
 
-                PrintExcelCell(ws.Cells[13, 3, 13, 5], "TH", "유발공정");
-                PrintExcelCell(ws.Cells[13, 6, 13, 13], "TD", QuickResponse.InduceNm);
-                PrintExcelCell(ws.Cells[13, 14, 13, 16], "TH", "귀책구분");
-                PrintExcelCell(ws.Cells[13, 17, 13, 24], "TD", QuickResponse.ImputeNm);
+                PrintExcelCell(ws.Cells[14, 3, 14, 5], "TH", "귀책구분");
+                PrintExcelCell(ws.Cells[14, 6, 14, 13], "TD", QuickResponse.ImputeNm);
+                PrintExcelCell(ws.Cells[14, 14, 14, 16], "TH", "귀책처");
+                PrintExcelCell(ws.Cells[14, 17, 14, 24], "TD", QuickResponse.ImputeDepartmentOID != null ? QuickResponse.ImputeDepartmentNm : QuickResponse.ImputeSupplierNm);
 
-                PrintExcelCell(ws.Cells[14, 3, 14, 5], "TH", "귀책처");
-                PrintExcelCell(ws.Cells[14, 6, 14, 13], "TD", QuickResponse.ImputeDepartmentOID != null ? QuickResponse.ImputeDepartmentNm : QuickResponse.ImputeSupplierNm);
-                PrintExcelCell(ws.Cells[14, 14, 14, 16], "TH", "재발여부");
-                PrintExcelCell(ws.Cells[14, 17, 14, 24], "TD", QuickResponse.RecurrenceFl == true ? "Y" : "N");
+                PrintExcelCell(ws.Cells[15, 3, 15, 5], "TH", "재발여부");
+                PrintExcelCell(ws.Cells[15, 6, 15, 13], "TD", QuickResponse.RecurrenceFl == true ? "Y" : "N");
+                PrintExcelCell(ws.Cells[15, 14, 15, 16], "TH", "발생일자");
+                PrintExcelCell(ws.Cells[15, 17, 15, 24], "TD", QuickResponse.OccurrenceDt == null ? "" : ((DateTime)QuickResponse.OccurrenceDt).ToString("yyyy-MM-dd"));
 
-                PrintExcelCell(ws.Cells[15, 3, 15, 5], "TH", "불량내용상세");
-                PrintExcelCell(ws.Cells[15, 6, 15, 24], "TD", QuickResponse.PoorDetail);
+                PrintExcelCell(ws.Cells[16, 3, 16, 5], "TH", "결함정도");
+                PrintExcelCell(ws.Cells[16, 6, 16, 13], "TD", QuickResponse.DefectDegreeNm);
+                PrintExcelCell(ws.Cells[16, 14, 16, 16], "TH", "대책서요구일자");
+                PrintExcelCell(ws.Cells[16, 17, 16, 24], "TD", QuickResponse.MeasureResponseDt == null ? "" : ((DateTime)QuickResponse.MeasureResponseDt).ToString("yyyy-MM-dd"));
 
-                PrintExcelCell(ws.Cells[16, 3, 16, 5], "TH", "발생일자");
-                PrintExcelCell(ws.Cells[16, 6, 16, 13], "TD", QuickResponse.OccurrenceDt == null ? "" : ((DateTime)QuickResponse.OccurrenceDt).ToString("yyyy-MM-dd"));
-                PrintExcelCell(ws.Cells[16, 14, 16, 16], "TH", "시정판정");
-                PrintExcelCell(ws.Cells[16, 17, 16, 24], "TD", QuickResponse.CorrectDecisionNm);
+                PrintExcelCell(ws.Cells[17, 3, 17, 5], "TH", "불량내용상세");
+                PrintExcelCell(ws.Cells[17, 6, 17, 24], "TD", QuickResponse.PoorDetail);
 
-                PrintExcelCell(ws.Cells[17, 3, 17, 5], "TH", "발생장소");
-                PrintExcelCell(ws.Cells[17, 6, 17, 24], "TD", QuickResponse.OccurrencePlace);
+                PrintExcelCell(ws.Cells[18, 3, 18, 5], "TH", "일정계획담당자");
+                PrintExcelCell(ws.Cells[18, 6, 18, 24], "TD", QuickResponse.PlanUserNm);
 
-                PrintExcelCell(ws.Cells[18, 3, 18, 5], "TH", "QA");
-                PrintExcelCell(ws.Cells[18, 6, 18, 24], "TD", QuickResponse.Qa);
-
-                ws.Cells[12, 3, 18, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                ws.Cells[13, 3, 18, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                 int iRow = 21;
                 #region -- 봉쇄조치
@@ -1572,41 +1592,49 @@ namespace SemsPLM.Controllers
                 if (LpaUnfitFl == 1)
                 {
                     StartModuleRow = iRow;
-                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 부적합현황");
+                    PrintExcelCell(ws.Cells[iRow, 2, iRow, 6], "MODULE", "LPA 감사");
 
                     iRow = ApprovPrint(ws, LpaMeasureApprvalData, iRow + 2);
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 부적합현황");
+                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 7], "TITLE", "LPA 점검");
                     iRow++;
                     int StartLpaUnfitRow = iRow;
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "Layer");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LayerLibNm);
-                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "감사주기");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.AuditLibNm);
-                    iRow++;
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "Layer");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LayerLibNm);
+                    //PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "감사주기");
+                    //PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.AuditLibNm);
+                    //iRow++;
 
                     PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "그룹군");
                     PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaGrpLibNm);
-                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "사용구분");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaUseLibNm);
-                    iRow++;
-
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사자");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckUserNm);
-                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "확인공정");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckProcessLibNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "심사자");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckUserNm);
+                    //PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "사용구분");
+                    //PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaUseLibNm);
                     iRow++;
 
                     PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사일자");
                     PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckDt == null ? "" : ((DateTime)LpaUnfit.LpaCheckDt).ToString("yyyy-MM-dd"));
-                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "설비명");
-                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.EquipmentNm);
+                    PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "점검라인");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckUserNm);
                     iRow++;
 
-                    PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "품번/품명");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.PartCd + "/" + LpaUnfit.PartNm);
-                    iRow++;
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사자");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckUserNm);
+                    //PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "확인공정");
+                    //PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.LpaCheckProcessLibNm);
+                    //iRow++;
+
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "심사일자");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 13], "TD", LpaUnfit.LpaCheckDt == null ? "" : ((DateTime)LpaUnfit.LpaCheckDt).ToString("yyyy-MM-dd"));
+                    //PrintExcelCell(ws.Cells[iRow, 14, iRow, 16], "TH", "설비명");
+                    //PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", LpaUnfit.EquipmentNm);
+                    //iRow++;
+
+                    //PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "품번/품명");
+                    //PrintExcelCell(ws.Cells[iRow, 6, iRow, 24], "TD", LpaUnfit.PartCd + "/" + LpaUnfit.PartNm);
+                    //iRow++;
 
                     int LpaUnfitCheckItemCount = LpaUnfitCheck.Count();
                     if (LpaUnfitCheckItemCount == 0)
