@@ -2594,7 +2594,7 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-        #region -- LPA 점검 변경 
+        #region -- LPA 점검 
         public ActionResult InfoLpaUnfit(int OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
