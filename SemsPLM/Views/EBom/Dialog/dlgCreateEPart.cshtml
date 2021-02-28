@@ -290,8 +290,19 @@
                     dlgCreateEPartName();
                 });
             } else {
+                dlgCreateEPart_ITEM_NO$.jqxComboBox('clearSelection');
+                itemMiddle$.jqxComboBox('clear');
+                placeList$.jqxComboBox('clearSelection');
+                epartType$.jqxComboBox('clearSelection');
+                BlockNo$.jqxComboBox('clear');
+                oem$.jqxComboBox('clearSelection');
+                CarType$.jqxComboBox('clear');
+                psize$.jqxComboBox('clearSelection');
+                Serial$.val('');
+                Srev$.val('');
+
                 Name$.val('');
-                dlgCreateEPart_ITEM_NO$.val('');
+                //dlgCreateEPart_ITEM_NO$.val('');
                 DivisionAssemblyDrawing$.addClass('DivisionAssemblyDrawing');
             }
         });
@@ -318,9 +329,20 @@
                 psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
             } else {
+                dlgCreateEPart_ITEM_NO$.jqxComboBox('clearSelection');
+                itemMiddle$.jqxComboBox('clear');
+                placeList$.jqxComboBox('clearSelection');
+                epartType$.jqxComboBox('clearSelection');
+                BlockNo$.jqxComboBox('clear');
+                oem$.jqxComboBox('clearSelection');
+                CarType$.jqxComboBox('clear');
+                psize$.jqxComboBox('clearSelection');
+                Serial$.val('');
+                Srev$.val('');
+
                 Name$.val('');
-                BlockNo$.val('');
-                dlgCreateEPart_ITEM_NO$.val('');
+                //BlockNo$.val('');
+                //dlgCreateEPart_ITEM_NO$.val('');
                 DivisionSingleDrawing$.addClass('DivisionSingleDrawing');
             }
         });
@@ -357,9 +379,20 @@
                 BlockNo$.jqxComboBox({ source: blockNodapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
 
             } else {
+                dlgCreateEPart_ITEM_NO$.jqxComboBox('clearSelection');
+                itemMiddle$.jqxComboBox('clear');
+                placeList$.jqxComboBox('clearSelection');
+                epartType$.jqxComboBox('clearSelection');
+                BlockNo$.jqxComboBox('clear');
+                oem$.jqxComboBox('clearSelection');
+                CarType$.jqxComboBox('clear');
+                psize$.jqxComboBox('clearSelection');
+                Serial$.val('');
+                Srev$.val('');
+
                 Name$.val('');
-                BlockNo$.val('');
-                dlgCreateEPart_ITEM_NO$.val('');
+                //BlockNo$.val('');
+                //dlgCreateEPart_ITEM_NO$.val('');
                 DivisionStandard$.addClass('DivisionStandard');
             }
         });
@@ -384,7 +417,7 @@
             var idx = evt.args.index;
             var middleList;
             var param = {};
-            param.fromOID = dlgCreateEPart_ITEM_NO$.val();
+            param.FromOID = dlgCreateEPart_ITEM_NO$.val();
             param.Code1 = 'CLASS';
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 itemno = itemList[idx].Code1;

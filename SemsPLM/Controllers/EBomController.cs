@@ -244,6 +244,13 @@ namespace SemsPLM.Controllers
 
                 if(_param.Division != Common.Constant.EBomConstant.DIV_STANDARD)
                 {
+                    int SelRev = SemsUtil.SingleCompare(_param.Sel_Revision);
+                    if (SelRev < 0)
+                    {
+                        DaoFactory.Rollback();
+                        return Json(new ResultJsonModel { isError = true, resultMessage = "고객사 리비전은 숫자 또는 문자만 가능 합니다", resultDescription = "고객사 리비전은 숫자 또는 문자만 가능 합니다" });
+                    }
+
                     var CheckName = _param.Name.Substring(0, (_param.Name.Length - 1));
                     var CheckDiv = CreateEPartChk(new EPart { Name = CheckName, Type = EBomConstant.TYPE_PART, Division = _param.Division });
                     if (CheckDiv == 1)
@@ -322,21 +329,64 @@ namespace SemsPLM.Controllers
         public JsonResult UdtEPartObj(EPart _param)
         {
             int result = 0;
-            DObjectRepository.UdtDObject(Session, _param);
-
-            EPartRepository.UdtEPartObject(_param);
-
-            if (_param.Files != null)
+            try
             {
-                HttpFileRepository.InsertData(Session, _param);
-            }
+                DaoFactory.BeginTransaction();
+                List<EPart> EpartName = EPartRepository.SelEPart(Session, new EPart { Name = _param.Name });
 
-            if (_param.delFiles != null)
-            {
-                _param.delFiles.ForEach(v =>
+                if (EpartName != null && EpartName.Count > 0 && _param.OID != EpartName[0].OID)
                 {
-                    HttpFileRepository.DeleteData(Session, v);
-                });
+                    DaoFactory.Rollback();
+                    return Json(new ResultJsonModel { isError = true, resultMessage = "이미 존재하는 품번 입니다.", resultDescription = "이미 존재하는 품번 입니다." });
+                }
+
+                if (_param.Division != EBomConstant.DIV_STANDARD)
+                {
+                    int SelRev = SemsUtil.SingleCompare(_param.Sel_Revision);
+                    if (SelRev < 0)
+                    {
+                        DaoFactory.Rollback();
+                        return Json(new ResultJsonModel { isError = true, resultMessage = "고객사 리비전은 숫자 또는 문자만 가능 합니다", resultDescription = "고객사 리비전은 숫자 또는 문자만 가능 합니다" });
+                    }
+
+                    List<EPart> Tdmxlist = EPartRepository.SelEPart(Session, new EPart { TdmxOID = _param.TdmxOID });
+                    if (_param.Revision != "00")
+                    {
+                        if (SemsUtil.SingleCompare(Tdmxlist[0].Sel_Revision) > SelRev)
+                        {
+                            DaoFactory.Rollback();
+                            return Json(new ResultJsonModel { isError = true, resultMessage = "이전 고객사 리비전은 사용 할 수 없습니다", resultDescription = "이전 고객사 리비전은 사용 할 수 없습니다" });
+                        }
+                    }
+                }
+
+                DObjectRepository.UdtDObject(Session, _param);
+
+                EPartRepository.UdtEPartObject(_param);
+
+                if(_param.Thumbnail == null || _param.Thumbnail == "")
+                {
+                    DObjectRepository.DelThumbnailDObject(Session, _param);
+                }
+                
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
+                }
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
 
             return Json(result);
@@ -1196,6 +1246,92 @@ namespace SemsPLM.Controllers
                 RootData.Name = SelRev + RootData.Sel_Revision;
             }
             return Json(RootData);
+        }
+        #endregion
+
+        #region CopyToBom
+        public JsonResult CopyToBom(EPart _param)
+        {
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                List<EBOM> SelOldEBom = DaoFactory.GetList<EBOM>("EBom.SelEBom", new EBOM { FromOID = _param.OldOID });
+
+                SelOldEBom.ForEach(v =>
+                {
+                    v.FromOID = _param.OID;
+                    EBomRepository.AddAction(Session, v);
+                });
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+            return Json(0);
+        }
+        #endregion
+
+
+        #region 하위에 붙을때 구조상 재귀 오류가 있을 수 있는 품번 체크
+        public JsonResult CheckRecursionError(EBOM _param)
+        {
+            var result = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                //OID로 부모 OID 전부 찾기
+                //SelAllParentStructure
+                EBOM Parent = new EBOM();
+                EBOM Child = new EBOM();
+
+
+                List<EBOM> SelAllParentStructure = DaoFactory.GetList<EBOM>("EBom.SelAllParentStructure", new EBOM { ToOID = _param.FromOID });
+                Parent.FromOID = _param.FromOID;
+                SelAllParentStructure.Add(Parent);
+
+                List<EPart> ParentData = new List<EPart>();
+                List<EPart> ChildData = new List<EPart>();
+
+                SelAllParentStructure.ForEach(v =>
+                {
+                    ParentData.Add(EPartRepository.SelEPartObject(Session, new EPart { OID = v.FromOID }));
+                });
+
+
+                //OID로 자식 OID 전부 찾기
+                //SelRootChildEBomList
+                List<EBOM> SelRootChildEBomList = DaoFactory.GetList<EBOM>("EBom.SelRootChildEBomList", new EBOM { FromOID = _param.ToOID });
+                Child.FromOID = _param.ToOID;
+                SelRootChildEBomList.Add(Child);
+
+                SelRootChildEBomList.ForEach(v => {
+                    ChildData.Add(EPartRepository.SelEPartObject(Session, new EPart { OID = v.FromOID }));
+                });
+
+                ChildData.ForEach(item => {
+                    if (ParentData.FindAll(v => v.TdmxOID == item.TdmxOID).Count > 0)
+                    {
+                        result = 1;
+                        return;
+                    }
+                });
+
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+
+            return Json(result);
         }
         #endregion
 

@@ -200,5 +200,16 @@ namespace Common.Models
             return result;
         }
 
+        public static int DelThumbnailDObject(HttpSessionStateBase Context, DObject _param)
+        {
+            int result = -1;
+            _param.ModifyUs = Convert.ToInt32(Context["UserOID"]);
+            if (_param.OID != null && _param.OID > 0)
+            {
+                result = DaoFactory.SetUpdate("Comm.DelThumbnailDObject", _param);
+            }
+            return result;
+        }
+
     }
 }

@@ -670,9 +670,9 @@
         <isNotNull prepend="," property="IssueType">
           IssueType = #IssueType#
         </isNotNull>
-        <isNotEmpty prepend="," property="Contents">
+        <isNotNull prepend="," property="Contents">
           Contents = #Contents#
-        </isNotEmpty>
+        </isNotNull>
         <isNotNull prepend="," property="FinDt">
           FinDt = #FinDt#
         </isNotNull>

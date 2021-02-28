@@ -7,6 +7,7 @@
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
             <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="Revhis"><i class="fas fa-stream"></i> 개정이력</li>
         </ul>
     </div>
     <div class="doc_content">
@@ -42,13 +43,15 @@
                                 <button id="InfoDocument_SaveBtn_@ViewBag.docDetail.OID" class="custom-button ModifiableEditCustomBox_@ViewBag.docDetail.OID"><i class="fas fa-save"></i> 저장</button>
                                 <button id="InfoDocument_CancelBtn_@ViewBag.docDetail.OID" class="custom-button ModifiableEditCustomBox_@ViewBag.docDetail.OID"><i class="fas fa-save"></i> 취소</button>
                             }
-
                             @if (((List<Common.Models.BPolicyAuth>)ViewBag.docDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_PROMOTE) > -1)
                             {
                                 <button id="InfoDocument_ApprovalBtn_@ViewBag.docDetail.OID" class="custom-button ModifiableCustomBox_@ViewBag.docDetail.OID"><i class="fas fa-pen-alt"></i> 결재</button>
                             }
                             @*<button id="InfoDocument_AppDrwEditBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-highlighter"></i>문서 정정</button>*@
-
+                            @if (ViewBag.docDetail.BPolicy.Name == Common.Constant.DocumentConstant.POLICY_DOCUMENT_COMPLETED && ViewBag.RevFlag == Common.Constant.CommonConstant.ACTION_YES)
+                            {
+                                <button id="InfoDocument_RevBtn_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 개정</button>
+                            }
                         </td>
                     </tr>
                 </tbody>
@@ -67,12 +70,12 @@
                         <th class="reqVal">문서 구분</th>
                         <td colspan="5" style="position:relative;">
                             <input type="hidden" readonly="readonly" id="InfoDocument_DocTypeOID_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType" />
-                            <input type="text" readonly="readonly" id="InfoDocument_DocTypeName_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType_KorNm" style="width:300px;"/>
+                            <input type="text" readonly="readonly" id="InfoDocument_DocTypeName_@ViewBag.docDetail.OID" value="@ViewBag.docDetail.DocType_KorNm" style="width:300px;" />
                             <div class="ModifiableEditCustomBox_@ViewBag.docDetail.OID" style="position:absolute;left:325px;top:3px;">
                                 <button id="InfoDocument_selDocClass_@ViewBag.docDetail.OID" class="custom-button"><i class="fas fa-plus-square"></i> 문서분류체계 선택</button>
                             </div>
                         </td>
-                        
+
                     </tr>
                     <tr id="dynamicTr_@ViewBag.docDetail.OID" hidden="hidden">
                     </tr>
@@ -113,7 +116,10 @@
             <div id="ApphisInfo_@ViewBag.docDetail.OID">
             </div>
         </div>
-
+        <div id="Revhis" class="basic_grid dective">
+            <div id="RevhisInfo_@ViewBag.docDetail.OID">
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -153,6 +159,52 @@
             $('.ModifiableEditCustomBox_@ViewBag.docDetail.OID').attr('hidden', false);
             $('.ModifiableCustomBox_@ViewBag.docDetail.OID').attr('hidden', true);
             InFoDocFiles.EditMode();
+        });
+        $('#InfoDocument_RevBtn_@ViewBag.docDetail.OID').on('click', function () {
+            if (confirm('개정 하시겠습니까?')) {
+                RequestData('/Document/RevDocument', { OID: DocOID }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+
+                    alert("개정되었습니다.");
+                    PageReload();
+                    const linkUrl = '/Document/InfoDocument?OID=' + response;
+                    if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                        var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                        $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                        return;
+                    }
+                    const loading$ = $('#loading');
+                    const tabContent$ = $('#tabContent');
+                    loading$.css('display', 'block');
+                    var linkName = '@ViewBag.docDetail.Name';
+                    tabContent$.jqxTabs('addLast', linkName, "");
+                    var tabLength = tabContent$.jqxTabs('length');
+                    $.ajax({
+                        url: linkUrl,
+                        type: 'get',
+                        dataType: 'html',
+                        async: true,
+                        success: function (resHtml) {
+                            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                            $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                        }, error: function (res) {
+                            if (res.status === 404) {
+                                alert("현재 개발중인 화면입니다.");
+                                return false;
+                            }
+                            alert(res.responseText);
+                            console.log(res);
+                        }
+                        , complete: function () {
+                            loading$.css('display', 'none');
+                        }
+                    });
+
+                });
+            }
         });
         $('#InfoDocument_CancelBtn_@ViewBag.docDetail.OID').on('click', function () {
             PageReload();
@@ -211,7 +263,79 @@
                 RequestHtml('/Common/ApprovalHistory', { OID: DocOID }, function (res) {
                     $('#ApphisInfo_' + DocOID).html(res);
                 });
-            } 
+            } else if (infoValue == 'Revhis') {
+
+                var RevhisDocSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'DocType' },
+                        { name: 'DocType_KorNm' },
+                        { name: 'Name' },
+                        { name: 'BPolicy' },
+                        { name: 'BPolicyOID' },
+                        { name: 'Title' },
+                        { name: 'Revision' },
+                        { name: 'Eo_No' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'CreateUs' },
+                        { name: 'CreateUsNm' },
+                        { name: 'Description' },
+                    ],
+                }
+
+                const RevhisDocGrd$ = $('#RevhisInfo_@ViewBag.docDetail.OID');
+                RevhisDocGrd$.jqxGrid('pagerrenderer');
+                RevhisDocGrd$.jqxGrid({
+                    theme: "kdnc",
+                    width: "100%",
+                    height: 675,
+                    rowsheight: 28,
+                    columnsheight: 30,
+                    //source: ProjectSource,
+                    sortable: false,
+                    pageable: true,
+                    columns: [
+                        {
+                            text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                            }
+                        },
+                        { text: '문서 분류', datafield: 'DocType_KorNm', width: "20%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '제목', datafield: 'Title', width: "29%", align: 'center', cellsalign: 'center', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                               var getrowdata = RevhisDocGrd$.jqxGrid('getrowdata', row);
+                                console.log(getrowdata);
+                                var vText = cellValue;
+                                return '<div style="margin-top:6.5px;text-align:center;">' + vText + ' <a href="#" onclick="EPartNewTabClick(\'/Document/InfoDocument\', ' + getrowdata.OID + ', \'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a></div>';
+                            }
+                        },
+
+                        { text: '문서번호', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                        { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                        { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center' },
+                        { text: '작성일', datafield: 'CreateDt', width: "12%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+                    ],
+                    showtoolbar: true,
+                    toolbarheight: 45,
+                  //  pagerrenderer: function () {
+
+                  //  }
+                });
+                RequestData("/Document/SelDoc", { 'TdmxOID': '@ViewBag.docDetail.TdmxOID' }, function (res) {
+                    PrintJqxGrid(RevhisDocSource, RevhisDocGrd$, res);
+                    console.log(123);
+                });
+            }
+
         });
 
 

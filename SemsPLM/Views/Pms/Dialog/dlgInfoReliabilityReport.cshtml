@@ -20,7 +20,7 @@
         <tbody>
             <tr>
                 <th colspan="10" style="text-align:right;font-weight:normal;">
-                    @if((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
+                    @if((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
                     
                     {
                         <button id='dlgEditBtn' class='custom-button'><i class='fas fa-check-circle'></i> 수정</button>
@@ -136,6 +136,7 @@
     var NG$ = $('#NGNum');
 
     $(function () {
+        var dlgRelEditCheck = "F";
         var startDt = '@Html.Raw((ViewBag.Detail.TotalTestStartDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestStartDt) : ""))';
         var endDt = '@Html.Raw((ViewBag.Detail.TotalTestEndDt != null ? string.Format("{0:yyyy-MM-dd}", ViewBag.Detail.TotalTestEndDt) : ""))';
         $('.ModifiableEditCustomBox').attr('hidden', true);
@@ -170,6 +171,8 @@
             $('.Modifiable').parent().append(modifyTag);
 
             ReportTestItemListGrid$.jqxGrid({ editable: true });
+
+            dlgRelEditCheck = "T";
 
             dlgEditBtn$.prop('hidden', 'hidden');
             dlgSaveBtn$.removeAttr('hidden');

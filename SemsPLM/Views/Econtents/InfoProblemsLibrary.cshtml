@@ -8,15 +8,13 @@
         <ul>
             <li class="tab info_focus" info="properties"><i class="fas fa-info-circle"></i> 기본 정보</li>
             <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
-            <li class="tab" info="Downhis"><i class="fas fa-users"></i> 다운로드 이력</li>
         </ul>
     </div>
     <div class="project_content">
 
         <div class="project_basic clearfix">
             <div class="basic_info">
-                <h3>@Model.Name</h3>
-                @*<p>품명 : <span>@ViewBag.ECRDetail.Title</span></p>*@
+                <h3>@ViewBag.ProblemsLibraryDetail.Name</h3>
             </div>
             <div class="basic_image">
                 <div class="image_inputbox">이미지<!--이미지 드래그 영역--></div>
@@ -51,94 +49,132 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="scrollY" style="height:624px;">
+                    <table class="infoTable">
+                        <tr>
+                            <th>고객사</th>
+                            <td>
+                                <input class="ModifiableCustomBox_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.OEM_Lib_Nm" readonly="readonly"/>
+                                <div id="InfoProblemsOem_@ViewBag.OID" class="ModifiableEditCustomBox_@ViewBag.OID"></div>
+                            </td>
+                            <th>차종</th>
+                            <td>
+                                <input class="ModifiableCustomBox_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Car_Lib_Nm" readonly="readonly"/>
+                                <div id="InfoProblemsCar_@ViewBag.OID" class="ModifiableEditCustomBox_@ViewBag.OID"></div>
+                            </td>
+                            <th>제품</th>
+                            <td><input id="InfoProblemProduct" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Product" readonly="readonly" /></td>
+                            <th>부품</th>
+                            <td><input id="InfoProblemPart" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Part" readonly="readonly" /></td>
+                        </tr>
+                        <tr>
+                            <th>발생처</th>
+                            <td><input id="InfoProblemOccurrence" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Occurrence" readonly="readonly" /></td>
+                            <th>발생단계</th>
+                            <td><input id="InfoProblemStage_Occurrence" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Stage_Occurrence" readonly="readonly" /></td>
+                            <th>고장유형</th>
+                            <td><input id="InfoProblemFailure_Type" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Failure_Type" readonly="readonly" /></td>
+                            <th>구분</th>
+                            <td><input id="InfoProblemDivision" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Division" readonly="readonly" /></td>
+                        </tr>
+                        <tr>
+                            <th>기타</th>
+                            <td colspan="5"><input id="InfoProblemDescription" class="Modifiable_@ViewBag.OID" type="text" value="@ViewBag.ProblemsLibraryDetail.Description" readonly="readonly" /></td>
+                            <th>리비전</th>
+                            <td>@ViewBag.ProblemsLibraryDetail.Revision</td>
+                        </tr>
+                        <tr>
+                            <th>Issues(문제점)</th>
+                            <td colspan="3">
+                                <div class="problemsLibraryDetailBox" style="width:100%;">
+                                    <textarea id="InfoProblemIssues" class="Modifiable_@ViewBag.OID" readonly="readonly">@ViewBag.ProblemsLibraryDetail.Issues</textarea>
+                                    <div class="ModifiableCustomBox_@ViewBag.OID">
+                                        @if (ViewBag.ProblemsLibraryDetail.Issues_Thumbnail != null)
+                                        {
+                                            <img src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Issues_Thumbnail" />
+                                        }
+                                    </div>
+                                    <div class="ModifiableEditCustomBox_@ViewBag.OID">
+                                        <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
+                                        <div class="image_inputbox floatL" id="IssuesDropZone">이미지@*이미지 드래그 영역*@</div>
+                                        <ul class="image_thumbnail floatL" id="IssuesUploadResult">
+                                            @*이미지 썸네일 영역*@
+                                            @if (ViewBag.ProblemsLibraryDetail.Issues_Thumbnail != null)
+                                            {
+                                                <li>
+                                                    <img class="modelthumbnail" src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Issues_Thumbnail" />
+                                                    <i id="CloseIssuesThumn" class="fas fa-window-close"></i>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
 
-                <table class="infoTable">
-                    <tr>
-                        <th>고객사</th>
-                        <td>@Model.Car_Lib_OID</td>
-                        <th>차종</th>
-                        <td>@Model.Car_Lib_OID</td>
-                        <th>제품</th>
-                        <td>@Model.Product</td>
-                        <th>부품</th>
-                        <td>@Model.Part</td>
-                    </tr>
-                    <tr>
-                        <th>발생처</th>
-                        <td>@Model.Occurrence</td>
-                        <th>발생단계</th>
-                        <td>@Model.Stage_Occurrence</td>
-                        <th>고장유형</th>
-                        <td>@Model.Failure_Type</td>
-                        <th>구분</th>
-                        <td>@Model.Division</td>
-                    </tr>
-                    <tr>
-                        <th>기타</th>
-                        <td colspan="5">@Model.Description</td>
-                        <th>Revision</th>
-                        <td>@Model.Revision</td>
-                    </tr>
-                    <tr>
-                        <th>첨부파일</th>
-                        <td colspan="7"></td>
-                    </tr>
-                    <tr>
-                        <th>Issues(문제점)</th>
-                        <td colspan="3">
-                            <div class="problemsLibraryDetailBox" style="width:100%;">
-                                <textarea id="CreateProblemIssues" style="width:55% !important;" readonly="readonly">@Model.Issues</textarea>
-                                @if (@Model.Issues_Thumbnail != null)
-                                {
-                                    <img src="~/images/Thumbnail/@Model.Issues_Thumbnail" />
-                                }
-                                @*
-        <div>
-            <input type="file" name="file" multiple="true" id="IssuesImageDrag" style="display:none;">
-            <div class="image_inputbox floatL" id="IssuesDropZone">이미지<!--이미지 드래그 영역--></div>
-            <ul class="image_thumbnail floatL" id="IssuesUploadResult"><!--이미지 썸네일 영역--></ul>
-        </div>
-                                *@
-                            </div>
-                        </td>
-                        <th>Cause(원인)</th>
-                        <td colspan="3">
-                            <div class="problemsLibraryDetailBox" style="width:100%;">
-                                <textarea id="CreateProblemCause" style="width:55% !important;" readonly="readonly">@Model.Cause</textarea>
-                                @if (@Model.Cause_Thumbnail != null)
-                                {
-                                    <img src="~/images/Thumbnail/@Model.Cause_Thumbnail" />
-                                }
-                                @*
-            <div>
-                <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
-                <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
-                <ul class="image_thumbnail floatL" id="CauseUploadResult"><!--이미지 썸네일 영역--></ul>
-            </div>
-                                *@
-                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Countermeasures<br />(대책)</th>
-                        <td colspan="7">
-                            <div class="problemsLibraryDetailBox" style="width:100%;">
-                                <textarea id="CreateProblemCountermeasures" readonly="readonly">@Model.Countermeasures</textarea>
-                                @if (@Model.Countermeasures_Thumbnail != null)
-                                {
-                                    <img src="~/images/Thumbnail/@Model.Countermeasures_Thumbnail" />
-                                }
-                                @*
-        <div>
-            <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
-            <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지<!--이미지 드래그 영역--></div>
-            <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult"><!--이미지 썸네일 영역--></ul>
-        </div>
-                                *@
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+                                </div>
+                            </td>
+                            <th>Cause(원인)</th>
+                            <td colspan="3">
+                                <div class="problemsLibraryDetailBox" style="width:100%;">
+                                    <textarea id="InfoProblemCause" class="Modifiable_@ViewBag.OID" readonly="readonly">@ViewBag.ProblemsLibraryDetail.Cause</textarea>
+                                    <div class="ModifiableCustomBox_@ViewBag.OID">
+                                        @if (ViewBag.ProblemsLibraryDetail.Cause_Thumbnail != null)
+                                        {
+                                            <img src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Cause_Thumbnail" />
+                                        }
+                                    </div>
+                                    <div class="ModifiableEditCustomBox_@ViewBag.OID">
+                                        <input type="file" name="file" multiple="true" id="CauseImageDrag" style="display:none;">
+                                        <div class="image_inputbox floatL" id="CauseDropZone">이미지<!--이미지 드래그 영역--></div>
+                                        <ul class="image_thumbnail floatL" id="CauseUploadResult">
+                                            <!--이미지 썸네일 영역-->
+                                            @if (ViewBag.ProblemsLibraryDetail.Cause_Thumbnail != null)
+                                            {
+                                                <li>
+                                                    <img class="modelthumbnail" src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Cause_Thumbnail" />
+                                                    <i id="CloseCauseThumn" class="fas fa-window-close"></i>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Countermeasures<br />(대책)</th>
+                            <td colspan="7">
+                                <div class="problemsLibraryDetailBox" style="width:100%;">
+                                    <textarea id="InfoProblemCountermeasures" class="Modifiable_@ViewBag.OID" readonly="readonly">@ViewBag.ProblemsLibraryDetail.Countermeasures</textarea>
+                                    <div class="ModifiableCustomBox_@ViewBag.OID">
+                                        @if (ViewBag.ProblemsLibraryDetail.Countermeasures_Thumbnail != null)
+                                        {
+                                            <img src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Countermeasures_Thumbnail" />
+                                        }
+                                    </div>
+                                    <div class="ModifiableEditCustomBox_@ViewBag.OID">
+                                        <input type="file" name="file" multiple="true" id="CountermeasuresImageDrag" style="display:none;">
+                                        <div class="image_inputbox floatL" id="CountermeasuresDropZone">이미지@*이미지 드래그 영역*@</div>
+                                        <ul class="image_thumbnail floatL" id="CountermeasuresUploadResult">
+                                            @*이미지 썸네일 영역*@
+                                            @if (ViewBag.ProblemsLibraryDetail.Countermeasures_Thumbnail != null)
+                                            {
+                                                <li>
+                                                    <img class="modelthumbnail" src="~/images/Thumbnail/@ViewBag.ProblemsLibraryDetail.Countermeasures_Thumbnail" />
+                                                    <i id="CloseCountermeasuresThumn" class="fas fa-window-close"></i>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>첨부파일</th>
+                            <td colspan="7"><div id="InfoProblemsFile_@ViewBag.OID" style="width:100%"></div></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -147,10 +183,6 @@
             </div>
         </div>
 
-        <div id="Downhis" class="basic_grid dective">
-            <div id="DownhisInfo_@ViewBag.OID">
-            </div>
-        </div>
     </div>
 </div>
 
@@ -159,11 +191,23 @@
 <script>
 
     $(function () {
+        var InfoProblemLibIssues = "@ViewBag.ProblemsLibraryDetail.Issues_Thumbnail";
+        var InfoProblemLibCause = "@ViewBag.ProblemsLibraryDetail.Cause_Thumbnail";
+        var InfoProblemLibCountermeasures = "@ViewBag.ProblemsLibraryDetail.Countermeasures_Thumbnail";
+
         var ProblemsLibraryOID = @ViewBag.OID;
+        var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+
+        var InfoProblemsOem$ = $('#InfoProblemsOem_' + ProblemsLibraryOID);
+        var InfoProblemsCar$ = $('#InfoProblemsCar_' + ProblemsLibraryOID);
+
         const DocDiv$ = $('#InfoProblemsLibrary_' + ProblemsLibraryOID);
         const headerStatus = $('#InfoProblemsLibrary_' + ProblemsLibraryOID + ' .pointer_wrap .pointer');
         const current = @ViewBag.ProblemsLibraryDetail.BPolicyOID;
 
+        var InfoFiles = $('#InfoProblemsFile_@ViewBag.OID').FileUpload({ OID : '@ViewBag.OID'});
+
+        $('.ModifiableEditCustomBox_' + ProblemsLibraryOID).attr('hidden', true);
 
         if (headerStatus != null && headerStatus.length > 0) {
             headerStatus.removeClass('pointer_focus');
@@ -181,6 +225,55 @@
             }, null, { TargetOID: ProblemsLibraryOID }, '/Common/Approval', '결재');
         });
 
+        $('#EditCancelBtn_@ViewBag.OID').on('click', function () {
+            PageReload();
+        });
+
+        var oemSource =
+        {
+            localdata: oemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        InfoProblemsOem$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 170, height: 32 });
+
+        InfoProblemsOem$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = InfoProblemsOem$.val();
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                var carSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                            { name: 'Code2', type: 'string' },
+                        ]
+                };
+                var caradapter = new $.jqx.dataAdapter(carSource);
+                InfoProblemsCar$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID", width: 170, height: 32 });
+                InfoProblemsCar$.jqxComboBox('selectItem', "@ViewBag.ProblemsLibraryDetail.Car_Lib_OID");
+
+            });
+        });
+
+        InfoProblemsOem$.jqxComboBox('selectItem', "@ViewBag.ProblemsLibraryDetail.OEM_Lib_OID");
+
+        $('#EditSaveBtn_@ViewBag.OID').attr('hidden', true);
+        $('#EditCancelBtn_@ViewBag.OID').attr('hidden', true);
+
         $('#InfoProblemsLibrary_' + ProblemsLibraryOID + ' .tab').on('click', function () {
             const self$ = $(this);
             const infoValue = self$.attr('info');
@@ -191,11 +284,190 @@
             DocDiv$.find('[id="' + infoValue + '"]').removeClass('dective');
 
             if (infoValue == 'properties') {
+                $('#EditBtn_@ViewBag.OID').on('click', function () {
+
+                    var modifyTag = document.createElement('div');
+                    modifyTag.className = "modifyTag";
+
+                    $('.Modifiable_@ViewBag.OID').removeAttr('readonly');
+                    $('.ModifiableCustomBox_@ViewBag.OID').attr('hidden', true);
+                    $('.ModifiableEditCustomBox_@ViewBag.OID').attr('hidden', false);
+
+                    $('.Modifiable_@ViewBag.OID').parent().css('position', 'relative');
+                    $('.ModifiableEditCustomBox_@ViewBag.OID').parent().css('position', 'relative');
+
+                    $('.Modifiable_@ViewBag.OID').parent().append(modifyTag);
+                    $('.ModifiableEditCustomBox_@ViewBag.OID').parent().append(modifyTag);
+
+                    
+                    $('#EditApprovalBtn_@ViewBag.OID').attr('hidden', true);
+                    $('#EditBtn_@ViewBag.OID').attr('hidden', true);
+                    $('#EditSaveBtn_@ViewBag.OID').attr('hidden', false);
+                    $('#EditCancelBtn_@ViewBag.OID').attr('hidden', false);
+
+                    InfoFiles.EditMode();
+
+
+                    $('#EditSaveBtn_@ViewBag.OID').on('click', function () {
+                        var param = {};
+                        var Issues_Thumbnail          = InfoProblemLibIssues;
+                        var Cause_Thumbnail           = InfoProblemLibCause;
+                        var Countermeasures_Thumbnail = InfoProblemLibCountermeasures;
+
+                        param.OID = ProblemsLibraryOID;
+                        param.OEM_Lib_OID = InfoProblemsOem$.val(); //차종
+                        param.Car_Lib_OID = InfoProblemsCar$.val(); //차종
+                        param.Product = $('#InfoProblemProduct').val(); //제품
+                        param.Part = $('#InfoProblemPart').val(); //부품
+                        param.Occurrence = $('#InfoProblemOccurrence').val(); //발생처
+                        param.Stage_Occurrence = $('#InfoProblemStage_Occurrence').val(); //발생단계
+                        param.Failure_Type = $('#InfoProblemFailure_Type').val(); //고장유형
+                        param.Division = $('#InfoProblemDivision').val(); //구분
+                        param.Issues = $('#InfoProblemIssues').val();
+                        param.Issues_Thumbnail = Issues_Thumbnail;
+                        param.Cause = $('#InfoProblemCause').val();
+                        param.Cause_Thumbnail = Cause_Thumbnail;
+                        param.Countermeasures = $('#InfoProblemCountermeasures').val();
+                        param.Countermeasures_Thumbnail = Countermeasures_Thumbnail;
+                        param.Description = $('#InfoProblemDescription').val(); //기타
+
+                        var Files = InfoFiles.Files();
+
+                        var removeFiles = InfoFiles.RemoveFiles();
+                        if (!WebUtils.isEmpty(removeFiles)) {
+                            param.delFiles = [];
+                            param.delFiles = removeFiles;
+                        }
+                        param.Files = Files;
+
+                        SendDataWithFile('/Econtents/UdtProblemsLibrary', param, null, function (response) {
+                            if (response.isError) {
+                                alert(response.resultMessage);
+                                return;
+                            }
+                            alert("저장되었습니다.");
+                            PageReload();
+
+                        });
+                    });
+
+                });
+
+
+
             } else if (infoValue == 'Apphis') {
-                RequestHtml('/Common/ApprovalHistory', { OID: EPartOID }, function (res) {
-                    $('#ApphisInfo_' + EPartOID).html(res);
+                RequestHtml('/Common/ApprovalHistory', { OID: ProblemsLibraryOID }, function (res) {
+                    $('#ApphisInfo_' + ProblemsLibraryOID).html(res);
                 });
             }
+        });
+
+        $('.info_focus').click();
+
+
+        $("#CloseIssuesThumn").on('click', function () {
+            InfoProblemLibIssues = null;
+            $(this).parent('li').remove();
+        });
+
+        $("#CloseCauseThumn").on('click', function () {
+            InfoProblemLibCause = null;
+            $(this).parent('li').remove();
+        });
+
+        $("#CloseCountermeasuresThumn").on('click', function () {
+            InfoProblemLibCountermeasures = null;
+            $(this).parent('li').remove();
+        });
+
+        $('#IssuesImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#IssuesDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#IssuesUploadResult').empty();
+            $('#IssuesUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            InfoProblemLibIssues = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+        $('#CauseImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#CauseDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#CauseUploadResult').empty();
+            $('#CauseUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            InfoProblemLibCause = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
+        });
+
+        $('#CountermeasuresImageDrag').simpleUpload({
+            url: '/Common/ImgUploadFile',
+            //params: { OID: null },
+            method: 'post',
+            maxFileNum: 1,
+            maxFileSize: 1000000,
+            allowedMimeType: ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'],
+            dropZone: '#CountermeasuresDropZone',
+        }).on('upload:over', function (e, files) {
+            alert('Number of files is over');
+        }).on('upload:invalid', function (e, files) {
+            for (var i = 0; i < files.length; i++) {
+                alert('Invalid ' + files[i].reason + ': ' + files[i].name);
+            }
+        }).on('upload:done', function (e, file, index, data, xhr) {
+            $('#CountermeasuresUploadResult').empty();
+            $('#CountermeasuresUploadResult').append('<li>' + '<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + data + '" />' + '<i class="fas fa-window-close"></i></li>');
+            InfoProblemLibCountermeasures = data;
+            $('.img-thumbnail').on('click', function () {
+                $(this).addClass('showbigimage');
+                return false;
+            });
+            $(window).click(function () {
+                $('.img-thumbnail').removeClass('showbigimage');
+            });
+            $('.img-thumbnail').next().on('click', function () {
+                $(this).parent('li').remove();
+            });
         });
     });
 </script>

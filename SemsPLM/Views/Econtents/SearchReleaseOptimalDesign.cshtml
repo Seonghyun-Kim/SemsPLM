@@ -1,0 +1,216 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div style="width:100%; margin-right:20px;">
+    <!--검색창-->
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;최적설계 반영서 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchReleaseOptimalDesignOem" class="dlgSearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="SearchReleaseOptimalDesignCar" class="searchEcontentsComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">작성일</div>
+                <div>
+                    <div id="SearchReleaseOptimalDesignCreateDt" class="searchEpartComboBox"></div>
+                </div>
+            </div><div class="searchButton">
+                <button id="" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="SearchOptimalDesignGrid"></div>
+<script type="text/javascript">
+    $(function () {
+        var SearchReleaseOptimalDesignOemLib$ = $('#SearchReleaseOptimalDesignOem');
+        var SearchReleaseOptimalDesignOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var SearchReleaseOptimalDesignCarLib$ = $('#SearchReleaseOptimalDesignCar');
+        var oemSource =
+        {
+            localdata: SearchReleaseOptimalDesignOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchReleaseOptimalDesignOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250 ,height: 32 });
+        SearchReleaseOptimalDesignCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchReleaseOptimalDesignOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchReleaseOptimalDesignOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchReleaseOptimalDesignCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
+        $('#SearchReleaseOptimalDesignCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+
+        var SearchReleaseOptimalDesignSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'Description' },
+
+                { name: 'Car_Lib_OID' },
+                { name: 'Car_Lib_Nm' },
+
+                { name: 'Title' },
+
+                { name: 'ReflectedNum' },
+                { name: 'NotReflectedNum' },
+                { name: 'Product' },
+                { name: 'Division' },
+            ],
+        }
+
+        const SearchReleaseOptimalDesignGrid$ = $('#SearchReleaseOptimalDesignGrid');
+        SearchReleaseOptimalDesignGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 675,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '제품', datafield: 'Product', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'Division', width: "15%", align: 'center', cellsalign: 'center', },
+                //{ text: '반영단계', datafield: 'Title', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '반영(건)', datafield: 'ReflectedNum', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '미반영(건)', datafield: 'NotReflectedNum', width: "8%", align: 'center', cellsalign: 'center', },
+                //{ text: '합계(건)', datafield: 'Eo_No', width: "8%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "9%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', }
+            ],
+            showtoolbar: true,
+            toolbarheight: 45,
+            rendertoolbar: function (toolBar) {
+                var container = $("<div class='lGridComponent' ></div>");
+                var CreateButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 최적설계 반영서 작성</button>").jqxButton();
+                container.append(CreateButton);
+                toolBar.append(container);
+
+                CreateButton.click(function (event) {
+                    const CreatelinkUrl = '/Econtents/CreateOptimalDesign';
+                    if ($("div[tabUrl='" + CreatelinkUrl + "']").length > 0) {
+                        var tabDiv = $("div[tabUrl='" + CreatelinkUrl + "']")[0].parentNode;
+                        $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                        return;
+                    }
+                    const loading$ = $('#loading');
+                    const tabContent$ = $('#tabContent');
+                    loading$.css('display', 'block');
+                    var linkName = "최적설계 반영서 등록";
+                    tabContent$.jqxTabs('addLast', linkName, "");
+                    var tabLength = tabContent$.jqxTabs('length');
+                    $.ajax({
+                        url: CreatelinkUrl,
+                        type: 'get',
+                        dataType: 'html',
+                        async: true,
+                        success: function (resHtml) {
+                            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                            $(content).html("<div class='wrapPage' tabUrl='" + CreatelinkUrl + "'>" + resHtml + "</div>");
+                        }, error: function (res) {
+                            if (res.status === 404) {
+                                alert("현재 개발중인 화면입니다.");
+                                return false;
+                            }
+                            alert(res.responseText);
+                        }
+                        , complete: function () {
+                            loading$.css('display', 'none');
+                        }
+                    });
+                });
+            }
+        });
+
+        SearchReleaseOptimalDesignGrid$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Econtents/InfoOptimalDesign?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        getSearchReleaseOptimalDesignList(SearchReleaseOptimalDesignSource, SearchReleaseOptimalDesignGrid$, {});
+    });
+    function getSearchReleaseOptimalDesignList(_Source, _Grid$, param) {
+        RequestData("/Econtents/SelOptimalDesign", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

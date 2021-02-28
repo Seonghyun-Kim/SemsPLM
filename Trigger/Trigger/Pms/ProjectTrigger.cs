@@ -253,6 +253,55 @@ namespace Pms.Trigger
             }
             return "";
         }
-        
+
+        public string ActionAutoCompleteProjectPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iUser = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
+            try
+            {
+                DObject tmpDobj = DObjectRepository.SelDObject(Context, new DObject { OID = Convert.ToInt32(oid) });
+                string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = tmpDobj.Type, OID = tmpDobj.BPolicyOID }).First().NextActionOID;
+                List<PmsRelationship> lWbs = PmsRelationshipRepository.GetProjWbsTypeOidList(Context, oid).FindAll(wbs => wbs.ObjStNm != null && !wbs.ObjStNm.Equals(PmsConstant.POLICY_PROJECT_COMPLETED));
+                if (lWbs.Count < 1)
+                {
+                    string strActionOID = "";
+                    if (strNextAction != null && strNextAction.Length > 0)
+                    {
+                        strNextAction.Split(',').ToList().ForEach(item =>
+                        {
+                            if (item.IndexOf(CommonConstant.ACTION_NON_AUTO) > -1)
+                            {
+                                strActionOID = item.Substring(item.IndexOf(":") + 1);
+                                return;
+                            }
+                        });
+                        DObjectRepository.UdtDObject(Context, new DObject { OID = Convert.ToInt32(oid), BPolicyOID = Convert.ToInt32(strActionOID) });
+                        PmsProject proj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = Convert.ToInt32(oid) });
+                        List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
+                        PmsProjectRepository.UdtPmsProject(Context,
+                        new PmsProject
+                        {
+                            OID = proj.OID,
+                            ActEndDt = DateTime.Now,
+                            ActDuration = PmsUtils.CalculateGapFutureDuration(Convert.ToDateTime(Convert.ToDateTime(proj.ActStartDt).ToString("yyyy-MM-dd")), Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), Convert.ToInt32(proj.WorkingDay), lHoliday),
+                            Complete = 100,
+                        });
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
+
     }
 }

@@ -53,10 +53,10 @@
                     <div id="SearchReleaseEPartCar" class="searchEpartComboBox"></div>
                 </div>
             </div>
-            <div class="searchData">
+            @*<div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div><div id="SearchReleaseEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
-            </div>
+            </div>*@
             <div class="searchButton">
                 <button id="SearchReleaseEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
@@ -152,7 +152,7 @@
         $('#SearchReleaseEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: false });
         $('#SearchReleaseEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
         $('#SearchReleaseEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#SearchReleaseEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+        //$('#SearchReleaseEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchReleaseEPartSource = {
             datatype: 'json',
@@ -317,8 +317,8 @@
 
 
         $('#SearchReleaseEPartbtn').on('click', function () {
-            var SearchReleaseEPartCreateDt = $('#SearchReleaseEPartCreateDt').val();
-            var SearchReleaseEPartCreateDtArray = SearchReleaseEPartCreateDt.split('-');
+            //var SearchReleaseEPartCreateDt = $('#SearchReleaseEPartCreateDt').val();
+            //var SearchReleaseEPartCreateDtArray = SearchReleaseEPartCreateDt.split('-');
 
             param = {};
             param.Name =        $('#SearchReleaseEPartName').val();
@@ -326,8 +326,8 @@
             param.Division      = SearchDivision;
             param.Car_Lib_OID   = SearchReleaseEPartCarLib$.val();
             param.ITEM_No       = SearchReleaseEPartItemLib$.val();
-            param.StartCreateDt = SearchReleaseEPartCreateDtArray[0];
-            param.EndCreateDt   = SearchReleaseEPartCreateDtArray[1] + " 23:59:59";
+            //param.StartCreateDt = SearchReleaseEPartCreateDtArray[0];
+            //param.EndCreateDt   = SearchReleaseEPartCreateDtArray[1] + " 23:59:59";
 
             param.ITEM_Middle   = SearchReleaseEPartItemMiddleLib$.val();
             param.IsReleasedLatest = 1;

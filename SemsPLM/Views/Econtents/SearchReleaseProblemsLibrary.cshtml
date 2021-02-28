@@ -1,0 +1,199 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div style="width:100%; margin-right:20px;">
+    <!--검색창-->
+    <div class="searchBox">
+        <div class="searchTitle">
+            <label><i class="fas fa-folder-open"></i> &nbsp;과거차문제 라이브러리 검색</label>
+        </div>
+        <div class="searchContent">
+            <div class="searchData">
+                <div class="comboBoxLabel">고객사</div>
+                <div>
+                    <div id="SearchReleaseEcontentsOem" class="SearchEPartComboBox"></div>
+                </div>
+            </div>
+            <div class="searchData">
+                <div class="comboBoxLabel">차종</div>
+                <div>
+                    <div id="SearchReleaseEcontentsCar" class="searchEcontentsComboBox"></div>
+                </div>
+            </div>
+
+
+            @*<div class="searchData">
+                <div class="comboBoxLabel">작성일</div>
+                <div>
+                    <div id="SearchEcontentsCreateDt" class="searchEpartComboBox"></div>
+                </div>
+            </div>*@
+            <div class="searchButton">
+                <button id="" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="SearchReleaseProblemsLibraryGrid"></div>
+<script type="text/javascript">
+    $(function () {
+        var SearchReleaseEcontentsOemLib$ = $('#SearchReleaseEcontentsOem');
+        var SearchReleaseEcontentsOemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
+        var SearchReleaseEcontentsCarLib$ = $('#SearchReleaseEcontentsCar');
+        var oemSource =
+        {
+            localdata: SearchReleaseEcontentsOemList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'KorNm', type: 'string' },
+                    { name: 'OID', type: 'int' },
+                    { name: 'Code1', type: 'string' },
+                    { name: 'Code2', type: 'string' },
+                ]
+        };
+        var oemAdapter = new $.jqx.dataAdapter(oemSource);
+        SearchReleaseEcontentsOemLib$.jqxComboBox({ source: oemAdapter, displayMember: "KorNm", valueMember: "OID", width: 250, height: 32 });
+        SearchReleaseEcontentsCarLib$.jqxComboBox({ width: 250, height: 32 });
+        SearchReleaseEcontentsOemLib$.on('change', function (evt) {
+            var param = {};
+            param.fromOID = SearchReleaseEcontentsOemLib$.val();
+            RequestData('/Manage/SelCodeLibrary', param, function (res) {
+
+                var CarSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                        ]
+                };
+                var CardataAdapter = new $.jqx.dataAdapter(CarSource);
+                SearchReleaseEcontentsCarLib$.jqxComboBox({ source: CardataAdapter, displayMember: "KorNm", valueMember: "OID", });
+            });
+        });
+
+        //$('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+
+
+        var SearchReleaseProblemsLibrarySource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID' },
+                { name: 'Name' },
+                { name: 'BPolicyOID' },
+                { name: 'BPolicy' },
+                { name: 'CreateUsNm' },
+                { name: 'CreateDt', type: 'date' },
+
+                { name: 'Description' },
+
+                { name: 'OEM_Lib_Nm'},
+
+                { name: 'Car_Lib_Nm' },
+                { name: 'Car_Lib_OID'},
+                { name: 'Product'},
+                { name: 'Part'},
+                { name: 'Occurrence'},
+                { name: 'Stage_Occurrence'},
+                { name: 'Failure_Type'},
+                { name: 'Division'},
+                { name: 'Issues'},
+                { name: 'Cause'},
+                { name: 'Countermeasures'},
+
+
+                { name: 'Revision' },
+
+            ],
+        }
+
+        const SearchReleaseProblemsLibraryGrid$ = $('#SearchReleaseProblemsLibraryGrid');
+        SearchReleaseProblemsLibraryGrid$.jqxGrid({
+            theme: "kdnc",
+            width: "100%",
+            height: 675,
+            rowsheight: 28,
+            columnsheight: 30,
+            sortable: false,
+            pageable: false,
+            columns: [
+                {
+                    text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                    }
+                },
+                { text: '고객사', datafield: 'OEM_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '제품', datafield: 'Product', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '부품', datafield: 'Part', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '발생처', datafield: 'Occurrence', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '발생단계', datafield: 'Stage_Occurrence', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '고장유형', datafield: 'Failure_Type', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '구분', datafield: 'Division', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '최적화', datafield: 'Cause', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '작성일', datafield: 'CreateDt', width: "7%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    }
+
+                }
+            ],
+            showtoolbar: false,
+            toolbarheight: 45,
+        });
+
+        SearchReleaseProblemsLibraryGrid$.on('celldoubleclick', function (e) {
+            const linkUrl = '/Econtents/InfoProblemsLibrary?OID=' + e.args.row.bounddata.OID;
+            if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+                var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+                $('#tabContent').jqxTabs('select', $(tabDiv).index());
+                return;
+            }
+
+            const loading$ = $('#loading');
+            const tabContent$ = $('#tabContent');
+            loading$.css('display', 'block');
+            var linkName = e.args.row.bounddata.Name;
+            tabContent$.jqxTabs('addLast', linkName, "");
+            var tabLength = tabContent$.jqxTabs('length');
+            $.ajax({
+                url: linkUrl,
+                type: 'get',
+                dataType: 'html',
+                async: true,
+                success: function (resHtml) {
+                    var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                    $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+                }, error: function (res) {
+                    if (res.status === 404) {
+                        alert("현재 개발중인 화면입니다.");
+                        return false;
+                    }
+                    alert(res.responseText);
+                }
+                , complete: function () {
+                    loading$.css('display', 'none');
+                }
+            });
+        });
+
+        getSearchReleaseProblemsLibraryList(SearchReleaseProblemsLibrarySource, SearchReleaseProblemsLibraryGrid$, {});
+    });
+    function getSearchReleaseProblemsLibraryList(_Source, _Grid$, param) {
+        RequestData("/Econtents/SelProblemsLibrary", param, function (res) {
+            PrintJqxGrid(_Source, _Grid$, res);
+        });
+    }
+</script>

@@ -14,9 +14,17 @@
                     {
                         <button id="dlgInfoDocument_editbtn" class="custom-button ModifiableCustomBox"><i class="fas fa-edit"></i> 수정</button>
                     }
-                        <button id="dlgInfoDocument_savebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-save"></i> 저장</button>
-                        <button id="dlgInfoDocument_canclebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-window-close"></i> 취소</button>
-                    </td>
+                    <button id="dlgInfoDocument_savebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-save"></i> 저장</button>
+                    <button id="dlgInfoDocument_canclebtn" class="custom-button ModifiableEditCustomBox"><i class="fas fa-window-close"></i> 취소</button>
+                    @if (ViewBag.TaskDetail.BPolicy.Name == Common.Constant.PmsConstant.POLICY_PROCESS_COMPLETED && ((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_MODIFY) > -1&&(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED))
+                    {
+                        <button id="dlgInfoDocument_ApprovalBtn" class="custom-button ModifiableCustomBox"><i class="fas fa-pen-alt"></i> 결재</button>
+                    }
+                    @if (ViewBag.Detail.BPolicy.Name == Common.Constant.DocumentConstant.POLICY_DOCUMENT_COMPLETED && ViewBag.RevFlag == Common.Constant.CommonConstant.ACTION_YES)
+                    {
+                        <button id="dlgInfoDocument_RevBtn" class="custom-button"><i class="fas fa-pen-alt"></i> 개정</button>
+                    }
+                </td>
             </tr>
         </tbody>
     </table>
@@ -83,7 +91,6 @@
             $('.ModifiableCustomBox').attr('hidden', true);
             $('.ModifiableEditCustomBox').attr('hidden', false);
             documentFile.EditMode();
-        });
-
+        });       
     });
 </script>

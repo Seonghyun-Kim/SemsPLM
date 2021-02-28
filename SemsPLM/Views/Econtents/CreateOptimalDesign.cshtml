@@ -44,12 +44,12 @@
             <tr>
                 <td><div id="CreateOptimalDesignOEM"></div></td>
                 <td><div id="CreateOptimalDesignCar"></div></td>
-                <td><div id="CreateOptimalDesignProduct"></div></td>
-                <td><div id="CreateOptimalDesignDivision"></div></td>
+                <td><input type="text" id="CreateOptimalDesignProduct"></td>
+                <td><input type="text" id="CreateOptimalDesignDivision"></td>
                 <td><input type="text" value="시작" readonly="readonly" style="text-align:center"/></td>
-                <td><input type="text" readonly="readonly" style="text-align:center;"/></td>
-                <td><input type="text" readonly="readonly" style="text-align:center"/></td>
-                <td><input type="text" readonly="readonly" style="text-align:center"/></td>
+                <td><input type="text" id="CreateOptimalDesignTrue" readonly="readonly" style="text-align:center;"/></td>
+                <td><input type="text" id="CreateOptimalDesignFalse" readonly="readonly" style="text-align:center"/></td>
+                <td><input type="text" id="CreateOptimalDesignTotal" readonly="readonly" style="text-align:center"/></td>
             </tr>
         </tbody>
     </table>
@@ -64,8 +64,8 @@
     $(function () {
         CreateOptimalDesignOEM$.jqxComboBox({width:250, height:32});
         CreateOptimalDesignCar$.jqxComboBox({width:250, height:32});
-        $("#CreateOptimalDesignProduct").jqxComboBox({width:250, height:32});
-        $("#CreateOptimalDesignDivision").jqxComboBox({ width: 180, height: 32 });
+        //$("#CreateOptimalDesignProduct").jqxComboBox({width:250, height:32});
+        //$("#CreateOptimalDesignDivision").jqxComboBox({ width: 180, height: 32 });
 
         var CreateOptimalDesignSource =
         {
@@ -85,10 +85,39 @@
         CreateOptimalDesignCar$.jqxComboBox({ selectedIndex: 0 });
 
         CreateOptimalDesignOEM$.on('change', function (event) {
-            ChangeCreateOptimalDesignComboBox(2, CreateOptimalDesignOEM$.val());
+            var param = {};
+            param.fromOID = CreateOptimalDesignOEM$.val();
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                var carSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                            { name: 'Code2', type: 'string' },
+                        ]
+                };
+                var caradapter = new $.jqx.dataAdapter(carSource);
+                CreateOptimalDesignCar$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID" });
+            });
+
+            $('#CreateOptimalDesignTrue').val(0);
+            $('#CreateOptimalDesignFalse').val(0);
+            $('#CreateOptimalDesignTotal').val(0);
+            PrintJqxGrid(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, null);
         });
 
-
+        CreateOptimalDesignCar$.on('change', function (event) {
+            var SearchParam = {};
+            SearchParam.OEM_Lib_OID = CreateOptimalDesignOEM$.val();
+            SearchParam.Car_Lib_OID = CreateOptimalDesignCar$.val();
+            getSearchCreateOptimalDesignGridList(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, SearchParam);
+        });
 
         var CreateOptimalDesignGridSource = {
             datatype: 'json',
@@ -113,7 +142,7 @@
                 { name: 'Cause' },
                 { name: 'Countermeasures' },
 
-                { name: 'Reflect'},
+                { name: 'Reflected'},
                 { name: 'ReflectVal' },
 
                 { name: 'Revision' },
@@ -151,8 +180,7 @@
                         div.append(element);
                         editor.append(div);
                         element.jqxRadioButton({
-                            //boxSize: '20px',
-                            groupName: "Reflect"
+                            groupName: "Reflected"
                         });
                     },
                     initeditor: function (row, cellvalue, editor, celltext, pressedChar) {
@@ -171,15 +199,52 @@
                             firstRadioButton = $(radioButtons[0]),
                             secondRadioButton = $(radioButtons[1]);
                         if (firstRadioButton.val() === true) {
-                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflect", "true");
+                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflected", "true");
+
+                            var rowdata = CreateOptimalDesignGrid$.jqxGrid('getrows');
+
+                            var TrueNum = 0;
+                            var FalseNum = 0;
+
+                            for (var v = 0; v < rowdata.length; v++) {
+                                if (rowdata[v].Reflected == "true") {
+                                    TrueNum = TrueNum + 1;
+                                } else if (rowdata[v].Reflected == "false") {
+                                    FalseNum = FalseNum + 1;
+                                }
+                            }
+
+                            $('#CreateOptimalDesignTrue').val(TrueNum);
+                            $('#CreateOptimalDesignFalse').val(FalseNum);
+
                             return firstRadioButton.text();
-                        } else {
-                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflect", "false");
+                        } else if (secondRadioButton.val() === true) {
+                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflected", "false");
+
+                            var rowdata = CreateOptimalDesignGrid$.jqxGrid('getrows');
+
+                            var TrueNum = 0;
+                            var FalseNum = 0;
+
+                            for (var v = 0; v < rowdata.length; v++) {
+                                if (rowdata[v].Reflected == "true") {
+                                    TrueNum = TrueNum + 1;
+                                } else if (rowdata[v].Reflected == "false") {
+                                    FalseNum = FalseNum + 1;
+                                }
+                            }
+
+                            $('#CreateOptimalDesignTrue').val(TrueNum);
+                            $('#CreateOptimalDesignFalse').val(FalseNum);
+
                             return secondRadioButton.text();
+                        } else {
+                            CreateOptimalDesignGrid$.jqxGrid('setcellvalue', row, "Reflected", "");
+                            return "";
                         }
                     }
                 },
-                { text: '반영/미반영', datafield: 'Reflect', width: "15%", align: 'center', cellsalign: 'center', hidden: true },
+                { text: '반영/미반영', datafield: 'Reflected', width: "15%", align: 'center', cellsalign: 'center', hidden: true },
                 { text: '사유', datafield: 'Description', width: "34%", align: 'center', cellsalign: 'center', },
                 { text: '리비전', datafield: 'Revision', width: "10%", align: 'center', cellsalign: 'center', editable: false, },
             ],
@@ -190,50 +255,38 @@
             }
         });
 
-        getSearchCreateOptimalDesignGridList(CreateOptimalDesignGridSource, CreateOptimalDesignGrid$, null);
-
 
         $('#CreateOptimalDesignBtn').on('click', function () {
             var data = CreateOptimalDesignGrid$.jqxGrid('getrows');
-            console.log($('#jqxRadioButtonTrue').jqxRadioButton('checked'));
-            console.log(data);
+            
+            var param = {};
+            param.Oem_Lib_OID  =   CreateOptimalDesignOEM$.val();
+            param.Car_Lib_OID  =   CreateOptimalDesignCar$.val();
+            param.Product  =   $('#CreateOptimalDesignProduct').val();
+            param.Division  =   $('#CreateOptimalDesignDivision').val();
+            param.ReflectedNum  =   $('#CreateOptimalDesignTrue').val();
+            param.NotReflectedNum = $('#CreateOptimalDesignFalse').val();
+
+            RequestData("/Econtents/InsOptimalDesign", { _param: param, _Items: data }, function (res) {
+                alert("저장되엇습니다");
+                
+            });
         });
 
     });
 
     function getSearchCreateOptimalDesignGridList(_Source, _Grid$, param) {
         RequestData("/Econtents/SelProblemsLibrary", param, function (res) {
+            if (res.length != 0) {
+                $('#CreateOptimalDesignTotal').val(res.length);
+            } else {
+                $('#CreateOptimalDesignTotal').val(0);
+            }
+
             PrintJqxGrid(_Source, _Grid$, res);
         });
     }
 
-    function ChangeCreateOptimalDesignComboBox(ID, OID) {
-        var ChangeCreateOptimalDesignComboBox$ = CreateOptimalDesignCar$
-        var param = {};
-        param.fromOID = OID;
-        var ChangeCreateOptimalDesignComboSource;
-        RequestData("/Manage/SelCodeLibrary", param, function (res) {
-            if (res.length > 0) {
-                ChangeCreateOptimalDesignComboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var ChangeCreateOptimalDesignComboAdapter = new $.jqx.dataAdapter(ChangeCreateOptimalDesignComboSource);
-                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ source: ChangeCreateOptimalDesignComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-            } else {
-                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
-                var ChangeCreateOptimalDesignComboAdapter = new $.jqx.dataAdapter(ChangeCreateOptimalDesignComboSource);
-                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ source: ChangeCreateOptimalDesignComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-                ChangeCreateOptimalDesignComboBox$.jqxComboBox({ selectedIndex: 0 });
-            }
-        });
-    }
 
 
 </script>

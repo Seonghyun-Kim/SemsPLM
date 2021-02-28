@@ -69,7 +69,7 @@
             var width = elementWidth - margin.left - margin.right;
             var height = elementHeight - margin.top - margin.bottom;
 
-            var groupWidth = options.hideGroupLabels ? 0 : 300;
+            var groupWidth = options.hideGroupLabels ? 0 : 320;
 
             
 
@@ -94,18 +94,20 @@
 
             if (!options.hideGroupLabels) {
                 var groupLabels = svg.selectAll('.group-label').data(data).enter().append('text').attr('class', 'group-label').attr('x', 0).attr('y', function (d, i) {
-                    return groupHeight * i + groupHeight / 2 + 5.5;
-                }).attr('dx', '0.5em').text(function (d) {
-                    return d.label;
+                    return groupHeight * i + groupHeight + 5.5;
+                }).attr('dx', '0.5em').text(function (d, i) {
+                    if (i % 2 == 0) {
+                        return d.label;
+                    }
                 });
 
                 var lineSection = svg.append('line').attr('x1', groupWidth).attr('x2', groupWidth).attr('y1', 0).attr('y2', height).attr('stroke', 'black');
 
-                var delayText = svg.selectAll('.group-delay').data(data).enter().append('text').attr('class', 'group-delay').attr('x', elementWidth - (delayWidth/2) - 10).attr('y', function (d, i) {
+                var delayText = svg.selectAll('.group-delay').data(data).enter().append('text').attr('class', 'group-delay').attr('x', elementWidth - (delayWidth/2) - 18).attr('y', function (d, i) {
                     return groupHeight * i + groupHeight + 5.5;
                 }).attr('dx', '0.5em').text(function (d, i) {
                     if (i % 2 == 0) {
-                        return d.delay;
+                        return d.delay < 10 ? "0" + d.delay : d.delay;
                     };
                 });
 

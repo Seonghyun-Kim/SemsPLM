@@ -45,6 +45,15 @@
         <isNotNull prepend="and" property="Description">
           A.Description LIKE CONCAT('%',#Description#,'%')
         </isNotNull>
+        <isNotNull prepend="and" property="TdmxOID">
+          A.TdmxOID = #TdmxOID#
+        </isNotNull>
+        <isNotNull prepend="and" property="IsReleasedLatest">
+          A.IsReleasedLatest = #IsReleasedLatest#
+        </isNotNull>
+        <isNotNull prepend="and" property="IsLatest">
+          A.IsLatest = #IsLatest#
+        </isNotNull>
         <isNotNull prepend="and" property="DocType">
           B.DocType = #DocType#
         </isNotNull>
@@ -59,6 +68,7 @@
         </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
+      ORDER BY A.OID DESC
     </select>
     
   

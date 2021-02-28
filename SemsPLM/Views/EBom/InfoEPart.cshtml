@@ -34,7 +34,7 @@
                         {
                             <li>
                                 <img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")@Model.Thumbnail" />
-                                <i class="fas fa-window-close"></i>
+                                <i id="ThumbnailClose" class="fas fa-window-close"></i>
                             </li>
                         }
                     </ul>
@@ -256,7 +256,7 @@
                             </td>
                             <th>수정자</th>
                             <td>
-                                <input type="text" readonly="readonly">
+                                <input type="text" value="@Model.ModifyUsNm" readonly="readonly">
                             </td>
                             <th></th>
                             <td>
@@ -325,8 +325,6 @@
     var InfoEPartNameSubString = InfoEPartName$.val();
 
     var InfoFiles = $('#InfoEPartFile_@ViewBag.OID').FileUpload({ OID : '@ViewBag.OID'});
-
-
 
     var name = '';
     var InfoEPartDivision = null;
@@ -399,6 +397,8 @@
         $('.InfoEPart_ITEM_NO_' + EPartOID).jqxComboBox({ width: "100%", height: 32 });
 
         InfoEPartDivision$ = $('#InfoEPartDivision_' + EPartOID);
+
+        var RevhistoryGrid$;
 
         var RelationECOParam = {};
         RelationECOParam.OID = EPartOID;
@@ -507,14 +507,6 @@
                 srev    = '';
                 psize = '';
 
-                //InfoEPart_ITEM_NO$.jqxComboBox('selectItem', null);
-                //InfoEPart_ITEM_Middle$.jqxComboBox('selectItem', null);
-                //InfoEPart_Block_No$.jqxComboBox('selectItem', null);
-                //InfoEPart_Place$.jqxComboBox('selectItem', null);
-                //InfoEPart_epartType$.jqxComboBox('selectItem', null);
-                //InfoEPart_Oem$.jqxComboBox('selectItem', null);
-                //InfoEPart_Car$.jqxComboBox('selectItem', null);
-                //InfoEPart_psize$.jqxComboBox('selectItem', null);
                 InfoEPart_ITEM_NO$.jqxComboBox('clearSelection');
                 InfoEPart_ITEM_Middle$.jqxComboBox('clear');
                 InfoEPart_Place$.jqxComboBox('clearSelection');
@@ -747,7 +739,13 @@
 
         InfoEPart_Oem$.on('change', function (evt) {
             var param = {};
-            param.fromOID = InfoEPart_Oem$.val();
+
+            if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                param.FromOID = $('#InfoEPartOem1_' + EPartOID).val();
+            } else {
+                param.FromOID = $('#InfoEPartOem2_' + EPartOID).val();
+            }
+
             param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
             RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
 
@@ -784,6 +782,7 @@
         }
 
         var InfoEPartThumbnailData = "@Model.Thumbnail";
+
         $('#imageDrag_' + @ViewBag.OID).simpleUpload({
             url: '/Common/ImgUploadFile',
             //params: { OID: null },
@@ -814,6 +813,10 @@
             });
         });
 
+        $("#ThumbnailClose").on('click', function () {
+            InfoEPartThumbnailData = null;
+            $(this).parent('li').remove();
+        });
 
         $('#InfoEPart_' + EPartOID + ' .tab').on('click', function () {
             const self$ = $(this);
@@ -947,6 +950,9 @@
 
                     InfoEPartParam.Description = $('#InfoEPartDescription_@ViewBag.OID').val();
                     InfoEPartParam.Thumbnail = InfoEPartThumbnailData;
+                    InfoEPartParam.TdmxOID = '@Model.TdmxOID';
+                    InfoEPartParam.Revision = '@Model.Revision';
+
                     if (InfoEPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {            //조립도일때
                         InfoEPartParam.Division = InfoEPartDivision;
                         InfoEPartParam.ITEM_No = $('#InfoEPartITEM_NO1_@ViewBag.OID').val();
@@ -975,10 +981,10 @@
                     }
 
                     if (InfoEPartParam.Name == null || InfoEPartParam.Name == "") {
-                        alert('품번을 확인해주세요.');
+                        alert('품번을 확인해주세요. 품번이 12자리 여야 합니다.');
                         return;
                     } else if (InfoEPartParam.Name.length != 12) {
-                        alert('품번을 확인해주세요.');
+                        alert('품번을 확인해주세요. 품번이 12자리 여야 합니다.');
                         return;
                     } else if (InfoEPartParam.Division == null || InfoEPartParam.Division == "") {
                         alert('구분을 선택해주세요.');
@@ -1348,9 +1354,10 @@
                         var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
                         var excelButton = $("<button class='custom-button'><i class='fas fa-file-excel'></i> excelExport</button>").jqxButton();
 
-
                         var expandButton = $("<button class='custom-button'><i class='fas fa-caret-down'></i> 펼치기</button>").jqxButton();
                         var collapseButton = $("<button class='custom-button'><i class='fas fa-caret-up'></i> 접기</button>").jqxButton();
+
+                        var copytobomButton = $("<button class='custom-button'><i class='fas fa-copy'></i> Copy To Bom</button>").jqxButton();
 
                         TreeAddButton.jqxButton({ disabled: true });
                         AddButton.jqxButton({ disabled: true });
@@ -1371,9 +1378,11 @@
                         container.append(saveButton);
                         container.append(cancelButton);
                         container.append('<span class="buttonSeparator"></span>');
-                        container.append(excelButton);
+                        //container.append(excelButton);
                         container.append(expandButton);
                         container.append(collapseButton);
+                        container.append(copytobomButton);
+
 
                         toolBar.append(container);
 
@@ -1423,6 +1432,27 @@
                                     break;
                             }
                         };
+
+                        copytobomButton.click(function (event) {
+                            var checkRows = EBomTreeGrid$.jqxTreeGrid('getSelection');
+                            if (checkRows.length == 0) {
+                                alert("부품을 선택 해주세요");
+                                return;
+                            }
+
+                            if (checkRows[0].Children.length < 1) {
+                                alert("하위 품목이 존재 하지않습니다.");
+                                return;
+                            }
+
+                            OpenInfoEPartCreateDialog(
+                                function (res) {
+                                    RequestData('/EBom/CopyToBom', { OID: res, OldOID: checkRows[0].ToOID }, function (res) {
+
+                                    })
+                                }, null, null, '/EBom/dlgCreateEPart', 'EPART 등록');
+
+                        });
 
                         expandButton.click(function (event) {
                             EBomTreeGrid$.jqxTreeGrid('expandAll');
@@ -1768,8 +1798,6 @@
                 });
 
                 EBomTreeGrid$.on('rowEndEdit', function (event) {
-
-
                     var args = event.args;
                     var row = args.row;
                     var key = args.key;
@@ -1838,7 +1866,7 @@
                 };
 
                 var RevhistoryAdapter = new $.jqx.dataAdapter(RevhistorySource);
-                const RevhistoryGrid$ = $('#RevhistoryInfo_' + EPartOID);
+                RevhistoryGrid$ = $('#RevhistoryInfo_' + EPartOID);
                 RevhistoryGrid$.jqxGrid('render');
                 RevhistoryGrid$.jqxGrid({
                     width: "100%",
@@ -1853,6 +1881,7 @@
 
                     },
                     columns: [
+                        { text: 'OID', datafield: 'OID', width: "11%", align: 'center', cellsalign: 'center', hidden: true },
                         {
                             text: 'NO', width: "3%", cellsalign: 'center', columntype: 'number', align: 'center',
                             cellsrenderer: function (row, column, value) {
@@ -1873,7 +1902,14 @@
                                 }
                             }
                         },
-                        { text: '품번', datafield: 'Name', width: "11%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '품번', datafield: 'Name', width: "11%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                var getrowdata = RevhistoryGrid$.jqxGrid('getrowdata', row);
+                                var vText = cellValue;
+                                return '<div style="margin-top:6.5px;text-align:center;">' + vText + ' <a href="#" onclick="EPartNewTabClick(\'/EBom/InfoEPart\', ' + getrowdata.OID + ', \'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a></div>';
+                            }
+                        },
                         { text: '품명', datafield: 'Title', width: "11%", align: 'center', cellsalign: 'center', },
                         { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "13%", align: 'center', cellsalign: 'center', },
                         { text: '재질', datafield: 'Material_Nm', width: "8%", align: 'center', cellsalign: 'center', },
@@ -1898,11 +1934,60 @@
                 }
 
                 getEPartRevList(RevhistorySource, RevhistoryGrid$, TdmxParam);
+
+                //RevhistoryGrid$.on('celldoubleclick', function (e) {
+                //    celldoubleEPartInfo(e.args.row.bounddata.OID, e.args.row.bounddata.Name);
+                //});
             }
         });
 
         $('.info_focus').click();
+
     });
+
+    //function celldoubleEPartInfo(OID, Name) {
+    //    if (DoubleClickEvent == true) {
+    //        DoubleClickEvent = false;
+    //    } else {
+    //        return;
+    //    }
+    //    const linkUrl = '/EBom/InfoEPart?OID=' + OID;
+    //    if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+    //        var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+    //        $('#tabContent').jqxTabs('select', $(tabDiv).index());
+    //        return;
+    //    }
+    //
+    //    const loading$ = $('#loading');
+    //    const tabContent$ = $('#tabContent');
+    //    loading$.css('display', 'block');
+    //    var linkName = Name;
+    //    tabContent$.jqxTabs('addLast', linkName, "");
+    //    var tabLength = tabContent$.jqxTabs('length');
+    //    $.ajax({
+    //        url: linkUrl,
+    //        type: 'get',
+    //        dataType: 'html',
+    //        async: true,
+    //        success: function (resHtml) {
+    //            var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+    //            $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+    //            DoubleClickEvent = true;
+    //        }, error: function (res) {
+    //            if (res.status === 404) {
+    //                DoubleClickEvent = true;
+    //                alert("현재 개발중인 화면입니다.");
+    //                return false;
+    //            }
+    //            DoubleClickEvent = true;
+    //            alert(res.responseText);
+    //        }
+    //        , complete: function () {
+    //            DoubleClickEvent = true;
+    //            loading$.css('display', 'none');
+    //        }
+    //    });
+    //}
 
     function getEPartList(_Source, _Grid$, EBomParam) {
         RequestData('/EBom/SelectEBom', EBomParam, function (res) {

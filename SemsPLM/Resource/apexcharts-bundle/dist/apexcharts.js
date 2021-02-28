@@ -6084,7 +6084,9 @@
               xDivision = w.globals.minXDiff / xRatio;
             }
 
-            barWidth = xDivision / this.barCtx.seriesLen * parseInt(this.barCtx.barOptions.columnWidth, 10) / 100;
+              barWidth = xDivision / this.barCtx.seriesLen * parseInt(this.barCtx.barOptions.columnWidth, 10) / 100;
+
+              barWidth = 20;
 
             if (barWidth < 1) {
               barWidth = 1;

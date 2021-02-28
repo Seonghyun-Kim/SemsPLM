@@ -53,10 +53,10 @@
                     <div id="SearchEPartCar" class="searchEpartComboBox"></div>
                 </div>
             </div>
-            <div class="searchData">
+            @*<div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div><div id="SearchEPartCreateDt" class="searchEpartDateTimeInput"></div></div>
-            </div>
+            </div>*@
             <div class="searchButton">
                 <button id="SearchEPartbtn" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
@@ -153,7 +153,7 @@
         $('#SearchEPartAssemble').jqxRadioButton({ width: 100, height: 30, checked: false });
         $('#SearchEPartSingle').jqxRadioButton({ width: 120, height: 30, checked: false });
         $('#SearchEPartStandard').jqxRadioButton({ width: 120, height: 30, checked: false });
-        $('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
+        //$('#SearchEPartCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchEPartSource = {
             datatype: 'json',
@@ -320,8 +320,8 @@
 
 
         $('#SearchEPartbtn').on('click', function () {
-            var SearchEPartCreateDt = $('#SearchEPartCreateDt').val();
-            var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+            //var SearchEPartCreateDt = $('#SearchEPartCreateDt').val();
+            //var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
             param = {};
             param.Name = $('#SearchEPartName').val();
@@ -329,8 +329,8 @@
             param.Division = SearchDivision;
             param.Car_Lib_OID = SearchEPartCarLib$.val();
             param.ITEM_No = SearchEPartItemLib$.val();
-            param.StartCreateDt = SearchEPartCreateDtArray[0];
-            param.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+            //param.StartCreateDt = SearchEPartCreateDtArray[0];
+            //param.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
 
             param.ITEM_Middle = SearchEPartItemMiddleLib$.val();
             param.IsLatest = 1;

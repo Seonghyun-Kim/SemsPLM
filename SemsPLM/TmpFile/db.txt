@@ -367,11 +367,77 @@ OID	MenuOID	Name	Description	Ord	Link	IsUse
 22	4	ECR 검색	NULL	4	/ChangeRequest/SearchReleaseChangeRequest	1
 
 
+210203 cskim 완료보고로 인한 임시 삭제 이후 원복 예정 - 적용완료
+T_BSUB_MENU
+52	10	신속대응현황	NULL	2	/Qms/QuickResponseList	0
+
+T_BDEFINE 수정 - 적용완료
+19	PROBLEMS_LIBRARY	TYPE	COMMON	15	과거차문제 라이브러리	/Econtents/InfoMiniProblemsLibrarys
+
+T_BSUB_MENU  - 적용완료
+35	7	과거차 문제<br />라이브러리 관리	NULL	1	/Econtents/SearchReleaseProblemsLibrary	1
+
+최적설계 테이블 추가  - 적용완료
+CREATE TABLE T_DOPTIMAL_DESIGN
+(
+    "OID"              int              NOT NULL, 
+    "ReflectedNum"     int              NULL, 
+    "NotReflectedNum"  int              NULL, 
+    "Product"          nvarchar(100)    NULL, 
+    "Division"         nvarchar(100)    NULL, 
+    "Oem_Lib_OID"      int              NULL, 
+    "Car_Lib_OID"      int              NULL, 
+    CONSTRAINT PK_T_DOPTIMAL_DESIGN PRIMARY KEY (OID)
+)
+  - 적용완료
+CREATE TABLE T_DOPTIMAL_DESIGN_ITEM
+(
+    "OID"               int              NOT NULL, 
+    "FromOID"           int              NOT NULL, 
+    "Problems_Lib_OID"  int              NOT NULL, 
+    "Reflected"         nvarchar(50)     NULL, 
+    "Description"       nvarchar(500)    NULL, 
+    CONSTRAINT PK_T_DOPTIMAL_DESIGN_ITEM PRIMARY KEY (OID)
+)
+
+shkim
+T_BPOLICY 수정  - 적용완료
+49	DOCUMENT	Started	49	검토중	NULL	Common.Trigger.ApprovalTrigger:ActionTemplatePromote,Common.Trigger.ReleasedTrigger:ReleasedLatestUpdate	2	NULL	NULL	P:50,R:20
+
+cskim T_BPOLICY
+최적설계 상태 추가  -적용완료
+143	OPTIMAL_DESIGN	Prepare	143	작성중	NULL	NULL	1	NULL	NULL	P:144
+144	OPTIMAL_DESIGN	Review	144	결재중	NULL	NULL	2	NULL	NULL	P:146,R:145
+145	OPTIMAL_DESIGN	Reject	145	반려	NULL	NULL	3	NULL	NULL	P:144
+146	OPTIMAL_DESIGN	Compleated	146	완료	NULL	NULL	4	NULL	NULL	NULL
+
+21.02.08 cskim T_BDEFINE 최적설계 미니 추가  - 적용완료
+20	OPTIMAL_DESIGN	TYPE	COMMON	16	최적설계	/Econtents/InfoMiniOptimalDesign
+
+T_BSUB_MENU - 적용완료
+55	7	최적설계 반영서	NULL	3	/Econtents/SearchReleaseOptimalDesign	1
+
+210217 ihjung T_BSUB_MENU 추가 -적용완료
+68	9	CEO 대시보드	NULL	3	/Pms/CLevelDashboard	1
+69	9	임원 대시보드	NULL	4	/Pms/ExecDashboard	1
+
+210217 ihjung  T_BPOLICY -- 적용완료
+2	PROJECT	Started	2	시작됨	NULL	Pms.Trigger.ProjectTrigger:ActionAutoCompleteProjectPromote	2	NULL	NULL	N:4
+9	PHASE	Started	9	진행중	NULL	Pms.Trigger.ProcessTrigger:ActionAutoCompleteProcessPromote	2	NULL	NULL	N:11
+
+
+T_BPOLICTY_AUTH 추가 <= 시험 성적서 수정 해야함
+163	133	NULL	OWNER	Modify	수정	SYSTEM	NULL
+164	133	NULL	OWNER	Relation	연결	SYSTEM	NULL
 
 
 
 
+
+
+------QMS 관련 시작
 2021.01.03 김성현
+
 라이브러리 관리 항목 추가 
 
 QMS 아래 
@@ -461,7 +527,7 @@ QMS
 
 
 
-
+ㅋ
 
 
 21.01.30 DB 로그 ---------------------------------------------
@@ -475,3 +541,6 @@ EduPlace -> 신규 추가(nvarchar(500), null 허용)
 
 T_DQMS_LPA_UNFIT
 CheckLine -> 신규 추가(nvarchar(255), null 허용(임시)) 
+
+
+--- QMS  끝

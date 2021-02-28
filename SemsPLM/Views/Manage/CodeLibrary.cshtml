@@ -219,7 +219,7 @@
     });
 
     function getCodeLibraryList(_Source, _Grid$,_param) {
-        RequestData("/Manage/SelCodeLibrary", _param, function (res) {
+        RequestData("/Manage/AllSelCodeLibrary", _param, function (res) {
             PrintJqxTreeGrid(_Source, _Grid$, res);
         });
 

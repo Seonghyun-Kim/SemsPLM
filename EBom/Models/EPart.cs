@@ -33,14 +33,15 @@ namespace EBom.Models
         public int? Prod_Lib_Lev3_OID { get; set; }
         public string CO { get; set; }
         public string Etc_Delivery { get; set; }
-        public string Pms_NM { get; set; }
+        
         public string Prod_Lib_Lev1_NM { get; set; }
         public string Prod_Lib_Lev2_NM { get; set; }
         public string Prod_Lib_Lev3_NM { get; set; }
 
 
 
-
+        public string Pms_NM { get; set; }
+        public string TaskNm { get; set; }
         public string Title { get; set; }
         public int? EPartType { get; set; } //제품 구분
         public int? Oem_Lib_OID { get; set; }
@@ -73,10 +74,74 @@ namespace EBom.Models
         public string EndCreateDt { get; set; }
         public int? Orgin_OID { get; set; }
         public string NewCheck { get; set; }
+        public int? OldOID { get; set; }
     }
 
     public static class EPartRepository
     {
+        #region 1레벨 부모 미포함 EPart 리스트 검색
+        public static List<EPart> SelNot1LvParentEPart(HttpSessionStateBase Context, EPart _param)
+        {
+            _param.Type = EBomConstant.TYPE_PART;
+            List<EPart> lEPart = DaoFactory.GetList<EPart>("EBom.SelNot1LvParentEPart", _param);
+            List<EPart> ViewEPart = new List<EPart>();
+            lEPart.ForEach(obj =>
+            {
+                if (obj.Car_Lib_OID != null)
+                {
+                    obj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Car_Lib_OID }).KorNm;
+                }
+                if (obj.Block_No != null)
+                {
+                    if (obj.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
+                    {
+                        obj.DivisionNm = Common.Constant.EBomConstant.DIV_ASSEMBLY_NM;
+                        obj.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                    else
+                    {
+                        if (obj.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                        {
+                            obj.DivisionNm = Common.Constant.EBomConstant.DIV_SINGLE_NM;
+                        }
+                        else
+                        {
+                            obj.DivisionNm = Common.Constant.EBomConstant.DIV_STANDARD_NM;
+                        }
+                        obj.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Block_No }).KorNm;
+                    }
+                }
+                if (obj.Oem_Lib_OID != null)
+                {
+                    obj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.Oem_Lib_OID }).KorNm;
+                }
+                if (obj.Material_OID != null)
+                {
+                    obj.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = obj.Material_OID }).KorNm;
+                }
+                if (obj.ITEM_No != null)
+                {
+                    obj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ITEM_No }).KorNm;
+                }
+                if (obj.EPartType != null)
+                {
+                    obj.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.EPartType }).KorNm;
+                }
+                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.BPolicyNm = obj.BPolicy.Name;
+                obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
+
+                if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+                {
+                    ViewEPart.Add(obj);
+                }
+            });
+            return ViewEPart;
+        }
+        #endregion
+
+
         #region EPart 리스트 검색
         public static List<EPart> SelEPart(HttpSessionStateBase Context, EPart _param)
         {
@@ -121,6 +186,10 @@ namespace EBom.Models
                 {
                     obj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = obj.ITEM_No }).KorNm;
                 }
+                if (obj.EPartType != null)
+                {
+                    obj.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.EPartType }).KorNm;
+                }
                 obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
                 obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
                 obj.BPolicyNm = obj.BPolicy.Name;
@@ -138,60 +207,68 @@ namespace EBom.Models
         #region EPart 오브젝트 검색
         public static EPart SelEPartObject(HttpSessionStateBase Context, EPart _param)
         {
-            EPart lEPart = DaoFactory.GetData<EPart>("EBom.SelEPart", new EPart { Type = EBomConstant.TYPE_PART, OID = _param.OID });
+            _param.Type = EBomConstant.TYPE_PART;
+            EPart lEPart = DaoFactory.GetData<EPart>("EBom.SelEPart", _param);
+            if(lEPart != null)
+            {
+                lEPart.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lEPart.CreateUs }).Name;
+                lEPart.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lEPart.Type, OID = lEPart.BPolicyOID }).First();
+                lEPart.BPolicyNm = lEPart.BPolicy.Name;
+                lEPart.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lEPart, null);
 
-            lEPart.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lEPart.CreateUs }).Name;
-            lEPart.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lEPart.Type, OID = lEPart.BPolicyOID }).First();
-            lEPart.BPolicyNm = lEPart.BPolicy.Name;
-            lEPart.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, lEPart, null);
-
-            if (lEPart.ITEM_No != null)
-            {
-                lEPart.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_No }).KorNm;
-            }
-            if (lEPart.ITEM_Middle != null)
-            {
-                lEPart.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_Middle }).KorNm;
-            }
-            if (lEPart.EPartType != null)
-            {
-                lEPart.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = Convert.ToInt32(lEPart.EPartType) }).KorNm;
-            }
-            if (lEPart.Production_Place != null)
-            {
-                lEPart.Production_PlaceNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Production_Place }).KorNm;
-            }
-            if (lEPart.Block_No != null)
-            {
-                if (lEPart.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
+                if (lEPart.ITEM_No != null)
                 {
-                    lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_ASSEMBLY_NM;
-                    lEPart.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
+                    lEPart.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_No }).KorNm;
                 }
-                else
+                if (lEPart.ITEM_Middle != null)
                 {
-                    if (lEPart.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                    lEPart.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.ITEM_Middle }).KorNm;
+                }
+                if (lEPart.EPartType != null)
+                {
+                    lEPart.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = Convert.ToInt32(lEPart.EPartType) }).KorNm;
+                }
+                if (lEPart.Production_Place != null)
+                {
+                    lEPart.Production_PlaceNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Production_Place }).KorNm;
+                }
+                if (lEPart.Block_No != null)
+                {
+                    if (lEPart.Division == Common.Constant.EBomConstant.DIV_ASSEMBLY)
                     {
-                        lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_SINGLE_NM;
+                        lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_ASSEMBLY_NM;
+                        lEPart.Block_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
                     }
                     else
                     {
-                        lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_STANDARD_NM;
+                        if (lEPart.Division == Common.Constant.EBomConstant.DIV_SINGLE)
+                        {
+                            lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_SINGLE_NM;
+                        }
+                        else
+                        {
+                            lEPart.DivisionNm = Common.Constant.EBomConstant.DIV_STANDARD_NM;
+                        }
+                        lEPart.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
                     }
-                    lEPart.Block_NoNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Block_No }).KorNm;
                 }
-            }
-            if (lEPart.Oem_Lib_OID != null)
-            {
-                lEPart.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Oem_Lib_OID }).KorNm;
-            }
-            if (lEPart.Car_Lib_OID != null)
-            {
-                lEPart.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Car_Lib_OID }).KorNm;
-            }
-            if (lEPart.Material_OID != null)
-            {
-                lEPart.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Material_OID }).KorNm;
+                if (lEPart.Oem_Lib_OID != null)
+                {
+                    lEPart.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Oem_Lib_OID }).KorNm;
+                }
+                if (lEPart.Car_Lib_OID != null)
+                {
+                    lEPart.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = lEPart.Car_Lib_OID }).KorNm;
+                }
+                if (lEPart.Material_OID != null)
+                {
+                    lEPart.Material_Nm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.Material_OID }).KorNm;
+                }
+                if (lEPart.EPartType != null)
+                {
+                    lEPart.EPartTypeNm = LibraryRepository.SelLibraryObject(new Library { OID = lEPart.EPartType }).KorNm;
+                }
+
             }
 
             return lEPart;
@@ -238,7 +315,10 @@ namespace EBom.Models
             getStructure.ObjRevision = PataData.Revision;
             getStructure.ObjTdmxOID = PataData.TdmxOID;
             getStructure.ObjIsLatest = PataData.IsLatest;
+
             getStructure.ObjEPartType = PataData.EPartType;
+            getStructure.ObjEPartTypeNm = PataData.EPartTypeNm;
+
             getStructure.ObjThumbnail = PataData.Thumbnail;
             getStructure.ObjCar_Lib_OID = PataData.Car_Lib_OID;
             getStructure.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
@@ -313,6 +393,7 @@ namespace EBom.Models
                 Obj.ObjTdmxOID = PataData.TdmxOID;
                 Obj.ObjIsLatest = PataData.IsLatest;
                 Obj.ObjEPartType = PataData.EPartType;
+                Obj.ObjEPartTypeNm = PataData.EPartTypeNm;
                 Obj.ObjThumbnail = PataData.Thumbnail;
                 Obj.ObjCar_Lib_OID = PataData.Car_Lib_OID;
                 Obj.ObjCar_Lib_Nm = PataData.Car_Lib_Nm;
@@ -401,6 +482,7 @@ namespace EBom.Models
             getStructure.ObjEtc = PataData.Etc;
             getStructure.ObjApprovOID = PataData.ApprovOID;
             getStructure.ObjEPartType = PataData.EPartType;
+            getStructure.ObjEPartTypeNm = PataData.EPartTypeNm;
             getStructure.ObjDivision = PataData.Division;
             getStructure.ObjDivisionNm = PataData.DivisionNm;
             getStructure.ObjITEM_No = PataData.ITEM_No;
@@ -465,6 +547,7 @@ namespace EBom.Models
                 Obj.ObjEtc = PataData.Etc;
                 Obj.ObjApprovOID = PataData.ApprovOID;
                 Obj.ObjEPartType = PataData.EPartType;
+                Obj.ObjEPartTypeNm = PataData.EPartTypeNm;
                 Obj.ObjDivision = PataData.Division;
                 Obj.ObjDivisionNm = PataData.DivisionNm;
                 Obj.ObjITEM_No = PataData.ITEM_No;
@@ -539,7 +622,7 @@ namespace EBom.Models
         #region EBOM 편집 추가 버튼 클릭시 나타나는 페이지
         public static List<EBOM> getListEbomAddChild(HttpSessionStateBase Context, int _level, string _Name, EPart _Param)
         {
-            List<EPart> EPartList = EPartRepository.SelEPart(Context, _Param);
+            List<EPart> EPartList = EPartRepository.SelNot1LvParentEPart(Context, _Param);
 
             if(_Param.NewCheck != null)
             {
@@ -565,6 +648,7 @@ namespace EBom.Models
                 getStructure.ObjTdmxOID = obj.TdmxOID;
                 getStructure.ObjIsLatest = obj.IsLatest;
                 getStructure.ObjEPartType = obj.EPartType;
+                getStructure.ObjEPartTypeNm = obj.EPartTypeNm;
                 getStructure.ObjThumbnail = obj.Thumbnail;
                 getStructure.ObjCar_Lib_OID = obj.Car_Lib_OID;
                 getStructure.ObjCar_Lib_Nm = obj.Car_Lib_Nm;

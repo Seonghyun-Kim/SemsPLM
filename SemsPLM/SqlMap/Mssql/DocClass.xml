@@ -31,6 +31,40 @@
       <isNotNull prepend="and" property="ViewUrl">
         A.ViewUrl = #ViewUrl#
       </isNotNull>
+      <isNotNull prepend="and" property="IsUse">
+        B.IsUse = #IsUse#
+      </isNotNull>
+      <isNull prepend="and" property="IsUse">
+        B.IsUse = 'Y'
+      </isNull>
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <select id="AllSelDocClass" parameterClass="DocClass" resultClass="DocClass">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DDOCUMENT_CLASSIFICATION B ON A.OID = B.OID
+      WHERE A.Type = #Type#
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        B.FromOID = #FromOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Name">
+        A.Name like '%' + #Name# + '%'
+      </isNotNull>
+      <isNotNull prepend="and" property="Code">
+        A.Code = #Code#
+      </isNotNull>
+      <isNotNull prepend="and" property="ViewUrl">
+        A.ViewUrl = #ViewUrl#
+      </isNotNull>
+      <isNotNull prepend="and" property="IsUse">
+        B.IsUse = #IsUse#
+      </isNotNull>
       AND A.DeleteDt IS NULL
     </select>
     
@@ -80,7 +114,14 @@
       <isNotNull prepend="and" property="CreateUsNm">
         C.Name like '%' + #CreateUsNm# + '%'
       </isNotNull>
+      <isNotNull prepend="and" property="IsUse">
+        B.IsUse = #IsUse#
+      </isNotNull>
+      <isNull prepend="and" property="IsUse">
+        B.IsUse = 'Y'
+      </isNull>
       AND A.DeleteDt IS NULL
+      AND B.IsUse = 'Y'
     </select>
 
     

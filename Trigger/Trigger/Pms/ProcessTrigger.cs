@@ -22,6 +22,7 @@ namespace Pms.Trigger
             string type = Convert.ToString(oArgs[1]);
             string status = Convert.ToString(oArgs[2]);
             string oid = Convert.ToString(oArgs[3]);
+            string RootOid = Convert.ToString(oArgs[4]);
             string action = Convert.ToString(oArgs[5]);
             string goStatus = "";
             if (oArgs.Length > 7)
@@ -38,6 +39,27 @@ namespace Pms.Trigger
                     if (tmpProcess.ActStartDt == null)
                     {
                         PmsProcessRepository.UdtPmsProcess(Context, new PmsProcess { OID = dobj.OID, ActStartDt = DateTime.Now, Dependency = tmpProcess.Dependency });
+
+                        List<PmsRelationship> lWbs = PmsRelationshipRepository.GetWbsOidLIst(Context, RootOid).FindAll(wbs => wbs.ToOID == Convert.ToInt32(oid));
+                        if (lWbs != null && lWbs.Count > 0)
+                        {
+                            DObject targetDobj = null;
+                            lWbs.ForEach(wbs =>
+                            {
+                                if (targetDobj != null)
+                                {
+                                    targetDobj = null;
+                                }
+                                string returnVal = "";
+                                targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = wbs.FromOID });
+                                returnVal = TriggerUtil.StatusPromote(Context, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(RootOid), CommonConstant.ACTION_PROMOTE, "");
+                                if (returnVal != null && returnVal.Length > 0)
+                                {
+                                    throw new Exception(returnVal);
+                                }
+                            });
+                        }
+
                         tmpProcess = null;
                     }
                     else
@@ -86,10 +108,10 @@ namespace Pms.Trigger
                         if (lParent.Count > 0)
                         {
                             PmsRelationship parent = lParent.First();
-                            PmsProcess parentProc = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = parent.FromOID });
-                            if (parentProc.Type == PmsConstant.TYPE_PHASE)
+                            DObject tmpDobj = DObjectRepository.SelDObject(Context, new DObject { OID = parent.FromOID });
+                            if (!tmpDobj.Type.Equals(PmsConstant.TYPE_TASK))
                             {
-                                string result = TriggerUtil.StatusObjectPromote(Context, false, parentProc.Type, Convert.ToString(parentProc.BPolicyOID), null, Convert.ToInt32(parentProc.OID), Convert.ToInt32(parentProc.OID), CommonConstant.ACTION_PROMOTE, "");
+                                string result = TriggerUtil.StatusObjectPromote(Context, false, tmpDobj.Type, Convert.ToString(tmpDobj.BPolicyOID), null, Convert.ToInt32(tmpDobj.OID), Convert.ToInt32(parent.RootOID), CommonConstant.ACTION_PROMOTE, "");
                                 if (result != null && result.Length > 0)
                                 {
                                     return result;
@@ -219,16 +241,17 @@ namespace Pms.Trigger
             string type = Convert.ToString(oArgs[1]);
             string status = Convert.ToString(oArgs[2]);
             string oid = Convert.ToString(oArgs[3]);
+            string RootOid = Convert.ToString(oArgs[4]);
             try
             {
                 List<PmsRelationship> lParent = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, ToOID = Convert.ToInt32(oid) });
                 if (lParent.Count > 0)
                 {
                     PmsRelationship parent = lParent.First();
-                    PmsProcess parentProc = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = parent.FromOID });
-                    if (parentProc.Type == PmsConstant.TYPE_PHASE)
+                    DObject tmpDObject = DObjectRepository.SelDObject(Context, new DObject { OID = parent.FromOID });
+                    if (!tmpDObject.Type.Equals(PmsConstant.TYPE_TASK))
                     {
-                        string result = TriggerUtil.StatusObjectPromote(Context, false, parentProc.Type, Convert.ToString(parentProc.BPolicyOID), null, Convert.ToInt32(parentProc.OID), Convert.ToInt32(parentProc.OID), CommonConstant.ACTION_PROMOTE, "");
+                        string result = TriggerUtil.StatusObjectPromote(Context, false, tmpDObject.Type, Convert.ToString(tmpDObject.BPolicyOID), null, Convert.ToInt32(tmpDObject.OID), Convert.ToInt32(RootOid), CommonConstant.ACTION_PROMOTE, "");
                         if (result != null && result.Length > 0)
                         {
                             return result;
@@ -287,7 +310,28 @@ namespace Pms.Trigger
                         dobj = DObjectRepository.SelDObject(Context, new DObject { OID = child.ToOID });
                         if(dobj.Type == DocumentConstant.TYPE_DOCUMENT)
                         {
-                            DObjectRepository.UdtDObject(Context, new DObject { OID = dobj.OID, BPolicyOID = Convert.ToInt32(bPolicies[comIdx].OID) });
+                            DObjectRepository.UdtDObject(Context, new DObject { OID = dobj.OID, BPolicyOID = Convert.ToInt32(bPolicies[comIdx].OID)});
+
+                            DObjectRepository.UdtReleaseLatestDObject(Context, new DObject { OID = dobj.OID, IsReleasedLatest = 1 });
+                            List<DObject> Tdmx = DObjectRepository.SelDObjects(Context, new DObject { TdmxOID = dobj.TdmxOID });
+                            List<DObject> appyStruct = new List<DObject>();
+
+                            Tdmx.ForEach(Obj =>
+                            {
+                                if (Obj.IsReleasedLatest == 1 && Obj.Revision != dobj.Revision)
+                                {
+                                    appyStruct.Add(Obj);
+                                }
+                            });
+                            appyStruct = appyStruct.OrderByDescending(revVal => revVal.Revision).ToList();
+
+                            if (appyStruct.Count > 0)
+                            {
+                                appyStruct.ForEach(v => {
+                                    DObjectRepository.UdtReleaseLatestDObject(Context, new DObject { OID = v.OID, IsReleasedLatest = 0 });
+                                    DObjectRepository.UdtLatestDObject(Context, new DObject { OID = v.OID });
+                                });
+                            }
                         }
                         else
                         {
@@ -388,6 +432,82 @@ namespace Pms.Trigger
                     });
                 }
                 smtp.SendMail();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "";
+        }
+
+        public string ActionAutoCompleteProcessPromote(object[] args)
+        {
+            object[] oArgs = args;
+            HttpSessionStateBase Context = (HttpSessionStateBase)oArgs[0];
+            int iUser = Convert.ToInt32(Context["UserOID"]);
+            string type = Convert.ToString(oArgs[1]);
+            string status = Convert.ToString(oArgs[2]);
+            string oid = Convert.ToString(oArgs[3]);
+            string action = Convert.ToString(oArgs[5]);
+            try
+            {
+                DObject tmpDobj = DObjectRepository.SelDObject(Context, new DObject { OID = Convert.ToInt32(oid) });
+                string strNextAction = BPolicyRepository.SelBPolicy(new BPolicy { Type = tmpDobj.Type, OID = tmpDobj.BPolicyOID }).First().NextActionOID;
+                List<PmsRelationship> lWbs = PmsRelationshipRepository.getProcWbsTypeOidList(Context, oid).FindAll(wbs => wbs.ObjStNm != null && !wbs.ObjStNm.Equals(PmsConstant.POLICY_PROJECT_COMPLETED));
+                if (lWbs.Count < 1)
+                {
+                    string strActionOID = "";
+                    if (strNextAction != null && strNextAction.Length > 0)
+                    {
+                        strNextAction.Split(',').ToList().ForEach(item =>
+                        {
+                            if (item.IndexOf(CommonConstant.ACTION_NON_AUTO) > -1)
+                            {
+                                strActionOID = item.Substring(item.IndexOf(":") + 1);
+                                return;
+                            }
+                        });
+                        DObjectRepository.UdtDObject(Context, new DObject { OID = Convert.ToInt32(oid), BPolicyOID = Convert.ToInt32(strActionOID) });
+                        PmsRelationship parent = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, ToOID = Convert.ToInt32(oid) }).First();
+                        int RootOID = Convert.ToInt32(parent.RootOID);
+                        PmsProject proj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = Convert.ToInt32(RootOID) });
+                        List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
+                        PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = Convert.ToInt32(oid) });
+                        PmsProcessRepository.UdtPmsProcess(Context,
+                        new PmsProcess
+                        {
+                            OID = tmpProc.OID,
+                            ActEndDt = DateTime.Now,
+                            ActDuration = PmsUtils.CalculateGapFutureDuration(Convert.ToDateTime(Convert.ToDateTime(tmpProc.ActStartDt).ToString("yyyy-MM-dd")), Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")), Convert.ToInt32(proj.WorkingDay), lHoliday),
+                            Complete = 100,
+                            Dependency = tmpProc.Dependency
+                        });
+
+                        if (lWbs != null)
+                        {
+                            lWbs = null;
+                        }
+                        lWbs = PmsRelationshipRepository.GetWbsOidLIst(Context,Convert.ToString(RootOID)).FindAll(wbs => wbs.ToOID == Convert.ToInt32(oid));
+                        if (lWbs != null && lWbs.Count > 0)
+                        {
+                            DObject targetDobj = null;
+                            lWbs.ForEach(wbs =>
+                            {
+                                if (targetDobj != null)
+                                {
+                                    targetDobj = null;
+                                }
+                                string returnVal = "";
+                                targetDobj = DObjectRepository.SelDObject(Context, new DObject { OID = wbs.FromOID });
+                                returnVal = TriggerUtil.StatusPromote(Context, false, targetDobj.Type, Convert.ToString(targetDobj.BPolicyOID), Convert.ToInt32(targetDobj.OID), Convert.ToInt32(RootOID), CommonConstant.ACTION_PROMOTE, "");
+                                if (returnVal != null && returnVal.Length > 0)
+                                {
+                                    throw new Exception(returnVal);
+                                }
+                            });
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

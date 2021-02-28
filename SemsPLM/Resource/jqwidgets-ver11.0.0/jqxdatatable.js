@@ -844,7 +844,7 @@ License: https://jqwidgets.com/license/
             }
         },
 
-        _updateScrollbars: function ( widgetHeight ) {
+        _updateScrollbars: function (widgetHeight) {
             var autoWidth = false;
             if ( this.width === "auto" || this.width === null || this.autowidth ) {
                 if ( this.maxWidth == 999999 ) {
@@ -2055,7 +2055,9 @@ License: https://jqwidgets.com/license/
                 if ( $.jqx.isHidden( this.host ) )
                     return;
 
-                this.vScrollInstance.setPosition( 0 );
+                //started modify by ihjung
+                //this.vScrollInstance.setPosition( 0 );
+                //end modify by ihjung
                 this._renderrows();
                 this.updatepagerdetails();
                 this._arrange();
@@ -9998,7 +10000,7 @@ License: https://jqwidgets.com/license/
                 } );
 
                 this.removeHandler( $( document ), mousedown );
-                this.addHandler( $( document ), mousedown, function ( event ) {
+                this.addHandler($(document), mousedown, function (event) {
                     if ( that.resizablecolumn != null && !that.disabled ) {
                         var resizeElement = that.resizablecolumn.columnelement;
                         if ( resizeElement.coord().top + resizeElement.height() + 5 < event.pageY ) {

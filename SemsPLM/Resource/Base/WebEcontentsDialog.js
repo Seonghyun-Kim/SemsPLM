@@ -33,30 +33,37 @@
                 var Countermeasures_Thumbnail = CreateProblemLibCountermeasures;
                 param.Oem_Lib_OID = $('#CreateProblemsLibraryOEM').val(); //차종
                 param.Car_Lib_OID = $('#CreateProblemsLibraryCAR').val(); //차종
-                //param.Product = $('#CreateProblemProduct').val(); //제품 
-                //param.Part = $('#CreateProblemPart').val(); //부품
-                //param.Occurrence = $('#CreateProblemOccurrence').val(); //발생처
-                //param.Stage_Occurrence = $('#CreateProblemStage_Occurrence').val();
-                //param.Failure_Type = $('#CreateProblemFailure_Type').val(); //고장유형
-                //param.Division = $('#CreateProblemDivision').val(); //구분
+                param.Product = $('#CreateProblemProduct').val(); //제품 
+                param.Part = $('#CreateProblemPart').val(); //부품
+                param.Occurrence = $('#CreateProblemOccurrence').val(); //발생처
+                param.Stage_Occurrence = $('#CreateProblemStage_Occurrence').val(); //발생단계
+                param.Failure_Type = $('#CreateProblemFailure_Type').val(); //고장유형
+                param.Division = $('#CreateProblemDivision').val(); //구분
                 param.Issues = $('#CreateProblemIssues').val();
                 param.Issues_Thumbnail = Issues_Thumbnail;
                 param.Cause = $('#CreateProblemCause').val();
                 param.Cause_Thumbnail = Cause_Thumbnail;
                 param.Countermeasures = $('#CreateProblemCountermeasures').val();
                 param.Countermeasures_Thumbnail = Countermeasures_Thumbnail;
-
-                //param.Name = $('#CreateProblemName').val(); //번호
                 param.Description = $('#CreateProblemDescription').val(); //기타
 
-                $.post('/Econtents/InsProblemsLibrary', param, function (response) {
+                var Files = InfoFiles.Files();
+
+                var removeFiles = InfoFiles.RemoveFiles();
+                if (!WebUtils.isEmpty(removeFiles)) {
+                    param.delFiles = [];
+                    param.delFiles = removeFiles;
+                }
+                param.Files = Files;
+
+                SendDataWithFile('/Econtents/InsProblemsLibrary', param, null, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
                     }
+                    alert("저장되었습니다."); 
                     $(popLayer).jqxWindow('modalDestory');
-                }).fail(function (err) {
-                    alert(err.responseText);
+
                 });
 
             });

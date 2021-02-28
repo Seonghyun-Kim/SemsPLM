@@ -416,7 +416,9 @@
                             text: '이름', dataField: 'ObjName', width: '20%', pinned: true, align: 'center',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 const editable = projWbsInfo$.jqxTreeGrid('editable');
-                                if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP' || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                                if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT_TEMP'
+                                    || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PHASE'
+                                    || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
 
                                     } else {
                                         if (editable) {
@@ -575,8 +577,8 @@
                         { text: '설명', dataField: 'Description', align: 'center', width: '12%', },
                     ],
                     columnGroups: [
-                        { text: '예상', name: 'Estimated', align: "center" },
-                        { text: '실제', name: 'Actual', align: "center" },
+                        { text: '계획', name: 'Estimated', align: "center" },
+                        { text: '실적', name: 'Actual', align: "center" },
                         { text: 'Dependency', name: 'Dependency' },
                     ],
                     renderToolbar: function (toolBar) {
@@ -594,6 +596,7 @@
                         var importExcelButton = $("<button class='custom-button'><i class='fas fa-file-import'></i> Import</button>").jqxButton();
                         var expandButton = $("<button class='custom-button'><i class='fas fa-caret-down'></i> 펼치기</button>").jqxButton();
                         var collapseButton = $("<button class='custom-button'><i class='fas fa-caret-up'></i> 접기</button>").jqxButton();
+                        var sameLevelCheck = $("<div style='display:inline-block;width:110px;margin-right:10px;'>동일 Level</div>").jqxCheckBox();
                         var gateAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Gate추가</button>").jqxButton();
                         var phaseAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Phase추가</button>").jqxButton();
                         var taskAddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> Task추가</button>").jqxButton();
@@ -603,6 +606,7 @@
                         var moveDownButton = $("<button class='custom-button'><i class='fas fa-long-arrow-alt-down'></i> 아래로</button>").jqxButton();
                         var saveButton = $("<button class='custom-button'><i class='fas fa-save'></i> 저장</button>").jqxButton();
                         var cancelButton = $("<button class='custom-button'><i class='fas fa-window-close'></i> 취소</button>").jqxButton();
+                        sameLevelCheck.jqxCheckBox({ disabled: true });
                         gateAddButton.jqxButton({ disabled: true });
                         phaseAddButton.jqxButton({ disabled: true });
                         taskAddButton.jqxButton({ disabled: true });
@@ -623,6 +627,7 @@
                         container.append(collapseButton);
                         container.append('<span class="buttonSeparator"></span>');
                         if (modifyAuth) {
+                            container.append(sameLevelCheck);
                             container.append(gateAddButton);
                             container.append(phaseAddButton);
                             container.append(taskAddButton);
@@ -637,6 +642,15 @@
                             container.append(cancelButton);
                         }
                         toolBar.append(container);
+
+                        var sameLevelChecked = false;
+                            sameLevelCheck.on('checked', function (event) {
+                                sameLevelChecked = true;
+                            });
+                            sameLevelCheck.on('unchecked', function (event) {
+                                sameLevelChecked = false;
+                            });
+
                         var actionContent = function (action) {
                             switch (action.toUpperCase()) {
                                 case "MODIFY":
@@ -650,27 +664,55 @@
                                     modifyMemberButton.jqxButton({ disabled: !modifyFlag });
                                     projWbsInfo$.jqxTreeGrid({ editable: modifyFlag, checkboxes: modifyFlag, });
                                     if (action.toUpperCase() == 'CANCEL') {
-                                        taskAddButton.jqxButton({ disabled: !modifyFlag });
-                                        deleteButton.jqxButton({ disabled: !modifyFlag });
                                         projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
+                                        gateAddButton.jqxButton({ disabled: true });
+                                        phaseAddButton.jqxButton({ disabled: true });
+                                        taskAddButton.jqxButton({ disabled: true });
+                                        deleteButton.jqxButton({ disabled: true });
                                     }
                                     break;
-                                case "PROJECT":
+                                case "PROJECT_TEMP":
                                     taskAddButton.jqxButton({ disabled: false });
+                                    gateAddButton.jqxButton({ disabled: false });
+                                    phaseAddButton.jqxButton({ disabled: false });
+                                    sameLevelCheck.jqxCheckBox({ checked: false });
+                                    sameLevelCheck.jqxCheckBox({ disabled: true });
                                     break;
                                 case "GATE":
+                                    sameLevelCheck.jqxCheckBox({ disabled: false });
                                     gateAddButton.jqxButton({ disabled: true });
                                     phaseAddButton.jqxButton({ disabled: true });
                                     deleteButton.jqxButton({ disabled: false });
                                     break;
                                 case "PHASE":
+                                    sameLevelCheck.jqxCheckBox({ disabled: false });
+                                    if (sameLevelChecked) {
+                                        gateAddButton.jqxButton({ disabled: false });
+                                        phaseAddButton.jqxButton({ disabled: false });
+                                    } else {
+                                        gateAddButton.jqxButton({ disabled: true });
+                                        phaseAddButton.jqxButton({ disabled: false });
+                                    }
+                                    taskAddButton.jqxButton({ disabled: false });
+                                    sameLevelCheck.on('checked', function (event) {
+                                        gateAddButton.jqxButton({ disabled: false });
+                                        phaseAddButton.jqxButton({ disabled: false });
+                                    });
+                                    sameLevelCheck.on('unchecked', function (event) {
+                                        gateAddButton.jqxButton({ disabled: true });
+                                        phaseAddButton.jqxButton({ disabled: true });
+                                    });
+                                    deleteButton.jqxButton({ disabled: false });
+                                    break;
                                 case "TASK":
+                                    sameLevelCheck.jqxCheckBox({ disabled: false });
                                     gateAddButton.jqxButton({ disabled: true });
                                     phaseAddButton.jqxButton({ disabled: true });
                                     taskAddButton.jqxButton({ disabled: false });
                                     deleteButton.jqxButton({ disabled: false });
                                     break;
                                 case "UNSELECT":
+                                    sameLevelCheck.jqxCheckBox({ disabled: true });
                                     gateAddButton.jqxButton({ disabled: false });
                                     phaseAddButton.jqxButton({ disabled: false });
                                     taskAddButton.jqxButton({ disabled: true });
@@ -740,6 +782,9 @@
                                             maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
                                         }
                                     }
+                                } else if (sameLevelChecked) {
+                                    maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                    maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
                                 } else {
                                     var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
                                     if (getNoData.length < 1) {
@@ -749,6 +794,44 @@
                                         maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                     }
                                 }
+
+                                if (sameLevelChecked) {
+                                        var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                        var sample = {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": parentData.FromOID,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_GATE",
+                                            "ObjStNm": "준비중",
+                                            "Id": maxId,
+                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_GATE" + ' ' + maxId,
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.Level),
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "No": maxData
+                                        };
+
+                                        var checkedRow = projWbsInfo$.jqxTreeGrid('getCheckedRows');
+                                        var parent = checkedRow[0].parent;
+                                        console.log(checkedRow);
+                                        for (var i = 0; i < parent.Children.length; i++) {
+                                            if (parent.Children[i].Id == checkedRow[0].Id) {
+                                                console.log(i);
+                                                parent.Children.splice(i + 1, 0, sample);
+                                                break;
+                                            }
+                                        }
+
+                                        projWbsInfo$.jqxTreeGrid('updateBoundData');
+                                        for (var i = 0; i < parent.Children.length; i++) {
+                                            var newRow = _.filter(projWbsInfo$.jqxTreeGrid('getRows'), function (data) { return data.Id == maxId });
+                                        }
+
+                                    } else {
 
                                 projWbsInfo$.jqxTreeGrid('addRow', null,
                                     {
@@ -768,16 +851,56 @@
                                     },
                                     'last', ProjectOID);
                             }
+                        }
                         });
 
                         phaseAddButton.click(function (event) {
                             if (!phaseAddButton.jqxButton('disabled')) {
+
+                                var selRowKey = ProjectOID;
+                                if (rowKey != null) {
+                                    selRowKey = rowKey;
+                                }
                                 // add new empty row.
-                                const parentData = projWbsInfo$.jqxTreeGrid('getRow', ProjectOID);
+                                const parentData = projWbsInfo$.jqxTreeGrid('getRow', selRowKey);
+                                var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                    if (sameLevelChecked) {
+                                        console.log(parentData);
+                                        var sample = {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": parentData.FromOID,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_PHASE",
+                                            "ObjStNm": "준비중",
+                                            "Id": maxId,
+                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_PHASE" + ' ' + maxId,
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.Level),
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt']
+                                        };
+
+                                        var checkedRow = projWbsInfo$.jqxTreeGrid('getCheckedRows');
+                                        var parent = checkedRow[0].parent;
+                                        console.log(checkedRow);
+                                        for (var i = 0; i < parent.Children.length; i++) {
+                                            if (parent.Children[i].Id == checkedRow[0].Id) {
+                                                console.log(i);
+                                                parent.Children.splice(i + 1, 0, sample);
+                                                break;
+                                            }
+                                        }
+
+                                        projWbsInfo$.jqxTreeGrid('updateBoundData');
+                                    } else {
                                 projWbsInfo$.jqxTreeGrid('addRow', null,
                                     {
                                         "RootOID": ProjectOID,
-                                        "FromOID": ProjectOID,
+                                        "FromOID": selRowKey,
                                         "ObjType": "@Common.Constant.PmsConstant.TYPE_PHASE",
                                         "ObjStNm": "준비중",
                                         "Complete": '0',
@@ -789,9 +912,9 @@
                                         "expanded": "true",
                                         "WorkingDay": workingDay,
                                         "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt']
-                                    },
-                                    'last', ProjectOID);
+                                    }, 'last', selRowKey);
                             }
+                        }
                         });
 
                         taskAddButton.click(function (event) {
@@ -812,6 +935,9 @@
                                             maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
                                         }
                                     }
+                                } else if (sameLevelChecked) {
+                                    maxData = _.max(NoData, function (item) { return item != undefined && item.replace('#', '') });
+                                    maxData = '#' + (parseInt(maxData.replace('#', '')) + 10);
                                 } else {
                                     var getNoData = NoData.filter(function (item) { return item != undefined && item.indexOf(parentData.No + '-') > -1 });
                                     if (getNoData.length < 1) {
@@ -821,7 +947,46 @@
                                         maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                     }
                                 }
+                                var parent = parentData.parent;
+                                //if (parent.OID == null) {
 
+                                //} else {
+                                //    parent = parent.parent;
+                                //}
+                                //  rowData.Id = maxId + 1;
+                                //rowData.ObjName = rowData.ObjType + ' ' + rowData.Id;
+
+                                    if (sameLevelChecked) {
+                                        var parent = parentData.parent;
+                                        var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                        var sample = {
+                                        "RootOID": ProjectOID,
+                                        "FromOID": parentData.FromOID,
+                                        "ObjType": "@Common.Constant.PmsConstant.TYPE_TASK",
+                                        "ObjStNm": "준비중",
+                                        "Id":maxId,
+                                        "ObjName": "@Common.Constant.PmsConstant.TYPE_TASK" + ' ' + maxId,
+                                        "Complete": '0',
+                                        "EstDuration": 1,
+                                        "EstStartDt": parentData.EstStartDt,
+                                        "EstEndDt": parentData.EstStartDt,
+                                        "Level": parseInt(parentData.Level),
+                                        "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                        "expanded": "true",
+                                        "WorkingDay": workingDay,
+                                        "No": maxData
+                                    };
+                                        console.log(parent);
+                                        for (var i = 0; i < parent.Children.length; i++) {
+                                        if (parent.Children[i].Id == parentData.Id) {
+                                            parent.Children.splice(i+1, 0, sample);
+                                            break;
+                                        }
+                                        }
+                                        //parent.Children.push(sample)
+                                        console.log(parent.Children);
+                                        projWbsInfo$.jqxTreeGrid('updateBoundData');
+                                    } else {
                                 projWbsInfo$.jqxTreeGrid('addRow', null,
                                     {
                                         "RootOID": ProjectOID,
@@ -840,6 +1005,7 @@
                                     },
                                     'last', rowKey);
                             }
+                        }
                         });
 
                         deleteButton.click(function (event) {
@@ -985,11 +1151,13 @@
                                     }
                                     projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', fWeekendCalcDuration(selDep[0].EstEndDt, 2, workingDay, sHoliday));
                                 } else {
+                                    if (records[i].EstStartDt < value) {
+                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
+                                    }
+
                                     if (records[i].records != null && records[i].records.length > 0) {
                                         const minEstStartDt = moment(fMinDate(fPmsLoadProperties(records[i].records, 'EstStartDt'))).format('YYYY-MM-DD');
                                         projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', minEstStartDt);
-                                    } else {
-                                        projWbsInfo$.jqxTreeGrid('setCellValue', rowKey, 'EstStartDt', value);
                                     }
                                 }
                             }

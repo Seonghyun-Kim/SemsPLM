@@ -518,3 +518,47 @@ function OpenAssessManagerDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title)
         $(popLayer).jqxWindow('modalDestory');
     });
 }
+
+
+
+function OpenEBomStructureDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1200 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1200, maxWidth: 1200, height: 650, minHeight: 650, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+
+
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}

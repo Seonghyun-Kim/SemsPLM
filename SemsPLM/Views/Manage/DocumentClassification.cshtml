@@ -210,7 +210,7 @@
     });
 
     function getDocumentClassificationList(_Source, _Grid$, _param) {
-        RequestData("/Manage/SelDocumentClassification", _param, function (res) {
+        RequestData("/Manage/AllSelDocumentClassification", _param, function (res) {
             PrintJqxTreeGrid(_Source, _Grid$, res);
             _Grid$.jqxTreeGrid('expandAll');
         });

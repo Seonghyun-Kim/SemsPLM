@@ -249,18 +249,17 @@ function OpenSearchEBomTreeDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
 
             $('#SearchEBomStructurebtn').on('click', function () {
                 
-                var SearchEPartCreateDt = $('#SearchEBomStructureCreateDt').val();
-                var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+                //var SearchEPartCreateDt = $('#SearchEBomStructureCreateDt').val();
+                //var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
                 var EBomStructureParam = {};
                 EBomStructureParam.Title = $("#SearchEBomStructureTitle").val();
                 EBomStructureParam.Car_Lib_OID = $("#SearchEBomStructureCar").val();
-                //EBomStructureParam. = dlgSearchEPartPms
                 EBomStructureParam.Name = $('#SearchEBomStructureName').val();
                 EBomStructureParam.ITEM_No = $('#SearchEBomStructureItemNo').val();
                 EBomStructureParam.Division = EPartDivision;
-                EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
-                EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+                //EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
+                //EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
 
                 EBomStructureParam.ITEM_Middle = $('#SearchEBomStructureItemMiddle').val();
 
@@ -474,15 +473,16 @@ function OpenSearchEBomOIDDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title,
             });
 
             $('#dlgSearchEPartbtn').on('click', function () {
-                var SearchEPartCreateDt = $('#dlgSearchEPartCreateDt').val();
-                var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+                //var SearchEPartCreateDt = $('#dlgSearchEPartCreateDt').val();
+                //var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+
                 var EBomStructureParam = {};
                 EBomStructureParam.Car_Lib_OID = $("#dlgSearchEPartCar").val();
                 EBomStructureParam.Name = $('#dlgSearchEPartName').val();
                 EBomStructureParam.ITEM_No = $('#dlgSearchEPartItemNo').val();
                 EBomStructureParam.Division = EPartDivision;
-                EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
-                EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+                //EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
+                //EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
 
                 EBomStructureParam.ITEM_Middle = $('#dlgSearchEPartItemMiddle').val();
 
@@ -683,6 +683,9 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                     { name: 'ObjTdmxOID', type: 'text' },
                     { name: 'ObjIsLatest', type: 'number' },
                     { name: 'ObjEPartType', type: 'text' },
+
+                    { name: 'ObjEPartTypeNm', type: 'text' },
+
                     { name: 'Level', type: 'number' },
                     { name: 'ObjName', type: 'text' },
                     { name: 'ObjThumbnail', type: 'text' },
@@ -816,6 +819,19 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         SelectData.Ord = 1;
                         SelectData.Count = 1;
                         SelectData.BPolicyNm = SelectData.BPolicy.StatusNm;
+                        if (SelectData.ObjEPartTypeNm == dlgEPartAssy) {
+                            alert("Assy는 하위에 붙을 수 없습니다.")
+                            return;
+                        }
+
+                        RequestData('/EBom/CheckRecursionError', { FromOID: parentData.parent.ToOID, ToOID: SelectData.ToOID }, function (res) {
+                            if (res == 1) {
+                                alert("이 품번은 구조는 연결시 오류가 발생하여 연결 할 수 없습니다.");
+                                return;
+                            }
+                        })
+
+
                         ffEPartArray([SelectData], Number(parentData.Level));
                         if (parentData.Action == "A") {
                             parentData.Action = "AD";
@@ -838,7 +854,6 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                             function (res) {
                                 RequestData('/EBom/SelectEBomAddChild', { OID: res }, function (res) {
                                     PrintJqxTreeGrid(EBomStructureSource, dlgSetSearchEBomStructureGrid$, res);
-                                    //dlgSetSearchEBomStructureGrid$.jqxTreeGrid('expandAll');
                                 })
                             }, null, AddName, '/EBom/dlgCreateEPart', 'EPART 등록');
                     });
@@ -867,8 +882,8 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
 
             $('#SearchEBomStructurebtn').on('click', function () {
 
-                var SearchEPartCreateDt = $('#SearchEBomStructureCreateDt').val();
-                var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+                //var SearchEPartCreateDt = $('#SearchEBomStructureCreateDt').val();
+                //var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
 
                 var EBomStructureParam = {};
                 EBomStructureParam.Title = $("#SearchEBomStructureTitle").val();
@@ -876,8 +891,11 @@ function OpenSearchEBomTreeADialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                 EBomStructureParam.Name = $('#SearchEBomStructureName').val();
                 EBomStructureParam.ITEM_No = $('#SearchEBomStructureItemNo').val();
                 EBomStructureParam.Division = EPartDivision;
-                EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
-                EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+
+                EBomStructureParam.TdmxOID = SetSearchData.parent.ObjTdmxOID;
+
+                //EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
+                //EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
 
                 EBomStructureParam.ITEM_Middle = $('#SearchEBomStructureItemMiddle').val();
 
@@ -1122,7 +1140,8 @@ function OpenSearchTopEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title
     });
 }
 
-
+// 2021.02.28 김성현
+// 제품선택팝업. 기존 파트팝업이 다를경우 신속대응에서 변경 필요
 function OpenSearchEPartDataDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
     const loading$ = $('#loading');
     loading$.css('display', 'block');
@@ -1251,7 +1270,7 @@ function OpenSearchEPartDataDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         //param.FromOID = _Param.RootOID;
                         //param.ToOID = SelectData.OID;
                         //RequestData('/Pms/InsProjectEPartRelation', param, function (res) {
-                            
+
                         //    $(popLayer).jqxWindow('modalDestory');
                         //});
                     });

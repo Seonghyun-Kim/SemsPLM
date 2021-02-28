@@ -65,17 +65,17 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NPOI, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
+    <Reference Include="NPOI, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.dll</HintPath>
     </Reference>
-    <Reference Include="NPOI.OOXML, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    <Reference Include="NPOI.OOXML, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OOXML.dll</HintPath>
     </Reference>
-    <Reference Include="NPOI.OpenXml4Net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
     </Reference>
-    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -161,6 +161,7 @@
     <Compile Include="Controllers\QmsController.cs" />
     <Compile Include="Controllers\VaultController.cs" />
     <Compile Include="Filter\AuthorizeFilter.cs" />
+    <Compile Include="Filter\GlobalExceptionFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -3732,6 +3733,7 @@
     <Content Include="Resource\d3-timeline-master\package.json" />
     <Content Include="Resource\d3-timeline-master\readme.md" />
     <Content Include="Resource\d3-timeline-master\scss\timeline-chart.scss" />
+    <Content Include="ExcelTmpFile\GanttFormat.xlsx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3909,9 +3911,17 @@
     <Content Include="Views\Document\SearchReleaseDocument.cshtml" />
     <Content Include="Views\Pms\Dialog\dlgSearchDocument.cshtml" />
     <Content Include="Views\ChangeRequest\SearchReleaseChangeRequest.cshtml" />
+    <Content Include="Views\Econtents\SearchReleaseProblemsLibrary.cshtml" />
+    <Content Include="Views\Econtents\InfoOptimalDesign.cshtml" />
+    <Content Include="Views\Econtents\SearchReleaseOptimalDesign.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardCLevel.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgDashboardExec.cshtml" />
+    <Content Include="Views\Pms\Dashboard\dlgProjectDelayList.cshtml" />
+    <Content Include="Views\ChangeOrder\Dialog\dlgEBomStructure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Hubs\" />
     <Folder Include="images\Thumbnail\" />
     <Folder Include="Models\" />
   </ItemGroup>

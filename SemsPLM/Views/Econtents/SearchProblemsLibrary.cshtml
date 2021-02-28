@@ -23,17 +23,14 @@
                     </div>
                 </div>
                 
-                @*<div class="comboBoxLabel">작성자</div>
-        <div>
-            <div id="" class="searchEpartComboBox"></div>
-        </div>*@
 
-            <div class="searchData">
+            @*<div class="searchData">
                 <div class="comboBoxLabel">작성일</div>
                 <div>
                     <div id="SearchEcontentsCreateDt" class="searchEpartComboBox"></div>
                 </div>
-            </div><div class="searchButton">
+            </div>*@
+            <div class="searchButton">
                 <button id="" class="searchBtn custom-button"><i class="fas fa-search"></i> 검색</button>
             </div>
         </div>
@@ -82,8 +79,7 @@
             });
         });
 
-        $('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
-
+        //$('#SearchEcontentsCreateDt').jqxDateTimeInput({ width: 250, height: 32, selectionMode: 'range', formatString: 'yyyy/MM/dd' });
 
         var SearchProblemsLibrarySource = {
             datatype: 'json',
@@ -97,6 +93,9 @@
 
                 { name: 'Description' },
 
+                { name: 'OEM_Lib_Nm'},
+
+                { name: 'Car_Lib_Nm' },
                 { name: 'Car_Lib_OID'},
                 { name: 'Product'},
                 { name: 'Part'},
@@ -130,18 +129,26 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                     }
                 },
-                { text: '차종', datafield: 'Car_Lib_OID', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '제품', datafield: 'Product', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '부품', datafield: 'Part', width: "12%", align: 'center', cellsalign: 'center', },
-                { text: '발생처', datafield: 'Occurrence', width: "12%", align: 'center', cellsalign: 'center', },
+                { text: '고객사', datafield: 'OEM_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '차종', datafield: 'Car_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '제품', datafield: 'Product', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '부품', datafield: 'Part', width: "11%", align: 'center', cellsalign: 'center', },
+                { text: '발생처', datafield: 'Occurrence', width: "11%", align: 'center', cellsalign: 'center', },
                 { text: '발생단계', datafield: 'Stage_Occurrence', width: "7%", align: 'center', cellsalign: 'center', },
                 { text: '고장유형', datafield: 'Failure_Type', width: "7%", align: 'center', cellsalign: 'center', },
                 { text: '구분', datafield: 'Division', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '문제점', datafield: 'Issues', width: "7%", align: 'center', cellsalign: 'center', },
-                { text: '최적화', datafield: 'Cause', width: "5%", align: 'center', cellsalign: 'center', },
-                { text: 'REV', datafield: 'Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                //{ text: '문제점', datafield: 'Issues', width: "7%", align: 'center', cellsalign: 'center', },
+                { text: '최적화', datafield: 'Cause', width: "6%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "6%", align: 'center', cellsalign: 'center', },
                 { text: '작성일', datafield: 'CreateDt', width: "7%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
-                { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center', }
+                { text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                {
+                    text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    }
+
+                }
             ],
             showtoolbar: true,
             toolbarheight: 45,
@@ -158,7 +165,6 @@
         });
 
         SearchProblemsLibraryGrid$.on('celldoubleclick', function (e) {
-            console.log(e.args.row.bounddata.OID);
             const linkUrl = '/Econtents/InfoProblemsLibrary?OID=' + e.args.row.bounddata.OID;
             if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
                 var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;

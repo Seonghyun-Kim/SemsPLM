@@ -81,6 +81,16 @@ namespace Pms.Models
         //도낫 차트 집계용 수량
         public int? Count { get; set; }
 
+        //대시보드용 선언
+
+        public List<int> GatePolicy { get; set; }
+
+        public int? TotalCnt { get; set; }
+        public int? PrepareCnt { get; set; }
+        public int? ProcessCnt { get; set; }
+        public int? DelayCnt { get; set; }
+        public int? CompleteCnt { get; set; }
+
     }
 
     public static class PmsProjectRepository
@@ -110,26 +120,28 @@ namespace Pms.Models
                 _param.IsTemplate = _param.Type;
                 pmsProject = DaoFactory.GetData<PmsProject>("Pms.SelPmsProject", _param);
             }
-
-            if (pmsProject.ITEM_No != null)
+            else // 2021.02.28 김성현 else 처리 안되있어서 수정
             {
-                pmsProject.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_No }).KorNm;
-            }
-            if (pmsProject.ITEM_Middle != null)
-            {
-                pmsProject.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_Middle }).KorNm;
-            }
-            if (pmsProject.Oem_Lib_OID != null)
-            {
-                pmsProject.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Oem_Lib_OID }).KorNm;
-            }
-            if (pmsProject.Car_Lib_OID != null)
-            {
-                pmsProject.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Car_Lib_OID }).KorNm;
-            }
-            if (pmsProject.Customer_OID != null)
-            {
-                pmsProject.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = pmsProject.Customer_OID }).KorNm;
+                if (pmsProject.ITEM_No != null)
+                {
+                    pmsProject.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_No }).KorNm;
+                }
+                if (pmsProject.ITEM_Middle != null)
+                {
+                    pmsProject.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_Middle }).KorNm;
+                }
+                if (pmsProject.Oem_Lib_OID != null)
+                {
+                    pmsProject.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Oem_Lib_OID }).KorNm;
+                }
+                if (pmsProject.Car_Lib_OID != null)
+                {
+                    pmsProject.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Car_Lib_OID }).KorNm;
+                }
+                if (pmsProject.Customer_OID != null)
+                {
+                    pmsProject.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = pmsProject.Customer_OID }).KorNm;
+                }
             }
 
             pmsProject.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = pmsProject.CreateUs }).Name;
@@ -244,6 +256,46 @@ namespace Pms.Models
         public static List<PmsProject> SelOemBPolicy(HttpSessionStateBase Context, PmsProject _param)
         {
             return DaoFactory.GetList<PmsProject>("Pms.SelOemBPolicy", _param);
+        }
+        #endregion
+
+        #region -- 전체 진행중인 프로젝트(CEO)
+        public static List<PmsProject> SelPmsCObjects(HttpSessionStateBase Context, PmsProject _param)
+        {
+            if (_param.Type == null)
+            {
+                _param.Type = PmsConstant.TYPE_PROJECT;
+            }
+            List<PmsProject> lPmsProjectes = new List<PmsProject>();
+            List<PmsProject> lPmsProject = DaoFactory.GetList<PmsProject>("Pms.SelPmsProject", _param);
+            lPmsProject.ForEach(dObj =>
+            {
+                if (dObj.ITEM_No != null)
+                {
+                    dObj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_No }).KorNm;
+                }
+                if (dObj.ITEM_Middle != null)
+                {
+                    dObj.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_Middle }).KorNm;
+                }
+                if (dObj.Oem_Lib_OID != null)
+                {
+                    dObj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Oem_Lib_OID }).KorNm;
+                }
+                if (dObj.Car_Lib_OID != null)
+                {
+                    dObj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Car_Lib_OID }).KorNm;
+                }
+                if (dObj.Customer_OID != null)
+                {
+                    dObj.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = dObj.Customer_OID }).KorNm;
+                }
+                dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, PmsAuth.RoleAuth(Context, dObj));
+                dObj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = dObj.CreateUs }).Name;
+                lPmsProjectes.Add(dObj);
+            });
+            return lPmsProjectes;
         }
         #endregion
     }

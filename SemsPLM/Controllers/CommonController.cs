@@ -185,19 +185,6 @@ namespace SemsPLM.Controllers
             if (_param.TargetOID != null)
             {
                 ViewBag.TargetOID = _param.TargetOID;
-
-                // 2021.01.30 김성현
-                // QMS 경우  '품질책임자에게 결재 바랍니다.' 라는 문구가 필요하다라고 요청해서 TYPE 추가함.
-
-                DObject dObject = DObjectRepository.SelDObject(Session, new DObject() { OID = _param.TargetOID });
-                if(dObject.Type == QmsConstant.TYPE_BLOCKADE || dObject.Type == QmsConstant.TYPE_QUICK_RESPONSE || dObject.Type == QmsConstant.TYPE_OCCURRENCE_CAUSE || dObject.Type == QmsConstant.TYPE_IMPROVE_COUNTERMEASURE
-                    || dObject.Type == QmsConstant.TYPE_ERROR_PRROF || dObject.Type == QmsConstant.TYPE_LPA_UNFIT || dObject.Type == QmsConstant.TYPE_LPA_MEASURE || dObject.Type == QmsConstant.TYPE_QUICK_RESPONSE_CHECK
-                    || dObject.Type == QmsConstant.TYPE_STANDARD || dObject.Type == QmsConstant.TYPE_WORKER_EDU)
-                {
-                    ViewBag.IsQms = "Y";
-                }
-
-                    
             }
             ViewBag.SelApproval = ApprovalRepository.SelSaveApprovalsNonStep(Session, new Approval{Type = Common.Constant.CommonConstant.TYPE_SAVE_APPROVAL });
             return PartialView("Dialog/dlgApproval");
@@ -656,6 +643,8 @@ namespace SemsPLM.Controllers
             int completeOID = Convert.ToInt32(lBPolicy.Find(bpolicy => bpolicy.Name == CommonConstant.POLICY_APPROVAL_COMPLETED).OID);
             int weekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)));
 
+            DObject tmpDobj = null;
+            List<Approval> tmpLApproval = null;
             lApproval.ForEach(approv =>
             {
                 if (approv.BPolicyOID == startedOID)
@@ -664,7 +653,20 @@ namespace SemsPLM.Controllers
                 }
                 else if (approv.BPolicyOID == rejectOID)
                 {
-                    rejectCount++;
+                    if (tmpDobj != null)
+                    {
+                        tmpDobj = null;
+                    }
+                    tmpDobj = DObjectRepository.SelDObject(Session, new DObject { OID = approv.TargetOID });
+                    if (tmpLApproval != null)
+                    {
+                        tmpLApproval = null;
+                    }
+                    tmpLApproval = ApprovalRepository.SelApprovalsNonStep(Session, new Approval { Type = CommonConstant.TYPE_APPROVAL, TargetOID = approv.TargetOID });
+                    if (tmpLApproval.Last().OID == approv.OID)
+                    {
+                        rejectCount++;
+                    }
                 }
                 else if (approv.BPolicyOID == completeOID)
                 {
@@ -701,6 +703,7 @@ namespace SemsPLM.Controllers
 
             List<BDefine> lBDefine = BDefineRepository.SelDefines(new BDefine { Type = CommonConstant.DEFINE_TYPE });
             DObject dobj = null;
+            List<Approval> tmpLApproval = null;
             lApproval.ForEach(approv =>
             {
                 if (dobj != null)
@@ -728,6 +731,18 @@ namespace SemsPLM.Controllers
                 {
                     innerWeekNum = Pms.PmsUtils.CalculateWeekNumber(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", approv.ModifyDt)));
                     if (innerWeekNum == weekNum)
+                    {
+                        myApproval.Add(approv);
+                    }
+                } 
+                else if (_param.BPolicyNm == CommonConstant.POLICY_APPROVAL_REJECTED)
+                {
+                    if (tmpLApproval != null)
+                    {
+                        tmpLApproval = null;
+                    }
+                    tmpLApproval = ApprovalRepository.SelApprovalsNonStep(Session, new Approval { Type = CommonConstant.TYPE_APPROVAL, TargetOID = approv.TargetOID });
+                    if (tmpLApproval.Last().OID == approv.OID)
                     {
                         myApproval.Add(approv);
                     }
