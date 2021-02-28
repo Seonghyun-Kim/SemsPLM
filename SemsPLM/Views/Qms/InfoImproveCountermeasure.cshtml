@@ -83,6 +83,9 @@
             <div id="ApphisInfo_@ViewBag.ImproveCounterMeasure.OID">
             </div>
         </div>
+        <div id="Downhis" class="basic_grid dective">
+            @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.ImproveCounterMeasure.OID });}
+        </div>
     </div>
 </div>
 

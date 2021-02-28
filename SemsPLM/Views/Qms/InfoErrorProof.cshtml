@@ -103,6 +103,9 @@
                 <div id="ApphisInfo_@ViewBag.ErrorProof.OID">
                 </div>
             </div>
+            <div id="Downhis" class="basic_grid dective">
+                @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.ErrorProof.OID });}
+            </div>
         </div>
     </div>
 

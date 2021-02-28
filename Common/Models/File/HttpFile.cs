@@ -92,7 +92,10 @@ namespace Common.Models.File
                     {
                         file = SemsValut.SaveFile(@object, item);
                         file.CreateUs = Convert.ToInt32(Context["UserOID"]); //HttpContext.Current.Session["UserOID"].ToString();
-                        DaoFactory.SetInsert("Comm.InsFile", file);
+                        file.OID = DaoFactory.SetInsert("Comm.InsFile", file);
+
+
+                        DFileHistoryRepository.InsDFileHistory(Context, Common.Constant.CommonConstant.ACTION_FILE_HISTORY_UPLOAD, file);
                     }
                     catch (Exception ex)
                     {

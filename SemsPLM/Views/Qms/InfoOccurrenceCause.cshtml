@@ -157,6 +157,9 @@
                 <div id="ApphisInfo_@ViewBag.OccurrenceCause.OID">
                 </div>
             </div>
+            <div id="Downhis" class="basic_grid dective">
+                @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.OccurrenceCause.OID });}
+            </div>
         </div>
     </div>
 </div>

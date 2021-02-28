@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="fileHistory_@ViewBag.TargetOID"></div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        const fileHistory$ = $('#fileHistory_@ViewBag.TargetOID');
+
+        const fileSource = {
+            datatype: 'json',
+            dafafields: [
+                { name: 'Seq', type: 'number' },
+                { name: 'FileOID', type: 'number' },
+                { name: 'OID', type: 'number' },
+                { name: 'Type', type: 'string' },
+                { name: 'Name', type: 'string' },
+                { name: 'OrgNm', type: 'string'},
+                { name: 'ActionType', type: 'string' },
+                { name: 'ActionUser', type: 'number' },
+                { name: 'ActionUserNm', type: 'string' },
+                { name: 'ActionIPAddress', type: 'string'},
+                { name: 'ActionMacAddress', type: 'string' },
+                { name: 'ActionDt', type: 'date' },
+                { name: 'SessionID', type: 'string' },
+            ],
+            type: "post",
+            url: "/Common/GetFileHistory",
+            data:
+            {
+                OID : "@ViewBag.TargetOID"
+            }
+        }
+
+         fileHistory$.jqxGrid({
+                width: '100%',
+                height: 665,
+                theme: 'kdnc',
+                source: fileSource,
+                columnsResize: false,
+                sortable: false,
+                editable: false,
+                rowsheight: 45,
+                selectionmode: 'none',
+                ready: function () {
+                },
+                columns: [                    
+                    {
+                        text: 'NO', dataField: 'NO', width: '3%', cellsalign: 'center', columntype: 'number', align: 'center', pinned:true,
+                        cellsrenderer: function (row, column, value, defaulthtml, columnproperties, rowData) {
+                            return "<div style='display:flex;justify-content:center;align-items:center;width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        }
+                    },
+                    { text: '파일명', dataField: 'OrgNm', width: '37%', align: 'center', cellsalign: 'left' },
+                    { text: '행위', dataField: 'ActionType', width: '8%', align: 'center', cellsalign: 'center' },
+                    { text: '행위자', dataField: 'ActionUserNm', width: '8%', align: 'center', cellsalign: 'center' },
+                    {
+                        text: '행위 날짜', width: '12%', datafield: 'ActionDt', align: 'center',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            if (value == '') {
+                                return '';
+                            }
+                            return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:45px;'>" + moment(value).format('YYYY-MM-DD HH:mm:ss') + "</div>";
+                        }
+                    },
+                    { text: 'IP 주소', dataField: 'ActionIPAddress', width: '16%', align: 'center', cellsalign: 'center' },
+                    { text: 'MAC 주소', dataField: 'ActionMacAddress', width: '16%', align: 'center', cellsalign: 'center' },
+                ]
+            });
+
+            @*RequestData("/Common/GetFileHistory", { OID: @ViewBag.TargetOID }, function (res) {                
+                PrintJqxGrid(fileSource, fileDiv$, res);
+            });*@
+    });
+</script>

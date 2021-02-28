@@ -106,6 +106,9 @@
             <div id="ApphisInfo_@ViewBag.WorkerEdu.OID">
             </div>
         </div>
+        <div id="Downhis" class="basic_grid dective">
+            @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.WorkerEdu.OID });}
+        </div>
     </div>
 </div>
 <script type="text/javascript">
