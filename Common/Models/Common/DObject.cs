@@ -55,6 +55,8 @@ namespace Common.Models
         public DateTime? DeleteDt { get; set; }
 
         public int? DeleteUs { get; set; }
+
+        public List<int> OIDs { get; set; }
     }
 
     public static class DObjectRepository
@@ -107,6 +109,25 @@ namespace Common.Models
             });
             return lDObject;
         }
+
+        public static List<DObject> SelDObjectOIDs(HttpSessionStateBase Context, DObject _param)
+        {
+            List<DObject> lDObject = DaoFactory.GetList<DObject>("Comm.SelDObject", _param);
+            if (lDObject == null || lDObject.Count < 1)
+            {
+                return new List<DObject>();
+            }
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = lDObject.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            lDObject.ForEach(dObj =>
+            {
+                //dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                dObj.BPolicy = lBPolicy.Find(bpolicy => bpolicy.OID == dObj.BPolicyOID);
+                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, null);
+            });
+            return lDObject;
+        }
+
+
 
         public static int CopyDObject(HttpSessionStateBase Context, DObject _param)
         {

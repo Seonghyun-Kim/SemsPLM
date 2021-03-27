@@ -204,8 +204,10 @@ namespace SemsPLM.Controllers
             return PartialView("Dialog/dlgSelectAssessManager");
         }
 
-        public ActionResult dlgEBomStructure()
+        public ActionResult dlgEBomStructure(int OID, string Name)
         {
+            ViewBag.OID = OID;
+            ViewBag.Name = Name;
             return PartialView("Dialog/dlgEBomStructure");
         }
 
@@ -473,16 +475,19 @@ namespace SemsPLM.Controllers
             List<EPart> lEPart = new List<EPart>();
             if (_param.Type == Common.Constant.EoConstant.TYPE_EBOM_LIST)
             {
-                
+
                 lEO.ForEach(obj =>
                 {
                     if (obj != null)
                     {
                         EPart eobj = EPartRepository.SelEPartObject(Session, new EPart { OID = obj.ToOID });
-                        eobj.RootOID = _param.RootOID;
-                        eobj.Type = _param.Type;
-                        eobj.ToOID = eobj.OID;
-                        lEPart.Add(eobj);
+                        if (eobj != null)
+                        {
+                            eobj.RootOID = _param.RootOID;
+                            eobj.Type = _param.Type;
+                            eobj.ToOID = eobj.OID;
+                            lEPart.Add(eobj);
+                        }
                     }
                 });
                 return Json(lEPart);

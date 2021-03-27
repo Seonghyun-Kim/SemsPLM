@@ -431,10 +431,6 @@ T_BPOLICTY_AUTH 추가 <= 시험 성적서 수정 해야함
 164	133	NULL	OWNER	Relation	연결	SYSTEM	NULL
 
 
-
-
-
-
 ------QMS 관련 시작
 2021.01.03 김성현
 
@@ -524,12 +520,6 @@ QMS
 귀책구분
 이름 : 자재 -> 자체 로 변경
 
-
-
-
-ㅋ
-
-
 21.01.30 DB 로그 ---------------------------------------------
 T_DQMS_QUICK
 GoodPicture -> 신규 추가(nvarchar(255), null 허용) 
@@ -544,3 +534,19 @@ CheckLine -> 신규 추가(nvarchar(255), null 허용(임시))
 
 
 --- QMS  끝
+
+ihjung 210302
+INDEX 추가
+
+CREATE INDEX IX_T_DPMS_RELATIONSHIP ON [WooryPLM].[dbo].[T_DPMS_RELATIONSHIP](FromOID, ToOID, RootOID, TaskOID, Type)
+
+
+
+-- cskim 김창수 권한 추가
+T_BPOLICY_AUTH
+165	19	2	ROLE	Modify	수정	SYSTEM	NULL
+166	19	2	ROLE	Relation	연결	SYSTEM	NULL
+
+T_BSUB_MENU
+68	9	임원 대시보드	NULL	3	/Pms/CLevelDashboard	1
+69	9	팀장 대시보드	NULL	3	/Pms/ExecDashboard	1

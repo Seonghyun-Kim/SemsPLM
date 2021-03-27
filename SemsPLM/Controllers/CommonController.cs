@@ -724,7 +724,12 @@ namespace SemsPLM.Controllers
                 {
                     dobj = null;
                 }
-                
+
+                if (approv.TargetOID == null)
+                {
+                    return;
+                }
+
                 dobj = DObjectRepository.SelDObject(Session, new DObject { OID = approv.TargetOID });
                 if (dobj == null)
                 {

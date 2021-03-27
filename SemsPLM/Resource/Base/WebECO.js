@@ -541,11 +541,11 @@ function OpenEBomStructureDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title)
 
     var winHeight = $(window).height();
     var winWidth = $(window).width();
-    var posX = (winWidth / 2) - (1200 / 2) + $(window).scrollLeft();
-    var posY = (winHeight / 2) - (650 / 2) + $(window).scrollTop();
+    var posX = (winWidth / 2) - (1600 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (730 / 2) + $(window).scrollTop();
 
     $(popLayer).jqxWindow({
-        width: 1200, maxWidth: 1200, height: 650, minHeight: 650, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        width: 1600, maxWidth: 1600, height: 730, minHeight: 730, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
         initContent: function () {
 
 

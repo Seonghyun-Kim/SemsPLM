@@ -1014,7 +1014,7 @@ function OpenReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.TestStandardContents = $('#TestStandardContents').val();
                 param.Requirements = $('#Requirements').val();
 
-                if (param.DevStep == null || param.DevStep == undefined) {
+                if (param.DevStep == null || param.DevStep == undefined || param.DevStep < 1) {
                     alert('개발단계를 선택하여주세요.');
                     return;
                 }
@@ -1120,64 +1120,92 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.Title = $('#dlgCreateDocument_Title').val();                 //제목
                 param.DocType = $('#dlgCreateDocument_DocClassOID').val();  //문서분류
                 param.Description = $('#dlgCreateDocument_Description').val();     //설명
-                var Files = documentFile.Files();
 
                 param.RootOID = _Param.RootOID;
                 param.FromOID = _Param.FromOID;
                 param.TaskOID = _Param.TaskOID;
+                
 
-                var removeFiles = documentFile.RemoveFiles();
-                if (!WebUtils.isEmpty(removeFiles)) {
-                    param.delFiles = [];
-                    param.delFiles = removeFiles;
-                }
                 if (param.Title == null || param.Title.length < 1) {
                     alert('제목을 입력해주세요.');
                     return;
                 }
-                SendDataWithFile('/Pms/InsertPmsDocument', param, Files, function (response) {
+
+                RequestData('/Pms/InsertPmsDocument', param, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
                     }
-                    alert("저장되었습니다.");
-                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                        _CallBackFunction();
+
+                    var FileParam = {};
+                    FileParam.OID = response;
+                    FileParam.Title = $('#dlgCreateDocument_Title').val();
+                    FileParam.Type = dlgCreateDocType;
+                    FileParam.Files = documentFile.Files();
+                    var removeFiles = documentFile.RemoveFiles();
+                    if (!WebUtils.isEmpty(removeFiles)) {
+                        FileParam.delFiles = [];
+                        FileParam.delFiles = removeFiles;
                     }
-                    $(popLayer).jqxWindow('modalDestory');
+
+                    SendDataWithFile('/Document/UdtDocument', FileParam, null, function (response) {
+                        if (response.isError) {
+                            alert(response.resultMessage);
+                            return;
+                        }
+                        alert("저장되었습니다.");
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction();
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
                 });
             });
 
             $('#dlgInfoDocument_canclebtn, #dlgCreateDocument_canclebtn').on('click', function () {
                 $(popLayer).jqxWindow('modalDestory');
             });
+
             $('#dlgInfoDocument_savebtn').on('click', function () {
                 if (confirm('수정하시겠습니까?')) {
                     const param = {};
                     param.OID = _Param.OID;
                     param.Title = $('#dlgInfoDocument_Title').val();                 //제목
                     param.Description = $('#dlgInfoDocument_Description').val();     //설명
-                    param.Files = documentFile.Files();
                     param.Type = _Param.Type;
-                    var removeFiles = documentFile.RemoveFiles();
-                    if (!WebUtils.isEmpty(removeFiles)) {
-                        param.delFiles = [];
-                        param.delFiles = removeFiles;
-                    }
                     if (param.Title == null || param.Title.length < 1) {
                         alert('제목을 입력해주세요.');
                         return;
                     }
-                    SendDataWithFile('/Document/UdtDocument', param, null, function (response) {
+
+                    RequestData('/Document/UdtDocument', param, function (response) {
                         if (response.isError) {
                             alert(response.resultMessage);
                             return;
                         }
-                        alert("수정되었습니다.");
-                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                            _CallBackFunction();
+
+                        var FileParam = {};
+                        FileParam.OID = _Param.OID;
+                        FileParam.Title = $('#dlgInfoDocument_Title').val();
+                        FileParam.Type = _Param.Type;
+                        FileParam.Files = documentFile.Files();
+                        var removeFiles = documentFile.RemoveFiles();
+                        if (!WebUtils.isEmpty(removeFiles)) {
+                            FileParam.delFiles = [];
+                            FileParam.delFiles = removeFiles;
                         }
-                        $(popLayer).jqxWindow('modalDestory');
+
+                        SendDataWithFile('/Document/UdtDocument', FileParam, null, function (response) {
+                            if (response.isError) {
+                                alert(response.resultMessage);
+                                return;
+                            }
+                            alert("수정되었습니다.");
+                            if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                                _CallBackFunction();
+                            }
+                            $(popLayer).jqxWindow('modalDestory');
+                        });
                     });
                 }
             });
@@ -1274,7 +1302,7 @@ function OpenInfoReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                 param.TestStandardContents = $('#TestStandardContents').val();
                 param.Requirements = $('#Requirements').val();
 
-                if (param.DevStep == null || param.DevStep == undefined) {
+                if (param.DevStep == null || param.DevStep == undefined || param.DevStep < 1) {
                     alert('개발단계를 선택하여주세요.');
                     return;
                 }
@@ -1285,6 +1313,9 @@ function OpenInfoReliabilityDialog(_CallBackFunction, _Wrap, _Param, _Url, _Titl
                         return;
                     }
                     alert("수정되었습니다.");
+
+                    console.log(_CallBackFunction);
+
                     if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
                         _CallBackFunction();
                     }
@@ -1393,7 +1424,16 @@ function OpenSearchReliabilityReportDialog(_CallBackFunction, _Wrap, _Param, _Ur
                     toolbar.append(container);
 
                     btnAdd.on('click', function () {
+                        if (rowkey == null) {
+                            return;
+                        }
+                        if (rowkey < 0) {
+                            return;
+                        }
                         var data = ReliabilityReportGrid$.jqxGrid('getrowdata', rowkey);
+                        if (data == null) {
+                            return;
+                        }
 
                         var RelParam = {};
                         RelParam.RootOID = _Param.RootOID;
@@ -1492,7 +1532,7 @@ function OpenInfoReliabilityReportDialog(_CallBackFunction, _Wrap, _Param, _Url,
                 var TestDt = ReportTotalTestDt$.jqxDateTimeInput('getRange');
                 param.TotalTestStartDt = TestDt.from;
                 param.TotalTestEndDt = TestDt.to;
-                if (param.DevStep == null || param.DevStep == undefined) {
+                if (param.DevStep == null || param.DevStep == undefined || param.DevStep < 1) {
                     alert('개발단계를 선택하여주세요.');
                     return;
                 }

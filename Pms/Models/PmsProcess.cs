@@ -82,5 +82,22 @@ namespace Pms.Models
             return pmsProcess;
         }
 
+        public static List<PmsProcess> SelPmsProcessOIDs(HttpSessionStateBase Context, PmsProcess _param)
+        {
+            List<PmsProcess> pmsProcesses = DaoFactory.GetList<PmsProcess>("Pms.SelPmsProcess", _param);
+            if (pmsProcesses == null || pmsProcesses.Count < 1)
+            {
+                return new List<PmsProcess>();
+            }
+            List<BPolicy> procBPolicies = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = pmsProcesses.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            pmsProcesses.ForEach(proc =>
+            {
+                //proc.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = proc.ProcessType, OID = proc.BPolicyOID }).First();
+                proc.BPolicy = procBPolicies.Find(data => data.OID == proc.BPolicyOID);
+                proc.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, proc, PmsAuth.RoleAuth(Context, proc));
+            });
+            return pmsProcesses;
+        }
+
     }
 }

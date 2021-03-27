@@ -136,12 +136,11 @@
                             if (!confirm("저장시 삭제가 완료됩니다. 삭제하시겠습니까?")) {
                                 return;
                             }
-
                             selection.forEach(function (v) {
                                 var rowData = $(FileList).jqxGrid('getrowdata', v);
                                 rowData.IsDel = true;
                                 $(FileList).jqxGrid('updaterow', rowData.uid, rowData);
-                                $(FileList).jqxGrid("hiderow", rowData.visibleindex);
+                                //$(FileList).jqxGrid("hiderow", rowData.visibleindex);
                             });
                         }
                     });
@@ -150,8 +149,14 @@
                 },
                 columns: [
                     {
-                        text: '제목', datafield: 'OrgNm', resizable: true, align: 'center', cellsalign: 'left', width: '60%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
-                            return "<div style='display:flex;align-items:center;width:100%;height:100%;' title='" + value + "'><div style='width:calc(100% - 8px);margin-left:8px;'>" + value + "</div></div>";
+                        text: '제목', datafield: 'OrgNm', resizable: true, align: 'center', cellsalign: 'left', width: '59.9%',
+                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                            var rowData = $(FileList).jqxGrid('getrowdata', row);
+                            if (rowData.IsDel) {
+                                return "<div style='display:flex;align-items:center;width:100%;height:100%;' title='" + value + "'><div style='width:calc(100% - 8px);margin-left:8px;text-decoration:line-through;color:#f00;'>" + value + "</div></div>";
+                            } else {
+                                return "<div style='display:flex;align-items:center;width:100%;height:100%;' title='" + value + "'><div style='width:calc(100% - 8px);margin-left:8px;'>" + value + "</div></div>";
+                            }
                         }
                     },
                     { text: '작성자', datafield: 'CreateUsNm', width: CellCreateUsNm, align: 'center', cellsalign: 'center', width:'12%', },
@@ -189,15 +194,13 @@
         ReadOnlyMode: function () {
             var DropDiv = this.DropFileContent;
             DropDiv.element.style.display = "none";
-
-            $(this.FileGrid).jqxGrid({ showtoolbar: false });
+            $(this.FileGrid).jqxGrid({ height: "189px", showtoolbar: false });
         },
 
         EditMode: function () {
             var DropDiv = this.DropFileContent;
             DropDiv.element.style.display = "block";
-
-            $(this.FileGrid).jqxGrid({ showtoolbar: true });
+            $(this.FileGrid).jqxGrid({ height: "189px", showtoolbar: true });
         },
 
         Reload: function () {
@@ -212,11 +215,9 @@
 
         RemoveFiles: function (a) {
             var rows = $(this.FileGrid).jqxGrid('getrows');
-
             var retValue = rows.filter(function (v) {
                 if (v.IsDel) { return v; }
             });
-
             return retValue;
         }
     };

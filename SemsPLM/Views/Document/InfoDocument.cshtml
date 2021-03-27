@@ -215,7 +215,7 @@
             param.OID = DocOID;
             param.DocType = docClassOID.val();
             param.Title = $('#InfoDocument_Title_' + DocOID).val();
-            param.Description = $('#InfoDocument_Description_' + DocOID).val();
+          //  param.Description = $('#InfoDocument_Description_' + DocOID).val();
             param.Type = '@ViewBag.docDetail.Type';
             param.Files = InFoDocFiles.Files();
             var removeFiles = InFoDocFiles.RemoveFiles();
@@ -238,8 +238,18 @@
                     alert(response.resultMessage);
                     return;
                 }
-                alert("수정되었습니다.");
-                PageReload();
+                var innerParam = {};
+                innerParam.OID = DocOID;
+                innerParam.Title = $('#InfoDocument_Title_' + DocOID).val();
+                innerParam.Description = $('#InfoDocument_Description_' + DocOID).val();
+                RequestData('/Document/UdtDocument', innerParam, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("수정되었습니다.");
+                    PageReload();
+                });          
             });
         });
         $('#InfoDocument_selDocClass_@ViewBag.docDetail.OID').on('click', function () {
@@ -289,7 +299,7 @@
                 RevhisDocGrd$.jqxGrid({
                     theme: "kdnc",
                     width: "100%",
-                    height: 675,
+                    height: 665,
                     rowsheight: 28,
                     columnsheight: 30,
                     //source: ProjectSource,
@@ -308,7 +318,7 @@
                                var getrowdata = RevhisDocGrd$.jqxGrid('getrowdata', row);
                                 console.log(getrowdata);
                                 var vText = cellValue;
-                                return '<div style="margin-top:6.5px;text-align:center;">' + vText + ' <a href="#" onclick="EPartNewTabClick(\'/Document/InfoDocument\', ' + getrowdata.OID + ', \'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a></div>';
+                                return '<div style="text-align:center;line-height:1.9;">' + vText + ' <a href="#" onclick="EPartNewTabClick(\'/Document/InfoDocument\', ' + getrowdata.OID + ', \'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a></div>';
                             }
                         },
 

@@ -112,8 +112,12 @@
         <isNull prepend="and" property="IsTemplate">
           B.IsTemplate IS NULL
         </isNull>
+        <isNotNull prepend="and" property="OIDs">
+          A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
+      ORDER BY CASE WHEN B.ProjectGrade IS NULL THEN 1 ELSE 0 END, B.ProjectGrade
     </select>
 
     <update id="UdtPmsProject" parameterClass="PmsProject">
@@ -205,6 +209,9 @@
         </isNotNull>
         <isNotNull prepend="and" property="ProcessType">
           B.ProcessType = #ProcessType#
+        </isNotNull>
+        <isNotNull prepend="and" property="OIDs">
+          A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
         </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
@@ -651,6 +658,9 @@
         <isNotNull prepend="and" property="IsApprovalRequired">
           B.IsApprovalRequired = #IsApprovalRequired#
         </isNotNull>
+        <isNotNull prepend="and" property="OIDs">
+          A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
     </select>
@@ -785,6 +795,9 @@
       </isNotNull>
       <isNotNull prepend="and" property="Name">
         A.Name LIKE CONCAT('%',#Name#,'%')
+      </isNotNull>
+      <isNotNull prepend="and" property="OIDs">
+        A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
       </isNotNull>
       AND A.DeleteDt IS NULL
     </select>

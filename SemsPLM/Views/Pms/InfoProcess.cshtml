@@ -337,12 +337,24 @@
 
                                 var targetDelay = @Common.Constant.PmsConstant.DELAY;
                                 var iCellText = parseInt(cellText);
+                                @*
                                 if (iCellText >= 1 && iCellText <= targetDelay) {
-                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-bViewBagock;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
                                 } else if (iCellText > targetDelay) {
                                     return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
                                 } else {
                                     return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                                }*@
+                                if (iCellText >= 1 && iCellText <= targetDelay) {
+                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#008ffb;"></div></div>'; //진행
+                                } else if (iCellText > targetDelay) {
+                                    if (rowData.ObjStNm == '완료됨') {
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#feb019;"></div></div>'; //지연완료
+                                    } else {
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#f44336;"></div></div>'; //지연
+                                    };
+                                } else {
+                                    return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#a4c953;"></div></div>'; //완료
                                 }
                                 return cellText;
                             },
@@ -777,7 +789,7 @@
                         { text: '예상처리일', cellsalign: 'center', align: 'center', datafield: 'EstFinDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                         { text: '처리완료일', cellsalign: 'center', align: 'center', datafield: 'ActProcessDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                     ],
-                    showtoolbar: @Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    showtoolbar: @Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || (ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED && ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_COMPLETED))),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;

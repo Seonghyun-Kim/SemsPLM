@@ -125,5 +125,24 @@ namespace Pms.Models
 
             return _param;
         }
+
+        public static List<PmsIssue> SelIssueOIDs(HttpSessionStateBase Context, PmsIssue _param)
+        {
+            List<PmsIssue> pmsIssue = DaoFactory.GetList<PmsIssue>("Pms.SelIssue", _param);
+            if (pmsIssue == null || pmsIssue.Count < 1)
+            {
+                return new List<PmsIssue>();
+            }
+            List<int> iPersonOIDs = pmsIssue.Select(data => Convert.ToInt32(data.CreateUs)).ToList();
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = pmsIssue.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = iPersonOIDs });
+            pmsIssue.ForEach(issue =>
+            {
+                issue.BPolicy = lBPolicy.Find(bpolicy => bpolicy.OID == issue.BPolicyOID);
+                issue.CreateUsNm = lPerson.Find(person => person.OID == issue.CreateUs).Name;
+
+            });
+            return pmsIssue;
+        }
     }
 }

@@ -37,6 +37,9 @@
         </nav>
 
         <div class="lnb">
+            <span class="btn_icon refreshBtn">
+                <img src="~/images/refresh.png" alt="refresh" />
+            </span>
             <div class="btn_user">
                 <div class="img">
                     @if (Session["Thumbnail"] != null && Session["Thumbnail"].ToString().Length > 0)
@@ -51,11 +54,11 @@
                 <span><!--접속자명-->@Session["UserNm"]</span>
             </div>
             @*<div class="search">
-                        <input type="text" placeholder="검색어를 입력하세요">
-                        <button><img src="~/images/search.png" alt="검색"></button>
-                    </div>
-                <span class="btn_icon"><img src="~/images/user.png" alt="user"></span>
-                <span class="btn_icon"><img src="~/images/settings.png" alt="settings"></span>*@
+                <input type="text" placeholder="검색어를 입력하세요">
+                <button><img src="~/images/search.png" alt="검색"></button>
+            </div>
+        <span class="btn_icon"><img src="~/images/user.png" alt="user"></span>
+        <span class="btn_icon"><img src="~/images/settings.png" alt="settings"></span>*@
             <span class="btn_icon">
                 @using (Html.BeginForm("TryLogOut", "Authority", FormMethod.Post, new { id = "logoutForm" }))
                 {
@@ -198,6 +201,15 @@
                 </div>
             </div>
         </div>
+
+        @*<div class="mailAlert">
+            <i class="fas fa-times"></i>
+            <div>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <p>메일이 도착했습니다</p>
+        </div>*@
+
     </div>
 
     <iframe id="hidFrame" style="display:none;"></iframe>
@@ -327,6 +339,21 @@
                 return false;
             });
 
+            ////mailAlert
+            //const mailAlert$ = $('.mailAlert');
+            //mailAlert$.animate({
+            //    'top': '80px',
+            //    'z-index': 9999,
+            //}, 1000, function () {
+            //        mailAlert$.addClass('shakeModal');
+            //})//.delay(3500).animate({
+            //  //  'opacity': 0
+            ////}, 1500);
+
+            //$('.mailAlert > i.fa-times').click(function () {
+            //    mailAlert$.fadeOut(1500);
+            //});
+
         });
 
         function PageReload() {
@@ -389,7 +416,16 @@
          $('.btn_user').on('click', function () {
             OpenPersonDialog(function () {
             }, null, { OID: @Session["UserOID"] }, '/Manage/EditPerson', '사용자 수정');
+         });
+
+        $('.refreshBtn').on('click', function () {
+            var selectedItem = $('#tabContent').jqxTabs('selectedItem');
+            if (selectedItem == 0) {
+                return false;
+            }
+            PageReload();
         });
+
     </script>
 </body>
 </html>

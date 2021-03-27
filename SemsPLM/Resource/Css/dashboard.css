@@ -541,6 +541,10 @@ input[name=rscRadio] {
     background-color:#fffdc5;
 }
 
+.activeItem{
+    background-color:#fffdc5;
+}
+
 .cDashboard > .mainStatusCount h4 {
     line-height: unset;
 }
@@ -642,7 +646,7 @@ input[name=rscRadio] {
 .gatePointer > div {
     cursor:pointer;
     float: left;
-    width: 48px;
+    width: 40px;
     height: 40px;
     line-height: 40px;
     text-align: center;

@@ -614,7 +614,7 @@
             param.EBom = $('#InfoChangeOrder_EBom_@ViewBag.ECODetail.OID').val();
             param.DevMP = InfodevType$.val();
             param.CarType = $('#InfoChangeOrder_CarType_@ViewBag.ECODetail.OID').val();
-            param.Description = $('#InfoChangeOrder_Description_@ViewBag.ECODetail.OID').val();
+         //   param.Description = $('#InfoChangeOrder_Description_@ViewBag.ECODetail.OID').val();
             var chkReason = [];
             for (var i = 0; i < $('input[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]').length; i++) {
                 if ($('input[name="InfoECOCheckBox_@ViewBag.ECODetail.OID"]')[i].value == "true") {
@@ -650,8 +650,19 @@
                     alert(response.resultMessage);
                     return;
                 }
-                alert("저장되었습니다.");
-                PageReload();
+                var innerParam = {};
+                innerParam.OID =  @ViewBag.ECODetail.OID;;
+                innerParam.Description =$('#InfoChangeOrder_Description_@ViewBag.ECODetail.OID').val();
+                innerParam.Title = $('#InfoChangeOrder_Title_@ViewBag.ECODetail.OID').val();
+                RequestData('/ChangeOrder/UdtChangeOrder', innerParam, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    gClickDuplication = false;
+                    PageReload();
+                });
             });
 
 
@@ -1003,7 +1014,7 @@
                             text: '품번', datafield: 'Name', width: '15%',
                             cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                                 var getrowdata = ebomListGrid$.jqxGrid('getrowdata', row);
-                                var vText = cellValue;
+                                var vText = '<a style="line-height:1.9;text-indent:4px;" href = "#" onclick="EPartNewTabClick(\'/EBom/InfoEPart\', ' + getrowdata.OID + ', \'' + getrowdata.Name + '\')">' + cellValue + '</a>';
                                 return vText + ' <a href="#" onclick="EBomStructureDialog(' + getrowdata.OID + ',\'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a>';
                             }
                         },

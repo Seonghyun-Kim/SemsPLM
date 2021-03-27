@@ -68,6 +68,9 @@
       <isNotNull prepend="and" property="TdmxOID">
         TdmxOID = #TdmxOID#
       </isNotNull>
+      <isNotNull prepend="and" property="OIDs">
+        OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+      </isNotNull>
     </select>
 
     <insert id="InsDObject" parameterClass="DObject" >
@@ -183,6 +186,9 @@
           </isNotNull>
           <isNotNull prepend="and" property="NextActionOID">
             NextActionOID = #NextActionOID#
+          </isNotNull>
+          <isNotNull prepend="and" property="OIDs">
+            OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
           </isNotNull>
       </dynamic>
     </select>

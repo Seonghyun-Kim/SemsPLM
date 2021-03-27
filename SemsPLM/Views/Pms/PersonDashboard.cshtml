@@ -33,75 +33,81 @@
     </div>
 </div>
 
-    <div class="dashboardGraphs clearfix">
-        <div class="piechart">
-            <div class="graphH">
-                프로젝트별 작업진행 상태
-                <div class="dashboardSelBox" id="totalTaskForChartSelBox"></div>
-            </div>
-            <div class="chartTotal">작업 총
-                <div id="totalTaskForChart"></div>
-            </div>
-            <div id="personalTaskRate" style="margin-left:10px;"></div>
+<div class="dashboardGraphs clearfix">
+    <div class="piechart">
+        <div class="graphH">
+            프로젝트별 작업진행 상태
+            <div class="dashboardSelBox" id="totalTaskForChartSelBox"></div>
         </div>
-        <div class="piechart">
-            <div class="graphH">
-                <ul class="issueDVPVLabel" id="piechart_label">
-                    <li data="issue">이슈</li>
-                    <li data="DV">DV현황</li>
-                    <li data="PV">PV현황</li>
-                </ul>
-                <div class="dashboardSelBox" id="totalIssueForChartSelBox"></div>
-            </div>
-            <div class="chartTotal">이슈 총
-                <div id="totalIssueForChart"></div>    
-            </div>
-            <div id="personalIssueRate" style="margin-left:10px;"></div>
+        <div class="chartTotal">
+            작업 총
+            <div id="totalTaskForChart"></div>
         </div>
-        <div class="barchart">
-            <div class="graphH">
-                프로젝트별 작업진행 상태
-                <span style="float:right;">Total : <span id="totalTasks"></span></span>
-            </div>
+        <div id="personalTaskRate" style="margin-left:10px;"></div>
+    </div>
+    <div class="piechart">
+        <div class="graphH">
+            <ul class="issueDVPVLabel" id="piechart_label">
+                <li data="issue">이슈</li>
+                <li data="DV">DV현황</li>
+                <li data="PV">PV현황</li>
+            </ul>
+            <div class="dashboardSelBox" id="totalIssueForChartSelBox"></div>
+        </div>
+        <div class="chartTotal">
+            이슈 총
+            <div id="totalIssueForChart"></div>
+        </div>
+        <div id="personalIssueRate" style="margin-left:10px;"></div>
+    </div>
+    <div class="barchart">
+        <div class="graphH">
+            프로젝트별 작업진행 상태
+            <span style="float:right;">Total : <span id="totalTasks"></span></span>
+        </div>
+        <div style="overflow:hidden;border-right:15px solid #fff;">
             <div id="personalTaskChart"></div>
         </div>
-        <div class="barchart">
-            <div class="graphH">
-                <ul class="issueDVPVLabel" id="barchart_label">
-                    <li data="issue">이슈</li>
-                    <li data="DV">DV현황</li>
-                    <li data="PV">PV현황</li>
-                </ul>
-                <span style="float:right;">Total : <span id="totalIssues"></span></span>
-            </div>
+    </div>
+    <div class="barchart">
+        <div class="graphH">
+            <ul class="issueDVPVLabel" id="barchart_label">
+                <li data="issue">이슈</li>
+                <li data="DV">DV현황</li>
+                <li data="PV">PV현황</li>
+            </ul>
+            <span style="float:right;">Total : <span id="totalIssues"></span></span>
+        </div>
+        <div style="overflow:hidden;border-right:15px solid #fff;">
             <div id="personalIssueChart"></div>
         </div>
     </div>
+</div>
 
-    <div class="dashboardGrids clearfix">
-        <div>
-            <div class="graphH">
-                예정작업
-                @*<button>+</button>*@
-            </div>
-            <div id="personalScheduleList"></div>
+<div class="dashboardGrids clearfix">
+    <div>
+        <div class="graphH">
+            예정작업
+            @*<button>+</button>*@
         </div>
-        <div>
-            <div class="graphH">
-                상세지연현황
-                @*<button>+</button>*@
-            </div>
-            <div id="personalDelayList"></div>
-        </div>
+        <div id="personalScheduleList"></div>
     </div>
-    <script type="text/javascript">
+    <div>
+        <div class="graphH">
+            상세지연현황
+            @*<button>+</button>*@
+        </div>
+        <div id="personalDelayList"></div>
+    </div>
+</div>
+<script type="text/javascript">
         var peCarType;
         var peItem;
         var peProject;
         var totalIssueForChartParam = {};
         totalIssueForChartParam.Type = 'issue';
         $(function () {
-            
+
             var projList =  @Html.Raw(Json.Encode(ViewBag.PmMyProjectInfo));
             projList.unshift({ 'OID': '', 'Name': '' });
             var dashboardProjSource =
@@ -183,7 +189,7 @@
                     totalTaskBox$.append(donutTaskTotal);
                 });
             }
-                
+
             //이슈,DV,PV donutchart
             var issuePersonData = [0,0,0];
             var issuePersonLabels = ['진행', '지연', '완료'];
@@ -213,7 +219,7 @@
                 RequestData('/Pms/CallIssueDVPV',param, function (res) {
                     issuePersonData = res;
                     issuePersonDonut.updateSeries(res);
-                  
+
                     const totalIssueBox$ = $('#totalIssueForChart');
                     const reducer = function (accumulator, currentValue) {
                         return accumulator + currentValue;
@@ -262,7 +268,7 @@
                     enabled:false
                 },
                 xaxis: {
-                    categories:dsbdPersonTaskList,
+                    categories: dsbdPersonTaskList,
                     tickPlacement: 'on',
                     labels: {
                         show: true,
@@ -271,10 +277,18 @@
                         hideOverlappingLabels: true,
                     }
                 },
+                yaxis: {
+                    labels: {
+                        formatter: function (val) {
+                            return val.toFixed(0);
+                        }
+                    },
+                },
                 legend: {
                     show: true,
                     position: 'bottom',
-                    horizontalAlign:'center',
+                    horizontalAlign:'left',
+                    offsetX: 145,
                 },
                 grid: {
                     padding: {
@@ -290,9 +304,28 @@
             function callProjectTaskInfo() {
                 RequestData('/Pms/CallProjectTaskInfo', {}, function (res) {
                     _.each(res.PROJECT, function (item) {
-                        var sItem = item.split(' ');
+                        //var sItem = item.split(' ');
                         //dsbdPersonTaskList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
-                        dsbdPersonTaskList.push([sItem[sItem.length - 1]]);
+                        //dsbdPersonTaskList.push([sItem[sItem.length - 1]]);
+                        var sItem = item.split(' ');
+
+                        var sitemparam = [];
+
+                        var halfstring = Math.round(sItem.length / 2);
+                        var topitem = "";
+                        var bottomitem = "";
+                        for (var i = 0; i < halfstring; i++) {
+                            topitem = topitem + " " + sItem[i];
+                        }
+
+                        for (halfstring; halfstring < sItem.length; halfstring++) {
+                            bottomitem = bottomitem + " " + sItem[halfstring];
+                        }
+
+                        sitemparam.push(topitem);
+                        sitemparam.push(bottomitem);
+
+                        dsbdPersonTaskList.push(sitemparam);
                     });
 
                     _.each(res.COUNT, function (item, key) {
@@ -301,8 +334,8 @@
                             'data': item
                         });
                     });
-
-                    dsbdPersonTaskChart.updateOptions({ xaxis: { categories: dsbdPersonTaskList } });
+                    var listLength = dsbdPersonTaskList.length;
+                    dsbdPersonTaskChart.updateOptions({ chart: { width: listLength < 4? 510 : 180 * listLength },  xaxis: { categories: dsbdPersonTaskList } });
                     dsbdPersonTaskChart.updateSeries(dsbdPersonTaskChartSample);
 
                     const totalTaskSpan$ = $('#totalTasks');
@@ -358,7 +391,7 @@
                 },
                 xaxis: {
                     categories: dsbdPersonIssueChartList,
-                    tickPlacement:'on',
+                    tickPlacement: 'on',
                     labels: {
                         show: true,
                         rotate: 0,
@@ -366,10 +399,18 @@
                         hideOverlappingLabels: true,
                     }
                 },
+                yaxis: {
+                    labels: {
+                        formatter: function (val) {
+                            return val.toFixed(0);
+                        }
+                    },
+                },
                 legend: {
                     show: true,
                     position: 'bottom',
-                    horizontalAlign:'center',
+                    horizontalAlign: 'left',
+                    offsetX: 165,
                 },
                 grid: {
                     padding: {
@@ -386,9 +427,27 @@
                 dsbdPersonIssueChartSample = [];
                 RequestData('/Pms/callProjectIssueDVPV', { _Type: param }, function (res) {
                    _.each(res.PROJECT, function (item) {
-                        var sItem = item.split(' ');
-                        //dsbdPersonIssueChartList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
-                       dsbdPersonIssueChartList.push([sItem[sItem.length - 1]]);
+                       var sItem = item.split(' ');
+                       //dsbdPersonIssueChartList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
+                       //dsbdPersonIssueChartList.push([sItem[sItem.length - 1]]);
+
+                       var sitemparam = [];
+
+                       var halfstring = Math.round(sItem.length / 2);
+                       var topitem = "";
+                       var bottomitem = "";
+                       for (var i = 0; i < halfstring; i++) {
+                           topitem = topitem + " " + sItem[i];
+                       }
+
+                       for (halfstring; halfstring < sItem.length; halfstring++) {
+                           bottomitem = bottomitem + " " + sItem[halfstring];
+                       }
+
+                       sitemparam.push(topitem);
+                       sitemparam.push(bottomitem);
+
+                       dsbdPersonIssueChartList.push(sitemparam);
                     });
 
                     _.each(res.COUNT, function (item, key) {
@@ -398,7 +457,7 @@
                         });
                     });
 
-                    dsbdPersonIssueChart.updateOptions({ xaxis: { categories: dsbdPersonIssueChartList } });
+                    dsbdPersonIssueChart.updateOptions({ chart: { width: dsbdPersonIssueChartList.length < 4 ? 510 : 180 * dsbdPersonIssueChartList.length },  xaxis: { categories: dsbdPersonIssueChartList } });
                     dsbdPersonIssueChart.updateSeries(dsbdPersonIssueChartSample);
 
                     const totalIssueSpan$ = $('#totalIssues');
@@ -535,7 +594,7 @@
                         for (var i = 0; i < rows.length; i++) {
                             rows[i].NO = i + 1;
                             rows[i].EstStartDt = moment(rows[i].EstStartDt).format('YYYY-MM-DD');
-                            rows[i].EstEndDt = moment(rows[i].EstEndDt).format('YYYY-MM-DD');   
+                            rows[i].EstEndDt = moment(rows[i].EstEndDt).format('YYYY-MM-DD');
                         }
                         console.log(rows);
                         $("#personalDelayList").jqxGrid('exportdata', 'xls','상세지연현황',true,rows);
@@ -639,4 +698,4 @@
 
         });
 
-    </script>
+</script>

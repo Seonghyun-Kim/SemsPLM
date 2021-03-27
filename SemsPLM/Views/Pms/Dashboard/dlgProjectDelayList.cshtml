@@ -4,7 +4,7 @@
 }
 
 
-<div id="wbsInfo_@ViewBag.OID"></div>
+<div id="DelayWbsInfo_@ViewBag.OID"></div>
 
 
 <script>
@@ -60,22 +60,12 @@
                 //Object Optional
                 { name: 'Description', type: 'string' },
             ],
-            //hierarchy:
-            //{
-            //    root: 'Children',
-            //},
             id: 'ToOID',
         };
 
-        var projWbsInfo$ = $("#wbsInfo_" + ProjectOID);
+        var projDelayWbsInfo$ = $("#DelayWbsInfo_" + ProjectOID);
 
-        //if (projWbsInfo$.html().length > 0) {
-        //    projWbsInfo$.jqxTreeGrid({ editable: false });
-        //    projWbsInfo$.jqxTreeGrid('pagerRenderer');
-        //    return;
-        //}
-
-        projWbsInfo$.jqxTreeGrid(
+        projDelayWbsInfo$.jqxTreeGrid(
             {
                 width: 1480,
                 height: 600,
@@ -96,7 +86,7 @@
                     {
                         text: '이름', dataField: 'ObjName', width: '20%', align: 'center', pinned: true,
                         cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                            const editable = projWbsInfo$.jqxTreeGrid('editable');
+                            const editable = projDelayWbsInfo$.jqxTreeGrid('editable');
                             if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT'
                                 || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PHASE'
                                 || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
@@ -115,27 +105,13 @@
                     { text: '구분', dataField: 'ObjType', width: '5%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
                     { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
                     { text: 'NO', dataField: 'No', width: '6%', align: 'center', editable: false, cellsAlign: 'left', },
-                    //{ text: '레벨', dataField: 'Level', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
-                    //{
-                    //    text: 'Critical Path', dataField: 'isCritical', width: '8%', align: 'center', cellsAlign: 'center', editable: false,
-                    //    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
-                    //        if (cellText == true) {
-                    //            return "<i class='fas fa-exclamation-circle'></i>";
-                    //        } else {
-                    //            return "";
-                    //        }
-                    //    },
-                    //},
-                    //{
-                    //    text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '8%', align: 'center', cellsAlign: 'center',
-                    //},
                     { text: '상태', dataField: 'ObjStNm', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
                     {
                         text: '진행', dataField: 'Delay', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
                         cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
                             if (('@ViewBag.Detail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
                                 && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
-                                gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
+                                gPmsModifyHistoryMaster[ProjectOID] = { obj: projDelayWbsInfo$, data: projectDatas, source: source };
                                 return "";
                                 //return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + row + ")'><i class='fas fa-caret-right'></i> 시작</button>";
                             }
@@ -199,7 +175,7 @@
                             return bResult;
                         },
                         cellsRenderer: function (row, dataField, cellValue, rowData) {
-                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            var editable = projDelayWbsInfo$.jqxTreeGrid('editable');
                             if (editable) {
                                 if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
                                     _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
@@ -219,7 +195,7 @@
                             return bResult;
                         },
                         cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
-                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            var editable = projDelayWbsInfo$.jqxTreeGrid('editable');
                             if (editable) {
                                 if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
                                     _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
@@ -239,7 +215,7 @@
                             return bResult;
                         },
                         cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
-                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            var editable = projDelayWbsInfo$.jqxTreeGrid('editable');
                             if (editable) {
                                 if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
                                     _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
@@ -270,19 +246,13 @@
                 ],
                 pagerRenderer: function () {
                     RequestData('/Pms/SelDelayWbs', { 'ProjectOID': @ViewBag.OID, 'Index' : @ViewBag.Index }, function (res) {
-                        //projectDatas = [];
-                        //projectDatas.push(res);
-                        //var arrData = fPmsArrayTasks(projectDatas);
-                        //var masterlink = fMasterLink(arrData);
-                        //fComputeCriticalPath(arrData, masterlink);
-
-                        PrintJqxTreeGrid(source, projWbsInfo$, res);
-                        gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: res, source: source };
+                        PrintJqxTreeGrid(source, projDelayWbsInfo$, res);
+                        gPmsModifyHistoryMaster[ProjectOID] = { obj: projDelayWbsInfo$, data: res, source: source };
                     });
                 },
             });
 
-        projWbsInfo$.jqxTreeGrid('pagerRenderer');
+        projDelayWbsInfo$.jqxTreeGrid('pagerRenderer');
     });
 
 

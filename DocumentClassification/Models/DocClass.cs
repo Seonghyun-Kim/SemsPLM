@@ -69,10 +69,19 @@ namespace DocumentClassification.Models
         {
             _param.Type = DocClassConstant.TYPE_DOCCLASS;
             List<DocClass> lDocClass = DaoFactory.GetList<DocClass>("DocClass.AllSelDocClass", _param);
+            List<int> iPersonOIDs = lDocClass.Select(data => Convert.ToInt32(data.CreateUs)).ToList();
+            if (iPersonOIDs == null || iPersonOIDs.Count < 1)
+            {
+                return lDocClass;
+            }
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = lDocClass.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = iPersonOIDs }); 
             lDocClass.ForEach(obj =>
             {
-                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
-                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                //obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                //obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.BPolicy = lBPolicy.Find(bpolicy => bpolicy.OID == obj.BPolicyOID);
+                obj.CreateUsNm = lPerson.Find(person => person.OID == obj.CreateUs).Name;
             });
             return lDocClass;
         }

@@ -90,6 +90,7 @@ namespace Pms.Models
         public int? ProcessCnt { get; set; }
         public int? DelayCnt { get; set; }
         public int? CompleteCnt { get; set; }
+        public int? IssueCnt { get; set; }
 
     }
 
@@ -120,28 +121,26 @@ namespace Pms.Models
                 _param.IsTemplate = _param.Type;
                 pmsProject = DaoFactory.GetData<PmsProject>("Pms.SelPmsProject", _param);
             }
-            else // 2021.02.28 김성현 else 처리 안되있어서 수정
+
+            if (pmsProject.ITEM_No != null)
             {
-                if (pmsProject.ITEM_No != null)
-                {
-                    pmsProject.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_No }).KorNm;
-                }
-                if (pmsProject.ITEM_Middle != null)
-                {
-                    pmsProject.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_Middle }).KorNm;
-                }
-                if (pmsProject.Oem_Lib_OID != null)
-                {
-                    pmsProject.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Oem_Lib_OID }).KorNm;
-                }
-                if (pmsProject.Car_Lib_OID != null)
-                {
-                    pmsProject.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Car_Lib_OID }).KorNm;
-                }
-                if (pmsProject.Customer_OID != null)
-                {
-                    pmsProject.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = pmsProject.Customer_OID }).KorNm;
-                }
+                pmsProject.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_No }).KorNm;
+            }
+            if (pmsProject.ITEM_Middle != null)
+            {
+                pmsProject.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.ITEM_Middle }).KorNm;
+            }
+            if (pmsProject.Oem_Lib_OID != null)
+            {
+                pmsProject.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Oem_Lib_OID }).KorNm;
+            }
+            if (pmsProject.Car_Lib_OID != null)
+            {
+                pmsProject.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = pmsProject.Car_Lib_OID }).KorNm;
+            }
+            if (pmsProject.Customer_OID != null)
+            {
+                pmsProject.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = pmsProject.Customer_OID }).KorNm;
             }
 
             pmsProject.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = pmsProject.CreateUs }).Name;
@@ -163,32 +162,48 @@ namespace Pms.Models
             }
             List<PmsProject> lPmsProjectes = new List<PmsProject>();
             List<PmsProject> lPmsProject = DaoFactory.GetList<PmsProject>("Pms.SelPmsProject", _param);
+            List<int> iPersonOIDs = lPmsProject.Select(data => Convert.ToInt32(data.CreateUs)).ToList();
+            if (iPersonOIDs == null || iPersonOIDs.Count < 1)
+            {
+                return lPmsProject;
+            }
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = iPersonOIDs });
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = _param.Type });
+            List<Library> lLibrary = LibraryRepository.AllSelCodeLibrary(new Library { });
             lPmsProject.ForEach(dObj =>
             {
                 if (dObj.ITEM_No != null)
                 {
-                    dObj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_No }).KorNm;
+                    //dObj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_No }).KorNm;
+                    dObj.ITEM_NoNm = lLibrary.Find(data => data.OID == dObj.ITEM_No).KorNm;
                 }
                 if (dObj.ITEM_Middle != null)
                 {
-                    dObj.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_Middle }).KorNm;
+                    //dObj.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_Middle }).KorNm;
+                    dObj.ITEM_MiddleNm = lLibrary.Find(data => data.OID == dObj.ITEM_Middle).KorNm;
                 }
                 if (dObj.Oem_Lib_OID != null)
                 {
-                    dObj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Oem_Lib_OID }).KorNm;
+                    //dObj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Oem_Lib_OID }).KorNm;
+                    dObj.Oem_Lib_Nm = lLibrary.Find(data => data.OID == dObj.Oem_Lib_OID).KorNm;
                 }
                 if (dObj.Car_Lib_OID != null)
                 {
-                    dObj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Car_Lib_OID }).KorNm;
+                    //dObj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Car_Lib_OID }).KorNm;
+                    dObj.Car_Lib_Nm = lLibrary.Find(data => data.OID == dObj.Car_Lib_OID).KorNm;
                 }
                 if (dObj.Customer_OID != null)
                 {
                     dObj.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = dObj.Customer_OID }).KorNm;
                 }
-                dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
-                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, PmsAuth.RoleAuth(Context,dObj));
-                dObj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = dObj.CreateUs }).Name;
-                if(dObj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
+
+                //dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                //dObj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = dObj.CreateUs }).Name;
+                dObj.BPolicy = lBPolicy.Find(data => data.OID == dObj.BPolicyOID);
+                dObj.CreateUsNm = lPerson.Find(data => data.OID == dObj.CreateUs).Name;
+
+                dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, PmsAuth.RoleAuth(Context, dObj));
+                if (dObj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
                 {
                     lPmsProjectes.Add(dObj);
                 }
@@ -268,31 +283,45 @@ namespace Pms.Models
             }
             List<PmsProject> lPmsProjectes = new List<PmsProject>();
             List<PmsProject> lPmsProject = DaoFactory.GetList<PmsProject>("Pms.SelPmsProject", _param);
+            List<int> iPersonOIDs = lPmsProject.Select(data => Convert.ToInt32(data.CreateUs)).ToList();
+            if (iPersonOIDs == null || iPersonOIDs.Count < 1)
+            {
+                return lPmsProject;
+            }
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = _param.Type });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = iPersonOIDs });
+            List<Library> lLibrary = LibraryRepository.AllSelCodeLibrary(new Library { });
             lPmsProject.ForEach(dObj =>
             {
                 if (dObj.ITEM_No != null)
                 {
-                    dObj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_No }).KorNm;
+                    //dObj.ITEM_NoNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_No }).KorNm;
+                    dObj.ITEM_NoNm = lLibrary.Find(data => data.OID == dObj.ITEM_No).KorNm;
                 }
                 if (dObj.ITEM_Middle != null)
                 {
-                    dObj.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_Middle }).KorNm;
+                    //dObj.ITEM_MiddleNm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.ITEM_Middle }).KorNm;
+                    dObj.ITEM_MiddleNm = lLibrary.Find(data => data.OID == dObj.ITEM_Middle).KorNm;
                 }
                 if (dObj.Oem_Lib_OID != null)
                 {
-                    dObj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Oem_Lib_OID }).KorNm;
+                    //dObj.Oem_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Oem_Lib_OID }).KorNm;
+                    dObj.Oem_Lib_Nm = lLibrary.Find(data => data.OID == dObj.Oem_Lib_OID).KorNm;
                 }
                 if (dObj.Car_Lib_OID != null)
                 {
-                    dObj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Car_Lib_OID }).KorNm;
+                    //dObj.Car_Lib_Nm = LibraryRepository.SelCodeLibraryObject(new Library { OID = dObj.Car_Lib_OID }).KorNm;
+                    dObj.Car_Lib_Nm = lLibrary.Find(data => data.OID == dObj.Car_Lib_OID).KorNm;
                 }
                 if (dObj.Customer_OID != null)
                 {
                     dObj.CustomerNm = LibraryRepository.SelLibraryObject(new Library { OID = dObj.Customer_OID }).KorNm;
                 }
-                dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                //dObj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = dObj.Type, OID = dObj.BPolicyOID }).First();
+                //dObj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = dObj.CreateUs }).Name;
+                dObj.BPolicy = lBPolicy.Find(data => data.OID == dObj.BPolicyOID);
+                dObj.CreateUsNm = lPerson.Find(data => data.OID == dObj.CreateUs).Name;
                 dObj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, dObj, PmsAuth.RoleAuth(Context, dObj));
-                dObj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = dObj.CreateUs }).Name;
                 lPmsProjectes.Add(dObj);
             });
             return lPmsProjectes;

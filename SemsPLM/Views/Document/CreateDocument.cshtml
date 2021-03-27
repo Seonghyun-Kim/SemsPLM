@@ -82,7 +82,7 @@
             const param = {};
             param.Title = $('#CreateDocument_Title').val();                 //제목
             param.DocType = $('#CreateDocument_DocClassOID').val();  //문서분류
-            param.Description = $('#CreateDocument_Description').val();     //설명
+            //  param.Description = $('#CreateDocument_Description').val();     //설명
             param.Files = documentFile.Files();
 
             var removeFiles = documentFile.RemoveFiles();
@@ -98,15 +98,23 @@
                 alert('제목을 입력해주세요.');
                 return;
             }
-            SendDataWithFile('/Document/InsertDocument', param,null, function (response) {
+            SendDataWithFile('/Document/InsertDocument', param, null, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
-                alert("저장되었습니다.");
-                PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
+                var innerParam = {};
+                innerParam.OID = response;
+                innerParam.Title = $('#CreateDocument_Title').val();
+                innerParam.Description = $('#CreateDocument_Description').val();     //설명
+                RequestData('/Document/UdtDocument', innerParam, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    PageReload();
+                });
             });
         });
     });

@@ -288,10 +288,18 @@ WebUtils.CallAutoVueFile = function (FileOID) {
         setTimeout(function () {
             var hiddenFrame$ = $('#hidFrame');
             hiddenFrame$.empty();
-            hiddenFrame$.attr('src', 'http://plm.woory.com:8080/Autovue/callAutoVue.html?PATH=' + res.replace('/FileTemp/', ''));
+            var sHref = '';
+            if (window.location.href.indexOf('woory') > -1) {
+                sHref = 'http://plm.woory.com:8080/Autovue/callAutoVue.html';
+            } else {
+                sHref = 'http://192.168.10.196:8080/Autovue/callAutoVue.html';
+            }
+            hiddenFrame$.attr('src', sHref + '?PATH=' + res.replace('/FileTemp/', ''));
             hiddenFrame$.empty();
             gClickDuplication = false;
         }, 250);
+
+
 
     });
 }

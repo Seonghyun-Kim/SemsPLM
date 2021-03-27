@@ -327,10 +327,16 @@ namespace SemsPLM.Controllers
                                 return;
                             }
 
+                            if (!mapperOid.ContainsKey(Convert.ToInt32(item.FromOID)))
+                            {
+                                return;
+                            }
+
                             if (tmpPmsRelationship != null)
                             {
                                 tmpPmsRelationship = null;
                             }
+                            
                             tmpPmsRelationship = new PmsRelationship();
                             tmpPmsRelationship.RootOID = resultOid;
                             tmpPmsRelationship.FromOID = mapperOid[Convert.ToInt32(item.FromOID)];
@@ -347,6 +353,11 @@ namespace SemsPLM.Controllers
                         List<PmsRelationship> lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_DOC_MASTER, RootOID = tmpProj.OID });
                         lDocMaster.ForEach(item =>
                         {
+                            if (!mapperOid.ContainsKey(Convert.ToInt32(item.FromOID)))
+                            {
+                                return;
+                            }
+
                             if (tmpPmsRelationship != null)
                             {
                                 tmpPmsRelationship = null;
@@ -632,7 +643,14 @@ namespace SemsPLM.Controllers
                     }
                 });
 
-                _params.FindAll(filter => filter.Action != PmsConstant.ACTION_DELETE).ForEach(item =>
+                List<PmsRelationship> gettInsData = _params.FindAll(filter => filter.Action != PmsConstant.ACTION_DELETE);
+                var duplicateId = gettInsData.GroupBy(data => data.Id).Where(g => g.Count() > 1).ToList();
+                if (duplicateId != null && duplicateId.Count > 0)
+                {
+                    throw new Exception("중복된 Id가 존재합니다.");
+                }
+
+                gettInsData.ForEach(item =>
                 {
                     tmpOid = 0;
                     if (item.Action == null || item.Action.Length < 1)
@@ -866,10 +884,14 @@ namespace SemsPLM.Controllers
         public JsonResult SelMembers(PmsRelationship _param)
         {
             _param.Type = PmsConstant.RELATIONSHIP_MEMBER;
+            List<PmsRelationship> lGettingMember = new List<PmsRelationship>();
             List<PmsRelationship> lMember = PmsRelationshipRepository.SelPmsRelationship(Session, _param);
             Person tmpPerson = null;
             lMember.ForEach(member =>
             {
+                if (lGettingMember.FindIndex(item => item.ToOID == member.ToOID) > -1) {
+                    return;
+                }
                 member.RoleOIDNm = BDefineRepository.SelDefine(new BDefine { OID = member.RoleOID }).Description;
                 if (tmpPerson != null)
                 {
@@ -879,8 +901,9 @@ namespace SemsPLM.Controllers
                 member.PersonNm = tmpPerson.Name;
                 member.DepartmentNm = tmpPerson.DepartmentNm;
                 member.Thumbnail = tmpPerson.Thumbnail;
+                lGettingMember.Add(member);
             });
-            return Json(lMember);
+            return Json(lGettingMember);
         }
 
         public JsonResult InsertMembers(List<PmsRelationship> _params)
@@ -976,10 +999,24 @@ namespace SemsPLM.Controllers
         {
             ViewBag.ProjectOID = ProjectOID;
             List<PmsProcess> lGate = new List<PmsProcess>();
-            PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = Convert.ToInt32(ProjectOID) }).ForEach(item =>
-            {
-                PmsProcess tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
 
+            List<PmsRelationship> lTmpWbs = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = Convert.ToInt32(ProjectOID) });
+
+            List<PmsProcess> lTmpProc = null;
+            List<int> lToOIDs = lTmpWbs.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (lToOIDs == null || lToOIDs.Count < 1)
+            {
+                lTmpProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lToOIDs });
+            }
+
+            lTmpWbs.ForEach(item =>
+            {
+                //PmsProcess tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                PmsProcess tmpProcess = lTmpProc.Find(data => data.OID == item.ToOID);
                 if (tmpProcess.Type.Equals(PmsConstant.TYPE_GATE))
                 {
                     Approval approv = ApprovalRepository.SelApprovalNonStep(Session, new Approval { TargetOID = Convert.ToInt32(tmpProcess.OID) });
@@ -1030,13 +1067,26 @@ namespace SemsPLM.Controllers
             List<int> lProcessOID = new List<int>();
             PmsProcess tmpProcess = new PmsProcess();
             bool bGate = false;
+
+            List<PmsProcess> lTmpProc = null;
+            List<int> lToOIDs = Relation.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (lToOIDs == null || lToOIDs.Count < 1)
+            {
+                lTmpProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lToOIDs });
+            }
+
             Relation.ForEach(item =>
             {
                 if (tmpProcess != null)
                 {
                     tmpProcess = null;
                 }
-                tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                //tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                tmpProcess = lTmpProc.Find(data => data.OID == item.ToOID);
                 if (tmpProcess == null)
                 {
                     return;
@@ -1063,25 +1113,32 @@ namespace SemsPLM.Controllers
                     lProcessOID.Add(Convert.ToInt32(item.ToOID));
                 }
             });
+
             Relation = null;
             int TotIssueCnt = 0;
             int CompIssueCnt = 0;
             int NonCompIssueCnt = 0;
             PmsIssue Issue = new PmsIssue();
+            
+            Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), Type = PmsConstant.RELATIONSHIP_ISSUE });
             lProcessOID.ForEach(item =>
             {
-                Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), FromOID = item, Type = PmsConstant.RELATIONSHIP_ISSUE });
-                if (Relation != null)
+                //Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), FromOID = item, Type = PmsConstant.RELATIONSHIP_ISSUE });
+                List<PmsRelationship> lTmpRelation = Relation.FindAll(data => data.FromOID == item);
+                if (lTmpRelation != null && lTmpRelation.Count > 0)
                 {
-
-                    Relation.ForEach(data =>
+                    List<PmsIssue> lTmpIssue = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = lTmpRelation.Select(sel => Convert.ToInt32(sel.ToOID)).ToList() });
+                    List<PmsProcess> lTmpProcs = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lTmpRelation.Select(sel => Convert.ToInt32(sel.FromOID)).ToList() });
+                    lTmpRelation.ForEach(data =>
                     {
                         TotIssueCnt++;
                         if (Issue != null)
                         {
                             Issue = null;
                         }
-                        Issue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = data.ToOID });
+
+                        //Issue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = data.ToOID });
+                        Issue = lTmpIssue.Find(tmp => tmp.OID == data.ToOID);
                         if (Issue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
                         {
                             CompIssueCnt++;
@@ -1092,11 +1149,10 @@ namespace SemsPLM.Controllers
                         }
                         if (data.RootOID != data.FromOID)
                         {
-                            Issue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.FromOID) }).Name;
+                            //Issue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.FromOID) }).Name;
+                            Issue.TaskNm = lTmpProcs.Find(tmp => tmp.OID == data.FromOID).Name;
                         }
-                        Issue.ProjectNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.RootOID) }).Name;
-                        Issue.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID = data.CreateUs }).Name;
-
+                        Issue.ProjectNm = proj.Name;
                         lPmsIssue.Add(Issue);
                     });
                 }
@@ -1113,6 +1169,7 @@ namespace SemsPLM.Controllers
             ViewBag.InfoGate = lGettingGate;
             return PartialView("Dialog/dlgGateSignOffReport");
         }
+
         public JsonResult InsGateSignOff(PmsGateSignOff param)
         {
             int result = 0;
@@ -1244,6 +1301,26 @@ namespace SemsPLM.Controllers
             }
             return Json(resultOID);
         }
+
+        public JsonResult UdtPmsGateMetting(PmsGateMetting param)
+        {
+            int resultOID = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                DObjectRepository.UdtDObject(Session, param);
+
+                DaoFactory.Commit();
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(resultOID);
+        }
+
         public JsonResult SelPmsGateMettingList(PmsRelationship param)
         {
             List<PmsRelationship> PmsGateMettingList = PmsRelationshipRepository.SelPmsRelationship(Session, param);
@@ -1269,8 +1346,9 @@ namespace SemsPLM.Controllers
             List<DocClass> lPmsDocument = new List<DocClass>();
             List<PmsRelationship> Relation = new List<PmsRelationship>();
             List<PmsRelationship> ReturnRelation = new List<PmsRelationship>();
+            PmsProject proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = Convert.ToInt32(ProjectOID) });
 
-            Relation = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(ProjectOID));
+            Relation = PmsRelationshipRepository.GetWbsOidLIst(Session, ProjectOID);
             //Relation = PmsRelationshipRepository.SelPmsRelationship(Session,new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), Type = PmsConstant.RELATIONSHIP_WBS });
             int _procIdx = Convert.ToInt32(Relation.Find(val => val.ToOID == Convert.ToInt32(ProcessOID)).Ord);
             List<int> lProcessOID = new List<int>();
@@ -1305,35 +1383,47 @@ namespace SemsPLM.Controllers
                     lProcessOID.Add(Convert.ToInt32(item.ToOID));
                 }
             });
-            Relation = null;
 
+            Relation = null;
             DocClass DocClass = new DocClass();
             Doc childDoc = new Doc();
+            Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), Type = PmsConstant.RELATIONSHIP_DOC_MASTER });
+            List<PmsRelationship> lClassRelation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), Type = PmsConstant.RELATIONSHIP_DOC_CLASS });
 
             lProcessOID.ForEach(item =>
             {
-                Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), FromOID = item, Type = PmsConstant.RELATIONSHIP_DOC_MASTER });
-                if (Relation != null)
+                //Relation = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = Convert.ToInt32(ProjectOID), FromOID = item, Type = PmsConstant.RELATIONSHIP_DOC_MASTER });
+                List<PmsRelationship> lTmpRelation = Relation.FindAll(data => data.FromOID == item);
+                if (lTmpRelation != null)
                 {
-                    Relation.ForEach(data =>
+                    List<DocClass> lTmpDocClass = DocClassRepository.AllSelDocClass(Session, new DocClass { OIDs = lTmpRelation.Select(sel => Convert.ToInt32(sel.ToOID)).ToList() });
+                    List<PmsProcess> lTmpProcs = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lTmpRelation.Select(sel => Convert.ToInt32(sel.FromOID)).ToList() });
+                    lTmpRelation.ForEach(data =>
                     {
-                        DocClass = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = data.ToOID });
+                        //DocClass = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = data.ToOID });
+                        DocClass = lTmpDocClass.Find(tmp => tmp.OID == data.ToOID);
                         if (data.RootOID != data.FromOID)
                         {
-                            data.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.FromOID) }).Name;
+                            //data.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.FromOID) }).Name;
+                            data.TaskNm = lTmpProcs.Find(tmp => tmp.OID == data.FromOID).Name;
                         }
-                        data.ProjectNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.RootOID) }).Name;
+                        //data.ProjectNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(data.RootOID) }).Name;
+                        data.ProjectNm = proj.Name;
                         data.DocClassNm = DocClass.Name;
                         data.ViewUrl = DocClass.ViewUrl;
-                        data.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID = data.CreateUs }).Name;
-                        data.Children = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = data.ToOID, Type = PmsConstant.RELATIONSHIP_DOC_CLASS, TaskOID = data.FromOID });
+                        //data.CreateUsNm = PersonRepository.SelPerson(Session, new Person { OID = data.CreateUs }).Name;
+
+                        //data.Children = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = data.ToOID, Type = PmsConstant.RELATIONSHIP_DOC_CLASS, TaskOID = data.FromOID });
+                        data.Children = lClassRelation.FindAll(tmp => tmp.FromOID == data.ToOID && tmp.TaskOID == data.FromOID);
                         if (data.Children != null)
                         {
+                            List<Doc> lTmpDoc = DocRepository.SelDoc(Session, new Doc { OIDs = data.Children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList() });
                             data.Children.ForEach(cdata =>
                             {
                                 if (data.ViewUrl == null)
                                 {
-                                    childDoc = DocRepository.SelDocObject(Session, new Doc { OID = cdata.ToOID });
+                                    //childDoc = DocRepository.SelDocObject(Session, new Doc { OID = cdata.ToOID });
+                                    childDoc = lTmpDoc.Find(tmp => tmp.OID == cdata.ToOID);
                                     if (cdata.RootOID != cdata.FromOID)
                                     {
                                         cdata.TaskNm = data.TaskNm;
@@ -1353,7 +1443,6 @@ namespace SemsPLM.Controllers
                                     if (data.DocClassNm == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
                                     {
                                         PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = cdata.ToOID });
-
                                         cdata.ProjectNm = data.ProjectNm;
                                         cdata.DocNm = Reliability.Name;
                                         cdata.DocRev = Reliability.Revision;
@@ -2131,7 +2220,7 @@ namespace SemsPLM.Controllers
             List<Library> lLibrary = LibraryRepository.SelCodeLibraryChild(new Library { FromOID = OemOID, Code1 = CommonConstant.ATTRIBUTE_CARTYPE }); //OEM의 차종목록
             List<PmsProject> tmp = new List<PmsProject>();
             List<BPolicy> bPolicies = BPolicyRepository.SelBPolicy(new BPolicy { Type = PmsConstant.TYPE_PROJECT });
-            Dictionary<string, Dictionary<string, int>> returnData = new Dictionary<string, Dictionary<string, int>>();
+            Dictionary<string, Dictionary<string, object>> returnData = new Dictionary<string, Dictionary<string, object>>();
             int startIdx = bPolicies.FindIndex(x => x.Name == PmsConstant.POLICY_PROJECT_STARTED); //시작 idx 
             int stopIdx = bPolicies.FindIndex(x => x.Name == PmsConstant.POLICY_PROJECT_PAUSED); //중단 idx 
             int compIdx = bPolicies.FindIndex(x => x.Name == PmsConstant.POLICY_PROJECT_COMPLETED); //완료 idx 
@@ -2144,10 +2233,11 @@ namespace SemsPLM.Controllers
                     {
                         tmp = null;
                     }
-                    if (!returnData.ContainsKey(car.KorNm))
+                    //if (!returnData.ContainsKey(car.KorNm))
+                    if (!returnData.ContainsKey(Convert.ToString(car.OID)))
                     {
-                        Dictionary<string, int> data = new Dictionary<string, int>();
-                        returnData.Add(car.KorNm, data);
+                        Dictionary<string, object> data = new Dictionary<string, object>();
+                        returnData.Add(Convert.ToString(car.OID), data);
                     }
                     tmp = PmsProjectRepository.SelPmsObjects(Session, new PmsProject { Type = PmsConstant.TYPE_PROJECT, Car_Lib_OID = car.OID });
                     if (tmp != null)
@@ -2170,9 +2260,10 @@ namespace SemsPLM.Controllers
                                 stopCnt++;
                             }
                         });
-                        returnData[car.KorNm].Add("진행", startCnt);
-                        returnData[car.KorNm].Add("완료", compCnt);
-                        returnData[car.KorNm].Add("중단", stopCnt);
+                        returnData[Convert.ToString(car.OID)].Add("KorNm", car.KorNm);
+                        returnData[Convert.ToString(car.OID)].Add("진행", startCnt);
+                        returnData[Convert.ToString(car.OID)].Add("완료", compCnt);
+                        returnData[Convert.ToString(car.OID)].Add("중단", stopCnt);
                     }
 
                 });
@@ -2377,6 +2468,9 @@ namespace SemsPLM.Controllers
             List<PmsRelationship> lIssues = null;
             List<PmsRelationship> lDocMaster = null;
             DObject dobj = null;
+            List<DObject> lTmpDobj = null;
+            List<PmsReliability> lTmpReliability = null;
+            List<PmsReliabilityReport> lTmpReliabilityReport = null;
             int dv = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_DV }).OID);
             int pv = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_PV }).OID);
             lProjOID.ForEach(projOid =>
@@ -2396,18 +2490,47 @@ namespace SemsPLM.Controllers
                 //lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
                 mydelivery = mydelivery + lDocMaster.Count;
 
+                if (lTmpDobj != null)
+                {
+                    lTmpDobj = null;
+                }
+
+                if (lTmpReliability != null)
+                {
+                    lTmpReliability = null;
+                }
+
+                if (lTmpReliabilityReport != null)
+                {
+                    lTmpReliabilityReport = null;
+                }
+                List<int> lDocMasterOIDs = lDocMaster.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                if (lDocMasterOIDs == null || lDocMasterOIDs.Count < 1)
+                {
+                    lTmpDobj = new List<DObject>();
+                    lTmpReliability = new List<PmsReliability>();
+                    lTmpReliabilityReport = new List<PmsReliabilityReport>();
+                }
+                else
+                {
+                    lTmpDobj = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lDocMasterOIDs });
+                    lTmpReliability = PmsReliabilityRepository.SelPmsReliability(Session, new PmsReliability { OIDs = lDocMasterOIDs });
+                    lTmpReliabilityReport = PmsReliabilityReportRepository.SelPmsReliabilityReport(Session, new PmsReliabilityReport { OIDs = lDocMasterOIDs });
+                }
                 lDocMaster.ForEach(delivery =>
                 {
                     if (dobj != null)
                     {
                         dobj = null;
                     }
-                    dobj = DObjectRepository.SelDObject(Session, new DObject { OID = delivery.ToOID });
+                    //dobj = DObjectRepository.SelDObject(Session, new DObject { OID = delivery.ToOID });
+                    dobj = lTmpDobj.Find(data => data.OID == delivery.ToOID);
                     if (dobj != null)
                     {
                         if (dobj.Type == PmsConstant.TYPE_RELIABILITY)
                         {
-                            int iStep = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = dobj.OID }).DevStep;
+                            //int iStep = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = dobj.OID }).DevStep;
+                            int iStep = lTmpReliability.Find(data => data.OID == dobj.OID).DevStep;
                             if (iStep == dv)
                             {
                                 dvstatus++;
@@ -2419,7 +2542,8 @@ namespace SemsPLM.Controllers
                         }
                         else if (dobj.Type == PmsConstant.TYPE_RELIABILITY_REPORT)
                         {
-                            int iStep = Convert.ToInt32(PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = dobj.OID }).DevStep);
+                            //int iStep = Convert.ToInt32(PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = dobj.OID }).DevStep);
+                            int iStep = Convert.ToInt32(lTmpReliabilityReport.Find(data => data.OID == dobj.OID).DevStep);
                             if (iStep == dv)
                             {
                                 dvstatus++;
@@ -2463,9 +2587,22 @@ namespace SemsPLM.Controllers
                         return;
                     }
 
-                    PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID)).ForEach(proc =>
+                    List<PmsRelationship> lPmsRelationship = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID));
+                    List<PmsProcess> lTmpPmsProc = null;
+                    List<int> iToOIDs = lPmsRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                    if (iToOIDs == null || iToOIDs.Count < 1)
                     {
-                        PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        lTmpPmsProc = new List<PmsProcess>();
+                    }
+                    else
+                    {
+                        lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iToOIDs, ProcessType = PmsConstant.TYPE_TASK });
+                    }
+
+                    lPmsRelationship.ForEach(proc =>
+                    {
+                        //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == proc.ToOID);
                         if (tmpProc != null)
                         {
                             if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
@@ -2520,9 +2657,22 @@ namespace SemsPLM.Controllers
                         return;
                     }
 
-                    PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID)).ForEach(proc =>
+                    List<PmsRelationship> lPmsRelationship = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID));
+                    List<PmsProcess> lTmpPmsProc = null;
+                    List<int> iToOIDs = lPmsRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                    if (iToOIDs == null || iToOIDs.Count < 1)
                     {
-                        PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        lTmpPmsProc = new List<PmsProcess>();
+                    }
+                    else
+                    {
+                        lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iToOIDs, ProcessType = PmsConstant.TYPE_TASK });
+                    }
+
+                    lPmsRelationship.ForEach(proc =>
+                    {
+                        //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == proc.ToOID);
                         if (tmpProc != null)
                         {
                             if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE || tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
@@ -2679,6 +2829,18 @@ namespace SemsPLM.Controllers
                 Dictionary<int, List<DateTime>> astGateData = new Dictionary<int, List<DateTime>>();
                 List<DateTime> estTmpDate = new List<DateTime>();
                 List<DateTime> astTmpDate = new List<DateTime>();
+
+                List<PmsProcess> lTmpPmsProc = null;
+                List<int> iToOIDs = tmpReltionship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                if (iToOIDs == null || iToOIDs.Count < 1)
+                {
+                    lTmpPmsProc = new List<PmsProcess>();
+                }
+                else
+                {
+                    lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iToOIDs });
+                }
+
                 tmpReltionship.ForEach(item =>
                 {
                     if (item.ObjType == PmsConstant.TYPE_PROJECT)
@@ -2688,7 +2850,8 @@ namespace SemsPLM.Controllers
 
                     if (item.ObjType == PmsConstant.TYPE_TASK)
                     {
-                        PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                        //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                        PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == item.ToOID);
                         int gap = 0;
                         if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
                         {
@@ -2800,6 +2963,18 @@ namespace SemsPLM.Controllers
             List<PmsProcess> tasks = new List<PmsProcess>();
             List<PmsProcess> delayTasks = new List<PmsProcess>();
             bool bContain = false;
+
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iToOIDs = tmpReltionship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (iToOIDs == null || iToOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iToOIDs });
+            }
+
             tmpReltionship.ForEach(rel =>
             {
                 if (bContain)
@@ -2809,7 +2984,8 @@ namespace SemsPLM.Controllers
 
                 if (rel.ObjType.Equals(PmsConstant.TYPE_TASK))
                 {
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = rel.ToOID });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = rel.ToOID });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == rel.ToOID);
                     int gap = 0;
                     if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
                     {
@@ -2871,6 +3047,18 @@ namespace SemsPLM.Controllers
             List<int> lProcOID = new List<int>();
             List<int> lProjOID = new List<int>();
             List<PmsRelationship> lTmpWbs = null;
+
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iFromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (iFromOIDs == null || iFromOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iFromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -2893,7 +3081,9 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         lProcOID.Add(Convert.ToInt32(tmpProc.OID));
@@ -2936,15 +3126,46 @@ namespace SemsPLM.Controllers
             DObject dobj = null;
             int dv = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_DV }).OID);
             int pv = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_PV }).OID);
+
+            List<PmsIssue> lTmpIssues = null;
             lProjOID.ForEach(projOid =>
             {
                 if (lIssues != null)
                 {
                     lIssues = null;
                 }
+
+                if (lTmpIssues != null)
+                {
+                    lTmpIssues = null;
+                }
+
+                if(lTmpWbs != null)
+                {
+                    lTmpWbs = null;
+                }
+
                 lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE });
-                //myissue = myissue + lIssues.FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)) || lProjOID.Contains(Convert.ToInt32(rel.FromOID))).Count;
-                myissue = myissue + lIssues.FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID))).Count;
+                
+                lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(projOid));
+
+                lIssues = lIssues.FindAll(data => lTmpWbs.FindIndex(wbs => Convert.ToInt32(wbs.ToOID) == Convert.ToInt32(data.FromOID)) > -1);
+
+                //lIssues = lIssues.FindAll(data => lTmpPmsProc.FindIndex(proc => Convert.ToInt32(proc.OID) == Convert.ToInt32(data.FromOID)) > -1);
+                //lTmpPmsProc.Contains(Convert.ToInt32(data.FromOID)));
+
+                //lTmpPmsProc.Find(data => data.OID == lIssues[0].FromOID);
+                //lIssues.FindAll(data => lTmpPmsProc.Contains(Convert.ToInt32(data.FromOID)));
+                // .FindAll(data => lProcOID.Contains(Convert.ToInt32(data.FromOID)));
+                if(lIssues.Count > 0)
+                {
+                    lTmpIssues = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = lIssues.Select(sel => Convert.ToInt32(sel.ToOID)).ToList() });
+                    //myissue = myissue + lIssues.FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)) || lProjOID.Contains(Convert.ToInt32(rel.FromOID))).Count;
+                    myissue = myissue + lTmpIssues.FindAll(rel => Convert.ToInt32(rel.Manager_OID) == iUser || Convert.ToInt32(rel.CreateUs) == iUser).Count();
+                    //myissue = myissue + lIssues.FindAll(rel => (rel.FromOID == rel.RootOID && )).Count;
+                }
+
+
                 if (lDocMaster != null)
                 {
                     lDocMaster = null;
@@ -2953,18 +3174,38 @@ namespace SemsPLM.Controllers
                 lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
                 mydelivery = mydelivery + lDocMaster.Count;
 
+                List<int> lToOIDs = lDocMaster.Select(data => Convert.ToInt32(data.ToOID)).ToList();
+                List<DObject> lTmpDobj = null;
+                List<PmsReliability> lTmpReliablity = null;
+                List<PmsReliabilityReport> lTmpReliabilityReport = null;
+
+                if (lToOIDs == null || lToOIDs.Count < 1)
+                {
+                    lTmpDobj = new List<DObject>();
+                    lTmpReliablity = new List<PmsReliability>();
+                    lTmpReliabilityReport = new List<PmsReliabilityReport>();
+                }
+                else
+                {
+                    lTmpDobj = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lToOIDs });
+                    lTmpReliablity = PmsReliabilityRepository.SelPmsReliability(Session, new PmsReliability { OIDs = lToOIDs });
+                    lTmpReliabilityReport = PmsReliabilityReportRepository.SelPmsReliabilityReport(Session, new PmsReliabilityReport { OIDs = lToOIDs });
+                }
+
                 lDocMaster.ForEach(delivery =>
                 {
                     if (dobj != null)
                     {
                         dobj = null;
                     }
-                    dobj = DObjectRepository.SelDObject(Session, new DObject { OID = delivery.ToOID });
+                    //dobj = DObjectRepository.SelDObject(Session, new DObject { OID = delivery.ToOID });
+                    dobj = lTmpDobj.Find(data => data.OID == delivery.ToOID);
                     if (dobj != null)
                     {
                         if (dobj.Type == PmsConstant.TYPE_RELIABILITY)
                         {
-                            int iStep = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = dobj.OID }).DevStep;
+                            //int iStep = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = dobj.OID }).DevStep;
+                            int iStep = lTmpReliablity.Find(data => data.OID == dobj.OID).DevStep;
                             if (iStep == dv)
                             {
                                 dvstatus++;
@@ -2976,7 +3217,8 @@ namespace SemsPLM.Controllers
                         }
                         else if (dobj.Type == PmsConstant.TYPE_RELIABILITY_REPORT)
                         {
-                            int iStep = Convert.ToInt32(PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = dobj.OID }).DevStep);
+                            //int iStep = Convert.ToInt32(PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = dobj.OID }).DevStep);
+                            int iStep = Convert.ToInt32(lTmpReliabilityReport.Find(data => data.OID == dobj.OID).DevStep);
                             if (iStep == dv)
                             {
                                 dvstatus++;
@@ -3013,6 +3255,18 @@ namespace SemsPLM.Controllers
             PmsProject tmpProj = null;
             List<DateTime> lHoliday = null;
             List<PmsRelationship> lTmpWbs = null;
+
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iFromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (iFromOIDs == null || iFromOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iFromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -3031,7 +3285,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
@@ -3068,15 +3323,21 @@ namespace SemsPLM.Controllers
             List<BDefine> lBDefine = BDefineRepository.SelDefines(new BDefine { Module = PmsConstant.MODULE_PMS, Type = CommonConstant.TYPE_ROLE });
             int PeOID = Convert.ToInt32(lBDefine.Find(bpolicy => bpolicy.Name == PmsConstant.ROLE_PE).OID);
             List<PmsRelationship> lPmses = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_MEMBER, RoleOID = PeOID, ToOID = iUser });
-            List<PmsProject> selPmsProj = PmsProjectRepository.SelPmsObjects(Session, new PmsProject { });
             List<PmsProcess> lPmsProc = new List<PmsProcess>();
-            PmsProject tmpProj = null;
-            List<DateTime> lHoliday = null;
             List<DObject> carList = new List<DObject>();
             List<DObject> itemList = new List<DObject>();
             List<DObject> projList = new List<DObject>();
+            if (lPmses == null || lPmses.Count < 1)
+            {
+                var NonResult = new { carList = carList, itemList = itemList, projList = projList, Result = lPmsProc.OrderByDescending(proc => proc.Delay).ToList() };
+                return Json(NonResult);
+            }
+            List<PmsProject> selPmsProj = PmsProjectRepository.SelPmsObjects(Session, new PmsProject { });
+            PmsProject tmpProj = null;
+            List<DateTime> lHoliday = null;
             DObject temp = new DObject();
             List<PmsRelationship> lTmpWbs = null;
+            List<PmsProcess> lTmpProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList(), ProcessType = PmsConstant.TYPE_TASK });
 
             lPmses.ForEach(pmes =>
             {
@@ -3096,7 +3357,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE || tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
@@ -3191,6 +3453,18 @@ namespace SemsPLM.Controllers
             PmsProject tmpProj = null;
             List<DateTime> lHoliday = null;
             List<PmsRelationship> lTmpWbs = null;
+
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iFromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (iFromOIDs == null || iFromOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iFromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -3209,7 +3483,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE || tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
@@ -3283,6 +3558,17 @@ namespace SemsPLM.Controllers
             dResult.Add("지연", new List<int>());
             dResult.Add("완료", new List<int>());
 
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iFromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (iFromOIDs == null || iFromOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iFromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -3301,7 +3587,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProj != null)
@@ -3400,6 +3687,18 @@ namespace SemsPLM.Controllers
             List<PmsRelationship> lTmpWbs = null;
             Dictionary<string, List<int>> dResult = new Dictionary<string, List<int>>();
             List<int> result = new List<int>();
+
+            List<PmsProcess> lTmpPmsProc = null;
+            List<int> iFromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (iFromOIDs == null || iFromOIDs.Count < 1)
+            {
+                lTmpPmsProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpPmsProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = iFromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -3422,7 +3721,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpPmsProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         lProcOID.Add(Convert.ToInt32(tmpProc.OID));
@@ -3440,49 +3740,91 @@ namespace SemsPLM.Controllers
             if (callType == "issue")
             {
                 lProjOID.ForEach(projOid =>
-            {
-
-                if (lIssues != null)
                 {
-                    lIssues = null;
-                }
-                lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)));
-                //myissue = myissue + lIssues.FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)) || lProjOID.Contains(Convert.ToInt32(rel.FromOID))).Count;
-                lIssues.ForEach(iss =>
-                {
+                    if (lIssues != null)
+                    {
+                        lIssues = null;
+                    }
 
-                    if (tmpIssue != null)
+                    if (lTmpWbs != null)
                     {
-                        tmpIssue = null;
+                        lTmpWbs = null;
                     }
-                    tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = iss.ToOID });
-                    if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
+
+                    //lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)));
+                    lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE });
+                    lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(projOid));
+                    lIssues = lIssues.FindAll(data => lTmpWbs.FindIndex(wbs => Convert.ToInt32(wbs.ToOID) == Convert.ToInt32(data.FromOID)) > -1);
+
+                    List<PmsIssue> lTmpIssue = null;
+                    List<int> lToOIDs = lIssues.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                    if (lToOIDs == null || lToOIDs.Count < 1)
                     {
-                        if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                        lTmpIssue = new List<PmsIssue>();
+                    }
+                    else
+                    {
+                        //lTmpIssue = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = lToOIDs });
+                        lTmpIssue = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = lToOIDs }).FindAll(rel => Convert.ToInt32(rel.Manager_OID) == iUser || Convert.ToInt32(rel.CreateUs) == iUser);
+                    }
+
+                    lTmpIssue.ForEach(iss =>
+                    {
+                        if (iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_PREPARE || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
                         {
-                            delay++;
+                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", iss.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                            {
+                                delay++;
+                            }
+                            else
+                            {
+                                start++;
+                            }
                         }
-                        else
+                        else if (iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
                         {
-                            start++;
+                            complete++;
                         }
-                    }
-                    else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
-                    {
-                        complete++;
-                    }
+                    });
+
+                    //lIssues.ForEach(iss =>
+                    //{
+                    //
+                    //    if (tmpIssue != null)
+                    //    {
+                    //        tmpIssue = null;
+                    //    }
+                    //    //tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = iss.ToOID });
+                    //    tmpIssue = lTmpIssue.Find(data => data.OID == iss.ToOID);
+                    //    if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
+                    //    {
+                    //        if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                    //        {
+                    //            delay++;
+                    //        }
+                    //        else
+                    //        {
+                    //            start++;
+                    //        }
+                    //    }
+                    //    else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
+                    //    {
+                    //        complete++;
+                    //    }
+                    //});
                 });
-            });
             }
             else
             {
                 if (callType == "DV")
                 {
-                    type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_DV }).OID);
+                    //type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_DV }).OID);
+                    type = dv;
                 }
                 else
                 {
-                    type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_PV }).OID);
+                    //type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_PV }).OID);
+                    type = pv;
                 }
 
                 lProjOID.ForEach(projOid =>
@@ -3494,16 +3836,50 @@ namespace SemsPLM.Controllers
                     //lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)) || rel.TaskOID == null);
                     lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
 
+                    List<DocClass> lTmpDocClass = null;
+                    List<int> lData = lDocMaster.Select(data => Convert.ToInt32(data.FromOID)).ToList();
+                    if (lData == null || lData.Count < 1)
+                    {
+                        lTmpDocClass = new List<DocClass>();
+                    }
+                    else
+                    {
+                        lTmpDocClass = DocClassRepository.AllSelDocClass(Session, new DocClass { OIDs = lData });
+                    }
+
+                    List<PmsReliability> lTmpReliablity = null;
+                    List<int> lToOIDs = lDocMaster.Select(data => Convert.ToInt32(data.ToOID)).ToList();
+                    if (lToOIDs == null || lToOIDs.Count < 1)
+                    {
+                        lTmpReliablity = new List<PmsReliability>();
+                    }
+                    else
+                    {
+                        lTmpReliablity = PmsReliabilityRepository.SelPmsReliability(Session, new PmsReliability { OIDs = lToOIDs });
+                    }
+
+                    List<PmsReliabilityReport> lTmpReliabilityReport = null;
+                    if (lToOIDs == null || lToOIDs.Count < 1)
+                    {
+                        lTmpReliabilityReport = new List<PmsReliabilityReport>();
+                    }
+                    else
+                    {
+                        lTmpReliabilityReport = PmsReliabilityReportRepository.SelPmsReliabilityReport(Session, new PmsReliabilityReport { OIDs = lToOIDs });
+                    }
+
                     lDocMaster.ForEach(delivery =>
                     {
                         if (dobj != null)
                         {
                             dobj = null;
                         }
-                        docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
+                        //docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
+                        docObj = lTmpDocClass.Find(data => data.OID == delivery.FromOID);
                         if (docObj.Name == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
                         {
-                            PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = delivery.ToOID });
+                            //PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = delivery.ToOID });
+                            PmsReliability Reliability = lTmpReliablity.Find(data => data.OID == delivery.ToOID);
                             if (Reliability.DevStep == type)
                             {
                                 if (Reliability.BPolicy.Name == DocumentConstant.POLICY_DOCUMENT_PREPARE)
@@ -3522,7 +3898,8 @@ namespace SemsPLM.Controllers
                         }
                         else if (docObj.Name == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT)
                         {
-                            PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = delivery.ToOID });
+                            //PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = delivery.ToOID });
+                            PmsReliabilityReport Reliability = lTmpReliabilityReport.Find(data => data.OID == delivery.ToOID);
                             if (Reliability.DevStep == type)
                             {
                                 if (Reliability.BPolicy.Name == DocumentConstant.POLICY_DOCUMENT_PREPARE)
@@ -3544,8 +3921,9 @@ namespace SemsPLM.Controllers
                 });
             }
             result.Add(start);
-            result.Add(complete);
             result.Add(delay);
+            result.Add(complete);
+
             return Json(result);
         }
         public ActionResult CallProjectIssueDVPV(string _Type, string _Product)
@@ -3597,6 +3975,19 @@ namespace SemsPLM.Controllers
             dResult.Add("진행", new List<int>());
             dResult.Add("지연", new List<int>());
             dResult.Add("완료", new List<int>());
+
+
+            List<PmsProcess> lTmpProcs = null;
+            List<int> FromOIDs = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (FromOIDs == null || FromOIDs.Count < 1)
+            {
+                lTmpProcs = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpProcs = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = FromOIDs, ProcessType = PmsConstant.TYPE_TASK });
+            }
+            
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -3619,7 +4010,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpProcs.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProj != null)
@@ -3657,19 +4049,40 @@ namespace SemsPLM.Controllers
                     int complete = 0, start = 0, delay = 0;
                     tmpProj = selPmsProj.Find(proj => proj.OID == projOid);
                     projNms.Add(tmpProj.Name);
-                    lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
-                    //myissue = myissue + lIssues.FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.FromOID)) || lProjOID.Contains(Convert.ToInt32(rel.FromOID))).Count;
-                    lIssues.ForEach(iss =>
-                    {
 
-                        if (tmpIssue != null)
+                    if (lIssues != null)
+                    {
+                        lIssues = null;
+                    }
+                    if (lTmpWbs != null)
+                    {
+                        lTmpWbs = null;
+                    }
+
+                    //lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
+
+                    lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_ISSUE });
+                    lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(projOid));
+                    lIssues = lIssues.FindAll(data => lTmpWbs.FindIndex(wbs => Convert.ToInt32(wbs.ToOID) == Convert.ToInt32(data.FromOID)) > -1);
+
+
+                    List<PmsIssue> lTmpIssues = null;
+                    List<int> issueOIDs = lIssues.Select(i => Convert.ToInt32(i.ToOID)).ToList();
+                    if (issueOIDs == null || issueOIDs.Count < 1)
+                    {
+                        lTmpIssues = new List<PmsIssue>();
+                    }
+                    else
+                    {
+                        //lTmpIssues = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = issueOIDs });
+                        lTmpIssues = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = issueOIDs }).FindAll(rel => Convert.ToInt32(rel.Manager_OID) == iUser || Convert.ToInt32(rel.CreateUs) == iUser);
+                    }
+
+                    lTmpIssues.ForEach(iss =>
+                    {
+                        if (iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_PREPARE || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
                         {
-                            tmpIssue = null;
-                        }
-                        tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = iss.ToOID });
-                        if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
-                        {
-                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", iss.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
                             {
                                 delay++;
                             }
@@ -3678,11 +4091,37 @@ namespace SemsPLM.Controllers
                                 start++;
                             }
                         }
-                        else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
+                        else if (iss.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
                         {
                             complete++;
                         }
                     });
+
+                    //lIssues.ForEach(iss =>
+                    //{
+                    //
+                    //    if (tmpIssue != null)
+                    //    {
+                    //        tmpIssue = null;
+                    //    }
+                    //    //tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = iss.ToOID });
+                    //    tmpIssue = lTmpIssues.Find(data => data.OID == iss.ToOID);
+                    //    if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
+                    //    {
+                    //        if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                    //        {
+                    //            delay++;
+                    //        }
+                    //        else
+                    //        {
+                    //            start++;
+                    //        }
+                    //    }
+                    //    else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
+                    //    {
+                    //        complete++;
+                    //    }
+                    //});
                     dResult["진행"].Add(start);
                     dResult["지연"].Add(delay);
                     dResult["완료"].Add(complete);
@@ -3693,11 +4132,11 @@ namespace SemsPLM.Controllers
 
                 if (callType == "DV")
                 {
-                    type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_DV }).OID);
+                    type = dv;
                 }
                 else
                 {
-                    type = Convert.ToInt32(LibraryRepository.SelLibraryObject(new Library { Name = DocClassConstant.ATTRIBUTE_PV }).OID);
+                    type = pv;
                 }
 
                 lProjOID.ForEach(projOid =>
@@ -3712,16 +4151,50 @@ namespace SemsPLM.Controllers
                     //lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)) || rel.TaskOID == null);
                     lDocMaster = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { RootOID = projOid, Type = PmsConstant.RELATIONSHIP_DOC_CLASS }).FindAll(rel => lProcOID.Contains(Convert.ToInt32(rel.TaskOID)));
 
+                    List<DocClass> lTmpDocClass = null;
+                    List<int> lData = lDocMaster.Select(data => Convert.ToInt32(data.FromOID)).ToList();
+                    if (lData == null || lData.Count < 1)
+                    {
+                        lTmpDocClass = new List<DocClass>();
+                    }
+                    else
+                    {
+                        lTmpDocClass = DocClassRepository.AllSelDocClass(Session, new DocClass { OIDs = lData });
+                    }
+
+                    List<PmsReliability> lTmpReliablity = null;
+                    List<int> lToOIDs = lDocMaster.Select(data => Convert.ToInt32(data.ToOID)).ToList();
+                    if (lToOIDs == null || lToOIDs.Count < 1)
+                    {
+                        lTmpReliablity = new List<PmsReliability>();
+                    }
+                    else
+                    {
+                        lTmpReliablity = PmsReliabilityRepository.SelPmsReliability(Session, new PmsReliability { OIDs = lToOIDs });
+                    }
+
+                    List<PmsReliabilityReport> lTmpReliabilityReport = null;
+                    if (lToOIDs == null || lToOIDs.Count < 1)
+                    {
+                        lTmpReliabilityReport = new List<PmsReliabilityReport>();
+                    }
+                    else
+                    {
+                        lTmpReliabilityReport = PmsReliabilityReportRepository.SelPmsReliabilityReport(Session, new PmsReliabilityReport { OIDs = lToOIDs });
+                    }
+
                     lDocMaster.ForEach(delivery =>
                     {
                         if (dobj != null)
                         {
                             dobj = null;
                         }
-                        docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
+                        //docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
+                        docObj = lTmpDocClass.Find(data => data.OID == delivery.FromOID);
                         if (docObj.Name == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY)
                         {
-                            PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = delivery.ToOID });
+                            //PmsReliability Reliability = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = delivery.ToOID });
+                            PmsReliability Reliability = lTmpReliablity.Find(data => data.OID == delivery.ToOID);
                             if (Reliability.DevStep == type)
                             {
                                 if (Reliability.BPolicy.Name == DocumentConstant.POLICY_DOCUMENT_PREPARE)
@@ -3740,7 +4213,8 @@ namespace SemsPLM.Controllers
                         }
                         else if (docObj.Name == Common.Constant.DocClassConstant.ATTRIBUTE_RELIABILITY_REPORT)
                         {
-                            PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = delivery.ToOID });
+                            //PmsReliabilityReport Reliability = PmsReliabilityReportRepository.SelPmsReliabilityReportObject(Session, new PmsReliabilityReport { OID = delivery.ToOID });
+                            PmsReliabilityReport Reliability = lTmpReliabilityReport.Find(data => data.OID == delivery.ToOID);
                             if (Reliability.DevStep == type)
                             {
                                 if (Reliability.BPolicy.Name == DocumentConstant.POLICY_DOCUMENT_PREPARE)
@@ -3852,6 +4326,36 @@ namespace SemsPLM.Controllers
             PmsProject proj = null;
             PmsProcess proc = null;
             List<DateTime> lHoliday = null;
+
+            List<DObject> lTmpDobj = null;
+            List<PmsProcess> lTmpProc = null;
+            List<PmsRelationship> lTmpWbs = null;
+            List<int> lFromOIDs = lProjMember.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (lFromOIDs == null || lFromOIDs.Count < 1)
+            {
+                lTmpDobj = new List<DObject>();
+                lTmpProc = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpDobj = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lFromOIDs });
+                lTmpProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lFromOIDs });
+            }
+
+            List<DObject> lTmpRootDobj = null;
+            List<PmsProject> lTmpProj = null;
+            List<int> lRootOIDs = lProjMember.Select(sel => Convert.ToInt32(sel.RootOID)).ToList();
+            if (lRootOIDs == null || lRootOIDs.Count < 1)
+            {
+                lTmpRootDobj = new List<DObject>();
+                lTmpProj = new List<PmsProject>();
+            }
+            else
+            {
+                lTmpRootDobj = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lRootOIDs });
+                lTmpProj = PmsProjectRepository.SelPmsObjects(Session, new PmsProject { OIDs = lRootOIDs });
+            }
+
             lProjMember.ForEach(item =>
             {
                 if (!CompleteOID.Contains(Convert.ToInt32(item.FromOID)))
@@ -3860,7 +4364,8 @@ namespace SemsPLM.Controllers
                     {
                         dobj = null;
                     }
-                    dobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.FromOID });
+                    //dobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.FromOID });
+                    dobj = lTmpDobj.Find(data => data.OID == item.FromOID);
                     if (dobj != null && dobj.Type == PmsConstant.TYPE_TASK)
                     {
                         if (pDobj != null)
@@ -3879,8 +4384,13 @@ namespace SemsPLM.Controllers
                         {
                             lHoliday = null;
                         }
+                        if (lTmpWbs != null)
+                        {
+                            lTmpWbs = null;
+                        }
 
-                        pDobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.RootOID });
+                        //pDobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.RootOID });
+                        pDobj = lTmpRootDobj.Find(data => data.OID == item.RootOID);
                         if (pDobj == null || pDobj.Type != PmsConstant.TYPE_PROJECT)
                         {
                             return;
@@ -3889,9 +4399,17 @@ namespace SemsPLM.Controllers
                         {
                             return;
                         }
-                        proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = pDobj.OID });
+                        lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pDobj.OID));
+                        if (lTmpWbs.FindIndex(data => data.ToOID == dobj.OID) < 0)
+                        {
+                            return;
+                        }
+
+                        //proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = pDobj.OID });
+                        proj = lTmpProj.Find(data => data.OID == pDobj.OID);
                         lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = Convert.ToInt32(proj.CalendarOID), IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
-                        proc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = dobj.OID });
+                        //proc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = dobj.OID });
+                        proc = lTmpProc.Find(data => data.OID == dobj.OID);
 
                         Dictionary<string, object> resultData = new Dictionary<string, object>();
                         resultData.Add("id", proc.OID);
@@ -3910,11 +4428,18 @@ namespace SemsPLM.Controllers
                         if (proc.ActEndDt != null)
                         {
 
-                            gap = PmsUtils.CalculateDelay(Convert.ToDateTime(proc.EstEndDt), Convert.ToDateTime(proc.ActEndDt), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.EstEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.ActEndDt)), Convert.ToInt32(proj.WorkingDay), lHoliday);
                         }
                         else
                         {
-                            gap = PmsUtils.CalculateDelay(Convert.ToDateTime(proc.EstEndDt), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            if (proc.ActStartDt != null)
+                            {
+                                gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.EstEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            }
+                            else
+                            {
+                                gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.EstStartDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            }
                         }
 
                         if (gap > 1 && gap <= PmsConstant.DELAY)
@@ -4083,18 +4608,41 @@ namespace SemsPLM.Controllers
                     lIssue = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = robj.ToOID, Type = PmsConstant.RELATIONSHIP_ISSUE });
                     if (lIssue != null)
                     {
+                        List<PmsIssue> lTmpIssue = null;
+                        List<int> lToOIDs = lIssue.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                        if (lToOIDs == null || lToOIDs.Count < 1)
+                        {
+                            lTmpIssue = new List<PmsIssue>();
+                        }
+                        else
+                        {
+                            lTmpIssue = PmsIssueRepository.SelIssueOIDs(Session, new PmsIssue { OIDs = lToOIDs });
+                        }
+
+                        List<PmsProcess> lTmpProcess = null;
+                        List<int> lFromOIDs = lIssue.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+                        if (lFromOIDs == null || lFromOIDs.Count < 1)
+                        {
+                            lTmpProcess = new List<PmsProcess>();
+                        }
+                        else
+                        {
+                            lTmpProcess = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lFromOIDs });
+                        }
                         lIssue.ForEach(item =>
                         {
                             if (tmpIssue != null)
                             {
                                 tmpIssue = null;
                             }
-                            tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = item.ToOID });
+                            //tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = item.ToOID });
+                            tmpIssue = lTmpIssue.Find(data => data.OID == item.ToOID);
                             if (tmpIssue != null)
                             {
                                 if (item.RootOID != item.FromOID)
                                 {
-                                    tmpIssue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(item.FromOID) }).Name;
+                                    //tmpIssue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(item.FromOID) }).Name;
+                                    tmpIssue.TaskNm = lTmpProcess.Find(data => data.OID == item.FromOID).Name;
                                 }
                                 tmpIssue.RootOID = item.RootOID;
                                 tmpIssue.FromOID = item.FromOID;
@@ -4267,8 +4815,11 @@ namespace SemsPLM.Controllers
         {
             Library DevStepKey = LibraryRepository.SelLibraryObject(new Library { Name = CommonConstant.ATTRIBUTE_DEVSTEP });
             List<Library> DevStepList = LibraryRepository.SelLibrary(new Library { FromOID = DevStepKey.OID });
+            PmsProject ProjectInfo = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = Convert.ToInt32(RootOID) });
             ViewBag.DevStepList = DevStepList;
             ViewBag.OEM = OEM;
+            ViewBag.ProjectInfo = ProjectInfo;
+
 
             return PartialView("Dialog/dlgReliabilityForm");
         }
@@ -4378,7 +4929,18 @@ namespace SemsPLM.Controllers
 
             Library TestItemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = CommonConstant.ATTRIBUTE_TESTITEMLIST });
 
-            ViewBag.Detail = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = Convert.ToInt32(_param.OID) });
+            PmsReliability PmsReliabilityInfo = PmsReliabilityRepository.SelPmsReliabilityObject(Session, new PmsReliability { OID = Convert.ToInt32(_param.OID) });
+            List<PmsRelationship> PmsRelationshipInfo = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { ToOID = PmsReliabilityInfo.OID });
+
+            PmsProject ProjectInfo = null;
+            if (PmsRelationshipInfo.Count > 0)
+            {
+                ProjectInfo = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = PmsRelationshipInfo[0].RootOID });
+            }
+            
+            ViewBag.Detail = PmsReliabilityInfo;
+            ViewBag.ProjectInfo = ProjectInfo;
+
             if (_param.BPolicyAuths != null && _param.BPolicyAuths.Count > 0)
             {
                 ViewBag.Detail.BPolicyAuths.AddRange(_param.BPolicyAuths);
@@ -4492,7 +5054,13 @@ namespace SemsPLM.Controllers
             {
                 ViewBag.Detail.BPolicyAuths.AddRange(_param.BPolicyAuths);
             }
-
+            List<PmsRelationship> PmsRelationshipInfo = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { ToOID = ViewBag.Detail.OID });
+            PmsProject ProjectInfo = null;
+            if (PmsRelationshipInfo.Count > 0)
+            {
+                ProjectInfo = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = PmsRelationshipInfo[0].RootOID });
+            }
+            ViewBag.ProjectInfo = ProjectInfo;
 
             return PartialView("Dialog/dlgInfoReliabilityReport");
         }
@@ -5023,6 +5591,36 @@ namespace SemsPLM.Controllers
             PmsProject proj = null;
             PmsProcess proc = null;
             List<DateTime> lHoliday = null;
+
+            List<DObject> tmpFromOIDs = null;
+            List<PmsProcess> tmpProcDatas = null;
+            List<PmsRelationship> lTmpWbs = null;
+            List<int> lFromOIDs = lProjMember.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (lFromOIDs == null || lFromOIDs.Count < 1)
+            {
+                tmpFromOIDs = new List<DObject>();
+                tmpProcDatas = new List<PmsProcess>();
+            }
+            else
+            {
+                tmpFromOIDs = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lFromOIDs });
+                tmpProcDatas = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lFromOIDs });
+            }
+
+            List<DObject> tmpRootOIDs = null;
+            List<PmsProject> tmpProjDatas = null;
+            List<int> lRootOIDs = lProjMember.Select(sel => Convert.ToInt32(sel.RootOID)).ToList();
+            if (lRootOIDs == null || lRootOIDs.Count < 1)
+            {
+                tmpRootOIDs = new List<DObject>();
+                tmpProjDatas = new List<PmsProject>();
+            }
+            else
+            {
+                tmpRootOIDs = DObjectRepository.SelDObjectOIDs(Session, new DObject { OIDs = lRootOIDs });
+                tmpProjDatas = PmsProjectRepository.SelPmsObjects(Session, new PmsProject { OIDs = lRootOIDs });
+            }
+
             lProjMember.ForEach(item =>
             {
                 if (!CompleteOID.Contains(Convert.ToInt32(item.FromOID)))
@@ -5031,7 +5629,8 @@ namespace SemsPLM.Controllers
                     {
                         dobj = null;
                     }
-                    dobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.FromOID });
+                    //dobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.FromOID });
+                    dobj = tmpFromOIDs.Find(data => data.OID == item.FromOID);
                     if (dobj != null && dobj.Type == PmsConstant.TYPE_TASK)
                     {
                         if (pDobj != null)
@@ -5050,8 +5649,13 @@ namespace SemsPLM.Controllers
                         {
                             lHoliday = null;
                         }
+                        if (lTmpWbs != null)
+                        {
+                            lTmpWbs = null;
+                        }
 
-                        pDobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.RootOID });
+                        //pDobj = DObjectRepository.SelDObject(Session, new DObject { OID = item.RootOID });
+                        pDobj = tmpRootOIDs.Find(data => data.OID == item.RootOID);
                         if (pDobj == null || pDobj.Type != PmsConstant.TYPE_PROJECT)
                         {
                             return;
@@ -5060,14 +5664,22 @@ namespace SemsPLM.Controllers
                         {
                             return;
                         }
-                        proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = pDobj.OID });
+                        lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pDobj.OID));
+                        if (lTmpWbs.FindIndex(data => data.ToOID == dobj.OID) < 0)
+                        {
+                            return;
+                        }
+
+                        //proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = pDobj.OID });
+                        proj = tmpProjDatas.Find(data => data.OID == pDobj.OID);
                         lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = Convert.ToInt32(proj.CalendarOID), IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
-                        proc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = dobj.OID });
+                        //proc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = dobj.OID });
+                        proc = tmpProcDatas.Find(data => data.OID == dobj.OID);
 
                         if (proc.BPolicy.Name.Equals(PmsConstant.POLICY_PROCESS_STARTED))
                         {
                             startedCount++;
-                            int gap = PmsUtils.CalculateDelay(Convert.ToDateTime(proc.EstEndDt), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            int gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.EstEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
                             if (gap > 1)
                             {
                                 delayCount++;
@@ -5076,7 +5688,7 @@ namespace SemsPLM.Controllers
                         else if (proc.BPolicy.Name.Equals(PmsConstant.POLICY_PROCESS_PREPARE))
                         {
                             prepareCount++;
-                            int gap = PmsUtils.CalculateDelay(Convert.ToDateTime(proc.EstStartDt), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
+                            int gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", proc.EstStartDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
                             if (gap > 1)
                             {
                                 delayCount++;
@@ -5130,9 +5742,21 @@ namespace SemsPLM.Controllers
                         return;
                     }
 
-                    PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID)).ForEach(proc =>
+                    List<PmsRelationship> lGetWbsOidList = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(pmes.RootOID));
+                    List<PmsProcess> lTmpPmsProcs = null;
+                    List<int> lToOID = lGetWbsOidList.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+                    if (lToOID == null || lToOID.Count < 1)
                     {
-                        PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        lTmpPmsProcs = new List<PmsProcess>();
+                    }
+                    else
+                    {
+                        lTmpPmsProcs = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lToOID, ProcessType = PmsConstant.TYPE_TASK });
+                    }
+                    lGetWbsOidList.ForEach(proc =>
+                    {
+                        //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = proc.ToOID, ProcessType = PmsConstant.TYPE_TASK });
+                        PmsProcess tmpProc = lTmpPmsProcs.Find(data => data.OID == proc.ToOID);
                         if (tmpProc != null)
                         {
                             if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE || tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
@@ -5198,6 +5822,17 @@ namespace SemsPLM.Controllers
             List<PmsProcess> startedProc = new List<PmsProcess>();
             List<PmsProcess> delayProc = new List<PmsProcess>();
             List<PmsRelationship> lTmpWbs = null;
+
+            List<PmsProcess> lTmpProcDatas = null;
+            List<int> lFromOID = lPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+            if (lFromOID == null || lFromOID.Count < 1)
+            {
+                lTmpProcDatas = new List<PmsProcess>();
+            }
+            else
+            {
+                lTmpProcDatas = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lFromOID, ProcessType = PmsConstant.TYPE_TASK });
+            }
             lPmses.ForEach(pmes =>
             {
                 if (selPmsProj.FindIndex(proj => proj.OID == pmes.RootOID) > -1)
@@ -5216,7 +5851,8 @@ namespace SemsPLM.Controllers
                     {
                         return;
                     }
-                    PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //PmsProcess tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    PmsProcess tmpProc = lTmpProcDatas.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc != null)
                     {
                         if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE || tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
@@ -5711,17 +6347,20 @@ namespace SemsPLM.Controllers
                                             tmpIssue = null;
                                         }
                                         tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = item.ToOID });
-                                        if (tmpIssue != null)
+                                        if(Convert.ToInt32(tmpIssue.Manager_OID) == iUser || Convert.ToInt32(tmpIssue.CreateUs) == iUser)
                                         {
-                                            if (item.RootOID != item.FromOID)
+                                            if (tmpIssue != null)
                                             {
-                                                tmpIssue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(item.FromOID) }).Name;
+                                                if (item.RootOID != item.FromOID)
+                                                {
+                                                    tmpIssue.TaskNm = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = Convert.ToInt32(item.FromOID) }).Name;
+                                                }
+                                                tmpIssue.RootOID = item.RootOID;
+                                                tmpIssue.ProjectNm = tempProj.Name;
+                                                tmpIssue.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
+                                                tmpIssue.Car_Lib_Nm = tempProj.Car_Lib_Nm;
+                                                lResult.Add(tmpIssue);
                                             }
-                                            tmpIssue.RootOID = item.RootOID;
-                                            tmpIssue.ProjectNm = tempProj.Name;
-                                            tmpIssue.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
-                                            tmpIssue.Car_Lib_Nm = tempProj.Car_Lib_Nm;
-                                            lResult.Add(tmpIssue);
                                         }
                                     });
                                 }
@@ -5791,6 +6430,7 @@ namespace SemsPLM.Controllers
                             docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
                             delivery.DocClassNm = docObj.Name;
                             delivery.ProjectNm = tempProj.Name;
+                            delivery.PartNm = tempProj.ProductNm;
                             delivery.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
                             delivery.Car_Lib_Nm = tempProj.Car_Lib_Nm;
 
@@ -5902,6 +6542,7 @@ namespace SemsPLM.Controllers
                         docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
                         delivery.DocClassNm = docObj.Name;
                         delivery.ProjectNm = tempProj.Name;
+                        delivery.PartNm = tempProj.ProductNm;
                         delivery.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
                         delivery.Car_Lib_Nm = tempProj.Car_Lib_Nm;
 
@@ -6012,6 +6653,7 @@ namespace SemsPLM.Controllers
                             docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
                             delivery.DocClassNm = docObj.Name;
                             delivery.ProjectNm = tempProj.Name;
+                            delivery.PartNm = tempProj.ProductNm;
                             delivery.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
                             delivery.Car_Lib_Nm = tempProj.Car_Lib_Nm;
 
@@ -6036,7 +6678,6 @@ namespace SemsPLM.Controllers
                                 if (Reliability.DevStep == pv)
                                 {
                                     delivery.ViewUrl = docObj.ViewUrl;
-                                    delivery.PartNm = Reliability.PartNm;
                                     delivery.DocNm = Reliability.Name;
                                     delivery.DocRev = Reliability.Revision;
                                     delivery.DocStNm = Reliability.BPolicy.StatusNm;
@@ -6103,7 +6744,12 @@ namespace SemsPLM.Controllers
                     {
                         lProcOID.Add(Convert.ToInt32(tmpProc.OID));
                     }
-                    lProjOID.Add(Convert.ToInt32(pmes.RootOID));
+
+                    if(!lProjOID.Contains(Convert.ToInt32(pmes.RootOID)))
+                    {
+                        lProjOID.Add(Convert.ToInt32(pmes.RootOID));
+                    }
+                    
                 }
             });
             lProjOID.ForEach(projOid =>
@@ -6124,6 +6770,7 @@ namespace SemsPLM.Controllers
                         docObj = DocClassRepository.SelDocClassObject(Session, new DocClass { OID = delivery.FromOID });
                         delivery.DocClassNm = docObj.Name;
                         delivery.ProjectNm = tempProj.Name;
+                        delivery.PartNm = tempProj.ProductNm;
                         delivery.Oem_Lib_Nm = tempProj.Oem_Lib_Nm;
                         delivery.Car_Lib_Nm = tempProj.Car_Lib_Nm;
 
@@ -6148,7 +6795,6 @@ namespace SemsPLM.Controllers
                             if (Reliability.DevStep == pv)
                             {
                                 delivery.ViewUrl = docObj.ViewUrl;
-                                delivery.PartNm = Reliability.PartNm;
                                 delivery.DocNm = Reliability.Name;
                                 delivery.DocRev = Reliability.Revision;
                                 delivery.DocStNm = Reliability.BPolicy.StatusNm;
@@ -6194,8 +6840,10 @@ namespace SemsPLM.Controllers
             List<int> lComplete = new List<int>();
 
             PmsProcess tmpProc = null;
+            List<PmsProcess> lTmpProc = null;
             List<DateTime> lHoliday = null;
             List<PmsRelationship> lTmpWbs = null;
+            List<PmsRelationship> lTmpPmses = null;
             selPmsProj.ForEach(proj =>
             {
                 int prepare = 0;
@@ -6215,16 +6863,37 @@ namespace SemsPLM.Controllers
                     lHoliday = null;
                 }
 
+                if (lTmpPmses != null)
+                {
+                    lTmpPmses = null;
+                }
+
+                if (lTmpProc != null)
+                {
+                    lTmpProc = null;
+                }
+
                 lTmpWbs = PmsRelationshipRepository.GetWbsOidLIst(Session, Convert.ToString(proj.OID));
                 lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = Convert.ToInt32(proj.CalendarOID), IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
 
-                lPmses.FindAll(innerProj => innerProj.RootOID == proj.OID && lTmpWbs.FindIndex(tmpWbs => tmpWbs.ToOID == innerProj.FromOID) > -1).ForEach(pmes =>
+                lTmpPmses = lPmses.FindAll(innerProj => innerProj.RootOID == proj.OID && lTmpWbs.FindIndex(tmpWbs => tmpWbs.ToOID == innerProj.FromOID) > -1);
+                List<int> lFromOID = lTmpPmses.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+                if (lFromOID == null || lFromOID.Count < 1)
+                {
+                    lTmpProc = new List<PmsProcess>();
+                }
+                else
+                {
+                    lTmpProc = PmsProcessRepository.SelPmsProcessOIDs(Session, new PmsProcess { OIDs = lFromOID, ProcessType = PmsConstant.TYPE_TASK });
+                }
+                lTmpPmses.ForEach(pmes =>
                 {
                     if (tmpProc != null)
                     {
                         tmpProc = null;
                     }
-                    tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    //tmpProc = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = pmes.FromOID, ProcessType = PmsConstant.TYPE_TASK });
+                    tmpProc = lTmpProc.Find(data => data.OID == pmes.FromOID);
                     if (tmpProc == null)
                     {
                         return;
@@ -6233,28 +6902,40 @@ namespace SemsPLM.Controllers
                     if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
                     {
                         gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpProc.EstStartDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
-                        prepare = prepare + 1;
+                        
                         if (gap > 1)
                         {
                             delay = delay + 1;
+                        }
+                        else
+                        {
+                            prepare = prepare + 1;
                         }
                     }
                     else if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
                     {
                         gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpProc.EstEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
-                        started = started + 1;
+                        
                         if (gap > 1)
                         {
                             delay = delay + 1;
+                        }
+                        else
+                        {
+                            started = started + 1;
                         }
                     }
                     else if (tmpProc.BPolicy.Name == PmsConstant.POLICY_PROCESS_COMPLETED)
                     {
                         gap = PmsUtils.CalculateDelay(Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpProc.ActEndDt)), Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)), Convert.ToInt32(proj.WorkingDay), lHoliday);
-                        complete = complete + 1;
+                        
                         if (gap > 1)
                         {
                             delaycomplete = delaycomplete + 1;
+                        }
+                        else
+                        {
+                            complete = complete + 1;
                         }
                     }
                 });
@@ -6402,107 +7083,155 @@ namespace SemsPLM.Controllers
                     selPmsProj = selPmsProj.FindAll(item => item.ITEM_NoNm.Equals("EBP"));
                 }
 
-                List<PmsRelationship> Relation = new List<PmsRelationship>();
+                //selPmsProj = selPmsProj.OrderBy(x => x.ProjectGrade).ToList();
+
+                List<PmsRelationship> Relation = null;
+
+                var dateTime = DateTime.Now;
+
+                var DelayFlag = "F";
+                var ProcessFlag = "F";
+
+                int TotalCnt = 0;
+                int PrepareCnt = 0;
+                int ProcessCnt = 0;
+                int DelayCnt = 0;
+                int CompleteCnt = 0;
+                int IssueCnt = 0;
+
                 selPmsProj.ForEach(projObj =>
                 {
-                    int TotalCnt = 0;
-                    int PrepareCnt = 0;
-                    int ProcessCnt = 0;
-                    int DelayCnt = 0;
-                    int CompleteCnt = 0;
+                    TotalCnt = 0;
+                    PrepareCnt = 0;
+                    ProcessCnt = 0;
+                    DelayCnt = 0;
+                    CompleteCnt = 0;
+                    IssueCnt = 0;
                     List<int> GatePolicy = new List<int>();
+
+                    if(Relation != null)
+                    {
+                        Relation = null;
+                    }
+
+                    if (Type == PmsConstant.ATTRIBUTE_CEO)
+                    {
+                        IssueCnt = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = projObj.OID, FromOID = projObj.OID }).Count;
+                    }
+                    else
+                    {
+                        IssueCnt = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = projObj.OID }).Count;
+                    }
 
                     Relation = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, projObj.OID.ToString()).FindAll(rel => rel.ObjType != PmsConstant.TYPE_PROJECT && rel.ObjType != PmsConstant.TYPE_PHASE);
                     TotalCnt = Relation.Count;
-                    List<int> lProcessOID = new List<int>();
-                    PmsProcess tmpProcess = new PmsProcess();
-                    bool bGate = false;
-                    Relation.ForEach(item =>
+
+                    Relation.FindAll(item => item.ObjStNm != PmsConstant.POLICY_PROCESS_COMPLETED && item.ObjStNm != PmsConstant.POLICY_PROCESS_PAUSED).ForEach(item =>
                     {
-                        if (item.ObjType.Equals(PmsConstant.TYPE_GATE))
+                        if ((item.ActStartDt != null && Convert.ToDateTime(item.EstStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.EstStartDt) : "") < Convert.ToDateTime(item.ActStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActStartDt) : "")) || (item.ActStartDt == null && item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
                         {
-                            if (item.ObjStNm == PmsConstant.POLICY_PROCESS_COMPLETED)
-                            {
-                                CompleteCnt++;
-                                if (item.EstStartDt < item.ActStartDt || item.EstEndDt < item.ActEndDt)
-                                {
-                                    GatePolicy.Add(4);
-                                }
-                                else
-                                {
-                                    GatePolicy.Add(5);
-                                }
-                            }
-                            else
-                            {
-                                if (item.ObjStNm == PmsConstant.POLICY_PROCESS_PREPARE)
-                                {
-                                    if (item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                                    {
-                                        DelayCnt++;
-                                        GatePolicy.Add(3);
-                                    }
-                                    else
-                                    {
-                                        PrepareCnt++;
-                                        GatePolicy.Add(1);
-                                    }
-                                }
-                                else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
-                                {
-                                    if (item.EstStartDt < item.ActStartDt || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                                    {
-                                        DelayCnt++;
-                                        GatePolicy.Add(3);
-                                    }
-                                    else
-                                    {
-                                        ProcessCnt++;
-                                        GatePolicy.Add(2);
-                                    }
-                                }
-                            }
-                        }
-                        else // 업무계수 확인
+                            DelayCnt++;
+                        } 
+                        else if ((item.ActEndDt != null && Convert.ToDateTime(item.EstEndDt != null ? string.Format("{0:yyyy-MM-dd}", item.EstEndDt) : "") < Convert.ToDateTime(item.ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActEndDt) : "")) || (item.ActEndDt == null && item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
                         {
-                            if (item.ObjStNm == PmsConstant.POLICY_PROCESS_COMPLETED)
-                            {
-                                CompleteCnt++;
-                            }
-                            else
-                            {
-                                if (item.ObjStNm == PmsConstant.POLICY_PROCESS_PREPARE)
-                                {
-                                    if (item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                                    {
-                                        DelayCnt++;
-                                    }
-                                    else
-                                    {
-                                        PrepareCnt++;
-                                    }
-                                }
-                                else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
-                                {
-                                    if (item.EstStartDt < item.ActStartDt || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                                    {
-                                        DelayCnt++;
-                                    }
-                                    else
-                                    {
-                                        ProcessCnt++;
-                                    }
-                                }
-                            }
+                            DelayCnt++;
                         }
-                       
+                        else
+                        {
+                            if (item.ObjStNm == PmsConstant.POLICY_PROCESS_PREPARE)
+                            {
+                                PrepareCnt++;
+                            }
+                            else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
+                            {
+                                ProcessCnt++;
+                            }
+                            
+                        }
                     });
-                    projObj.GatePolicy = GatePolicy;
-                    projObj.TotalCnt = TotalCnt;
+
                     projObj.PrepareCnt = PrepareCnt;
                     projObj.ProcessCnt = ProcessCnt;
                     projObj.DelayCnt = DelayCnt;
-                    projObj.CompleteCnt = CompleteCnt;
+                    projObj.CompleteCnt = Relation.FindAll(item => item.ObjStNm == PmsConstant.POLICY_PROCESS_COMPLETED).Count;
+
+                    int beforeGateOID = -1;
+                    Relation.FindAll(item => item.ObjType == PmsConstant.TYPE_GATE).ForEach(item =>
+                    {
+                        if (item.ObjStNm == PmsConstant.POLICY_PROCESS_PREPARE)
+                        {
+                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", item.EstStartDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                            {
+                                GatePolicy.Add(3);
+                            }
+                            else
+                            {
+
+                                int startIdx = 0;
+                                if (beforeGateOID >= 0)
+                                {
+                                    startIdx = Relation.FindIndex(innerItem => innerItem.ToOID == beforeGateOID) + 1;
+                                }
+                                else
+                                {
+                                    startIdx = 0;
+                                }
+
+                                int endIdx = Relation.FindIndex(innerItem => innerItem.ToOID == item.ToOID);
+                                if (endIdx < 0)
+                                {
+                                    GatePolicy.Add(1);
+                                    return;
+                                }
+
+                                bool started = false;
+                                for (int i = startIdx; i < endIdx; i++)
+                                {
+                                    if (Relation[i].ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
+                                    {
+                                        started = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!started)
+                                {
+                                    GatePolicy.Add(1);
+                                }
+                                else
+                                {
+                                    GatePolicy.Add(2);
+                                }
+                                
+                            }
+                            beforeGateOID = Convert.ToInt32(item.ToOID);
+                        }
+                        else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
+                        {
+                            if ((Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", item.EstEndDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                            {
+                                GatePolicy.Add(3);
+                            }
+                            else
+                            {
+                                GatePolicy.Add(2);
+                            }
+                        }
+                        else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_COMPLETED)
+                        {
+                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", item.EstEndDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", item.ActEndDt)))
+                            {
+                                GatePolicy.Add(4);
+                            }
+                            else
+                            {
+                                GatePolicy.Add(5);
+                            }
+                        }
+                    });
+                    projObj.GatePolicy = GatePolicy;
+                    projObj.TotalCnt = TotalCnt;
+                    projObj.IssueCnt = IssueCnt;
                     Relation = null;
                 });
             }
@@ -6516,8 +7245,16 @@ namespace SemsPLM.Controllers
             PmsProject selPmsProj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = OID });
 
             List<PmsRelationship> ProjWbsTypeOidList = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, OID.ToString());
-
-            List<PmsRelationship> lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = OID });
+            List<PmsRelationship> lIssues = new List<PmsRelationship>();
+            if (Type == PmsConstant.ATTRIBUTE_CEO)
+            {
+                lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = OID, FromOID = OID });
+            }
+            else
+            {
+                lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = OID });
+            }
+                
 
             List<string> projNms = new List<string>();
             Dictionary<string, List<int>> dResult = new Dictionary<string, List<int>>();
@@ -6572,7 +7309,7 @@ namespace SemsPLM.Controllers
             PmsProject proj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = Convert.ToInt32(ProjectOID) });
 
             List<PmsRelationship> Relation = new List<PmsRelationship>();
-            Relation = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, ProjectOID).FindAll(rel => rel.ObjType != PmsConstant.TYPE_PROJECT);
+            Relation = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, ProjectOID).FindAll(rel => rel.ObjType != PmsConstant.TYPE_PROJECT && rel.ObjType != PmsConstant.TYPE_PHASE);
 
             List<PmsProcess> lProcess = new List<PmsProcess>();
             PmsProcess tmpProcess = new PmsProcess();
@@ -6580,80 +7317,113 @@ namespace SemsPLM.Controllers
 
             var GateCheck = 1;
 
-            Relation.ForEach(item =>
-            {
-                if (tmpProcess != null)
-                {
-                    tmpProcess = null;
-                }
-                tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
-                if (tmpProcess == null)
-                {
-                    return;
-                }
-                item.Type = tmpProcess.Type;
-                if (bGate)
-                {
-                    return;
-                }
-
-                if (item.Type.Equals(PmsConstant.TYPE_GATE))
-                {
-                    if (Index == GateCheck)
-                    {
-                        lProcess.Add(tmpProcess);
-                        bGate = true;
-                    }
-                    else
-                    {
-                        GateCheck++;
-                        lProcess.Clear();
-                    }
-                }
-                else if(!item.Type.Equals(PmsConstant.TYPE_PHASE))
-                {
-                    lProcess.Add(tmpProcess);
-                }
-            });
-
+            List<int> result = new List<int>();
             int CompleteCnt = 0;
             int DelayCnt = 0;
             int PrepareCnt = 0;
             int ProcessCnt = 0;
 
-            lProcess.ForEach(item => {
-                if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_COMPLETED)
+            if (Index == 0)
+            {
+                Relation.FindAll(item => item.ObjStNm != PmsConstant.POLICY_PROCESS_COMPLETED && item.ObjStNm != PmsConstant.POLICY_PROCESS_PAUSED).ForEach(item =>
                 {
-                    CompleteCnt++;
-                }
-                else
-                {
-                    if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
+                    if ((item.ActStartDt != null && Convert.ToDateTime(item.EstStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.EstStartDt) : "") < Convert.ToDateTime(item.ActStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActStartDt) : "")) || (item.ActStartDt == null && item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
                     {
-                        if (item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                        {
-                            DelayCnt++;
-                        }
-                        else
+                        DelayCnt++;
+                    }
+                    else if ((item.ActEndDt != null && Convert.ToDateTime(item.EstEndDt != null ? string.Format("{0:yyyy-MM-dd}", item.EstEndDt) : "") < Convert.ToDateTime(item.ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActEndDt) : "")) || (item.ActEndDt == null && item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                    {
+                        DelayCnt++;
+                    }
+                    else
+                    {
+                        if (item.ObjStNm == PmsConstant.POLICY_PROCESS_PREPARE)
                         {
                             PrepareCnt++;
                         }
-                    }
-                    else if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
-                    {
-                        if (item.EstStartDt < item.ActStartDt || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                        {
-                            DelayCnt++;
-                        }
-                        else
+                        else if (item.ObjStNm == PmsConstant.POLICY_PROCESS_STARTED)
                         {
                             ProcessCnt++;
                         }
+
+                    }
+                });
+
+                result.Add(Relation.Count);
+                result.Add(PrepareCnt);
+                result.Add(ProcessCnt);
+                result.Add(DelayCnt);
+                result.Add(CompleteCnt);
+
+                return Json(result);
+            }
+            else
+            {
+                Relation.ForEach(item =>
+                {
+                    if (tmpProcess != null)
+                    {
+                        tmpProcess = null;
+                    }
+                    tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+                    if (tmpProcess == null)
+                    {
+                        return;
+                    }
+                    item.Type = tmpProcess.Type;
+                    if (bGate)
+                    {
+                        return;
+                    }
+
+                    if (item.Type.Equals(PmsConstant.TYPE_GATE))
+                    {
+                        if (Index == GateCheck)
+                        {
+                            lProcess.Add(tmpProcess);
+                            bGate = true;
+                        }
+                        else
+                        {
+                            GateCheck++;
+                            lProcess.Clear();
+                        }
+                    }
+                    else
+                    {
+                        lProcess.Add(tmpProcess);
+                    }
+                });
+            }
+
+            CompleteCnt = lProcess.FindAll(item => item.BPolicy.Name == PmsConstant.POLICY_PROCESS_COMPLETED).Count();
+
+            lProcess.FindAll(item => item.BPolicy.Name != PmsConstant.POLICY_PROCESS_COMPLETED).ForEach(item =>
+            {
+                if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
+                {
+                    if (item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                    {
+                        DelayCnt++;
+                    }
+                    else
+                    {
+                        PrepareCnt++;
+                    }
+                }
+                else if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED)
+                {
+                    if (item.EstStartDt < Convert.ToDateTime(item.ActStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActStartDt) : "") || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
+                    {
+                        DelayCnt++;
+                    }
+                    else
+                    {
+                        ProcessCnt++;
                     }
                 }
             });
-            
-            List<int> result = new List<int>();
+
             result.Add(lProcess.Count);
             result.Add(PrepareCnt);
             result.Add(ProcessCnt);
@@ -6665,19 +7435,26 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-        public JsonResult CallDashBoardIssueGrd(int OID, string Type)
+        public JsonResult CallDashBoardIssueGrd(int OID, string Type, string DashType)
         {
-            List<PmsRelationship> lPmses = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, OID.ToString()).FindAll(rel => rel.ObjType != PmsConstant.TYPE_PROJECT && rel.ObjType != PmsConstant.TYPE_PHASE);
+            List<PmsRelationship> lPmses = PmsRelationshipRepository.GetProjWbsTypeOidList(Session, OID.ToString()).FindAll(rel => rel.ObjType != PmsConstant.TYPE_GATE && rel.ObjType != PmsConstant.TYPE_PHASE);
             List<PmsIssue> lResult = new List<PmsIssue>();
             PmsProject tempProj = null;
             PmsIssue tmpIssue = null;
             List<int> lProjOID = new List<int>();
-            List<PmsRelationship> lTmpWbs = null;
             List<PmsRelationship> lIssues = null;
             lPmses.ForEach(pmes => //타스크 이슈
             {
                 lIssues = null;
-                lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = pmes.ToOID, Type = PmsConstant.RELATIONSHIP_ISSUE });
+                if(DashType == PmsConstant.ATTRIBUTE_CEO)
+                {
+                    lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = OID, Type = PmsConstant.RELATIONSHIP_ISSUE, RootOID = OID });
+                }
+                else
+                {
+                    lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = pmes.ToOID, Type = PmsConstant.RELATIONSHIP_ISSUE });
+                }
+
                 tempProj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = pmes.RootOID });
                 if (lIssues != null)
                 {
@@ -6692,78 +7469,11 @@ namespace SemsPLM.Controllers
                         {
                             tmpIssue.TaskNm = pmes.ObjName;
                             tmpIssue.ProjectNm = tempProj.Name;
-                            if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
-                            {
-                                if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                                {
-                                    if (Type == "지연")
-                                    {
-                                        lResult.Add(tmpIssue);
-                                    }
-                                }
-                                else
-                                {
-                                    if (Type == "진행")
-                                    {
-                                        lResult.Add(tmpIssue);
-
-                                    }
-                                }
-                            }
-                            else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
-                            {
-                                if (Type == "완료")
-                                {
-                                    lResult.Add(tmpIssue);
-                                }
-                            }
+                            lResult.Add(tmpIssue);
                         }
                     });
                 }
             });
-            lIssues = null;  //프로젝트 이슈       
-            tempProj = PmsProjectRepository.SelPmsObject(Session, new PmsProject { OID = OID });
-            lIssues = PmsRelationshipRepository.SelPmsRelationship(Session, new PmsRelationship { FromOID = OID, Type = PmsConstant.RELATIONSHIP_ISSUE });
-            if (lIssues != null)
-            {
-                lIssues.ForEach(item =>
-                {
-                    if (tmpIssue != null)
-                    {
-                        tmpIssue = null;
-                    }
-                    tmpIssue = PmsIssueRepository.SelIssue(Session, new PmsIssue { OID = item.ToOID });
-                    if (tmpIssue != null)
-                    {
-                        tmpIssue.ProjectNm = tempProj.Name;
-                        if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_STARTED || tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_BEFORE_COMPLETED)
-                        {
-                            if (Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", tmpIssue.EstFinDt)) < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now)))
-                            {
-                                if (Type == "지연")
-                                {
-                                    lResult.Add(tmpIssue);
-                                }
-                            }
-                            else
-                            {
-                                if (Type == "진행")
-                                {
-                                    lResult.Add(tmpIssue);
-
-                                }
-                            }
-                        }
-                        else if (tmpIssue.BPolicy.Name == PmsConstant.POLICY_ISSUE_COMPLETED)
-                        {
-                            if (Type == "완료")
-                            {
-                                lResult.Add(tmpIssue);
-                            }
-                        }
-                    }
-                });
-            }
             lResult = lResult.OrderByDescending(x => x.CreateDt).ToList();
             return Json(lResult);
         }
@@ -6786,6 +7496,22 @@ namespace SemsPLM.Controllers
             bool bGate = false;
 
             var GateCheck = 1;
+
+            //if (Index == 0)
+            //{
+            //    Relation.ForEach(item =>
+            //    {
+            //        if (tmpProcess != null)
+            //        {
+            //            tmpProcess = null;
+            //        }
+            //        tmpProcess = PmsProcessRepository.SelPmsProcess(Session, new PmsProcess { OID = item.ToOID });
+            //        if (!tmpProcess.Type.Equals(PmsConstant.TYPE_PHASE))
+            //        {
+            //            lProcess.Add(tmpProcess);
+            //        }
+            //    });
+            //}
 
             Relation.ForEach(item =>
             {
@@ -6829,8 +7555,8 @@ namespace SemsPLM.Controllers
                     lProcess.Add(tmpProcess);
                 }
             });
-            
 
+            var Flag = "F";
             Relation = null;
             List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.OID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
             lProcess.ForEach(item =>
@@ -6841,7 +7567,18 @@ namespace SemsPLM.Controllers
                 }
                 if (item.BPolicy.Name == PmsConstant.POLICY_PROCESS_STARTED || item.BPolicy.Name == PmsConstant.POLICY_PROCESS_PREPARE)
                 {
-                    if ((item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))) || (item.EstStartDt < item.ActStartDt || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                    if ((item.ActStartDt != null && item.EstStartDt < Convert.ToDateTime(item.ActStartDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActStartDt) : "")) || (item.ActStartDt == null && item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                    {
+                        Flag = "T";
+                    }
+
+                    if ((item.ActEndDt != null && item.EstEndDt < Convert.ToDateTime(item.ActEndDt != null ? string.Format("{0:yyyy-MM-dd}", item.ActEndDt) : "")) || (item.ActEndDt == null && item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                    {
+                        Flag = "T";
+                    }
+
+                    //if ((item.EstStartDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))) || (item.EstStartDt < item.ActStartDt || item.EstEndDt < Convert.ToDateTime(string.Format("{0:yyyy-MM-dd}", DateTime.Now))))
+                    if (Flag == "T")
                     {
                         getStructure.ToOID = item.OID;
                         getStructure.ObjName = item.Name;
@@ -6885,8 +7622,9 @@ namespace SemsPLM.Controllers
                         }
                         getRelation.Add(getStructure);
                     }
-                }
 
+                    Flag = "F";
+                }
             });
 
             
