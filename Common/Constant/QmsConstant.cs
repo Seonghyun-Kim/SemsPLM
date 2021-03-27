@@ -67,29 +67,29 @@ namespace Common.Constant
 
         public static string TYPE_BLOCKADE_ITEM { get { return "BLOCKADE_ITEM"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_MATERIAL { get { return "BLOCKADE_ITEM_MATERIAL"; } }
+        public static string TYPE_BLOCKADE_ITEM_PARTNER { get { return "BLOCKADE_ITEM_PARTNER"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_OUT_PRODUCT { get { return "BLOCKADE_ITEM_OUT_PRODUCT"; } }
+        public static string TYPE_BLOCKADE_ITEM_MATERIAL_STORAGE { get { return "BLOCKADE_ITEM_MATERIAL_STORAGE"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_PROCESS_PRODUCT { get { return "BLOCKADE_ITEM_PROCESS_PRODUCT"; } }
+        public static string TYPE_BLOCKADE_ITEM_LINE { get { return "BLOCKADE_ITEM_LINE"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_FINISH_PRODUCT { get { return "BLOCKADE_ITEM_FINISH_PRODUCT"; } }
+        public static string TYPE_BLOCKADE_ITEM_SALES_STARAGE { get { return "BLOCKADE_ITEM_SALES_STARAGE"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_STORAGE_PRODUCT { get { return "BLOCKADE_ITEM_STORAGE_PRODUCT"; } }
+        public static string TYPE_BLOCKADE_ITEM_LOGISTICS { get { return "BLOCKADE_ITEM_LOGISTICS"; } }
 
-        public static string TYPE_BLOCKADE_ITEM_SHIP_PRODUCT { get { return "BLOCKADE_ITEM_SHIP_PRODUCT"; } }
+        public static string TYPE_BLOCKADE_ITEM_CUSTOMER { get { return "BLOCKADE_ITEM_CUSTOMER"; } }
 
-        public static string NAME_BLOCKADE_ITEM_MATERIAL { get { return "원재료"; } }
+        public static string NAME_BLOCKADE_ITEM_PARTNER { get { return "협력사"; } }
 
-        public static string NAME_BLOCKADE_ITEM_OUT_PRODUCT { get { return "외주품"; } }
+        public static string NAME_BLOCKADE_ITEM_MATERIAL_STORAGE { get { return "자재창고"; } }
 
-        public static string NAME_BLOCKADE_ITEM_PROCESS_PRODUCT { get { return "공정품"; } }
+        public static string NAME_BLOCKADE_ITEM_LINE { get { return "라인재공"; } }
 
-        public static string NAME_BLOCKADE_ITEM_FINISH_PRODUCT { get { return "완성품"; } }
+        public static string NAME_BLOCKADE_ITEM_SALES_STARAGE { get { return "출하창고"; } }
 
-        public static string NAME_BLOCKADE_ITEM_STORAGE_PRODUCT { get { return "창고재고"; } }
+        public static string NAME_BLOCKADE_ITEM_LOGISTICS { get { return "물류이동"; } }
 
-        public static string NAME_BLOCKADE_ITEM_SHIP_PRODUCT { get { return "고객출하"; } }
+        public static string NAME_BLOCKADE_ITEM_CUSTOMER { get { return "고객"; } }
 
 
 
