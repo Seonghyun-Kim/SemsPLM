@@ -131,7 +131,7 @@
                         <tr>
                             <th><label class="lbText">작성일자</label></th>
                             <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtWriteDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.OccurrenceDt == null ? "" : ViewBag.QuickDetail.WriteDt.ToString("yyyy-MM-dd"))" /></td>
-                            <th><label class="lbText">접수자</label></th>
+                            <th><label class="lbText">품질담당자</label></th>
                             <td colspan="3">
                                 <input type="text" readonly="readonly" id="InfoQuickResponse_txtWorkUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" WorkUserOID="@ViewBag.QuickDetail.WorkUserOID" value="@ViewBag.QuickDetail.WorkUserNm" />
                                 <button id="InfoQuickResponse_btnWorkUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
@@ -152,7 +152,7 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <th><label class="lbText">불량내용(문제점 요약)</label></th>
+                            <th><label class="lbText">제목</label></th>
                             <td colspan="5">
                                 <input type="text" class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXT" readonly="readonly" id="InfoQuickResponse_txtSummary_@ViewBag.QuickDetail.OID" style="width:98%;" value="@ViewBag.QuickDetail.Title" />
                             </td>
@@ -215,7 +215,7 @@
                         <tr>
                             <th><label class="lbText">고품사진</label></th>
                             <td colspan="3">
-                                <div style="width:200px; height:210px; position:relative; text-align:center;">
+                                <div style="width:200px; height:240px; position:relative; text-align:center;">
                                     <input type="file" multiple="true" id="InfoQuickResponse_imgPoorPicture_@ViewBag.QuickDetail.OID" style="display:none;">
                                     <div class="Modifiable_@ViewBag.QuickDetail.OID PictureInputImg" AttrType="IMGDROPZONE" style="z-index:100; display:none;" id="InfoQuickResponse_imgPoorZone_@ViewBag.QuickDetail.OID">
                                         <span id="InfoQuickResponse_imgPoorhere_@ViewBag.QuickDetail.OID"></span>
@@ -223,15 +223,15 @@
                                     <div id="InfoQuickResponse_imgPoorResult_@ViewBag.QuickDetail.OID">
                                         @if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.PoorPicture != null)
                                         {
-                                            <img class="img-thumbnail" style="width:200px;" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />
+                                            <img class="img-thumbnail" style="width:200px;height:200px;" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.PoorPicture)" />
                                         }
                                     </div>
-                                    <button class="custom-button" id="InfoQuickResponse_btnPoorImgDownload_@ViewBag.QuickDetail.OID"> 불러오기</button>
+                                    <button class="custom-button" id="InfoQuickResponse_btnPoorImgDownload_@ViewBag.QuickDetail.OID"> 다운로드</button>
                                 </div>
                             </td>
                             <th><label class="lbText">양품사진</label></th>
                             <td colspan="5">
-                                <div style="width:200px; height:210px; position:relative; text-align:center;">
+                                <div style="width:200px; height:240px; position:relative; text-align:center;">
                                     <input type="file" multiple="true" id="InfoQuickResponse_imgGoodPicture_@ViewBag.QuickDetail.OID" style="display:none;">
                                     <div class="Modifiable_@ViewBag.QuickDetail.OID PictureInputImg" AttrType="IMGDROPZONE" style="z-index:100; display:none;" id="InfoQuickResponse_imgGoodZone_@ViewBag.QuickDetail.OID">
                                         <span id="InfoQuickResponse_imgGoodhere_@ViewBag.QuickDetail.OID"></span>
@@ -239,29 +239,29 @@
                                     <div id="InfoQuickResponse_imgGoodResult_@ViewBag.QuickDetail.OID">
                                         @if (ViewBag.QuickDetail.OID != null && ViewBag.QuickDetail.GoodPicture != null)
                                         {
-                                            <img class="img-thumbnail" style="width:200px;" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.GoodPicture)" />
+                                            <img class="img-thumbnail" style="width:200px;height:200px;" src="@(Url.Content(FullImgPath) + "/" + ViewBag.QuickDetail.GoodPicture)" />
                                         }
                                     </div>
-                                    <button class="custom-button" id="InfoQuickResponse_btnGoodImgDownload_@ViewBag.QuickDetail.OID"> 불러오기</button>
+                                    <button class="custom-button" id="InfoQuickResponse_btnGoodImgDownload_@ViewBag.QuickDetail.OID"> 다운로드</button>
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
+                <label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
                 <table class="infoTable" style="table-layout:fixed;">
                     <colgroup>
                         <col style="width:210px;" />
                         <col style="width:auto;" />
-                        <col style="width:210px;" />
+                        @*<col style="width:210px;" />
                         <col style="width:auto;" />
                         <col style="width:210px;" />
-                        <col style="width:auto;" />
+                        <col style="width:auto;" />*@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <th><label class="lbText">봉쇄조치 범위선택 </label></th>
+                            @*<th><label class="lbText">봉쇄조치 범위선택 </label></th>
                             <td colspan="3">
                                 <div style="display:flex;flex-direction:row;">
                                     <div id="InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID">원재료</div>
@@ -272,7 +272,7 @@
                                     <div id="InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID">고객출하</div>
                                 </div>
 
-                            </td>
+                            </td>*@
                             <th><label class="lbText">일정계획담당자</label></th>
                             <td>
                                 <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
@@ -392,12 +392,12 @@
         });
 
         $("#InfoQuickResponse_chkRecurrenceFl_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.RecurrenceFl" == "True" ? true : false), disabled: true });
-        $("#InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeMaterialFl" == "True"? true : false), disabled: true });
+        @*$("#InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeMaterialFl" == "True"? true : false), disabled: true });
         $("#InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeOutProductFl" == "True"? true : false), disabled: true });
         $("#InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeProcessProductFl" == "True"? true : false), disabled: true });
         $("#InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeFinishProductFl" == "True"? true : false), disabled: true });
         $("#InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeStorageProductFl" == "True"? true : false) , disabled: true});
-        $("#InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeShipProductFl" == "True"? true : false), disabled: true });
+        $("#InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID").jqxCheckBox({ width: 130, checked: ("@ViewBag.QuickDetail.BlockadeShipProductFl" == "True"? true : false), disabled: true });*@
 
         // 고품사진, 양품사진
         if ($('.showImg').children().length == 1) {
@@ -647,12 +647,12 @@
             @*param.CorrectDecisionLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID");*@
             param.MeasureResponseDt = $("#InfoQuickResponse_txtMeasureResponseDt_@ViewBag.QuickDetail.OID").val();
             @*param.Qa = $("#InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID").val();*@
-            param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID");
+            @*param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID");
             param.BlockadeOutProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID");
             param.BlockadeProcessProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID");
             param.BlockadeFinishProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID");
             param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID");
-            param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID");
+            param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID");*@
             param.PlanUserOID = $("#InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID").attr("PlanUserOID");
             param.PoorPicture = $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val();
             param.GoodPicture = $('#hidInfoQuickResponseGoodPicture_@ViewBag.QuickDetail.OID').val();

@@ -67,24 +67,31 @@
                     <colgroup>
                         <col style="width:9%" />
                         <col style="width:22%" />
-                        <col style="width:22%" />
+                        <col style="width:12%" />
                         <col style="width:8%" />
+                        <col style="width:5%" />
+                        <col style="width:5%" />
                         <col style="width:9%" />
                         <col style="width:11%" />
                         <col style="width:19%" />
                     </colgroup>
                     <tr>
-                        <th>범위</th>
-                        <th>대상범위</th>
-                        <th>조치방법</th>
-                        <th>대상수량</th>
-                        <th>조치부서</th>
-                        <th>담당자</th>
-                        <th>기한설정</th>
+                        <th rowspan="2">봉쇄범위</th>
+                        <th rowspan="2">대상범위(LOT)</th>
+                        <th rowspan="2">조치방법</th>
+                        <th rowspan="2">대상수량</th>
+                        <th colspan="2">결과</th>
+                        <th rowspan="2">조치부서</th>
+                        <th rowspan="2">담당자</th>
+                        <th rowspan="2">처리일정</th>
+                    </tr>
+                    <tr>
+                        <th>적합</th>
+                        <th>부적합</th>
                     </tr>
                 </table>
 
-                <label style="margin:20px 0 10px;"><i class="fas fa-caret-square-down"></i> 시정결과</label>
+                @*<label style="margin:20px 0 10px;"><i class="fas fa-caret-square-down"></i> 시정결과</label>
                 <table id="tbCorrectiveAction" class="infoTable">
                     <colgroup>
                         <col style="width:9%" />
@@ -109,7 +116,7 @@
                         <th>적합</th>
                         <th>부적합</th>
                     </tr>
-                </table>
+                </table>*@
 
                 <label style="margin-top:20px;"><i class="fas fa-caret-square-down"></i> 첨부파일</label>
                 <div id="InfoBlockade_FileList_@ViewBag.Blockade.OID">
@@ -136,7 +143,7 @@
 
         BlockadeList.forEach(function (v, i) {
             PrintBlockade(v);
-            PrintCorrectiveAction(v);
+            //PrintCorrectiveAction(v);
         });
 
         const BlockadeDiv$ = $('#InfoBlockade_' + BlockadeOID);
@@ -209,45 +216,47 @@
                 data.TargetScope = $($(v).find("[name='TargetScope']")[0]).val();
                 data.Act = $($(v).find("[name='Act']")[0]).val();
                 data.TargetCnt = $($(v).find("[name='TargetCnt']")[0]).val();
+                data.SortSuitableCnt = $($(v).find("[name='SortSuitableCnt']")[0]).val();
+                data.SortIncongruityCnt = $($(v).find("[name='SortIncongruityCnt']")[0]).val();
                 //data.ActDepartmentOID = $($(v).find("[name='ActDepartment']")[0]).attr("ActDepartmentOID");
                 data.ActUserOID = $($(v).find("[name='ActUser']")[0]).attr("ActUserOID");
                 data.ActStartDt = $($(v).find("[name='ActStartDt']")[0]).val();
                 data.ActEndDt = $($(v).find("[name='ActEndDt']")[0]).val();
 
-                var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + data.OID + "']")[0];
+                //var trCorrectiveAction$ = $("#tbCorrectiveAction").children("[OID='" + data.OID + "']")[0];
 
-                data.SortSuitableCnt = $($(trCorrectiveAction$).find("[name='SortSuitableCnt']")[0]).val();
-                data.SortIncongruityCnt = $($(trCorrectiveAction$).find("[name='SortIncongruityCnt']")[0]).val();
-                data.ReworkCnt = $($(trCorrectiveAction$).find("[name='ReworkCnt']")[0]).val();
-                data.DisuseCnt = $($(trCorrectiveAction$).find("[name='DisuseCnt']")[0]).val();
-                data.SpecialCnt = $($(trCorrectiveAction$).find("[name='SpecialCnt']")[0]).val();
-                data.EtcCnt = $($(trCorrectiveAction$).find("[name='EtcCnt']")[0]).val();
-                data.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
+                //data.SortSuitableCnt = $($(trCorrectiveAction$).find("[name='SortSuitableCnt']")[0]).val();
+                //data.SortIncongruityCnt = $($(trCorrectiveAction$).find("[name='SortIncongruityCnt']")[0]).val();
+                //data.ReworkCnt = $($(trCorrectiveAction$).find("[name='ReworkCnt']")[0]).val();
+                //data.DisuseCnt = $($(trCorrectiveAction$).find("[name='DisuseCnt']")[0]).val();
+                //data.SpecialCnt = $($(trCorrectiveAction$).find("[name='SpecialCnt']")[0]).val();
+                //data.EtcCnt = $($(trCorrectiveAction$).find("[name='EtcCnt']")[0]).val();
+                //data.Description = $($(trCorrectiveAction$).find("[name='Description']")[0]).val();
 
-                if (WebUtils.isEmpty(data.TargetScope)) {
-                    errMsg = "대상범위를 선택해주세요";
-                    return;
-                }
+                //if (WebUtils.isEmpty(data.TargetScope)) {
+                //    errMsg = "대상범위를 선택해주세요";
+                //    return;
+                //}
 
-                if (WebUtils.isEmpty(data.Act)) {
-                    errMsg = "조치방법를 선택해주세요";
-                    return;
-                }
+                //if (WebUtils.isEmpty(data.Act)) {
+                //    errMsg = "조치방법를 선택해주세요";
+                //    return;
+                //}
 
-                if (WebUtils.isEmpty(data.TargetCnt)) {
-                    errMsg = "대상수량을 입력해주세요";
-                    return;
-                }
+                //if (WebUtils.isEmpty(data.TargetCnt)) {
+                //    errMsg = "대상수량을 입력해주세요";
+                //    return;
+                //}
 
-                if (WebUtils.isEmpty(data.ActUserOID)) {
-                    errMsg = "담당자를 선택해주세요";
-                    return;
-                }
+                //if (WebUtils.isEmpty(data.ActUserOID)) {
+                //    errMsg = "담당자를 선택해주세요";
+                //    return;
+                //}
 
-                if (WebUtils.isEmpty(data.ActStartDt) || WebUtils.isEmpty(data.ActEndDt)) {
-                    errMsg = "기한을 선택해주세요";
-                    return;
-                }
+                //if (WebUtils.isEmpty(data.ActStartDt) || WebUtils.isEmpty(data.ActEndDt)) {
+                //    errMsg = "기한을 선택해주세요";
+                //    return;
+                //}
 
                 param.BlockadeItems.push(data);
             });
@@ -314,15 +323,28 @@
         tdTargetScope$.appendChild(txtTargetScope$);
 
         var tdAct$ = document.createElement("td");
-        var txtAct$ = document.createElement("input");
+        var divAct$ = document.createElement("div");
+        divAct$.className = "Modifiable_@ViewBag.Blockade.OID";
+        divAct$.setAttribute("name", "Act");
+        divAct$.setAttribute("AttrType", "COMBO");
+        tdAct$.appendChild(divAct$);
+
+        console.log(v.Act);
+
+        $(divAct$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ActionMethodList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+
+        if (!WebUtils.isEmpty(v.Act)) {
+            $(divAct$).jqxComboBox('val', v.Act);
+        }
+
+        @*var txtAct$ = document.createElement("input");
         txtAct$.setAttribute("type", "text");
         txtAct$.setAttribute("name", "Act");
         txtAct$.style.width = "100%";
         txtAct$.value = v.Act;
         txtAct$.className = "Modifiable_@ViewBag.Blockade.OID"; 
         txtAct$.setAttribute("readonly", "readonly");
-        txtAct$.setAttribute("AttrType", "TEXT");
-        tdAct$.appendChild(txtAct$);
+        txtAct$.setAttribute("AttrType", "TEXT");*@
 
         var tdTargetCnt$ = document.createElement("td");
         var txtTargetCnt$ = document.createElement("input");
@@ -338,6 +360,34 @@
             $(this).val($(this).val().replace(/[^0-9]/g, ""));
         });
         tdTargetCnt$.appendChild(txtTargetCnt$);
+
+           
+        var tdSortSuitableCnt$ = document.createElement("td");
+        var txtSortSuitableCnt$ = document.createElement("input");
+        txtSortSuitableCnt$.setAttribute("type", "text");
+        txtSortSuitableCnt$.setAttribute("name", "SortSuitableCnt");
+        txtSortSuitableCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtSortSuitableCnt$.setAttribute("AttrType", "TEXT");
+        txtSortSuitableCnt$.style.width = "100%";
+        txtSortSuitableCnt$.value = v.SortSuitableCnt;   
+        $(txtSortSuitableCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
+        tdSortSuitableCnt$.appendChild(txtSortSuitableCnt$);
+
+        var tdSortIncongruityCnt$ = document.createElement("td");
+        var txtSortIncongruityCnt$ = document.createElement("input");
+        txtSortIncongruityCnt$.setAttribute("type", "text");
+        txtSortIncongruityCnt$.setAttribute("name", "SortIncongruityCnt");
+        txtSortIncongruityCnt$.style.width = "100%";
+        txtSortIncongruityCnt$.value = v.SortIncongruityCnt;
+        txtSortIncongruityCnt$.className = "Modifiable_@ViewBag.Blockade.OID";   
+        txtSortIncongruityCnt$.setAttribute("AttrType", "TEXT");
+        $(txtSortIncongruityCnt$).on("keyup", function () {
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        });
+        tdSortIncongruityCnt$.appendChild(txtSortIncongruityCnt$);
+
         /*
           <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
          */ 
@@ -452,13 +502,15 @@
         tr$.appendChild(tdTargetScope$);
         tr$.appendChild(tdAct$);
         tr$.appendChild(tdTargetCnt$);
+        tr$.appendChild(tdSortSuitableCnt$);
+        tr$.appendChild(tdSortIncongruityCnt$);
         tr$.appendChild(tdActDepartmentOID$);
         tr$.appendChild(tdActUserOID$);
         tr$.appendChild(tdActDt$);
 
         document.getElementById("tbBlockadeList").appendChild(tr$);
     }
-
+    @*
     function PrintCorrectiveAction(v) {
         var tr$ = document.createElement("tr");
         tr$.setAttribute("BlockadeType", v.Type);
@@ -568,4 +620,5 @@
 
         document.getElementById("tbCorrectiveAction").appendChild(tr$);
     }
+    *@
 </script>

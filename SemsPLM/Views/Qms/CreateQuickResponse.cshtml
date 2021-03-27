@@ -71,7 +71,7 @@
             <tr>
                 <th><label class="lbText">작성일자</label></th>
                 <td><input type="text" id="txtDlgWriteDt" value="" /></td>
-                <th><label class="lbText">접수자</label></th>
+                <th><label class="lbText">품질담당자</label></th>
                 <td colspan="3">
                     <input type="text" id="txtDlgWorkUserNm" style="width:120px;" value="" readonly="readonly" />
                     <button id="btnEditWorkUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
@@ -93,7 +93,7 @@
         </colgroup>
         <tbody>
             <tr>
-                <th><label class="lbText">불량내용(문제점 요약)</label></th>
+                <th><label class="lbText">제목</label></th>
                 <td colspan="5">
                     <input type="text" id="txtDlgSummary" style="width:98%;" />
                 </td>
@@ -184,38 +184,38 @@
         </tbody>
     </table>
 
-    <label><i class="fas fa-caret-square-down"></i> 봉쇄조치</label>
-        <table class="infoTable" style="table-layout:fixed;">
-            <colgroup>
-                <col style="width:210px;" />
-                <col style="width:auto;" />
-                <col style="width:210px;" />
-                <col style="width:auto;" />
-                <col style="width:210px;" />
-                <col style="width:auto;" />
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th><label class="lbText">봉쇄조치 범위선택</label></th>
-                    <td colspan="3">
-                        <div style="display:flex;flex-direction:row;">
-                            <div id="chkDlgBlockadeMaterial">원재료</div>
-                            <div id="chkDlgBlockadeOutProduct">외주품</div>
-                            <div id="chkDlgBlockadeProcessProduct">공정품</div>
-                            <div id="chkDlgBlockadeFinishProduct">완성품</div>
-                            <div id="chkDlgBlockadeStorageProduct">창고재고</div>
-                            <div id="chkDlgBlockadeShipProduct">고객출하</div>
-                        </div>
+    <label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
+    <table class="infoTable" style="table-layout:fixed;">
+        <colgroup>
+            <col style="width:210px;" />
+            <col style="width:auto;" />
+            @*<col style="width:210px;" />
+            <col style="width:auto;" />
+            <col style="width:210px;" />
+            <col style="width:auto;" />*@
+        </colgroup>
+        <tbody>
+            <tr>
+                @*<th><label class="lbText">봉쇄조치 범위선택</label></th>
+                <td colspan="3">
+                    <div style="display:flex;flex-direction:row;">
+                        <div id="chkDlgBlockadeMaterial">원재료</div>
+                        <div id="chkDlgBlockadeOutProduct">외주품</div>
+                        <div id="chkDlgBlockadeProcessProduct">공정품</div>
+                        <div id="chkDlgBlockadeFinishProduct">완성품</div>
+                        <div id="chkDlgBlockadeStorageProduct">창고재고</div>
+                        <div id="chkDlgBlockadeShipProduct">고객출하</div>
+                    </div>
 
-                    </td>
-                    <th><label class="lbText">일정계획담당자</label></th>
-                    <td>
-                        <input type="text" id="txtPlanUserNm" style="width:60%;" value="" readonly="readonly" />
-                        <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                </td>*@
+                <th><label class="lbText">일정계획담당자</label></th>
+                <td>
+                    <input type="text" id="txtPlanUserNm" style="width:60%;" value="" readonly="readonly" />
+                    <button id="btnEditPlanUserSearch" class="custom-button"><i class="fas fa-search"></i> 검색</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
         @*<label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
         <table class="infoTable" style="table-layout:fixed;">
@@ -323,12 +323,12 @@
         });
 
         $("#chkDlgRecurrenceFl").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeMaterial").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeOutProduct").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeProcessProduct").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeFinishProduct").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeStorageProduct").jqxCheckBox({ width: 130, checked: true });
-        $("#chkDlgBlockadeShipProduct").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeMaterial").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeOutProduct").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeProcessProduct").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeFinishProduct").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeStorageProduct").jqxCheckBox({ width: 130, checked: true });
+        //$("#chkDlgBlockadeShipProduct").jqxCheckBox({ width: 130, checked: true });
 
         var btnDlgPlanUserSearch$ = $("#btnEditPlanUserSearch").jqxButton();
         btnDlgPlanUserSearch$.on("click", function () {
@@ -469,12 +469,12 @@
             @*param.CorrectDecisionLibOID = WebUtils.GetComboValue("cbDlgCorrectDecision");*@
             param.MeasureResponseDt = $("#txtDlgMeasureResponseDt").val();
             @*param.Qa = $("#txtDlgQa").val();*@
-            param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeMaterial");
-            param.BlockadeOutProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeOutProduct");
-            param.BlockadeProcessProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeProcessProduct");
-            param.BlockadeFinishProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeFinishProduct");
-            param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeStorageProduct");
-            param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeShipProduct");
+            //param.BlockadeMaterialFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeMaterial");
+            //param.BlockadeOutProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeOutProduct");
+            //param.BlockadeProcessProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeProcessProduct");
+            //param.BlockadeFinishProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeFinishProduct");
+            //param.BlockadeStorageProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeStorageProduct");
+            //param.BlockadeShipProductFl = WebUtils.GetCheckBoxValue("chkDlgBlockadeShipProduct");
             param.PlanUserOID = $("#txtPlanUserNm").attr("PlanUserOID");
             param.PoorPicture = $("#hidImgFileNameDlgPoorPicture").val();
             param.GoodPicture = $("#hidImgFileNameDlgGoodPicture").val();

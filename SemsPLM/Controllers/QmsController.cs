@@ -821,35 +821,42 @@ namespace SemsPLM.Controllers
                 // 봉쇄조치
                 int blockadeOID = SetQuickModule(QmsConstant.TYPE_BLOCKADE, QmsConstant.TYPE_BLOCKADE_NAME);
 
-                if (_param.BlockadeMaterialFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_MATERIAL, QmsConstant.NAME_BLOCKADE_ITEM_MATERIAL);
-                }
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_PARTNER, QmsConstant.NAME_BLOCKADE_ITEM_PARTNER);
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_MATERIAL_STORAGE, QmsConstant.NAME_BLOCKADE_ITEM_MATERIAL_STORAGE);
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_LINE, QmsConstant.NAME_BLOCKADE_ITEM_LINE);
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_SALES_STARAGE, QmsConstant.NAME_BLOCKADE_ITEM_SALES_STARAGE);
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_LOGISTICS, QmsConstant.NAME_BLOCKADE_ITEM_LOGISTICS);
+                SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_CUSTOMER, QmsConstant.NAME_BLOCKADE_ITEM_CUSTOMER);
 
-                if (_param.BlockadeOutProductFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_OUT_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_OUT_PRODUCT);
-                }
+                //if (_param.BlockadeMaterialFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_MATERIAL, QmsConstant.NAME_BLOCKADE_ITEM_MATERIAL);
+                //}
 
-                if (_param.BlockadeProcessProductFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_PROCESS_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_PROCESS_PRODUCT);
-                }
+                //if (_param.BlockadeOutProductFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_OUT_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_OUT_PRODUCT);
+                //}
 
-                if (_param.BlockadeFinishProductFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_FINISH_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_FINISH_PRODUCT);
-                }
+                //if (_param.BlockadeProcessProductFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_PROCESS_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_PROCESS_PRODUCT);
+                //}
 
-                if (_param.BlockadeStorageProductFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_STORAGE_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_STORAGE_PRODUCT);
-                }
+                //if (_param.BlockadeFinishProductFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_FINISH_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_FINISH_PRODUCT);
+                //}
 
-                if (_param.BlockadeShipProductFl == true)
-                {
-                    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_SHIP_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_SHIP_PRODUCT);
-                }
+                //if (_param.BlockadeStorageProductFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_STORAGE_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_STORAGE_PRODUCT);
+                //}
+
+                //if (_param.BlockadeShipProductFl == true)
+                //{
+                //    SetBloackadeItem(blockadeOID, QmsConstant.TYPE_BLOCKADE_ITEM_SHIP_PRODUCT, QmsConstant.NAME_BLOCKADE_ITEM_SHIP_PRODUCT);
+                //}
 
                 // 원인분석
                 SetQuickModule(QmsConstant.TYPE_OCCURRENCE_CAUSE, QmsConstant.TYPE_OCCURRENCE_CAUSE_NAME);
@@ -2165,20 +2172,29 @@ namespace SemsPLM.Controllers
         public ActionResult InfoBlockade(int OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            Library ActionMethod = LibraryRepository.SelLibraryObject(new Library { Name = "BLOCKADE_ACTION_METHOD" });
+            List<Library> ActionMethodList = LibraryRepository.SelLibrary(new Library { FromOID = ActionMethod.OID });
+           
+            
             ViewBag.Blockade = Module;
             ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
+            ViewBag.ActionMethodList = ActionMethodList;
             return View();
         }
 
         public PartialViewResult InfoMiniBlockade(int OID)
         {
             QuickResponseModule Module = QuickResponseModuleRepository.SelQuickResponseModule(new QuickResponseModule { OID = OID });
+            Library ActionMethod = LibraryRepository.SelLibraryObject(new Library { Name = "BLOCKADE_ACTION_METHOD" });
+            List<Library> ActionMethodList = LibraryRepository.SelLibrary(new Library { FromOID = ActionMethod.OID });  
+
             ViewBag.Blockade = Module;
             ViewBag.BlockadeItems = BlockadeItemRepository.SelBlockadeItems(new BlockadeItem() { ModuleOID = OID });
             ViewBag.QuickDetail = QuickResponseRepository.SelQuickResponse(new QuickResponse() { OID = Module.QuickOID });
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = QmsConstant.TYPE_BLOCKADE });
+            ViewBag.ActionMethodList = ActionMethodList;
             return PartialView("InfoBlockade");
         }
 
