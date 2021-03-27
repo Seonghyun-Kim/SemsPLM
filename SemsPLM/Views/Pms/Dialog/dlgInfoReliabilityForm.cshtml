@@ -78,11 +78,11 @@
                 </td>
                 <th>품명</th>
                 <td>
-                    <input type="text" readonly="readonly" value="SYSTEM" />
+                    <input type="text" readonly="readonly" value="@Html.Raw((ViewBag.ProjectInfo.ProductNm != null ? ViewBag.ProjectInfo.ProductNm : ""))" />
                 </td>
                 <th>차종</th>
                 <td>
-                    <input type="text" readonly="readonly" value="SYSTEM" />
+                    <input type="text" readonly="readonly" value="@ViewBag.ProjectInfo.Car_Lib_Nm" />
                 </td>
                 <th>사험방법 <br>Review일</th>
                 <td>

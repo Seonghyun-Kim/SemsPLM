@@ -54,6 +54,7 @@ namespace Common.Constant
         public static string RELATIONSHIP_EPART = "EPART";
         public static string RELATIONSHIP_DOCUMENT = "DOCUMENT";
 
+        public static string ROLE_CFT = "CFT";
         public static string ROLE_PM = "PM";
         public static string ROLE_PE = "PE";
         public static string ROLE_GUEST = "GUEST";
@@ -69,7 +70,7 @@ namespace Common.Constant
         public static int INIT_COMPLETE = 0;
 
         public static int PREPARE = 5;
-        public static int DELAY = 3;
+        public static int DELAY = 1;
         public static string WARNING_COLOR = "#00f";
         public static string DELAY_COLOR = "#f00";
 
@@ -111,7 +112,10 @@ namespace Common.Constant
 
         // Option
         public static List<string> DISEDITABLE { get => new List<string> { "ObjName", "Dependency", "EstEndDt", "EstDuration" }; }
+
         public static List<string> FLOWEDITABLE { get => new List<string> { "ObjName", "Dependency", "EstStartDt", "EstEndDt", "EstDuration", "Description" }; }
+
+        public static List<string> PFLOWEDITABLE { get => new List<string> { "Dependency", "EstStartDt", "EstEndDt", "EstDuration", "Description" }; }
 
         //ICON
         public static int DEFAULT_ICONSIZE = 20;

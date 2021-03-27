@@ -1065,7 +1065,7 @@
       LEFT JOIN T_DOBJECT F ON A.ProjectOID = F.OID
       LEFT JOIN T_BPOLICY G ON B.BPolicyOID = G.OID
       LEFT JOIN V_DOBJECT H ON B.CreateUs = H.OID
-      WHERE B.DeleteDt IS NULL
+      WHERE B.DeleteDt IS NULL AND F.DeleteDT IS NULL
       <isNotNull prepend="and" property="OID">
         A.OID = #OID#
       </isNotNull>

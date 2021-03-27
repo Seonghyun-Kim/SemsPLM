@@ -65,6 +65,9 @@
       <isNotNull prepend="and" property="IsUse">
         B.IsUse = #IsUse#
       </isNotNull>
+      <isNotNull prepend="and" property="OIDs">
+        A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+      </isNotNull>
       AND A.DeleteDt IS NULL
     </select>
     

@@ -18,7 +18,7 @@ namespace ChangeOrder.Models
         public string ItemGroup { get; set; }
         public string Title { get; set; }
         public DateTime? DesignChangeDt { get; set; }
-        public int ReasonChange { get; set; }
+        public int? ReasonChange { get; set; }
         public string ReasonChangeNm { get; set; }
         public string Compatible { get; set; }
         public string IsMold { get; set; }

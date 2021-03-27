@@ -496,6 +496,7 @@ namespace SemsPLM.Controllers
 
                 System.IO.Stream fileStream = SemsValut.GetFileStream(downFile);
                 //new ActionLog(downFile, eActionType.DOWNLOAD, null).InsertData();
+                DFileHistoryRepository.InsDFileHistory(Session, Common.Constant.CommonConstant.ACTION_FILE_HISTORY_DOWNLOAD, downFile);
 
                 if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
                 {
@@ -525,6 +526,8 @@ namespace SemsPLM.Controllers
                     throw new Exception("잘못된 호출입니다.");
                 }
 
+                DFileHistoryRepository.InsDFileHistory(Session, Common.Constant.CommonConstant.ACTION_FILE_HISTORY_VIEW, downFile);
+
                 string filePath = SemsValut.GetFileString(downFile);
                 return Json(filePath.Replace("\\", "/"));
             }
@@ -532,6 +535,17 @@ namespace SemsPLM.Controllers
             {
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
+        }
+
+        public ActionResult FileHistory(DObject _param)
+        {
+            ViewBag.TargetOID = _param.OID;          
+            return PartialView("Partitial/ptFileHistory");
+        }
+
+        public JsonResult GetFileHistory(DFileHistory _param)
+        {
+            return Json(DFileHistoryRepository.SelDFileHistories(_param));
         }
         #endregion
 
@@ -710,7 +724,12 @@ namespace SemsPLM.Controllers
                 {
                     dobj = null;
                 }
-                
+
+                if (approv.TargetOID == null)
+                {
+                    return;
+                }
+
                 dobj = DObjectRepository.SelDObject(Session, new DObject { OID = approv.TargetOID });
                 if (dobj == null)
                 {

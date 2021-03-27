@@ -849,11 +849,15 @@
                                     var targetDelay = @Common.Constant.PmsConstant.DELAY;
                                     var iCellText = parseInt(cellText);
                                     if (iCellText >= 1 && iCellText <= targetDelay) {
-                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#008ffb;"></div></div>'; //진행
                                     } else if (iCellText > targetDelay) {
-                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                                        if (rowData.ObjStNm == '완료됨') {
+                                            return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#feb019;"></div></div>'; //지연완료
+                                        } else {
+                                            return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#f44336;"></div></div>'; //지연
+                                        };
                                     } else {
-                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                                        return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#a4c953;"></div></div>'; //완료
                                     }
                                     return cellText;
                                 },
@@ -1132,6 +1136,7 @@
                                 }
                                 var args = event.args;
                                 if (previousRowKey != rowKey) {
+                                    // Mig
                                     projWbsInfo$.jqxTreeGrid('uncheckRow', rowKey);
                                 }
                                 rowKey = args.key;
@@ -1190,14 +1195,20 @@
                                     }
 
                                     if (sameLevelChecked) {
-                                        var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                        //var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                        if (maxId == 0) {
+                                            maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id;
+                                        } else {
+                                            maxId = maxId + 1;
+                                        }
+
                                         var sample = {
                                             "RootOID": ProjectOID,
                                             "FromOID": parentData.FromOID,
                                             "ObjType": "@Common.Constant.PmsConstant.TYPE_GATE",
                                             "ObjStNm": "준비중",
-                                            "Id": maxId,
-                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_GATE" + ' ' + maxId,
+                                            "Id": (maxId + 1),
+                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_GATE" + ' ' + (maxId + 1),
                                             "Complete": '0',
                                             "EstDuration": 1,
                                             "EstStartDt": parentData.EstStartDt,
@@ -1206,7 +1217,8 @@
                                             "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
                                             "expanded": "true",
                                             "WorkingDay": workingDay,
-                                            "No": maxData
+                                            "No": maxData,
+                                            "ToOID": (parseInt(ProjectOID) + maxId + 1),
                                         };
 
                                         var checkedRow = projWbsInfo$.jqxTreeGrid('getCheckedRows');
@@ -1219,12 +1231,7 @@
                                                 break;
                                             }
                                         }
-
                                         projWbsInfo$.jqxTreeGrid('updateBoundData');
-                                        for (var i = 0; i < parent.Children.length; i++) {
-                                            var newRow = _.filter(projWbsInfo$.jqxTreeGrid('getRows'), function (data) { return data.Id == maxId });
-                                        }
-
                                     } else {
                                         projWbsInfo$.jqxTreeGrid('addRow', null,
                                             {
@@ -1256,16 +1263,21 @@
                                     // add new empty row.
                                     const parentData = projWbsInfo$.jqxTreeGrid('getRow', selRowKey);
 
-                                    var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                    //var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
                                     if (sameLevelChecked) {
-                                        console.log(parentData);
+                                        if (maxId == 0) {
+                                            maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id;
+                                        } else {
+                                            maxId = maxId + 1;
+                                        }
+
                                         var sample = {
                                             "RootOID": ProjectOID,
                                             "FromOID": parentData.FromOID,
                                             "ObjType": "@Common.Constant.PmsConstant.TYPE_PHASE",
                                             "ObjStNm": "준비중",
-                                            "Id": maxId,
-                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_PHASE" + ' ' + maxId,
+                                            "Id": (maxId + 1),
+                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_PHASE" + ' ' + (maxId + 1),
                                             "Complete": '0',
                                             "EstDuration": 1,
                                             "EstStartDt": parentData.EstStartDt,
@@ -1274,20 +1286,20 @@
                                             "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
                                             "expanded": "true",
                                             "WorkingDay": workingDay,
-                                            "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt']
+                                            "diseditable": ['Dependency', 'EstDuration', 'EstStartDt', 'EstEndDt'],
+                                            "ToOID": (parseInt(ProjectOID) + maxId + 1),
                                         };
 
                                         var checkedRow = projWbsInfo$.jqxTreeGrid('getCheckedRows');
                                         var parent = checkedRow[0].parent;
                                         for (var i = 0; i < parent.Children.length; i++) {
                                             if (parent.Children[i].Id == checkedRow[0].Id) {
-                                                console.log(i);
                                                 parent.Children.splice(i + 1, 0, sample);
                                                 break;
                                             }
                                         }
-
                                         projWbsInfo$.jqxTreeGrid('updateBoundData');
+
                                     } else {
                                         projWbsInfo$.jqxTreeGrid('addRow', null,
                                         {
@@ -1340,7 +1352,7 @@
                                             maxData = parentData.No + '-' + (parseInt(maxData.replace(parentData.No + '-', '')) + 1);
                                         }
                                     }
-                                    var parent = parentData.parent;
+                                    //var parent = parentData.parent;
                                     //if (parent.OID == null) {
 
                                     //} else {
@@ -1350,37 +1362,42 @@
                                     //rowData.ObjName = rowData.ObjType + ' ' + rowData.Id;
 
                                     if (sameLevelChecked) {
-                                        var parent = parentData.parent;
-                                        var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
-                                        var sample = {
-                                        "RootOID": ProjectOID,
-                                        "FromOID": parentData.FromOID,
-                                        "ObjType": "@Common.Constant.PmsConstant.TYPE_TASK",
-                                        "ObjStNm": "준비중",
-                                        "Id":maxId,
-                                        "ObjName": "@Common.Constant.PmsConstant.TYPE_TASK" + ' ' + maxId,
-                                        "Complete": '0',
-                                        "EstDuration": 1,
-                                        "EstStartDt": parentData.EstStartDt,
-                                        "EstEndDt": parentData.EstStartDt,
-                                        "Level": parseInt(parentData.Level),
-                                        "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
-                                        "expanded": "true",
-                                        "WorkingDay": workingDay,
-                                        "No": maxData
-                                    };
-                                        console.log(parent);
+                                            var parent = parentData.parent;
+                                            //var maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id + 1;
+                                            if (maxId == 0) {
+                                                maxId = (_.max(fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows')), function (data) { return data.Id })).Id;
+                                            } else {
+                                                maxId = maxId + 1;
+                                            }
+                                            var sample = {
+                                            "RootOID": ProjectOID,
+                                            "FromOID": parentData.FromOID,
+                                            "ObjType": "@Common.Constant.PmsConstant.TYPE_TASK",
+                                            "ObjStNm": "준비중",
+                                            "Id":(maxId + 1),
+                                            "ObjName": "@Common.Constant.PmsConstant.TYPE_TASK" + ' ' + (maxId + 1),
+                                            "Complete": '0',
+                                            "EstDuration": 1,
+                                            "EstStartDt": parentData.EstStartDt,
+                                            "EstEndDt": parentData.EstStartDt,
+                                            "Level": parseInt(parentData.Level),
+                                            "Action": "@Common.Constant.PmsConstant.ACTION_NEW",
+                                            "expanded": "true",
+                                            "WorkingDay": workingDay,
+                                            "No": maxData,
+                                            "ToOID": (parseInt(ProjectOID) + maxId + 1),
+                                        };
+
                                         for (var i = 0; i < parent.Children.length; i++) {
-                                        if (parent.Children[i].Id == parentData.Id) {
-                                            parent.Children.splice(i+1, 0, sample);
-                                            break;
+                                            if (parent.Children[i].Id == parentData.Id) {
+                                                parent.Children.splice(i+1, 0, sample);
+                                                break;
+                                            }
                                         }
-                                        }
-                                        parent.Children.push(sample)
-                                        console.log(parent.Children);
+                                        //parent.Children.push(sample)
                                         projWbsInfo$.jqxTreeGrid('updateBoundData');
                                     } else {
-                                    projWbsInfo$.jqxTreeGrid('addRow', null,
+                                        projWbsInfo$.jqxTreeGrid('addRow', null,
                                         {
                                             "RootOID": ProjectOID,
                                             "FromOID": rowKey,
@@ -1396,12 +1413,36 @@
                                             "WorkingDay": workingDay,
                                             "No": maxData
                                         }, 'last', rowKey);
-                                }
+                                    }
                                 }
                             });
 
                             deleteButton.click(function (event) {
                                 if (!deleteButton.jqxButton('disabled')) {
+                                    const IdData = fPmsLoadProperties([projWbsInfo$.jqxTreeGrid('getRow', rowKey)], 'Id');
+                                    const DepData = fPmsArrayTasks(projWbsInfo$.jqxTreeGrid('getRows'));
+                                    const selDepData = DepData.filter(function (item) {
+                                        return IdData.indexOf(item.Id) < 0;
+                                    });
+                                    const filterData = selDepData.filter(function (item) {
+                                        var bResult = false;
+                                        var depD = Object.keys(fGettingDependData(item.Dependency));
+                                        if (depD == null || depD == undefined || depD.length < 1) {
+                                            return bResult;
+                                        }
+                                        _.each(depD, function (i) {
+                                            if (IdData.indexOf(parseInt(i)) > -1) {
+                                                bResult = true;
+                                                return;
+                                            }
+                                        });
+                                        return bResult;
+                                    });
+
+                                    if (filterData != null && filterData != undefined && filterData.length > 0) {
+                                        alert('의존적인 타스크가 존재합니다.');
+                                        return;
+                                    }
                                     projWbsInfo$.jqxTreeGrid('expandRow', rowKey);
                                     projWbsInfo$.jqxTreeGrid('deleteRow', rowKey);
                                     projWbsInfo$.jqxTreeGrid('clearSelection');
@@ -1508,6 +1549,12 @@
                             OpenAddModifyMemberDialog(function (res) {
                                 const wbsDataSource = projWbsInfo$.jqxTreeGrid("source").loadedData;
                                 fAddModMemberRecusive(wbsDataSource, key, res);
+                                // Mig
+                                /*
+                                _.each(projWbsInfo$.jqxTreeGrid('getCheckedRows'), function (item) {
+                                    fAddModMemberRecusive(wbsDataSource, item.uid, res);
+                                });
+                                */
                                 projWbsInfo$.jqxTreeGrid('updateBoundData');
                             }, null, {
                                 Title: row.Name + '(' + row.Type + ')',
@@ -1864,16 +1911,15 @@
 
                             btnSave.click(function (event) {
                                 if (confirm('저장하시겠습니까?')) {
-                                    const rowData = resourceGrd$.jqxTreeGrid('getRows');
+                                    var rowData = resourceGrd$.jqxTreeGrid('getRows');
                                     for (var _row in rowData) {
                                         rowData[_row].RoleOID = (PmsRole.filter(function (item) { return item.Description == rowData[_row].RoleOIDNm })[0]).OID;
                                     }
                                     RequestData('/Pms/InsertMembers', rowData.concat(deleteResourceData), function (res) {
-                                        //deleteResourceData = [];
+                                        deleteResourceData = [];
                                         //btnCancel.click();
                                     });
-
-                                    deleteResourceData = [];
+                                    //deleteResourceData = [];
                                     resourceGrd$.jqxTreeGrid('pagerRenderer');
                                 }
                             });

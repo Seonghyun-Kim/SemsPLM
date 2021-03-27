@@ -73,7 +73,7 @@
                     { text: '처리완료일', datafield: 'FinDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                 ],
             });
-             RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+            RequestData("/Pms/@ViewBag.linker", {}, function (res) {
                  PrintJqxGrid(issueSource, $('#pmMyIssueGrid'), res);
              });
             $('#pmMyIssueGrid').on('celldoubleclick', function (e) {
@@ -93,8 +93,8 @@
                 setTimeout(function () {
                     OpenIssueDialog(
                         function (res) {
-                            RequestData('/Pms/SelIssue', { 'RootOID': ProjectOID }, function (res) {
-                                PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                            RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                PrintJqxGrid(issueSource, $('#pmMyIssueGrid'), res);
                             });
                         }, null, param, '/Pms/InfoIssue', '이슈 상세');
                     gClickDuplication = false;

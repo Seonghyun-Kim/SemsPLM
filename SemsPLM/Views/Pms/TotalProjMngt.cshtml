@@ -445,6 +445,7 @@
         day = day >= 10 ? day : '0' + day;
         return year + '-' + month + '-' + day;
     }
+
     function getProjDonut(_Param, _TargetDiv) {
         RequestData("/Pms/SelOemProjDonut", { OemOID: _Param }, function (res) {
             var keys = Object.keys(res);
@@ -457,15 +458,13 @@
                 var innerKeys = Object.keys(res[keys[i]]);
                 var sumValue = 0;
                 for (var j = 0; j < innerKeys.length; j++) {
-
-                    sumValue += res[keys[i]][innerKeys[j]];
-                    partnerProjSampleData.push({ status: innerKeys[j], amount: res[keys[i]][innerKeys[j]] });
-
+                    if (innerKeys[j] != 'KorNm') {
+                        sumValue += res[keys[i]][innerKeys[j]];
+                        partnerProjSampleData.push({ status: innerKeys[j], amount: res[keys[i]][innerKeys[j]] });
+                    }
                 }
                 var chart$ = '<div id="DonutChart_' + i + '"></div>';
                 $('.partnerChartBox ').append(chart$);
-
-
 
                 var partnerTotalChartSetting = {
                     description: '',
@@ -510,7 +509,7 @@
                     }],
                 };
                 $('#DonutChart_' + i).jqxChart(partnerTotalChartSetting);
-                $('#DonutChart_' + i).jqxChart({ title: keys[i] + ' 차종 총  프로젝트' });
+                $('#DonutChart_' + i).jqxChart({ title: res[keys[i]]["KorNm"] + ' 차종 총  프로젝트' });
             }
         });
     }

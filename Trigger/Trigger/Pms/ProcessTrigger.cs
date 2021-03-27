@@ -405,7 +405,7 @@ namespace Pms.Trigger
                         {
                             if (item.Dependency.IndexOf(":") > -1)
                             {
-                                string[] ds = proc.Dependency.Split(':');
+                                string[] ds = item.Dependency.Split(':');
                                 if (Convert.ToInt32(ds[0]) == proc.Id)
                                 {
                                     return true;

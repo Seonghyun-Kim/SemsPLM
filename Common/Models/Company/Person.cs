@@ -93,10 +93,12 @@ namespace Common.Models
         {
             _param.Type = CommonConstant.TYPE_PERSON;
             List<Person> lPerson = DaoFactory.GetList<Person>("Users.SelPerson", _param);
+            List<DObject> SelDepartments = DObjectRepository.SelDObjects(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT });
             lPerson.ForEach(person =>
             {
                 person.Password = "**************";
-                person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
+                //person.DepartmentNm = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = person.DepartmentOID }).Name;
+                person.DepartmentNm = SelDepartments.Find(item => item.OID == person.DepartmentOID).Name;
                 if (person.DeleteDt != null)
                 {
                     person.Name = person.Name + "(삭제)";

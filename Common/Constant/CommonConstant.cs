@@ -113,5 +113,13 @@ namespace Common.Constant
         //Doc Class
         public static string ATTRIBUTE_DOCUMENT = "일반문서";
         public static string ATTRIBUTE_PROJECT_DOCUMENT = "프로젝트 문서";
+
+        // 2021.02.28 김성현
+        // File History
+
+
+        public static string ACTION_FILE_HISTORY_UPLOAD = "업로드";
+        public static string ACTION_FILE_HISTORY_DOWNLOAD = "다운로드";
+        public static string ACTION_FILE_HISTORY_VIEW = "뷰어";
     }
 }

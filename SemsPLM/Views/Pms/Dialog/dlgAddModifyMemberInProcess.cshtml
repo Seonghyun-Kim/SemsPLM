@@ -68,6 +68,10 @@
                     return item.Name == '@Common.Constant.PmsConstant.ROLE_GUEST';
                 });
 
+                var cftOwnerRole = procRole.filter(function (item) {
+                    return item.Name == '@Common.Constant.PmsConstant.ROLE_CFT';
+                });
+
                 RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID' }, function (res) {
                     procResourceData = [];
                     procResourceData = res.filter(function (item) { return item.RoleOID != guestRole[0].OID });

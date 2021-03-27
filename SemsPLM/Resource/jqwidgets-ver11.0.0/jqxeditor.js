@@ -448,20 +448,21 @@ License: https://jqwidgets.com/license/
                     if (!$.jqx.browser.mozilla) {
                         that.editorDocument.designMode = 'On';
                     }
+                    //2021-03-03 font-size 13px to large
                     that.editorDocument.open();
                     var rtlStyle = that.rtl ? "direction:rtl;" : "";
                     var selectionStyle = $.jqx.browser.msie ? "::selection{color: #fff; background: #328EFD;};" +
                                 "::-moz-selection{color: #fff; background: #328eD;};" +
                                 "::selection:window-inactive {background: #c7c7c7; color: #000;}" +
                                 "::-moz-selection:window-inactive {background: #c7c7c7; color: #000;}" +
-                                "html{font-size:13px; height:100%;}body{padding-top:1px;margin-top:-1px; padding-right: 1px; overflow-x: hidden;" +
+                                "html{font-size:large; height:100%;}body{padding-top:1px;margin-top:-1px; padding-right: 1px; overflow-x: hidden;" +
                                 "word-wrap: break-word;-webkit-nbsp-mode: space;-webkit-line-break: after-white-space;"
                     : "";
                     that.editorDocument.write(
                             "<!DOCTYPE html><html><head>" +
                             "<meta charset='utf-8' />" +
                             "<style>" +
-                                "html,body{padding:0; margin:0; font-size: 13px; font-family: " + that.fontFamily + "; background:#fff; min-height:100%; " + rtlStyle + "}" +
+                                "html,body{padding:0; margin:0; font-size: large; font-family: " + that.fontFamily + "; background:#fff; min-height:100%; " + rtlStyle + "}" +
                                 selectionStyle +
                                 "}" +
                                 "h1{font-size:2em;margin:.67em 0}" +

@@ -31,10 +31,18 @@ namespace Common.Models
         public string BeforeActionOID { get; set; }
 
         public string NextActionOID { get; set; }
+
+        public List<int> OIDs { get; set; }
     }
 
     public static class BPolicyRepository
     {
+
+        public static List<BPolicy> SelBPolicyOIDs(BPolicy _param)
+        {
+            return DaoFactory.GetList<BPolicy>("Comm.SelBPolicy", _param).OrderBy(d => d.StatusOrd).ToList();
+        }
+
         public static List<BPolicy> SelBPolicy(BPolicy _param)
         {
             return DaoFactory.GetList<BPolicy>("Comm.SelBPolicy", _param).OrderBy(d => d.StatusOrd).ToList();

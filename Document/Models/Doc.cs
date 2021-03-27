@@ -42,11 +42,20 @@ namespace Document.Models
             _param.Type = DocumentConstant.TYPE_DOCUMENT;
             List<Doc> lDocs = new List<Doc>();
             List<Doc> lDoc = DaoFactory.GetList<Doc>("Doc.SelDoc", _param);
+            if (lDoc == null || lDoc.Count < 1)
+            {
+                return lDocs;
+            }
+            List<BPolicy> lBPlolicy = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = lDoc.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = lDoc.Select(sel => Convert.ToInt32(sel.CreateUs)).ToList() });
             lDoc.ForEach(obj =>
             {
-                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                //obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.BPolicy = lBPlolicy.Find(data => data.OID == obj.BPolicyOID);
                 obj.DocType_KorNm = DObjectRepository.SelDObject(Context, new DObject { OID = obj.DocType }).Name;
-                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                //obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.CreateUsNm = lPerson.Find(data => data.OID == obj.CreateUs).Name;
+
                 obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
                 if (obj.BPolicyAuths.FindAll(item => item.AuthNm == CommonConstant.AUTH_VIEW).Count > 0)
                 {

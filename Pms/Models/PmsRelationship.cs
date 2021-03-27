@@ -151,7 +151,7 @@ namespace Pms.Models
             _param.DeleteUs = Convert.ToInt32(Context["UserOID"]);
             if (_param.OID == null)
             {
-                DaoFactory.SetUpdate("Pms.DelPmsRelationshipByData", _param);
+                return DaoFactory.SetUpdate("Pms.DelPmsRelationshipByData", _param);
             }
             return DaoFactory.SetUpdate("Pms.DelPmsRelationship", _param);
         }
@@ -162,6 +162,7 @@ namespace Pms.Models
         {
             List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = _proj.OID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
             string strHoliday = string.Join(",", CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = _proj.OID, IsHoliday = 1 }).Select(value => value.FullDate.ToString().ToArray()));
+            List<PmsRelationship> lAllWbsData = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { RootOID = _fromOID, Type = PmsConstant.RELATIONSHIP_WBS });
 
             PmsRelationship getStructure = new PmsRelationship();
             getStructure.Level = _level;
@@ -205,7 +206,7 @@ namespace Pms.Models
                     }
                 }
             }
-            GetWbsStructure(Context, getStructure, _fromOID, Convert.ToInt32(_proj.WorkingDay), strHoliday, _proj, lHoliday);
+            GetWbsStructure(Context, getStructure, _fromOID, Convert.ToInt32(_proj.WorkingDay), strHoliday, _proj, lHoliday, lAllWbsData);
             return getStructure;
         }
 
@@ -264,14 +265,29 @@ namespace Pms.Models
                     }
                 }
             }
-            GetWbsStructure(Context, getStructure, Convert.ToInt32(proj.OID), Convert.ToInt32(proj.WorkingDay), strHoliday, proj, lHoliday);
+            GetWbsStructure(Context, getStructure, Convert.ToInt32(proj.OID), Convert.ToInt32(proj.WorkingDay), strHoliday, proj, lHoliday, null);
             return getStructure;
         }
 
-        public static void GetWbsStructure(HttpSessionStateBase Context, PmsRelationship _relObj, int _projOID, int _workingDay, string _holiday, PmsProject _proj, List<DateTime> _lHoliday)
+        public static void GetWbsStructure(HttpSessionStateBase Context, PmsRelationship _relObj, int _projOID, int _workingDay, string _holiday, PmsProject _proj, List<DateTime> _lHoliday, List<PmsRelationship> _AllWbsData)
         {
             _relObj.RootOID = _projOID;
-            _relObj.Children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = _relObj.ToOID });
+            //_relObj.Children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = _relObj.ToOID });
+            if (_AllWbsData == null || _AllWbsData.Count < 1)
+            {
+                _relObj.Children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, FromOID = _relObj.ToOID });
+            }
+            else
+            {
+                _relObj.Children = _AllWbsData.FindAll(data => data.FromOID == _relObj.ToOID).OrderBy(data => data.Ord).ToList();
+            }
+
+            List<int> children = _relObj.Children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (children == null || children.Count < 1)
+            {
+                return;
+            }
+            List<PmsProcess> tmpToDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = children });
             PmsProcess tmpToData = null;
             _relObj.Children.ForEach(item =>
             {
@@ -283,7 +299,12 @@ namespace Pms.Models
                 {
                     tmpToData = null;
                 }
-                tmpToData = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                //tmpToData = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                tmpToData = tmpToDatas.Find(data => data.OID == item.ToOID);
+                if (tmpToData == null)
+                {
+                    tmpToData = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                }
                 item.ObjName = tmpToData.Name;
                 item.Description = tmpToData.Description;
                 item.ObjType = tmpToData.Type;
@@ -312,7 +333,8 @@ namespace Pms.Models
                 {
                     if (item.ObjType.Equals(PmsConstant.TYPE_PHASE))
                     {
-                        item.diseditable = PmsConstant.FLOWEDITABLE;
+                        //item.diseditable = PmsConstant.FLOWEDITABLE;
+                        item.diseditable = PmsConstant.PFLOWEDITABLE;
                     }
                 }
                 else
@@ -335,7 +357,7 @@ namespace Pms.Models
                         }
                     }
                 }
-                GetWbsStructure(Context, item, _projOID, _workingDay, _holiday, _proj, _lHoliday);
+                GetWbsStructure(Context, item, _projOID, _workingDay, _holiday, _proj, _lHoliday, _AllWbsData);
             });
         }
 
@@ -349,6 +371,7 @@ namespace Pms.Models
             PmsProject proj = PmsProjectRepository.SelPmsObject(Context, new PmsProject { OID = Convert.ToInt32(OID) });
             List<DateTime> lHoliday = CalendarDetailRepository.SelCalendarDetails(new CalendarDetail { CalendarOID = proj.CalendarOID, IsHoliday = 1 }).Select(val => DateTime.Parse(val.Year + "-" + val.Month + "-" + val.Day)).ToList();
             List<Dictionary<string, object>> ldPmsWbs = new List<Dictionary<string, object>>();
+            List<PmsRelationship> lAllWbsData = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { Type = PmsConstant.RELATIONSHIP_WBS, RootOID = proj.OID });
 
             Dictionary<string, object> dProj = new Dictionary<string, object>();
             dProj.Add("oid", proj.OID);
@@ -402,13 +425,14 @@ namespace Pms.Models
             dProj.Add("collapsed", false);
             dProj.Add("assigs", new List<object>());
             ldPmsWbs.Add(dProj);
-            GetGanttSturcture(Context, dProj, ldPmsWbs, Convert.ToInt32(proj.WorkingDay), lHoliday);
+            GetGanttSturcture(Context, dProj, ldPmsWbs, Convert.ToInt32(proj.WorkingDay), lHoliday, lAllWbsData);
             return ldPmsWbs;
         }
 
-        public static void GetGanttSturcture(HttpSessionStateBase Context, Dictionary<string, object> _dParent, List<Dictionary<string, object>> _ldStructure, int _iWorkingDay, List<DateTime> _lHoliday)
+        public static void GetGanttSturcture(HttpSessionStateBase Context, Dictionary<string, object> _dParent, List<Dictionary<string, object>> _ldStructure, int _iWorkingDay, List<DateTime> _lHoliday, List<PmsRelationship> _lAllWbsData)
         {
-            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_dParent["oid"]), Type = PmsConstant.RELATIONSHIP_WBS });
+            //List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_dParent["oid"]), Type = PmsConstant.RELATIONSHIP_WBS });
+            List<PmsRelationship> children = _lAllWbsData.FindAll(data => data.FromOID == Convert.ToInt32(_dParent["oid"]));
             if (children != null && children.Count > 0)
             {
                 _dParent.Add("hasChild", true);
@@ -417,6 +441,13 @@ namespace Pms.Models
             {
                 _dParent.Add("hasChild", false);
             }
+
+            List<int> iChildrenOID = children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (iChildrenOID == null || iChildrenOID.Count < 1)
+            {
+                return;
+            }
+            List<PmsProcess> tmpToDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = iChildrenOID });
             PmsProcess tmpProcess = null;
             children.ForEach(item =>
             {
@@ -424,7 +455,8 @@ namespace Pms.Models
                 {
                     tmpProcess = null;
                 }
-                tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                //tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                tmpProcess = tmpToDatas.Find(data => data.OID == item.ToOID);
                 Dictionary<string, object> tmpChildren = new Dictionary<string, object>();
                 tmpChildren.Add("oid", tmpProcess.OID);
                 tmpChildren.Add("id", tmpProcess.Id);
@@ -491,7 +523,7 @@ namespace Pms.Models
 
                 tmpChildren.Add("assigs", lPerson);
                 _ldStructure.Add(tmpChildren);
-                GetGanttSturcture(Context, tmpChildren, _ldStructure, _iWorkingDay, _lHoliday);
+                GetGanttSturcture(Context, tmpChildren, _ldStructure, _iWorkingDay, _lHoliday, _lAllWbsData);
             });
         }
 
@@ -563,13 +595,21 @@ namespace Pms.Models
             PmsProject tmpProject = null;
             PmsProcess tmpToData = null;
             List<DateTime> lHoliday = null;
+
+            List<int> iChildren = children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (iChildren == null || iChildren.Count < 1)
+            {
+                return;
+            }
+            List<PmsProcess> tmpToDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = iChildren });
             children.ForEach(item =>
             {
                 if (tmpToData != null)
                 {
                     tmpToData = null;
                 }
-                tmpToData = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                //tmpToData = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                tmpToData = tmpToDatas.Find(data => data.OID == item.ToOID);
                 item.ObjName = tmpToData.Name;
                 item.Description = tmpToData.Description;
                 item.ObjType = tmpToData.Type;
@@ -634,6 +674,17 @@ namespace Pms.Models
             DocClass DocClas = null;
             PmsProcess Task = null;
 
+            if (RelationshipList == null || RelationshipList.Count < 1)
+            {
+                return getStructureList;
+            }
+
+            List<int> PersonOIDs = RelationshipList.Select(sel => Convert.ToInt32(sel.CreateUs)).ToList();
+            List<int> TaskOIDs = RelationshipList.Select(sel => Convert.ToInt32(sel.FromOID)).ToList();
+
+            List<Person> tmpPersonDatas = PersonRepository.SelPersons(Context, new Person { OIDs = PersonOIDs });
+            List<PmsProcess> tmpTaskDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = TaskOIDs });
+
             foreach (var obj in RelationshipList)
             {
                 if (lProjectList.FindAll(item => item.ToOID == obj.FromOID).Count > 0)
@@ -657,11 +708,13 @@ namespace Pms.Models
                     getStructure.FromOID = obj.FromOID;
                     getStructure.DocClassNm = DocClas.Name;
                     getStructure.Type = obj.Type;
-                    getStructure.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                    //getStructure.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                    getStructure.CreateUsNm = tmpPersonDatas.Find(data => data.OID == obj.CreateUs).Name;
                     Task = new PmsProcess();
                     if (getStructure.FromOID != getStructure.RootOID)
                     {
-                        Task = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = obj.FromOID });
+                        //Task = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = obj.FromOID });
+                        Task = tmpTaskDatas.Find(data => data.OID == obj.FromOID);
                         getStructure.TaskNm = Task.Name;
                         getStructure.TaskOID = Task.OID;
                         getStructure.BPolicyAuths = Task.BPolicyAuths;
@@ -670,7 +723,6 @@ namespace Pms.Models
                     getStructure.ViewUrl = DocClas.ViewUrl;
 
                     getPmsDeliveriesStructure(Context, getStructure, Convert.ToInt32(obj.RootOID), project.Name, Task.Name, getStructure.ViewUrl);
-
                     getStructureList.Add(getStructure);
                 }
             }
@@ -760,22 +812,23 @@ namespace Pms.Models
         public static List<PmsRelationship> GetWbsOidLIst(HttpSessionStateBase Context, string OID)
         {
             List<PmsRelationship> lWbs = new List<PmsRelationship>();
-
+            List<PmsRelationship> AllChildrens = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { RootOID = Convert.ToInt32(OID), Type = PmsConstant.RELATIONSHIP_WBS });
             PmsRelationship getStructure = new PmsRelationship();
             getStructure.ToOID = Convert.ToInt32(OID);
             lWbs.Add(getStructure);
 
-            GetWbsChildOidList(Context, getStructure, lWbs);
+            GetWbsChildOidList(Context, getStructure, lWbs, AllChildrens);
             return lWbs;
         }
 
-        public static void GetWbsChildOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
+        public static void GetWbsChildOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure, List<PmsRelationship> _lAllData)
         {
-            List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            //List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            List<PmsRelationship> children = _lAllData.FindAll(data => data.FromOID == _parent.ToOID).OrderBy(data => data.Ord).ToList();
             children.ForEach(item =>
             {
                 _ldStructure.Add(item);
-                GetWbsChildOidList(Context, item, _ldStructure);
+                GetWbsChildOidList(Context, item, _ldStructure, _lAllData);
             });
         }
 
@@ -786,14 +839,53 @@ namespace Pms.Models
         public static List<PmsRelationship> GetProjWbsTypeOidList(HttpSessionStateBase Context, string OID)
         {
             List<PmsRelationship> lWbs = new List<PmsRelationship>();
+            List<PmsRelationship> lAllData = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { RootOID = Convert.ToInt32(OID), Type = PmsConstant.RELATIONSHIP_WBS });
+            List<PmsProcess> lAllProc = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = lAllData.Select(sel => Convert.ToInt32(sel.ToOID)).ToList() });
 
             PmsRelationship getStructure = new PmsRelationship();
             getStructure.ToOID = Convert.ToInt32(OID);
             getStructure.ObjType = PmsConstant.TYPE_PROJECT;
             lWbs.Add(getStructure);
 
-            GetWbsChildTypeOidList(Context, getStructure, lWbs);
+            GetWbsChildTypeOidList(Context, getStructure, lWbs, lAllData, lAllProc);
             return lWbs;
+        }
+
+        public static void GetWbsChildTypeOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure, List<PmsRelationship> _lAllData, List<PmsProcess> _lAllProc)
+        {
+            //List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+            List<PmsRelationship> children = _lAllData.FindAll(data => data.FromOID == _parent.ToOID).OrderBy(data => data.Ord).ToList();
+
+            List<int> iChildren = children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (iChildren == null || iChildren.Count < 1)
+            {
+                return;
+            }
+            //List<PmsProcess> tmpToDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = iChildren });
+            List<PmsProcess> tmpToDatas = _lAllProc.FindAll(data => iChildren.Contains(Convert.ToInt32(data.OID)));
+            PmsProcess tmpProcess = null;
+            children.ForEach(item =>
+            {
+                if (tmpProcess != null)
+                {
+                    tmpProcess = null;
+                }
+                //tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                tmpProcess = tmpToDatas.Find(data => data.OID == item.ToOID);
+                item.ObjType = tmpProcess.Type;
+                item.ObjName = tmpProcess.Name;
+                item.EstStartDt = tmpProcess.EstStartDt;
+                item.EstEndDt = tmpProcess.EstEndDt;
+                item.EstDuration = tmpProcess.EstDuration;
+                item.ActStartDt = tmpProcess.ActStartDt;
+                item.ActEndDt = tmpProcess.ActEndDt;
+                item.ActDuration = tmpProcess.ActDuration;
+                item.Id = tmpProcess.Id;
+                item.Dependency = tmpProcess.Dependency;
+                item.ObjStNm = tmpProcess.BPolicy.Name;
+                _ldStructure.Add(item);
+                GetWbsChildTypeOidList(Context, item, _ldStructure, _lAllData, _lAllProc);
+            });
         }
 
         public static List<PmsRelationship> getProcWbsTypeOidList(HttpSessionStateBase Context, string OID)
@@ -811,6 +903,13 @@ namespace Pms.Models
         public static void GetWbsChildTypeOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
         {
             List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
+
+            List<int> iChildren = children.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            if (iChildren == null || iChildren.Count < 1)
+            {
+                return;
+            }
+            List<PmsProcess> tmpToDatas = PmsProcessRepository.SelPmsProcessOIDs(Context, new PmsProcess { OIDs = iChildren });
             PmsProcess tmpProcess = null;
             children.ForEach(item =>
             {
@@ -818,7 +917,8 @@ namespace Pms.Models
                 {
                     tmpProcess = null;
                 }
-                tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                //tmpProcess = PmsProcessRepository.SelPmsProcess(Context, new PmsProcess { OID = item.ToOID });
+                tmpProcess = tmpToDatas.Find(data => data.OID == item.ToOID);
                 item.ObjType = tmpProcess.Type;
                 item.ObjName = tmpProcess.Name;
                 item.EstStartDt = tmpProcess.EstStartDt;

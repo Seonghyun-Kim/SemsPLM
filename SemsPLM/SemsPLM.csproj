@@ -166,6 +166,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -188,6 +193,7 @@
     <Content Include="images\logo_.png" />
     <Content Include="images\logo_big.png" />
     <Content Include="images\PLM_logo_c.png" />
+    <Content Include="images\refresh.png" />
     <Content Include="images\report.png" />
     <Content Include="images\right_arrow.png" />
     <Content Include="images\status_h.png" />
@@ -3734,6 +3740,10 @@
     <Content Include="Resource\d3-timeline-master\readme.md" />
     <Content Include="Resource\d3-timeline-master\scss\timeline-chart.scss" />
     <Content Include="ExcelTmpFile\GanttFormat.xlsx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3918,6 +3928,7 @@
     <Content Include="Views\Pms\Dashboard\dlgDashboardExec.cshtml" />
     <Content Include="Views\Pms\Dashboard\dlgProjectDelayList.cshtml" />
     <Content Include="Views\ChangeOrder\Dialog\dlgEBomStructure.cshtml" />
+    <Content Include="Views\Common\Partitial\ptFileHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

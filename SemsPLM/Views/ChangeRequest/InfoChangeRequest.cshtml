@@ -468,7 +468,7 @@
                 $('#EditSaveBtn_@ViewBag.ECRDetail.OID').on('click', function () {
                     var InfoEcrEditParam = {};
                     InfoEcrEditParam.OID = @ViewBag.ECRDetail.OID;
-                    InfoEcrEditParam.Description = $('#InfoEcrDescription_@ViewBag.ECRDetail.OID').val();
+                   // InfoEcrEditParam.Description = $('#InfoEcrDescription_@ViewBag.ECRDetail.OID').val();
 
 
                     InfoEcrEditParam.ItemGroup = $('#InfoEcrItemGroup_@ViewBag.ECRDetail.OID').val();
@@ -498,19 +498,19 @@
                     InfoEcrEditParam.DevMP = InfoEcrDevMP$.val();
                     InfoEcrEditParam.CarType = $('#CarType_@ViewBag.ECRDetail.OID').val();
 
-                    if (InfoEcrEditParam.Title == "" || param.Title == null) {
+                    if (InfoEcrEditParam.Title == "" || InfoEcrEditParam.Title == null) {
                         alert('제목을 입력하여 주세요.');
                         return;
                     }
-                    if (InfoEcrEditParam.DesignChangeDt == "" || param.DesignChangeDt == null) {
+                    if (InfoEcrEditParam.DesignChangeDt == "" || InfoEcrEditParam.DesignChangeDt == null) {
                         alert('설계변경일자를 선택하여 주세요.');
                         return;
                     }
-                    if (InfoEcrEditParam.ReasonChangeRequest == "" || param.ReasonChangeRequest == null) {
+                    if (InfoEcrEditParam.ReasonChangeRequest == "" || InfoEcrEditParam.ReasonChangeRequest == null) {
                         alert('변경요청사유를 선택하여 주세요.');
                         return;
                     }
-                    if (InfoEcrEditParam.DevMP == "" || param.DevMP == null) {
+                    if (InfoEcrEditParam.DevMP == "" || InfoEcrEditParam.DevMP == null) {
                         alert('개발/양산 구분을 선택하여 주세요.');
                         return;
                     }
@@ -527,8 +527,19 @@
                             alert(response.resultMessage);
                             return;
                         }
-                        alert("저장되었습니다.");
-                        PageReload();
+                        var innerParam = {};
+                        innerParam.OID =  @ViewBag.ECRDetail.OID;
+                        innerParam.Description =  $('#InfoEcrDescription_@ViewBag.ECRDetail.OID').val();
+                        innerParam.Title =  $('#InfoEcrTitle_@ViewBag.ECRDetail.OID').val();
+                        RequestData('/ChangeRequest/UdtEcrObj', innerParam, function (response) {
+                            if (response.isError) {
+                                alert(response.resultMessage);
+                                return;
+                            }
+                            alert("저장되었습니다.");
+                            gClickDuplication = false;
+                            PageReload();
+                        });
                     });
                 });
 

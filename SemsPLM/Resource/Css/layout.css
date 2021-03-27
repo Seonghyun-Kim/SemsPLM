@@ -33,7 +33,7 @@ h6 {
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-weight: bold;
-    line-height: normal;
+    /*line-height: normal;*/
     margin: 0;
 }
 
@@ -154,6 +154,16 @@ button, .menu_h, .btn_icon, .btn_user, .sub > li {
         width: 100%;
     }
 
+.refreshBtn {
+    margin-right: 20px;
+    transform: translateY(1px);
+}
+
+.refreshBtn:hover > img{
+    transform:rotate(180deg);
+    transition:.5s;
+}
+
 nav {
     float: left;
     height: 48px;
@@ -183,7 +193,7 @@ nav {
     font-weight: bold;
     display: block;
     float:left;
-    line-height: 55px;
+    line-height: 50px;
     height: 55px;
     position: relative;
     width:100%;
@@ -450,7 +460,7 @@ nav {
     overflow-x: auto;
 }
 
-.scrollX::-webkit-scrollbar{
+/*.scrollX::-webkit-scrollbar{
     height:4px;
     background-color:#eee;
 }
@@ -458,13 +468,13 @@ nav {
 .scrollX::-webkit-scrollbar-thumb{
     background-color:#c5c5c5;
     
-}
+}*/
 
 .scrollY {
     overflow-y: auto;
 }
 
-.scrollY::-webkit-scrollbar {
+/*.scrollY::-webkit-scrollbar {
     width: 4px;
     background-color: #eee;
 }
@@ -472,7 +482,7 @@ nav {
 .scrollY::-webkit-scrollbar-thumb {
     background-color: #c5c5c5; 
     width: 2px;
-}
+}*/
 
 
 
@@ -1057,7 +1067,8 @@ button > .fas{
 
 .wbsMember {
     position: relative;
-    width:90px;
+    /*width:90px;*/
+    padding-right:8px;
     height:21px;
     padding-left:32px;
     float:left;

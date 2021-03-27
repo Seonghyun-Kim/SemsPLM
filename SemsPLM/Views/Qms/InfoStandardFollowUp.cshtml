@@ -64,7 +64,7 @@
                     <col style="width:190px;" />
                     <col style="width:auto;" />
                     <col style="width:190px;" />
-                    <col style="width:auto;" /> 
+                    <col style="width:auto;" />
                 </colgroup>
                 <tbody>
                     <tr>
@@ -80,6 +80,9 @@
         <div id="Apphis" class="basic_grid dective">
             <div id="ApphisInfo_@ViewBag.StandardDoc.OID">
             </div>
+        </div>
+        <div id="Downhis" class="basic_grid dective">
+            @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.StandardDoc.OID });}
         </div>
     </div>
 </div>

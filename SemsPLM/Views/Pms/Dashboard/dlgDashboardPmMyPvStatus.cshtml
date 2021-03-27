@@ -52,17 +52,17 @@
                     { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '차종', datafield: 'Car_Lib_Nm', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '제품명', datafield: 'PartNm', width: "10%", align: 'center', cellsalign: 'center', },
-                    { text: '전체시험일정', datafield: 'TotalTestDt', width: "10%", align: 'center', cellsalign: 'center', },
+                    { text: '전체시험일정', datafield: 'TotalTestDt', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
                     { text: '총 시험항목', datafield: 'TotalTestItem', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '대기건수', datafield: 'WaitingNum', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '완료건수', datafield: 'CompleteNum', width: "10%", align: 'center', cellsalign: 'center', },
                     { text: '진행건수', datafield: 'ProgressNum', width: "10%", align: 'center', cellsalign: 'center', },
-                    { text: 'NG건수', datafield: 'NGNum', width: "10%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                    { text: 'NG건수', datafield: 'NGNum', width: "10%", align: 'center', cellsalign: 'center', },
                 ],
             });
-             RequestData("/Pms/@ViewBag.linker", {}, function (res) {
-                 PrintJqxGrid(pvSource, $('#pmMyPVStatusGrid'), res);
-             });
+            RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                PrintJqxGrid(pvSource, $('#pmMyPVStatusGrid'), res);
+            });
             $('#pmMyPVStatusGrid').on('celldoubleclick', function (event) {
                 const row = event.args.row.bounddata;
 
@@ -75,7 +75,9 @@
                         gClickDuplication = true;
                         setTimeout(function () {
                             OpenPmsDocumentDialog(function (res) {
-                                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                    PrintJqxGrid(pvSource, $('#pmMyPVStatusGrid'), res);
+                                });
                             }, null, param, '/Pms/InfoDocument', '문서 상세');
                             gClickDuplication = false;
                         }, 250);
@@ -85,7 +87,9 @@
                             gClickDuplication = true;
                             setTimeout(function () {
                                 OpenInfoReliabilityDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                        PrintJqxGrid(pvSource, $('#pmMyPVStatusGrid'), res);
+                                    });
                                 }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
                                 gClickDuplication = false;
                             }, 250);
@@ -94,7 +98,9 @@
                             gClickDuplication = true;
                             setTimeout(function () {
                                 OpenInfoReliabilityReportDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                        PrintJqxGrid(pvSource, $('#pmMyPVStatusGrid'), res);
+                                    });
                                 }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
                                 gClickDuplication = false;
                             }, 250);

@@ -61,12 +61,25 @@ namespace Pms.Models
         {
             _param.Type = Common.Constant.PmsConstant.TYPE_RELIABILITY;
             List<PmsReliability> PmsReliability = DaoFactory.GetList<PmsReliability>("Pms.SelPmsReliability", _param);
+            List<int> iPersonOIDs = PmsReliability.Select(data => Convert.ToInt32(data.CreateUs)).ToList();
+            if (iPersonOIDs == null || iPersonOIDs.Count < 1)
+            {
+                return PmsReliability;
+            }
+            List<BPolicy> lBPolicy = BPolicyRepository.SelBPolicyOIDs(new BPolicy { OIDs = PmsReliability.Select(sel => Convert.ToInt32(sel.BPolicyOID)).ToList() });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { OIDs = iPersonOIDs });
+
             PmsReliability.ForEach(obj =>
             {
-                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
-                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                //obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                //obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+                obj.BPolicy = lBPolicy.Find(bpolicy => bpolicy.OID == obj.BPolicyOID);
+                obj.CreateUsNm = lPerson.Find(person => person.OID == obj.CreateUs).Name;
+                if(obj.DevStep > 0)
+                {
+                    obj.DevStepNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.DevStep }).KorNm;
+                }
                 obj.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, obj, null);
-                obj.DevStepNm = LibraryRepository.SelLibraryObject(new Library { OID = obj.DevStep }).KorNm;
             });
             return PmsReliability;
         }
@@ -78,7 +91,11 @@ namespace Pms.Models
             PmsReliability.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = PmsReliability.CreateUs }).Name;
             PmsReliability.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = PmsReliability.Type, OID = PmsReliability.BPolicyOID }).First();
             PmsReliability.BPolicyAuths = BPolicyAuthRepository.MainAuth(Context, PmsReliability, null);
-            PmsReliability.DevStepNm = LibraryRepository.SelLibraryObject(new Library { OID = PmsReliability.DevStep }).KorNm;
+            if(PmsReliability.DevStep > 0)
+            {
+                PmsReliability.DevStepNm = LibraryRepository.SelLibraryObject(new Library { OID = PmsReliability.DevStep }).KorNm;
+            }
+
 
             return PmsReliability;
         }

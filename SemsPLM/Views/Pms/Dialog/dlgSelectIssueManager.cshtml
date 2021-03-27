@@ -64,18 +64,23 @@
                 { text: '설명', datafield: 'Description', width: "41.5%", align: 'center', cellsalign: 'left', },
             ],
             pagerrenderer: function () {
-                var peRole = procRole.filter(function (item) {
-                    return item.Name == '@Common.Constant.PmsConstant.ROLE_PE';
+                var guestRole = procRole.filter(function (item) {
+                    return item.Name == '@Common.Constant.PmsConstant.ROLE_GUEST';
                 });
-                RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID', 'RoleOID': peRole[0].OID }, function (res) {
+
+                var cftRole = procRole.filter(function (item) {
+                    return item.Name == '@Common.Constant.PmsConstant.ROLE_CFT';
+                });
+
+                RequestData("/Pms/SelMembers", { 'FromOID': '@ViewBag.ProjectOID' }, function (res) {
                     dlgMemberData = [];
-                    dlgMemberData = res;
-                    PrintJqxGrid(dlgMemberSource, dlgMemberGrd$, res);
+                    dlgMemberData = res.filter(function (item) { return (item.RoleOID != guestRole[0].OID && item.RoleOID != cftRole[0].OID) });
+                    PrintJqxGrid(dlgMemberSource, dlgMemberGrd$, dlgMemberData);
                 });
             }
         });
         dlgMemberGrd$.jqxGrid('pagerrenderer')
-        
+
         dlgMemberGrd$.on('rowselect', function (event) {
             var rowBoundIndex = (event.args).rowindex;
             if (!selectFromMethod) {
@@ -85,6 +90,6 @@
             }
             selectFromMethod = false;
         });
-        
+
     });
 </script>

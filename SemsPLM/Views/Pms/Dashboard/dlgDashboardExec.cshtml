@@ -3,15 +3,15 @@
 }
 
 <div class="cDashboard">
-    <div class="mainStatusCount">
+    <div class="mainStatusCount"  id="mainStatusCountExec">
         <h3>전체 ITEM 관리현황</h3>
-        <div style="width:12.5%;padding:18px 10px 12px;">
+        <div style="width:16%;">
             <div style="background-color:#FEB019;" class="icon">
                 <i class="fas fa-list-ul"></i>
             </div>
             <div class="text">
-                <h4 style="line-height:20px;">개발 진행중<br />전체 프로젝트</h4>
-                <p><span id="" style="font-size:21px;font-weight:bold;">@ViewBag.ItemCount[0]</span>건</p>
+                <h4>개발 진행중 전체 프로젝트</h4>
+                <p><span style="font-size:21px;font-weight:bold;">@ViewBag.ItemCount[0]</span>건</p>
             </div>
         </div>
         <div onclick="CallGateReview(1,null)">
@@ -73,7 +73,7 @@
                 <i class="fas fa-wine-bottle"></i>
             </div>
             <div class="text">
-                <h4>EPB</h4>
+                <h4>기타</h4>
                 <p><span id="">@ViewBag.ItemCount[7]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[7])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
             </div>
         </div>
@@ -109,10 +109,16 @@
     </div>
 
     <div class="cDashboardIssue">
-        <div style="margin-bottom:15px;">
+        @*<div style="margin-bottom:15px;">
             <h3>프로젝트별 Issue 현황</h3>
             <div id="prdtIssueExec" class="box"></div>
+        </div>*@
+
+        <div style="margin-bottom:15px;">
+            <h3>프로젝트별 지연 TASK/GATE</h3>
+            <div id="getTaskGateGridExec" class="box"></div>
         </div>
+
         <div style="position:relative;">
             <h3>상세 Issue List</h3>
             <div class="importance">
@@ -129,12 +135,22 @@
 <script type="text/javascript">
     var gateReviewSource;
     var gateReviewGridExec$;
-    var cIssueChartExec;
-    var cIssueTaskListExec = [];
-    var cIssueSeriesExec = [];
+
+    //var cIssueChartExec;
+    //var cIssueTaskListExec = [];
+    //var cIssueSeriesExec = [];
+
+    var getTaskGateGridExec$ = $('#getTaskGateGridExec');
+
     var selGateRowIdx;
+
     var issueListExec$;
     var issueListExecSource;
+
+    var ExecProjectOID;
+    var ExecProjectNm;
+
+
     $(function () {
         //Gate Review 진행현황
          gateReviewSource = {
@@ -148,9 +164,11 @@
                 { name: 'ProcessCnt', type: 'number' },
                 { name: 'DelayCnt', type: 'number' },
                 { name: 'CompleteCnt', type: 'number' },
+                { name: 'ProjectGrade', type: 'string' },
+                { name: 'IssueCnt', type: 'number' },
             ],
         };
-         gateReviewGridExec$ = $('#gateReviewGridExec');
+        gateReviewGridExec$ = $('#gateReviewGridExec');
         gateReviewGridExec$.jqxGrid({
             width: "100%",
             height: 600,
@@ -167,75 +185,85 @@
                 {
                     text: '프로젝트', datafield: 'Name', align: 'center', width: '30%', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                         var rowData = gateReviewGridExec$.jqxGrid('getrowdata', row);
-                        var val = '<div id="' + rowData.OID +'"  style="cursor:pointer; margin-top:18.5px;text-indent:4px;" onclick="CallIssue(' + rowData.OID + ')">' + cellValue + '</div>';
+                        //var val = '<div id="' + rowData.OID + '" class="cDashboardPName" onclick="CallIssue(' + rowData.OID + ',' + row +')">' + cellValue + '</div>';
+                        var val = '<div id="' + rowData.OID + '" class="cDashboardPName" onclick="ExecTaskGateIssueCall(' + rowData.OID + ',' + 0 + ', \'' + rowData.Name + '\',' + row + ')">' + cellValue + '</div>';
                         return val;
-                } },
+                    }
+                },
+                { text: '등급', datafield: 'ProjectGrade', align: 'center', cellsalign: 'center', width: '5%' },
                 {
-                    text: 'G/Review 현황', datafield: 'GatePolicy', align: 'center', cellsalign: 'center', width: '28%', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
-                        var rowData = gateReviewGridExec$.jqxGrid('getrowdata',row);
+                    text: 'G/Review 현황', datafield: 'GatePolicy', align: 'center', cellsalign: 'center', width: '24%', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        var rowData = gateReviewGridExec$.jqxGrid('getrowdata', row);
                         var pointerDiv = '<div class="gatePointer clearfix">';
                         for (var i = 0; i < cellValue.length; i++) {
                             var gStatus = 'grade' + cellValue[i];//임의로 작성. grade1:계획, grade2:진행, grade3:지연, grade4:지연완료, grade5:완료
-                            pointerDiv += '<div class="' + gStatus + '" onclick="CallTaskCnt(' + row + ',' + rowData.OID + ',' + (i + 1) + ')" style="z-index:'+ (6-i) +';">G'+(i+1)+'</div>';
+                            pointerDiv += '<div class="' + gStatus + '" onclick="CallTaskCnt(' + row + ',' + rowData.OID + ',' + (i + 1) + ')" style="z-index:' + (6 - i) + ';">G' + (i + 1) + '</div>';
                         }
 
                         pointerDiv += '</div>';
 
                         return pointerDiv;
                     },
-                      aggregatesrenderer: function (aggregates, column, element) {
-                          return '<div style="line-height:32px;">단계별 업무 총 합계</div>';
-                      }
+                    aggregatesrenderer: function (aggregates, column, element) {
+                        return '<div style="line-height:32px;">단계별 업무 총 합계</div>';
+                    }
                 },
-                { text: '총 업무', datafield:'TotalCnt', columngroup: 'taskStatus', align: 'center', cellalign: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
-                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
-                        var renderstring = '<div class="gReviewAggr">'
-                        $.each(aggregates, function (key, value) {
-                            renderstring += value;
-                          });
-                        renderstring += "</div>";
-                          return renderstring;
-
-                    } },
-                { text: '계획', datafield:'PrepareCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
-                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
-                        var renderstring = '<div class="gReviewAggr">'
-                        $.each(aggregates, function (key, value) {
-                            renderstring += value;
-                          });
-                        renderstring += "</div>";
-                          return renderstring;
-
-                    } },
-                { text: '진행중', datafield:'ProcessCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
-                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
-                        var renderstring = '<div class="gReviewAggr">'
-                        $.each(aggregates, function (key, value) {
-                            renderstring += value;
-                          });
-                        renderstring += "</div>";
-                          return renderstring;
-
-                    } },
+                { text: '이슈', datafield: 'IssueCnt', align: 'center', cellsalign: 'center', width: '5%' },
                 {
-                    text: '지연', datafield: 'DelayCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'], cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                    text: '총 업무', datafield: 'TotalCnt', columngroup: 'taskStatus', align: 'center', cellalign: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                        });
+                        renderstring += "</div>";
+                        return renderstring;
+
+                    }
+                },
+                {
+                    text: '계획', datafield: 'PrepareCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '5%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                        });
+                        renderstring += "</div>";
+                        return renderstring;
+
+                    }
+                },
+                {
+                    text: '진행중', datafield: 'ProcessCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '5%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                        });
+                        renderstring += "</div>";
+                        return renderstring;
+
+                    }
+                },
+                {
+                    text: '지연', datafield: 'DelayCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '5%', aggregates: ['sum'], cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                         return '<div style="font-weight:bold;color:#f44336;text-align:center;margin-top:18.5px;">' + cellValue + '</div>';
                     },
                     aggregatesrenderer: function (aggregates, column, element, summaryData) {
                         var renderstring = '<div class="gReviewAggr">'
                         $.each(aggregates, function (key, value) {
                             renderstring += value;
-                          });
+                        });
                         renderstring += "</div>";
-                          return renderstring;
+                        return renderstring;
 
                     }
                 },
                 {
                     text: '완료(지연완료포함)', datafield: 'CompleteCnt', columngroup: 'taskStatus', align: 'center', width: '14%', aggregates: ['sum'], cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
                         var rowData = gateReviewGridExec$.jqxGrid('getrowdata', row);
-                        var div = '<div style="text-indent:28px;margin-top:18.5px;position:relative;">'
-                        div += cellValue + ' <button onclick="ProjectTabClick(' + rowData.OID + ',\'' + rowData.Name + '\')" class="custom-button" style="position:absolute;right:8px;top:-6px;font-size:14px;">바로가기</button></div>';
+                        var div = '<div style="margin-top:18.5px;position:relative;"><span style="display:inline-block;text-align:center;width:68px;">'
+                        div += cellValue + '</span> <button onclick="ProjectTabClick(' + rowData.OID + ',\'' + rowData.Name + '\')" class="custom-button" style="position:absolute;right:8px;top:-6px;font-size:14px;">바로가기</button></div>';
 
                         return div;
                     },
@@ -243,9 +271,9 @@
                         var renderstring = '<div class="gReviewAggr" style="text-indent:-80px;">'
                         $.each(aggregates, function (key, value) {
                             renderstring += value;
-                          });
+                        });
                         renderstring += "</div>";
-                          return renderstring;
+                        return renderstring;
 
                     }
                 },
@@ -254,6 +282,7 @@
                 { text: '단계별 업무 상태', align: 'center', name: 'taskStatus' }
             ],
         });
+
         gateReviewGridExec$.on('cellclick', function (event) {
             // column data field.
             var dataField = event.args.datafield;
@@ -282,72 +311,190 @@
 
             }
         });
+
+        getTaskGateGridExecSource =
+        {
+            dataType: "json",
+            dataFields: [
+                //System Mandatory
+                { name: 'OID', type: 'number' },
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'Children', type: 'array' },
+                { name: 'Action', type: 'string' },
+                { name: 'Ord', type: 'number' },
+                { name: 'isCritical', type: 'string' },
+                { name: 'WorkingDay', type: 'number' },
+
+                //System Option
+                { name: 'expanded', type: 'bool' },
+                { name: 'diseditable', type: 'array' },
+
+                //Object Mandatory
+                { name: 'ObjName', type: 'string' },
+                { name: 'ObjType', type: 'string' },
+                { name: 'Id', type: 'number' },
+                { name: 'Dependency', type: 'string' },
+                { name: 'ObjSt', type: 'number' },
+                { name: 'ObjStNm', type: 'string' },
+                { name: 'Complete', type: 'number' },
+                { name: 'Members', type: 'array' },
+                { name: 'EstDuration', type: 'number' },
+                { name: 'EstStartDt', type: 'date' },
+                { name: 'EstEndDt', type: 'date' },
+                { name: 'ActDuration', type: 'number' },
+                { name: 'ActStartDt', type: 'date' },
+                { name: 'ActEndDt', type: 'date' },
+                { name: 'Level', type: 'number' },
+                { name: 'Delay', type: 'number' },
+                { name: 'Deliveries', type: 'number' },
+                { name: 'No', type: 'string' },
+
+                { name: 'Description', type: 'string' },
+            ],
+        };
+
+        getTaskGateGridExec$.jqxGrid({
+            width: "100%",
+            height: 300,
+            //rowsheight: 56,
+            columnsheight: 30,
+            columnsresize: true,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            showstatusbar: false,
+            statusbarheight: 32,
+            showaggregates: false,
+            columns: [
+                { text: 'OID', datafield: 'OID', align: 'center', cellsalign: 'center', hidden: true },
+                {
+                    text: '이름', datafield: 'ObjName', align: 'center', cellsalign: 'left', width: '43%',
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        var getrowdata = getTaskGateGridExec$.jqxGrid('getrowdata', row);
+                        if (getrowdata.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT'
+                            || getrowdata.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PHASE'
+                            || getrowdata.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                        } else {
+                            var vText = getrowdata.ObjName;
+                            return '<div style="margin-top:6.5px;text-indent:4px;">' + vText + ' <a href="#" onclick="PmsNewTabClick(' + ExecProjectOID + ', \'' + ExecProjectNm + '\', \'/Pms/InfoProcess\', ' + getrowdata.ToOID + ', \'' + getrowdata.ObjName + '\')" ><i class="fas fa-window-maximize"></i></a></div>';
+                        }
+                    }
+                },
+                { text: '구분', datafield: 'ObjType', align: 'center', cellsalign: 'center', width: '8%' },
+                { text: '상태', datafield: 'ObjStNm', align: 'center', cellsalign: 'center', width: '8%' },
+                {
+                    text: '멤버', datafield: 'Members', align: 'center', cellsalign: 'center', width: '32%',
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        if (rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT' ||
+                            rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PHASE' ||
+                            rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                            var disableDiv = "<div style=text-align:center;color:#ccc;'>시스템</div>";
+                            return disableDiv;
+                            return;
+                        }
+                        if (cellValue != null && cellValue != undefined) {
+                            if (cellValue.length > 0) {
+                                var tmpTag = "<div style='text-align: center;width:100%;margin-top:6.5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;height:20px;'>";
+                                for (var index = 0; index < cellValue.length; index++) {
+                                    if (cellValue[index].Thumbnail != null) {
+                                        tmpTag += "<div class='wbsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + cellValue[index].Thumbnail + "'></div>" + cellValue[index].PersonNm + "&nbsp;</div>";
+                                    } else {
+                                        tmpTag += "<div class='wbsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + cellValue[index].PersonNm + "</div>";
+                                    }
+                                }
+                                tmpTag += "</div></div>";
+                                return tmpTag;
+                            }
+                        }
+                    }
+                },
+                {
+                    text: '지연일수', align: 'center', cellsalign: 'center', width: '10%', datafield: 'Delay',
+                },
+                { text: '기간', datafield: 'EstDuration', align: 'center', cellsalign: 'center', columngroup: 'Estimated', width: '8%' },
+                { text: '시작일', datafield: 'EstStartDt', align: 'center', cellsalign: 'center', columngroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '15%'},
+                { text: '완료일', datafield: 'EstEndDt', align: 'center', cellsalign: 'center', columngroup: 'Estimated', cellsFormat: 'yyyy-MM-dd',  width: '15%'},
+            ],
+            columngroups: [
+                { text: '예상', align: 'center', name: 'Estimated' }
+            ],
+        });
+
+
         //제품별 이슈현황
 
-        var cIssueSettingExec = {
-            series: cIssueSeriesExec,
-            chart: {
-                type: 'bar',
-                width: '100%',
-                height: 290,
-                zoom: {
-                    enabled: true,
-                },
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: false,
-                        selection: true,
-                        zoom: false,
-                        zoomin: false,
-                        zoomout: false,
-                        pan: true,
-                        reset: true,
-                    },
-                    autoSelected: 'pan'
-                },
-                events: {
-                    dataPointSelection: function (event, chartContext, config) {
-                        var Type = config.w.config.series[config.seriesIndex].name;
-                        CallIssueGrd(selGateRowIdx, Type);
-                    },
-                }
-            },
-            colors: ['#008ffb', '#f44336', '#a4c953'],
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: 80,
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            xaxis: {
-                categories: cIssueTaskListExec,
-                tickPlacement: 'on',
-                labels: {
-                    show: true,
-                    rotate: 0,
-                    rotateAlways: false,
-                    hideOverlappingLabels: true,
-                }
-            },
-            legend: {
-                show: true,
-                position: 'bottom',
-                horizontalAlign: 'center'
-            },
-            grid: {
-                padding: {
-                    left: 50,
-                    right: 50
-                }
-            }
-
-        }
-        cIssueChartExec = new ApexCharts(document.querySelector('#prdtIssueExec'), cIssueSettingExec);
-        cIssueChartExec.render();
+        //var cIssueSettingExec = {
+        //    series: cIssueSeriesExec,
+        //    chart: {
+        //        type: 'bar',
+        //        width: '100%',
+        //        height: 290,
+        //        zoom: {
+        //            enabled: false,
+        //        },
+        //        toolbar: {
+        //            show: false,
+        //            tools: {
+        //                download: false,
+        //                selection: false,
+        //                zoom: false,
+        //                zoomin: false,
+        //                zoomout: false,
+        //                pan: false,
+        //                reset: false,
+        //            },
+        //        },
+        //        events: {
+        //            dataPointSelection: function (event, chartContext, config) {
+        //                var Type = config.w.config.series[config.seriesIndex].name;
+        //                CallIssueGrd(selGateRowIdx, Type);
+        //            },
+        //        }
+        //    },
+        //    colors: ['#008ffb', '#f44336', '#a4c953'],
+        //    plotOptions: {
+        //        bar: {
+        //            horizontal: false,
+        //            columnWidth: 80,
+        //        }
+        //    },
+        //    dataLabels: {
+        //        enabled: false
+        //    },
+        //    xaxis: {
+        //        categories: cIssueTaskListExec,
+        //        tickPlacement: 'on',
+        //        labels: {
+        //            show: true,
+        //            rotate: 0,
+        //            rotateAlways: false,
+        //            hideOverlappingLabels: true,
+        //        }
+        //    },
+        //    yaxis: {
+        //        labels: {
+        //            formatter: function (val) {
+        //                return val.toFixed(0);
+        //            }
+        //        }
+        //    },
+        //        legend: {
+        //            show: true,
+        //            position: 'bottom',
+        //            horizontalAlign: 'center'
+        //        },
+        //    grid: {
+        //        padding: {
+        //            left: 50,
+        //            right: 50
+        //        }
+        //    }
+        //
+        //}
+        //cIssueChartExec = new ApexCharts(document.querySelector('#prdtIssueExec'), cIssueSettingExec);
+        //cIssueChartExec.render();
 
         //상세 이슈 리스트
         $('#checkHighExec').jqxCheckBox({ width: 40, height: 32, checked: true, });
@@ -435,15 +582,16 @@
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (row + 1) + "</div>";
                     }
                 },
-                { text: '이슈내용', datafield: 'Name', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '55%', },
+                { text: '구분', datafield: 'TaskNm', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '20%', },
+                { text: '이슈내용', datafield: 'Name', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '40%', },
                 {
                     text: '상태', datafield: 'BPolicy', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '12%',
                     cellsrenderer: function (row, column, value) {
                         return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
                     }
                 },
-                { text: '예상 처리일', datafield: 'EstFinDt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '25%', cellsFormat: 'yyyy-MM-dd', },
-                { text: 'Importance', datafield: 'Importance', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '25%',hidden:true},
+                { text: '예상 처리일', datafield: 'EstFinDt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '20%', cellsFormat: 'yyyy-MM-dd', },
+                { text: 'Importance', datafield: 'Importance', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '25%', hidden: true },
             ],
         });
         issueListExec$.on('rowdoubleclick', function (e) {
@@ -472,7 +620,8 @@
         CallGateReview(1, function () {
             var data = gateReviewGridExec$.jqxGrid('getrowdata', 0);
             if (data != null) {
-                CallIssue(data.OID);
+                //CallIssue(data.OID);
+                ExecTaskGateIssueCall(data.OID, 0, data.Name);
                 selGateRowIdx = data.OID;
             }
         });
@@ -487,10 +636,27 @@
                 return;
             }
             PrintJqxGrid(gateReviewSource, gateReviewGridExec$, res);
+            if (res.length == 0) {
+                PrintJqxGrid(getTaskGateGridExecSource, getTaskGateGridExec$, null);
+                CEOProjectOID = null;
+                CEOProjectNm = null;
+                PrintJqxGrid(issueListExecSource, issueListExec$, null);
+            }
+
             if (func != null) {
                 func();
+            } else {
+                var data = gateReviewGridExec$.jqxGrid('getrowdata', 0);
+                if (data != null) {
+                    //CallIssue(data.OID);
+                    ExecTaskGateIssueCall(data.OID, 0, data.Name);
+                    selGateRowIdx = data.OID;
+                }
             }
         });
+        var selItem = $('#mainStatusCountExec > div:nth-of-type(' + (num + 1) + ')');
+        $('#mainStatusCountExec > div').removeClass('activeItem');
+        selItem.addClass('activeItem');
     }
     function CallTaskCnt(row, ProjectOID, Index) {
 
@@ -503,32 +669,76 @@
             $('#' + ProjectOID).data('gate', Index);
         });
     }
-    function CallIssue(OID) {
 
-        //var cIssueChartCEO = new ApexCharts(document.querySelector('#prdtIssueCEO'), cIssueSettingCEO);
-        //cIssueChartCEO.render();
 
-        cIssueTaskListCEO = [];
-        cIssueTaskListExec = [];
+    function ExecTaskGateIssueCall(ProjectOID, Index, ProjectNm, row) {
+        ExecTaskGate(ProjectOID, Index, ProjectNm);
+        CallIssueGrd(ProjectOID, null);
+        if (row != null) {
+            CallTaskCnt(row, ProjectOID, 0);
+        }
+    }
 
-        RequestData('/Pms/CallDashboardIssue', { OID: OID }, function (res) {
-            _.each(res.PROJECT, function (item) {
-                var sItem = item.split(' ');
-                cIssueTaskListCEO.push([sItem[sItem.length - 1]]);
-            });
-
-            _.each(res.COUNT, function (item, key) {
-                cIssueTaskListExec.push({
-                    'name': key,
-                    'data': item
-                });
-            });
-
-            cIssueChartExec.updateOptions({ xaxis: { categories: cIssueTaskListCEO } });
-            cIssueChartExec.updateSeries(cIssueTaskListExec);
-
+    function ExecTaskGate(ProjectOID, Index, ProjectNm) {
+        ExecProjectOID = ProjectOID;
+        ExecProjectNm = ProjectNm;
+        RequestData('/Pms/SelDelayWbs', { 'ProjectOID': ProjectOID, 'Index': Index }, function (res) {
+            PrintJqxGrid(getTaskGateGridExecSource, getTaskGateGridExec$, res);
         });
     }
+
+
+    //function CallIssue(OID, row) {
+    //
+    //    if (row != null) {
+    //        CallTaskCnt(row, OID, 0);
+    //    }
+    //
+    //    //var cIssueChartCEO = new ApexCharts(document.querySelector('#prdtIssueCEO'), cIssueSettingCEO);
+    //    //cIssueChartCEO.render();
+    //
+    //    cIssueTaskListCEO = [];
+    //    cIssueTaskListExec = [];
+    //
+    //    RequestData('/Pms/CallDashboardIssue', { OID: OID }, function (res) {
+    //        _.each(res.PROJECT, function (item) {
+    //            //var sItem = item.split(' ');
+    //            //cIssueTaskListCEO.push([sItem[sItem.length - 1]]);
+    //
+    //            var sItem = item.split(' ');
+    //
+    //            var sitemparam = [];
+    //
+    //            var halfstring = Math.round(sItem.length / 2);
+    //            var topitem = "";
+    //            var bottomitem = "";
+    //            for (var i = 0; i < halfstring; i++) {
+    //                topitem = topitem + " " + sItem[i];
+    //            }
+    //
+    //            for (halfstring; halfstring < sItem.length; halfstring++) {
+    //                bottomitem = bottomitem + " " + sItem[halfstring];
+    //            }
+    //
+    //            sitemparam.push(topitem);
+    //            sitemparam.push(bottomitem);
+    //
+    //            cIssueTaskListCEO.push(sitemparam);
+    //        });
+    //
+    //        _.each(res.COUNT, function (item, key) {
+    //            cIssueTaskListExec.push({
+    //                'name': key,
+    //                'data': item
+    //            });
+    //        });
+    //
+    //        cIssueChartExec.updateOptions({ xaxis: { categories: cIssueTaskListCEO } });
+    //        cIssueChartExec.updateSeries(cIssueTaskListExec);
+    //
+    //    });
+    //}
+
     function CallIssueGrd(OID, Type) {
       param = {};
         param.OID = OID;

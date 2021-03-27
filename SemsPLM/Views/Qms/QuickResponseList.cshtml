@@ -100,15 +100,30 @@
     <div style="display:flex;flex-direction:row;justify-content:flex-end;align-items:center;">
 
         <label>Warning 색상표시(</label>
-
-        <div style="width:13px;height:13px;background-color:yellow;"></div>
+        <div class="kanban-legend">
+            <ul>
+                <li>
+                    <div style="background-color:yellow;margin-left:5px;" class="legend-color"></div>
+                    <label>:일정 이전</label>
+                </li>
+                <li>
+                    <div style="background-color:red;" class="legend-color"></div>
+                    <label>:일정 경과</label>
+                </li>
+                <li style="margin-right:0px;">
+                    <div style="background-color:lightgreen;" class="legend-color"></div>
+                    <label>:일정내 완료)</label>
+                </li>
+            </ul>
+        </div>
+        @*<div style="width:13px;height:13px;background-color:yellow;"></div>
         <label>:일정 이전</label>
         &nbsp;
         <div style="width:13px;height:13px;background-color:red;"></div>
         <label>:일정 경과</label>
         &nbsp;
         <div style="width:13px;height:13px;background-color:lightgreen;"></div>
-        <label>:일정내 완료)</label>
+        <label>:일정내 완료)</label>*@
     </div>
     <div id="SearchQuickResponse_Grid"></div>
 </div>
@@ -259,7 +274,7 @@
         quickResponseList$.jqxGrid({
             theme: "kdnc",
             width: '100%',
-            height: 625,
+            height: 585,
             rowsheight: 40,
             columnsheight: 45,
             source :  new $.jqx.dataAdapter(QuickResponseSource),

@@ -60,7 +60,7 @@
             var param = {};
             param.RootOID = @ViewBag.ProjectOID;
             param.FromOID = @ViewBag.ProcessOID;
-            param.Description = dlgtxtMettingDescription$.val();
+            //param.Description = dlgtxtMettingDescription$.val();
             param.MettingOID = "@(ViewBag.MettingDetail != null ? ViewBag.MettingDetail.OID : null)";
 
             var Files = InfoFiles.Files();
@@ -78,12 +78,17 @@
                     return;
                 }
 
+                var innerParam = {};
+                innerParam.OID = response;
+                innerParam.Description = dlgtxtMettingDescription$.val();
+                RequestData('/Pms/UdtPmsGateMetting', innerParam, function () {
+                    alert("저장되었습니다.");
+                    getPmsGateViewMettingList(mettingSource, grdMetting$);
+                    dlgtxtMettingDescription$.val("");
+                    InfoFiles.ClearFile();
+                });
                 //InfoFiles.ClearFile();
-                dlgtxtMettingDescription$.val("");
 
-
-                getPmsGateViewMettingList(mettingSource, grdMetting$);
-                alert("저장되었습니다.");
 
             });
         });

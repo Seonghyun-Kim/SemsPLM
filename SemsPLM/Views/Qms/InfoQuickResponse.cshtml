@@ -168,7 +168,7 @@
                                 <input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm" style="display:none;" />
                             </td>
                             @*<th><label class="lbText">유발공정</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>*@
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>*@
                         </tr>
                         <tr>
                             <th><label class="lbText">재발여부 </label></th>
@@ -187,16 +187,16 @@
                             <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtMeasureResponseDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.MeasureResponseDt == null ? "" : ViewBag.QuickDetail.MeasureResponseDt.ToString("yyyy-MM-dd"))"></div></td>
                         </tr>
                         @*<tr>
-                            <th><label class="lbText">QA</label></th>
-                            <td colspan="5">
-                                <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
-                            </td>
-                        </tr>*@
+                        <th><label class="lbText">QA</label></th>
+                        <td colspan="5">
+                            <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
+                        </td>
+                    </tr>*@
                         <tr>
                             <th><label class="lbText">등록구분</label></th>
                             <td colspan="5"><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbEnrollmentType_@ViewBag.QuickDetail.OID"></div></td>
                             @*<th><label class="lbText">시정판정</label></th>
-                            <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>*@
+                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>*@
                         </tr>
                     </tbody>
                 </table>
@@ -283,25 +283,25 @@
                 </table>
 
                 @*<label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
-                <table class="infoTable" style="table-layout:fixed;">
-                    <colgroup>
-                        <col style="width:210px;" />
-                        <col style="width:auto;" />
-                        <col style="width:210px;" />
-                        <col style="width:auto;" />
-                        <col style="width:210px;" />
-                        <col style="width:auto;" />
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <th><label class="lbText">일정계획담당자</label></th>
-                            <td colspan="5">
-                                <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
-                                <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>*@
+            <table class="infoTable" style="table-layout:fixed;">
+                <colgroup>
+                    <col style="width:210px;" />
+                    <col style="width:auto;" />
+                    <col style="width:210px;" />
+                    <col style="width:auto;" />
+                    <col style="width:210px;" />
+                    <col style="width:auto;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th><label class="lbText">일정계획담당자</label></th>
+                        <td colspan="5">
+                            <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
+                            <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>*@
 
                 <label><i class="fas fa-caret-square-down"></i> 첨부파일</label>
                 <div id="InfoQuickResponse_fileList_@ViewBag.QuickDetail.OID">
@@ -311,6 +311,9 @@
             <div id="Apphis" class="basic_grid dective">
                 <div id="ApphisInfo_@ViewBag.QuickDetail.OID">
                 </div>
+            </div>
+            <div id="Downhis" class="basic_grid dective">                
+                @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.QuickDetail.OID });}              
             </div>
         </div>
     </div>
@@ -541,7 +544,8 @@
                 RequestHtml('/Common/ApprovalHistory', { OID: QuickDetailOID }, function (res) {
                     $('#ApphisInfo_' + QuickDetailOID).html(res);
                 });
-            }
+            }else if (infoValue == 'fileHistory') {               
+            }            
         });
 
         $('#InfoQuickResponse_EditBtn_' + QuickDetailOID).on('click', function () {

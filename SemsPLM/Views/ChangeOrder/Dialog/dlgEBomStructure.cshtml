@@ -2,3 +2,174 @@
 @{
     Layout = null;
 }
+
+<div id="dlgStructureInfo"></div>
+
+<script>
+    $(function () {
+        var dlgEPartOID = @ViewBag.OID;
+        var dlgEBomParam = {};
+        var maxId = 0;
+
+        dlgEBomParam.OID = dlgEPartOID;
+        var dlgEBomsource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'diseditable', type: 'array' },
+
+                { name: 'OID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'Children', type: 'array' },
+                { name: 'Ord', type: 'number' },
+                { name: 'Count', type: 'number' },
+                { name: 'Action' },
+                { name: 'OldOID' },
+                { name: 'BPolicy' },
+                { name: 'BPolicyNm' },
+
+                { name: 'TimeOID' },
+
+                { name: 'ObjRevision', type: 'text' },
+                { name: 'ObjTdmxOID', type: 'text' },
+                { name: 'ObjIsLatest', type: 'number' },
+
+                { name: 'Level', type: 'number' },
+                { name: 'ObjName', type: 'text' },
+                { name: 'ObjEPartType', type: 'text' },
+                { name: 'ObjITEM_No', type: 'text' },
+                { name: 'ObjITEM_NoNm', type: 'text' },
+                { name: 'ObjMaterial_OID', type: 'text' },
+                { name: 'ObjMaterial_Nm', type: 'text' },
+                { name: 'ObjITEM_Middle', type: 'text' },
+                { name: 'ObjITEM_MiddleNm', type: 'text' },
+                { name: 'ObjThumbnail', type: 'text' },
+                { name: 'ObjBlock_No', type: 'text' },
+                { name: 'ObjBlock_NoNm', type: 'text' },
+                { name: 'ObjProduction_Place', type: 'text' },
+                { name: 'ObjProduction_PlaceNm', type: 'text' },
+                { name: 'ObjCar_Lib_OID', type: 'number' },
+                { name: 'ObjCar_Lib_Nm', type: 'text' },
+                { name: 'ObjDivision' },
+                { name: 'ObjDivisionNm' },
+
+                { name: 'ObjOem_Lib_OID', type: 'number' },
+                { name: 'ObjOem_Lib_Nm', type: 'text' },
+
+                { name: 'ObjTitle', type: 'text' },
+                { name: 'ObjSel_Revision', type: 'text' },
+                { name: 'ObjStandard', type: 'text' },
+            ],
+            hierarchy:
+            {
+                root: 'Children',
+            },
+            id: 'OID',
+        };
+        var dataAdapter = new $.jqx.dataAdapter(dlgEBomsource);
+        const dlgEBomTreeGrid$ = $('#dlgStructureInfo');
+        dlgEBomTreeGrid$.jqxTreeGrid('render');
+        dlgEBomTreeGrid$.jqxTreeGrid({
+            width: "100%",
+            theme: "kdnc",
+            height: 665,
+            sortable: true,
+            showToolbar: true,
+            toolbarHeight: 44,
+            editable: false,
+            source: dataAdapter,
+            selectionMode: 'singleRow',
+
+            columns: [
+                { name: 'Level', dataField: 'Level', type: 'number', width: '8%', editable: false },
+                { name: 'OID', dataField: 'OID', type: 'number', width: '10%', editable: false, hidden: true },
+                { name: 'FromOID', dataField: 'FromOID', type: 'number', width: '10%', editable: false, hidden: true },
+                { name: 'ToOID', dataField: 'ToOID', type: 'number', width: '10%', editable: false, hidden: true },
+
+                { name: 'ObjOem_Lib_Nm', dataField: 'ObjOem_Lib_Nm', type: 'text', text: 'OEM', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjCar_Lib_Nm', dataField: 'ObjCar_Lib_Nm', type: 'text', text: '차종', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjDivisionNm', dataField: 'ObjDivisionNm', type: 'text', text: '구분', width: '5%', editable: false, cellsalign: 'center', align: 'center' },
+                {
+                    name: 'ObjName', id: 'ObjName', dataField: 'ObjName', type: 'text', text: '품번', width: '11%', editable: false, align: 'center',
+                    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+
+                    }
+                },
+                { name: 'ObjTitle', dataField: 'ObjTitle', type: 'text', text: '품명', width: '11%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjITEM_NoNm', dataField: 'ObjITEM_NoNm', type: 'text', text: 'ITEM_NO', width: '10%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjMaterial_Nm', dataField: 'ObjMaterial_Nm', type: 'text', text: '재질', width: '8%', editable: false, cellsalign: 'center', align: 'center' },
+
+                { name: 'ObjStandard', dataField: 'ObjStandard', type: 'text', text: '규격', width: '7%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjSel_Revision', dataField: 'ObjSel_Revision', type: 'text', text: '고객리비전', width: '6%', editable: false, cellsalign: 'center', align: 'center' },
+                { name: 'ObjRevision', dataField: 'ObjRevision', type: 'text', text: '리비전', width: '4%', editable: false, cellsalign: 'center', align: 'center' },
+                { text: '상태', datafield: 'BPolicyNm', width: "4%", align: 'center', cellsalign: 'center', editable: false },
+                {
+                    name: 'Ord', dataField: 'Ord', type: 'number', text: '순서', width: '4%', align: 'center', cellsalign: 'center',
+                    cellsRenderer: function (row, dataField, cellValue, rowData) {
+
+                    },
+                },
+                {
+                    name: 'Count', dataField: 'Count', type: 'number', text: '수량', width: '4%', align: 'center', cellsalign: 'center',
+                    cellsRenderer: function (row, dataField, cellValue, rowData) {
+
+                    },
+                },
+                {
+                    name: 'ObjThumbnail', dataField: 'ObjThumbnail', type: 'text', text: '이미지', width: '10%', editable: false, align: 'center',
+                    cellsrenderer: function (row, column, value) {
+                        if (value.length > 1) {
+                            return "<div class='ebomImg'><img src='@Url.Content("~/images/Thumbnail/")" + value + "'></div>";
+                        } else {
+                            return ""
+                        }
+                    }
+                },
+            ],
+            rendertoolbar: function (toolBar) {
+                const editable = dlgEBomTreeGrid$.jqxTreeGrid('editable');
+                if (!editable && toolBar[0].children.length > 0) {
+                    return;
+                }
+
+                var container = $("<div class='lGridComponent'></div>");
+                var excelButton = $("<button class='custom-button'><i class='fas fa-file-excel'></i> excelExport</button>").jqxButton();
+                var expandButton = $("<button class='custom-button'><i class='fas fa-caret-down'></i> 펼치기</button>").jqxButton();
+                var collapseButton = $("<button class='custom-button'><i class='fas fa-caret-up'></i> 접기</button>").jqxButton();
+
+                container.append(expandButton);
+                container.append(collapseButton);
+                toolBar.append(container);
+
+                expandButton.click(function (event) {
+                    dlgEBomTreeGrid$.jqxTreeGrid('expandAll');
+                });
+
+                collapseButton.click(function (event) {
+                    dlgEBomTreeGrid$.jqxTreeGrid('collapseAll');
+                });
+
+                //excelButton.click(function () {
+                //    dlgEBomTreeGrid$.jqxTreeGrid({
+                //        exportSettings: {
+                //            fileName: "Model.Name"
+                //        }
+                //    });
+                //    dlgEBomTreeGrid$.jqxTreeGrid('exportData', 'xls');
+                //});
+
+            },
+        });
+
+        RequestData('/EBom/SelectEBom', dlgEBomParam, function (res) {
+            PrintJqxTreeGrid(dlgEBomsource, dlgEBomTreeGrid$, [res]);
+            dlgEBomTreeGrid$.jqxTreeGrid('expandAll');
+        });
+
+        var SaveObjName = null;
+        var SaveLevel = null;
+    });
+
+</script>
+

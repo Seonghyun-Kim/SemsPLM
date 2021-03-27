@@ -65,9 +65,9 @@
 
                 ],
             });
-              RequestData("/Pms/@ViewBag.linker", {}, function (res) {
-                  PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
-              });
+            RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
+            });
 
             $('#pmMyDeliveryGrid').on('celldoubleclick', function (event) {
                 const row = event.args.row.bounddata;
@@ -81,7 +81,9 @@
                         gClickDuplication = true;
                         setTimeout(function () {
                             OpenPmsDocumentDialog(function (res) {
-                                getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                    PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
+                                });
                             }, null, param, '/Pms/InfoDocument', '문서 상세');
                             gClickDuplication = false;
                         }, 250);
@@ -91,7 +93,9 @@
                             gClickDuplication = true;
                             setTimeout(function () {
                                 OpenInfoReliabilityDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                        PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
+                                    });
                                 }, null, param, '/Pms/dlgInfoReliabilityForm', '신뢰성 시험 의뢰서 상세');
                                 gClickDuplication = false;
                             }, 250);
@@ -100,7 +104,9 @@
                             gClickDuplication = true;
                             setTimeout(function () {
                                 OpenInfoReliabilityReportDialog(function (res) {
-                                    getProjectDocumentClassificationList(deliveriesSource, deliveriesGrd$, deliveriesparam);
+                                    RequestData("/Pms/@ViewBag.linker", {}, function (res) {
+                                        PrintJqxGrid(deliverySource, $('#pmMyDeliveryGrid'), res);
+                                    });
                                 }, null, param, '/Pms/dlgInfoReliabilityReport', '신뢰성 시험 결과서 상세');
                                 gClickDuplication = false;
                             }, 250);

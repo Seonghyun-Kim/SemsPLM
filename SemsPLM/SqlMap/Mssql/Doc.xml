@@ -66,6 +66,9 @@
         <isNotNull prepend="and" property="DocGroup">
           B.DocGroup = #DocGroup#
         </isNotNull>
+        <isNotNull prepend="and" property="OIDs">
+          A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
       ORDER BY A.OID DESC

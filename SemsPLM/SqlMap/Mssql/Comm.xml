@@ -15,6 +15,7 @@
     <typeAlias alias="ApprovalTask" type="Common.Models.ApprovalTask" />
     <typeAlias alias="ApprovalComment" type="Common.Models.ApprovalComment" />
     <typeAlias alias="HttpFile" type="Common.Models.File.HttpFile" />
+    <typeAlias alias="DFileHistory" type="Common.Models.File.DFileHistory" /> <!--2021.02.28 김성현-->
   </alias>
 
   <statements>
@@ -66,6 +67,9 @@
       </isNotNull>
       <isNotNull prepend="and" property="TdmxOID">
         TdmxOID = #TdmxOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="OIDs">
+        OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
       </isNotNull>
     </select>
 
@@ -182,6 +186,9 @@
           </isNotNull>
           <isNotNull prepend="and" property="NextActionOID">
             NextActionOID = #NextActionOID#
+          </isNotNull>
+          <isNotNull prepend="and" property="OIDs">
+            OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
           </isNotNull>
       </dynamic>
     </select>
@@ -559,6 +566,62 @@
     <update id="DelFile" parameterClass="HttpFile">
       UPDATE T_DFILE  SET DeleteDt = GETDATE(), DeleteUs =  #DeleteUs# WHERE FileOID = #FileOID#
     </update>
+
+
+    <!--2021.02.28 김성현-->
+    <insert id="InsDFileHistory" parameterClass="DFileHistory">
+      <selectKey type="pre" resultClass="int" property="SEQ">
+        SELECT ISNULL(MAX(SEQ),0) + 1 AS SEQ FROM T_DFILE_HISTORY
+      </selectKey>
+      INSERT INTO T_DFILE_HISTORY
+      (SEQ,
+      FileOID,
+      ActionType,
+      ActionUser,
+      ActionIPAddress,
+      ActionMacAddress,
+      SessionID,
+      ActionDt,
+      Description)
+      VALUES
+      (#SEQ#,
+      #FileOID#,
+      #ActionType#,
+      #ActionUser#,
+      #ActionIPAddress#,
+      #ActionMacAddress#,
+      #SessionID#,
+      GETDATE(),
+      #Description#)
+    </insert>
+
+    <select id="SelDFileHistory" parameterClass="DFileHistory" resultClass="DFileHistory">
+      SELECT A.SEQ, A.FileOID, A.ActionType, A.ActionUser, D.Name AS ActionUserNm, A.ActionIPAddress, A.ActionDt, A.ActionMacAddress, A.SessionID, A.Description
+      , B.OrgNm, C.OID, C.Name, C.Type
+      FROM T_DFILE_HISTORY A
+      LEFT JOIN T_DFILE B ON A.FileOID = B.FileOID
+      LEFT JOIN V_DOBJECT C ON B.OID = C.OID
+      LEFT JOIN V_DOBJECT D ON A.ActionUser = D.OID
+      <dynamic prepend="WHERE">
+        <isNotNull prepend="AND" property="OID">
+          C.OID = #OID#
+        </isNotNull>
+
+        <isNotNull prepend="AND" property="Type">
+          C.Type = #Type#
+        </isNotNull>
+
+        <isNotNull prepend="AND" property="FileOID">
+          A.FileOID = #FileOID#
+        </isNotNull>
+
+        <isNotNull prepend="AND" property="ActionUser">
+          A.ActionUser = #ActionUser#
+        </isNotNull>
+      </dynamic>
+    </select>
+    
+    
 
   </statements>
 </sqlMap>

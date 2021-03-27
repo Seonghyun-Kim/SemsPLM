@@ -108,25 +108,61 @@
 
 
     <update id="UdtChangeOrder" parameterClass="ECO">
-      UPDATE T_DCHANGE_ORDER SET
-      ItemGroup = #ItemGroup#
-      ,Title = #Title#
-      ,DesignChangeDt = #DesignChangeDt#
-      ,ReasonChange = #ReasonChange#
-      ,Compatible = #Compatible#
-      ,IsMold = #IsMold#
-      ,ReasonRegistration = #ReasonRegistration#
-      ,Security = #Security#
-      ,Changes = #Changes#
-      ,Stock = #Stock#
-      ,Memo = #Memo#
-      ,IsAttached = #IsAttached#
-      ,SelRequestDt = #SelRequestDt#
-      ,SelPartNo = #SelPartNo#
-      ,EBom = #EBom#
-      ,DevMP = #DevMP#
-      ,CarType = #CarType#
+      UPDATE T_DCHANGE_ORDER 
+		 <dynamic prepend="SET">
+      <isNotNull prepend="," property="ItemGroup">
+        ItemGroup = #ItemGroup#
+      </isNotNull>
+      <isNotNull prepend="," property="Title">
+        Title = #Title#
+      </isNotNull>
+      <isNotNull prepend="," property="DesignChangeDt">
+        DesignChangeDt = #DesignChangeDt#
+      </isNotNull>
+      <isNotNull prepend="," property="ReasonChange">
+        ReasonChange = #ReasonChange#
+      </isNotNull>
+      <isNotNull prepend="," property="Compatible">
+        Compatible = #Compatible#
+      </isNotNull>
+      <isNotNull prepend="," property="IsMold">
+        IsMold = #IsMold#
+      </isNotNull>
+      <isNotNull prepend="," property="ReasonRegistration">
+        ReasonRegistration = #ReasonRegistration#
+      </isNotNull>
+      <isNotNull prepend="," property="Security">
+        Security = #Security#
+      </isNotNull>
+      <isNotNull prepend="," property="Changes">
+        Changes = #Changes#
+      </isNotNull>
+      <isNotNull prepend="," property="Stock">
+        Stock = #Stock#
+      </isNotNull>
+      <isNotNull prepend="," property="Memo">
+        Memo = #Memo#
+      </isNotNull>
+      <isNotNull prepend="," property="IsAttached">
+        IsAttached = #IsAttached#
+      </isNotNull>
+      <isNotNull prepend="," property="SelRequestDt">
+        SelRequestDt = #SelRequestDt#
+      </isNotNull>
+      <isNotNull prepend="," property="SelPartNo">
+        SelPartNo = #SelPartNo#
+      </isNotNull>
+      <isNotNull prepend="," property="EBom">
+        EBom = #EBom#
+      </isNotNull>
+      <isNotNull prepend="," property="DevMP">
+        DevMP = #DevMP#
+      </isNotNull>
+      <isNotNull prepend="," property="CarType">
+        CarType = #CarType#
+      </isNotNull>
       WHERE OID   =  #OID#
+    </dynamic>
     </update>
     
     

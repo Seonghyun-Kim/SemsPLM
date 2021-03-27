@@ -111,6 +111,9 @@
             <div id="ApphisInfo_@ViewBag.LpaMeasure.OID">
             </div>
         </div>
+        <div id="Downhis" class="basic_grid dective">
+            @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.LpaMeasure.OID });}
+        </div>
     </div>
 </div>
 

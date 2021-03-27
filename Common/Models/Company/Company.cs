@@ -30,14 +30,23 @@ namespace Common.Models
             jqTreeModel.type = CommonConstant.TYPE_COMPANY;
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
+            List<DRelationship> lDRelationship = DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID });
+            if (lDRelationship == null || lDRelationship.Count < 1)
+            {
+                return jqTreeModel;
+            }
+
+            List<int> iOIDs = lDRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            List<DObject> lTmpDepartment = DObjectRepository.SelDObjects(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OIDs = iOIDs });
+            lDRelationship.ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                //tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = lTmpDepartment.Find(data => data.OID == item.ToOID);
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -56,14 +65,23 @@ namespace Common.Models
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
-            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
+
+            List<DRelationship> lDRelationship = DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID });
+            if (lDRelationship == null || lDRelationship.Count < 1)
+            {
+                return;
+            }
+            List<int> iOIDs = lDRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            List<DObject> lTmpDepartment = DObjectRepository.SelDObjects(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OIDs = iOIDs });
+            lDRelationship.ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
                     tmpDepartment = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                //tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = lTmpDepartment.Find(data => data.OID == item.ToOID);
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -108,7 +126,16 @@ namespace Common.Models
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
             List<Person> innerPersonItems = null;
-            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID }).ForEach(item =>
+
+            List<DRelationship> lDRelationship = DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = dCompany.OID });
+            if (lDRelationship == null || lDRelationship.Count < 1)
+            {
+                return jqTreeModel;
+            }
+            List<int> iOIDs = lDRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            List<DObject> lTmpDepartment = DObjectRepository.SelDObjects(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OIDs = iOIDs });
+            List<Person> lPerson = PersonRepository.SelPersons(Context, new Person { });
+            lDRelationship.ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
@@ -119,7 +146,8 @@ namespace Common.Models
                     innerPersonItems = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                //tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = lTmpDepartment.Find(data => data.OID == item.ToOID);
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -127,7 +155,8 @@ namespace Common.Models
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
                 innerJqTreeModel.checkitemtypes = checkitemtypes;
-                innerPersonItems = PersonRepository.SelPersons(Context, new Person { DepartmentOID = tmpDepartment.OID });
+                //innerPersonItems = PersonRepository.SelPersons(Context, new Person { DepartmentOID = tmpDepartment.OID });
+                innerPersonItems = lPerson.FindAll(data => data.DepartmentOID == tmpDepartment.OID);
                 innerPersonItems.ForEach(personItem =>
                 {
                     JqTreeModel personJqTreeModel = new JqTreeModel();
@@ -144,7 +173,7 @@ namespace Common.Models
                     }
                     innerJqTreeModel.items.Add(personJqTreeModel);
                 });
-                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, checkitemtypes);
+                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, checkitemtypes, lPerson);
                 items.Add(innerJqTreeModel);
             });
             jqTreeModel.items = items;
@@ -152,12 +181,20 @@ namespace Common.Models
             return jqTreeModel;
         }
 
-        public static void SelDepartmentWithPerson(HttpSessionStateBase Context, JqTreeModel _jqxTree, DObject _param, List<string> _checkitemtypes)
+        public static void SelDepartmentWithPerson(HttpSessionStateBase Context, JqTreeModel _jqxTree, DObject _param, List<string> _checkitemtypes, List<Person> _AllPerson)
         {
             List<JqTreeModel> items = new List<JqTreeModel>();
             DObject tmpDepartment = null;
             List<Person> personItems = null;
-            DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID }).ForEach(item =>
+            List<DRelationship> lDRelationship = DRelationshipRepository.SelRelationship(Context, new DRelationship { Type = CommonConstant.RELATIONSHIP_DEPARTMENT, FromOID = _param.OID });
+            if (lDRelationship == null || lDRelationship.Count < 1)
+            {
+                return;
+            }
+            List<int> iOIDs = lDRelationship.Select(sel => Convert.ToInt32(sel.ToOID)).ToList();
+            List<DObject> lTmpDepartment = DObjectRepository.SelDObjects(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OIDs = iOIDs });
+
+            lDRelationship.ForEach(item =>
             {
                 if (tmpDepartment != null)
                 {
@@ -168,7 +205,8 @@ namespace Common.Models
                     personItems = null;
                 }
                 JqTreeModel innerJqTreeModel = new JqTreeModel();
-                tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                //tmpDepartment = DObjectRepository.SelDObject(Context, new DObject { Type = CommonConstant.TYPE_DEPARTMENT, OID = item.ToOID });
+                tmpDepartment = lTmpDepartment.Find(data => data.OID == item.ToOID);
                 innerJqTreeModel.id = tmpDepartment.OID;
                 innerJqTreeModel.label = tmpDepartment.Name;
                 innerJqTreeModel.icon = CommonConstant.ICON_DEPARTMENT;
@@ -176,7 +214,8 @@ namespace Common.Models
                 innerJqTreeModel.expanded = true;
                 innerJqTreeModel.type = CommonConstant.TYPE_DEPARTMENT;
                 innerJqTreeModel.checkitemtypes = _checkitemtypes;
-                personItems = PersonRepository.SelPersons(Context, new Person { DepartmentOID = tmpDepartment.OID });
+                //personItems = PersonRepository.SelPersons(Context, new Person { DepartmentOID = tmpDepartment.OID });
+                personItems = _AllPerson.FindAll(data => data.DepartmentOID == tmpDepartment.OID);
                 personItems.ForEach(personItem =>
                 {
                     JqTreeModel personJqTreeModel = new JqTreeModel();
@@ -193,7 +232,7 @@ namespace Common.Models
                     }
                     innerJqTreeModel.items.Add(personJqTreeModel);
                 });
-                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, _checkitemtypes);
+                SelDepartmentWithPerson(Context, innerJqTreeModel, tmpDepartment, _checkitemtypes, _AllPerson);
                 items.Add(innerJqTreeModel);
             });
             if (_jqxTree.items == null)

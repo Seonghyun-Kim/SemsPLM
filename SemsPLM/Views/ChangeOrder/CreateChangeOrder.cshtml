@@ -1,25 +1,25 @@
 ﻿@{
     Layout = null;
 }
-    <div class="info_project clearfix">
-        <div class="info_menubar clearfix" style="width:250px;">
-            <ul id="ECOMenu">
-                <li class="tab info_focus" info="ECOprofile"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
-                <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
-                <li class="tab" info="ECRRelation"><i class="fas fa-file"></i> 연관 변경요청</li>
-                <li class="tab" info="ECOList"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
-                <li class="tab" info="ECOStatement"><i class="fas fa-stream"></i> 설계변경 내역서</li>
-            </ul>
-        </div>
+<div class="info_project clearfix">
+    <div class="info_menubar clearfix" style="width:250px;">
+        <ul id="ECOMenu">
+            <li class="tab info_focus" info="ECOprofile"><i class="fas fa-info-circle"></i> 설계변경 프로파일</li>
+            <li class="tab" info="ECOEffectAssess"><i class="fas fa-file"></i> 설계변경 영향성 평가</li>
+            <li class="tab" info="ECRRelation"><i class="fas fa-file"></i> 연관 변경요청</li>
+            <li class="tab" info="ECOList"><i class="fas fa-file-medical"></i> 설계변경 리스트</li>
+            <li class="tab" info="ECOStatement"><i class="fas fa-stream"></i> 설계변경 내역서</li>
+        </ul>
+    </div>
 
-        <div class="eBomChangeContents">
-            <div class="eBomChangeTitle">
-                <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
-                <button id="ECOSaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
-            </div>
-            <div id="ECOprofile" class="ecoContents">
-                <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
-                <div class="scrollY" style="height:720px;">
+    <div class="eBomChangeContents">
+        <div class="eBomChangeTitle">
+            <h2><i class="fas fa-edit"></i> 설계변경 등록</h2>
+            <button id="ECOSaveBtn" class="custom-button"><i class="fas fa-save"></i> 저장</button>
+        </div>
+        <div id="ECOprofile" class="ecoContents">
+            <h3><i class="fa fa-info-circle"></i> 기본정보</h3>
+            <div class="scrollY" style="height:720px;">
                 <table class="infoTable">
                     <colgroup>
                         <col width="10%" />
@@ -127,28 +127,28 @@
                         </tr>
                     </tbody>
                 </table>
-                </div>
-            </div>
-
-            <div id="ECOEffectAssess" class="ecoContents dective">
-                <div class="scrollY" style="height:770px;">
-                    <table id="effectAssessList" class="effectAssessList">
-                    </table>
-                </div>
-            </div>
-            <div id="ECRRelation" class="ecoContents dective">
-                <div id="ECRRelationGrid"></div>
-            </div>
-            <div id="ECOList" class="ecoContents dective">
-                <div id="ECOListGrid"></div>
-            </div>
-
-            <div id="ECOStatement" class="ecoContents dective">
-                <div id="ECOStatementGrid"></div>
             </div>
         </div>
+
+        <div id="ECOEffectAssess" class="ecoContents dective">
+            <div class="scrollY" style="height:770px;">
+                <table id="effectAssessList" class="effectAssessList">
+                </table>
+            </div>
+        </div>
+        <div id="ECRRelation" class="ecoContents dective">
+            <div id="ECRRelationGrid"></div>
+        </div>
+        <div id="ECOList" class="ecoContents dective">
+            <div id="ECOListGrid"></div>
+        </div>
+
+        <div id="ECOStatement" class="ecoContents dective">
+            <div id="ECOStatementGrid"></div>
+        </div>
     </div>
-    <script type="text/javascript">
+</div>
+<script type="text/javascript">
         var ECRRelationGrid$ = $('#ECRRelationGrid');
         var ECOListGrid$ = $('#ECOListGrid');
         var ECOStatementGrid$ = $('#ECOStatementGrid');
@@ -722,7 +722,7 @@
                 param.EBom = $('#CreateChangeOrder_EBom').val();
                 param.DevMP = devType$.val();
                 param.CarType = $('#CreateChangeOrder_CarType').val();
-                param.Description = $('#CreateChangeOrder_Description').val();
+              //  param.Description = $('#CreateChangeOrder_Description').val();
                 var chkReason = [];
                 for (var i = 0; i < $('input[name="Changes"]').length; i++) {
                     if ($('input[name="Changes"]')[i].value == "true") {
@@ -793,9 +793,19 @@
                         alert(response.resultMessage);
                         return;
                     }
-                    alert("저장되었습니다.");
-                    gClickDuplication = false;
-                    PageReload();
+                    var innerParam = {};
+                    innerParam.OID = response;
+                    innerParam.Description = $('#CreateChangeOrder_Description').val();
+                    innerParam.Title = $('#CreateChangeOrder_Title').val();
+                    RequestData('/ChangeOrder/UdtChangeOrder', innerParam, function (response) {
+                        if (response.isError) {
+                            alert(response.resultMessage);
+                            return;
+                        }
+                        alert("저장되었습니다.");
+                        gClickDuplication = false;
+                        PageReload();
+                    });
                 });
             });
         });
@@ -847,7 +857,7 @@
             });
         }
 
-    </script>    
+</script>
 
 
 

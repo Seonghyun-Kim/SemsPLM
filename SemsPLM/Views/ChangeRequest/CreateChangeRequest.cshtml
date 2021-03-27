@@ -145,163 +145,154 @@
         var InfoFiles = $('#CreateEcrFile').FileUpload();
         $(function () {
             InfoFiles.EditMode();
-        $('.ECRComboBox').jqxComboBox({ width: '50%', height: 32 });
-        $('.ECRCheckBox').jqxCheckBox({ width: 120, height: 32 });
-        $('.ECRDatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
-        $(".ECRDatetimeInput").jqxDateTimeInput({ value: null });
+            $('.ECRComboBox').jqxComboBox({ width: '50%', height: 32 });
+            $('.ECRCheckBox').jqxCheckBox({ width: 120, height: 32 });
+            $('.ECRDatetimeInput').jqxDateTimeInput({ width: 225, height: 32, formatString: 'yyyy-MM-dd' });
+            $(".ECRDatetimeInput").jqxDateTimeInput({ value: null });
 
-        $('.ECRRadioBtn').jqxRadioButton({ width: 120, height: 32 });
-        $('[group="ECRcompatibleR"]').jqxRadioButton({ groupName: 'compatibleR' });
-        $('[group="ECRmoldModR"]').jqxRadioButton({ groupName: 'moldModR' });
-        $('[group="ECRreasonR"]').jqxRadioButton({ groupName: 'reasonR' });
-        $('[group="ECRsecurityR"]').jqxRadioButton({ groupName: 'securityR' });
-        $('[group="ECRstockR"]').jqxRadioButton({ groupName: 'stockR' });
-        $('[group="ECRdataYNR"]').jqxRadioButton({ groupName: 'dataYNR' });
+            $('.ECRRadioBtn').jqxRadioButton({ width: 120, height: 32 });
+            $('[group="ECRcompatibleR"]').jqxRadioButton({ groupName: 'compatibleR' });
+            $('[group="ECRmoldModR"]').jqxRadioButton({ groupName: 'moldModR' });
+            $('[group="ECRreasonR"]').jqxRadioButton({ groupName: 'reasonR' });
+            $('[group="ECRsecurityR"]').jqxRadioButton({ groupName: 'securityR' });
+            $('[group="ECRstockR"]').jqxRadioButton({ groupName: 'stockR' });
+            $('[group="ECRdataYNR"]').jqxRadioButton({ groupName: 'dataYNR' });
 
-        var CreateEcrCompatible = null;
-        var CreateEcrIsMold = null;
-        var CreateEcrReasonRegistration = null;
-        var CreateEcrSecurity = null;
-        var CreateEcrStock = null;
-        var CreateEcrIsAttached = null;
+            var CreateEcrCompatible = null;
+            var CreateEcrIsMold = null;
+            var CreateEcrReasonRegistration = null;
+            var CreateEcrSecurity = null;
+            var CreateEcrStock = null;
+            var CreateEcrIsAttached = null;
 
-        $('[group="ECRcompatibleR"]').on('checked', function (event) {
-            CreateEcrCompatible = $(this).data('value'); //호환성
-        });
-        $('[group="ECRmoldModR"]').on('checked', function (event) {
-            CreateEcrIsMold = $(this).data('value'); //금형
-        });
-        $('[group="ECRreasonR"]').on('checked', function (event) {
-            CreateEcrReasonRegistration = $(this).data('value'); //등록사유
-        });
-        $('[group="ECRsecurityR"]').on('checked', function (event) {
-            CreateEcrSecurity = $(this).data('value'); //보안여부
-        });
-        $('[group="ECRstockR"]').on('checked', function (event) {
-            CreateEcrStock = $(this).data('value'); //재고
-        });
-        $('[group="ECRdataYNR"]').on('checked', function (event) {
-            CreateEcrIsAttached = $(this).data('value'); //유첨
-        });
-
-
-        var ECRDevMP$ = $('#CreateEcrDevMP');
-        var ECRDevTypeList = [
-            { type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
-            { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }
-        ];
-        var ECRDevMPSource =
-        {
-            localdata: ECRDevTypeList,
-            datatype: "json",
-            datafields:
-                [
-                    { name: 'type', type: 'string' },
-                    { name: 'value', type: 'string' },
-                ]
-        };
-        var ECRdevAdapter = new $.jqx.dataAdapter(ECRDevMPSource);
-        ECRDevMP$.jqxComboBox({ source: ECRdevAdapter, displayMember: "type", valueMember: "value" });
+            $('[group="ECRcompatibleR"]').on('checked', function (event) {
+                CreateEcrCompatible = $(this).data('value'); //호환성
+            });
+            $('[group="ECRmoldModR"]').on('checked', function (event) {
+                CreateEcrIsMold = $(this).data('value'); //금형
+            });
+            $('[group="ECRreasonR"]').on('checked', function (event) {
+                CreateEcrReasonRegistration = $(this).data('value'); //등록사유
+            });
+            $('[group="ECRsecurityR"]').on('checked', function (event) {
+                CreateEcrSecurity = $(this).data('value'); //보안여부
+            });
+            $('[group="ECRstockR"]').on('checked', function (event) {
+                CreateEcrStock = $(this).data('value'); //재고
+            });
+            $('[group="ECRdataYNR"]').on('checked', function (event) {
+                CreateEcrIsAttached = $(this).data('value'); //유첨
+            });
 
 
-        var ECRreasonChange$ = $('#CreateEcrReasonChangeRequest');
-        var ECRreasonList$ =  @Html.Raw(Json.Encode(ViewBag.ECRreasonList));
-        var ECRreasonSource =
-        {
-            localdata: ECRreasonList$,
-            datatype: "json",
-            datafields:
-                [
-                    { name: 'KorNm', type: 'string' },
-                    { name: 'OID', type: 'int' },
-                ]
-        };
-        var ECRreasonAdapter = new $.jqx.dataAdapter(ECRreasonSource);
-        ECRreasonChange$.jqxComboBox({ source: ECRreasonAdapter, displayMember: "KorNm", valueMember: "OID" });
+            var ECRDevMP$ = $('#CreateEcrDevMP');
+            var ECRDevTypeList = [
+                { type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
+                { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }
+            ];
+            var ECRDevMPSource =
+            {
+                localdata: ECRDevTypeList,
+                datatype: "json",
+                datafields:
+                    [
+                        { name: 'type', type: 'string' },
+                        { name: 'value', type: 'string' },
+                    ]
+            };
+            var ECRdevAdapter = new $.jqx.dataAdapter(ECRDevMPSource);
+            ECRDevMP$.jqxComboBox({ source: ECRdevAdapter, displayMember: "type", valueMember: "value" });
 
-        var CreateECRRelatedData = [];
 
-        $('#ECRMenu > .tab').on('click', function () {
-            if ($(this).hasClass('info_focus')) {
-                return;
-            }
-            const menu$ = $('#ECRMenu'),
-                contents$ = $('.eBomChangeContents');
-            const self$ = $(this);
-            const ecrValue = self$.attr('info');
-            menu$.find('[class="tab info_focus"]').removeClass('info_focus');
-            self$.addClass('info_focus');
-            contents$.find('[class="ecrContents"]').addClass('dective');
-            contents$.find('[id="' + ecrValue + '"]').removeClass('dective');
+            var ECRreasonChange$ = $('#CreateEcrReasonChangeRequest');
+            var ECRreasonList$ =  @Html.Raw(Json.Encode(ViewBag.ECRreasonList));
+            var ECRreasonSource =
+            {
+                localdata: ECRreasonList$,
+                datatype: "json",
+                datafields:
+                    [
+                        { name: 'KorNm', type: 'string' },
+                        { name: 'OID', type: 'int' },
+                    ]
+            };
+            var ECRreasonAdapter = new $.jqx.dataAdapter(ECRreasonSource);
+            ECRreasonChange$.jqxComboBox({ source: ECRreasonAdapter, displayMember: "KorNm", valueMember: "OID" });
 
-            if (ecrValue == 'ECRProfile') {
+            var CreateECRRelatedData = [];
+            $('#CreateEcrSave').on('click', function () {
+                if (gClickDuplication) { return; }
+                gClickDuplication = true;
+                var param = {};
+                // param.Description = $('#CreateEcrDescription').val();
 
-                $('#CreateEcrSave').on('click', function () {
-                    if (gClickDuplication) { return; }
+                param.ItemGroup = $('#CreateEcrItemGroup').val();
+                param.Title = $('#CreateEcrTitle').val();
+                param.DesignChangeDt = $('#CreateEcrDesignChangeDt').val();
+                param.ReasonChangeRequest = $('#CreateEcrReasonChangeRequest').val();
+                param.Compatible = CreateEcrCompatible;
+                param.IsMold = CreateEcrIsMold;
+                param.ReasonRegistration = CreateEcrReasonRegistration;
+                param.Security = CreateEcrSecurity;
+
+                var chkECRChanges = [];
+                for (var i = 0; i < $('input[name="chkECRChanges"]').length; i++) {
+                    if ($('input[name="chkECRChanges"]')[i].value == "true") {
+                        chkECRChanges.push($('div[name="chkECRChanges"]').eq(i).data('value'));
+                    }
+                }
+
+                param.Changes = chkECRChanges.join(',');;
+
+                param.Stock = CreateEcrStock;
+                param.Memo = $('#CreateEcrMemo').val();
+                param.IsAttached = CreateEcrIsAttached;
+                param.SelRequestDt = $('#CreateEcrSelRequestDt').val();
+                param.SelPartNo = $('#CreateEcrSelPartNo').val();
+                param.EBom = $('#CreateEcrEBom').val();
+                param.DevMP = $('#CreateEcrDevMP').val();
+                param.CarType = $('#CreateEcrCarType').val();
+
+                var CreateECRStatementGridData = $('#CreateECRStatementGrid').jqxGrid('getrows');
+
+                if (param.Title == "" || param.Title == null) {
+                    alert('제목을 입력하여 주세요.');
                     gClickDuplication = false;
-                    var param = {};
+                    return;
+                }
+                if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
+                    alert('설계변경일자를 선택하여 주세요.');
+                    gClickDuplication = false;
+                    return;
+                }
+                if (param.ReasonChangeRequest == "" || param.ReasonChangeRequest == null) {
+                    alert('변경요청사유를 선택하여 주세요.');
+                    gClickDuplication = false;
+                    return;
+                }
+                if (param.DevMP == "" || param.DevMP == null) {
+                    alert('개발/양산 구분을 선택하여 주세요.');
+                    gClickDuplication = false;
+                    return;
+                }
 
-                    param.Description = $('#CreateEcrDescription').val();
-
-                    param.ItemGroup = $('#CreateEcrItemGroup').val();
-                    param.Title = $('#CreateEcrTitle').val();
-                    param.DesignChangeDt = $('#CreateEcrDesignChangeDt').val();
-                    param.ReasonChangeRequest = $('#CreateEcrReasonChangeRequest').val();
-                    param.Compatible = CreateEcrCompatible;
-                    param.IsMold = CreateEcrIsMold;
-                    param.ReasonRegistration = CreateEcrReasonRegistration;
-                    param.Security = CreateEcrSecurity;
-
-                    var chkECRChanges = [];
-                    for (var i = 0; i < $('input[name="chkECRChanges"]').length; i++) {
-                        if ($('input[name="chkECRChanges"]')[i].value == "true") {
-                            chkECRChanges.push($('div[name="chkECRChanges"]').eq(i).data('value'));
-                        }
-                    }
-                    
-                    param.Changes = chkECRChanges.join(',');;
-
-                    param.Stock = CreateEcrStock;
-                    param.Memo = $('#CreateEcrMemo').val();
-                    param.IsAttached = CreateEcrIsAttached;
-                    param.SelRequestDt = $('#CreateEcrSelRequestDt').val();
-                    param.SelPartNo = $('#CreateEcrSelPartNo').val();
-                    param.EBom = $('#CreateEcrEBom').val();
-                    param.DevMP = $('#CreateEcrDevMP').val();
-                    param.CarType = $('#CreateEcrCarType').val();
-
-                    var CreateECRStatementGridData = $('#CreateECRStatementGrid').jqxGrid('getrows');
-
-                    if (param.Title == "" || param.Title == null) {
-                        alert('제목을 입력하여 주세요.');
-                        gClickDuplication = false;
+                var Files = InfoFiles.Files();
+                var removeFiles = InfoFiles.RemoveFiles();
+                if (!WebUtils.isEmpty(removeFiles)) {
+                    param.delFiles = [];
+                    param.delFiles = removeFiles;
+                }
+                param.Files = Files;
+                SendDataWithFile('/ChangeRequest/InsertChangeRequest', { _param: param, ECR_STATEMENT: CreateECRStatementGridData, ECRRelatedData: CreateECRRelatedData }, Files, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
                         return;
                     }
-                    if (param.DesignChangeDt == "" || param.DesignChangeDt == null) {
-                        alert('설계변경일자를 선택하여 주세요.');
-                        gClickDuplication = false;
-                        return;
-                    }
-                    if (param.ReasonChangeRequest == "" || param.ReasonChangeRequest == null) {
-                        alert('변경요청사유를 선택하여 주세요.');
-                        gClickDuplication = false;
-                        return;
-                    }
-                    if (param.DevMP == "" || param.DevMP == null) {
-                        alert('개발/양산 구분을 선택하여 주세요.');
-                        gClickDuplication = false;
-                        return;
-                    }
-
-                    var Files = InfoFiles.Files();
-                    var removeFiles = InfoFiles.RemoveFiles();
-                    if (!WebUtils.isEmpty(removeFiles)) {
-                        param.delFiles = [];
-                        param.delFiles = removeFiles;
-                    }
-                    param.Files = Files;
-
-                    SendDataWithFile('/ChangeRequest/InsertChangeRequest', { _param: param, ECR_STATEMENT: CreateECRStatementGridData, ECRRelatedData: CreateECRRelatedData }, Files, function (response) {
+                    var innerParam = {};
+                    innerParam.OID = response;
+                    innerParam.Description = $('#CreateEcrDescription').val();
+                    innerParam.Title = $('#CreateEcrTitle').val();
+                    RequestData('/ChangeRequest/UdtEcrObj', innerParam, function (response) {
                         if (response.isError) {
                             alert(response.resultMessage);
                             return;
@@ -310,206 +301,223 @@
                         gClickDuplication = false;
                         PageReload();
                     });
-
                 });
 
-            } else if (ecrValue == 'CreateECRStatement') {
-                var Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
-                var CreateECRStatementSource = {
-                    datatype: 'json',
-                    datafields: [
-                        { name: 'OID' },
-                        { name: 'PNo' },
-                        { name: 'RootOID' },
-                        { name: 'Type' },
-                        { name: 'PName' },
-                        { name: 'BfThumbnail' },
-                        { name: 'AfThumbnail' },
-                        { name: 'Statement' },
-                        { name: 'Description' },
-                        { name: 'Stamp' },
-                        { name: 'CreateUsNm' },
-                        { name: 'CreateDt', type: 'date' },
-                    ],
-                    updateRow: function (rowID, rowData, commit) {
-                        commit(true);
-
-                    }
+            });
+            $('#ECRMenu > .tab').on('click', function () {
+                if ($(this).hasClass('info_focus')) {
+                    return;
                 }
+                const menu$ = $('#ECRMenu'),
+                    contents$ = $('.eBomChangeContents');
+                const self$ = $(this);
+                const ecrValue = self$.attr('info');
+                menu$.find('[class="tab info_focus"]').removeClass('info_focus');
+                self$.addClass('info_focus');
+                contents$.find('[class="ecrContents"]').addClass('dective');
+                contents$.find('[id="' + ecrValue + '"]').removeClass('dective');
 
-                const CreateECRStatementGrid$ = $('#CreateECRStatementGrid');
-                CreateECRStatementGrid$.jqxGrid('render');
-                CreateECRStatementGrid$.jqxGrid({
-                    theme: "kdnc",
-                    width: "100%",
-                    height: 767,
-                    rowsheight: 200,
-                    columnsheight: 30,
-                    editable: true,
-                    selectionmode: 'checkbox',
-                    sortable: false,
-                    pageable: false,
-                    columns: [
-                        {
-                            text: 'P/NO', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
-                            validation: function (cell, value) {
-                                if (value == '' || value == null) {
-                                    return { result: false, message: "P/NO를 입력해주세요" };
-                                }
-                                return true;
-                            }
-                        },
-                        {
-                            text: 'P/NAME', datafield: 'PName', width: "18%", align: 'center', cellsalign: 'center',
-                        },
-                        {
-                            text: '변경 전', datafield: 'BfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
-                            createwidget: function (row, column, value, htmlElement) {
-                                var uid = row.bounddata.uid;
-                                var div = '<div class="basic_image ChangeRequestImg">';
-                                div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
-                                div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                                div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
-                                $(htmlElement).append(div);
-                                if (value != null && value != '') {
-                                    $(htmlElement).find('#dropZone1_' + uid).empty();
-                                    $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                                }
-                            },
-                            initwidget: function (row, column, value, htmlElement) {
+                if (ecrValue == 'ECRProfile') {
 
-                            }
-                        },
-                        {
-                            text: '변경 후', datafield: 'AfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
-                            createwidget: function (row, column, value, htmlElement) {
-                                var uid = row.bounddata.uid;
-                                var div = '<div class="basic_image ChangeRequestImg">';
-                                div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
-                                div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
-                                div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
-                                $(htmlElement).append(div);
-                                
-                                if (value != null && value != '') {
-                                    $(htmlElement).find('#dropZone2_' + uid).empty();
-                                    $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
-                                }
-                                dropImage(uid);
-                            },
-                            initwidget: function (row, column, value, htmlElement) {
+                    
 
-                            }
-                        },
-                        { text: '변경 내역', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
-                        { text: '비고', datafield: 'Description', width: "21.2%", align: 'center', },
-                    ],
-                    showtoolbar: true,
-                    toolbarheight: 45,
-                    renderToolbar: function (statusbar) {
-                        statusbar.empty();
-                        const container$ = $('<div class="lGridComponent"></div>');
-                        var EcrStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                        var EcrStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
+                } else if (ecrValue == 'CreateECRStatement') {
+                    var Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
+                    var CreateECRStatementSource = {
+                        datatype: 'json',
+                        datafields: [
+                            { name: 'OID' },
+                            { name: 'PNo' },
+                            { name: 'RootOID' },
+                            { name: 'Type' },
+                            { name: 'PName' },
+                            { name: 'BfThumbnail' },
+                            { name: 'AfThumbnail' },
+                            { name: 'Statement' },
+                            { name: 'Description' },
+                            { name: 'Stamp' },
+                            { name: 'CreateUsNm' },
+                            { name: 'CreateDt', type: 'date' },
+                        ],
+                        updateRow: function (rowID, rowData, commit) {
+                            commit(true);
 
-                        container$.append(EcrStatementAddBtn$);
-                        container$.append(EcrStatementDelBtn$);
-                        statusbar.append(container$);
-
-                        EcrStatementAddBtn$.on('click', function (e) {
-                            var rowData = {};
-                            rowData.Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
-                            CreateECRStatementGrid$.jqxGrid('addrow', null, rowData);
-                            CreateECRStatementGrid$.jqxGrid({ editable: true });
-                        });
-
-                        EcrStatementDelBtn$.on('click', function (e) {
-                            var rowindex = CreateECRStatementGrid$.jqxGrid('selectedrowindexes');
-                            rowindex.sort();
-                            if (rowindex == null || rowindex == undefined) {
-                                alert('삭제할 행을 선택하여 주세요');
-                            } else {
-                                if (confirm('삭제하시겠습니까?')) {
-                                    for (var i = rowindex.length - 1; i >= 0; i--) {
-                                        var id = CreateECRStatementGrid$.jqxGrid('getrowid', rowindex[i]);
-                                        CreateECRStatementGrid$.jqxGrid('deleterow', id);
-                                    }
-                                }
-                            }
-                        });
-                    },
-                });
-
-            } else if (ecrValue == 'ECRRelated') {
-
-                var CreateECRRelatedSource = {
-                    datatype: 'json',
-                    datafields: [
-                        { name: 'OID' },
-                        { name: 'Name' },
-                        { name: 'DesignChangeDt' },
-                        { name: 'CreateUs' },
-                        { name: 'BPolicy' },
-                        { name: 'BPolicyOID' },
-                    ],
-                };
-                const CreateECRRelatedGrid$ = $('#CreateECRRelatedGrid');
-                CreateECRRelatedGrid$.jqxGrid('render');
-                CreateECRRelatedGrid$.jqxGrid({
-                    theme: "kdnc",
-                    width: "100%",
-                    height: 767,
-                    columnsheight: 30,
-                    editable: false,
-                    selectionmode: 'checkbox',
-                    sortable: false,
-                    pageable: false,
-                    columns: [
-                        { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
-                        { text: 'ECO_NO', datafield: 'Name', width: '28.2%', },
-                        { text: 'ECO_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd'},
-                        { text: '작성자', datafield: 'CreateUs', width: '10%', },
-                        { text: '상태', datafield: 'BPolicyOID', width: '40%', },
-                    ],
-                    showtoolbar: true,
-                    toolbarheight: 45,
-                    renderToolbar: function (statusbar) {
-                        statusbar.empty();
-                        var container$ = $('<div class="lGridComponent"></div>');
-                        var EcrRelatedAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
-                        var EcrRelatedDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
-
-                        container$.append(EcrRelatedAddBtn$);
-                        container$.append(EcrRelatedDelBtn$);
-                        statusbar.append(container$);
-
-                        EcrRelatedAddBtn$.on('click', function (e) {
-                            OpenSearchECODialog(
-                                function (res) {
-                                    PrintJqxGrid(CreateECRRelatedSource, CreateECRRelatedGrid$, CreateECRRelatedData);
-                                }, null, CreateECRRelatedData, '/ChangeRequest/dlgSearchECO', 'ECO 검색', CreateECRRelatedGrid$, CreateECRRelatedSource);
-                        });
-
-                        EcrRelatedDelBtn$.on('click', function (e) {
-                            var rowindex = CreateECRRelatedGrid$.jqxGrid('selectedrowindexes');
-                            rowindex.sort();
-                            if (rowindex == null || rowindex == undefined) {
-                                alert('삭제할 행을 선택하여 주세요');
-                            } else {
-                                if (confirm('삭제하시겠습니까?')) {
-                                    for (var i = rowindex.length - 1; i >= 0; i--) {
-                                        var id = CreateECRRelatedGrid$.jqxGrid('getrowid', rowindex[i]);
-                                        CreateECRRelatedData.splice(id, 1);
-                                        CreateECRRelatedGrid$.jqxGrid('deleterow', id);
-                                    }
-                                }
-                            }
-                        });
+                        }
                     }
-                });
-            }
+
+                    const CreateECRStatementGrid$ = $('#CreateECRStatementGrid');
+                    CreateECRStatementGrid$.jqxGrid('render');
+                    CreateECRStatementGrid$.jqxGrid({
+                        theme: "kdnc",
+                        width: "100%",
+                        height: 767,
+                        rowsheight: 200,
+                        columnsheight: 30,
+                        editable: true,
+                        selectionmode: 'checkbox',
+                        sortable: false,
+                        pageable: false,
+                        columns: [
+                            {
+                                text: 'P/NO', datafield: 'PNo', width: "11%", align: 'center', cellsalign: 'center',
+                                validation: function (cell, value) {
+                                    if (value == '' || value == null) {
+                                        return { result: false, message: "P/NO를 입력해주세요" };
+                                    }
+                                    return true;
+                                }
+                            },
+                            {
+                                text: 'P/NAME', datafield: 'PName', width: "18%", align: 'center', cellsalign: 'center',
+                            },
+                            {
+                                text: '변경 전', datafield: 'BfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
+                                createwidget: function (row, column, value, htmlElement) {
+                                    var uid = row.bounddata.uid;
+                                    var div = '<div class="basic_image ChangeRequestImg">';
+                                    div += '<input type="file" name="file1_' + uid + '" multiple="true" id="imageDrag1_' + uid + '" style="display:none;">';
+                                    div += '<div class="image_inputbox" id="dropZone1_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                    div += '<ul class="image_thumbnail" id="uploadResult1_' + uid + '"></div>';
+                                    $(htmlElement).append(div);
+                                    if (value != null && value != '') {
+                                        $(htmlElement).find('#dropZone1_' + uid).empty();
+                                        $(htmlElement).find('#dropZone1_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                    }
+                                },
+                                initwidget: function (row, column, value, htmlElement) {
+
+                                }
+                            },
+                            {
+                                text: '변경 후', datafield: 'AfThumbnail', width: "14%", align: 'center', cellsalign: 'center',
+                                createwidget: function (row, column, value, htmlElement) {
+                                    var uid = row.bounddata.uid;
+                                    var div = '<div class="basic_image ChangeRequestImg">';
+                                    div += '<input type="file" name="file2_' + uid + '" multiple="true" id="imageDrag2_' + uid + '" style="display:none;">';
+                                    div += '<div class="image_inputbox" id="dropZone2_' + uid + '"><span class="imgPlaceholder">이미지</span></div>';
+                                    div += '<ul class="image_thumbnail" id="uploadResult2_' + uid + '"></div>';
+                                    $(htmlElement).append(div);
+
+                                    if (value != null && value != '') {
+                                        $(htmlElement).find('#dropZone2_' + uid).empty();
+                                        $(htmlElement).find('#dropZone2_' + uid).append('<img class="img-thumbnail" src="@Url.Content("~/images/Thumbnail/")' + value + '" />');
+                                    }
+                                    dropImage(uid);
+                                },
+                                initwidget: function (row, column, value, htmlElement) {
+
+                                }
+                            },
+                            { text: '변경 내역', datafield: 'Statement', width: "20%", align: 'center', cellsalign: 'center', },
+                            { text: '비고', datafield: 'Description', width: "21.2%", align: 'center', },
+                        ],
+                        showtoolbar: true,
+                        toolbarheight: 45,
+                        renderToolbar: function (statusbar) {
+                            statusbar.empty();
+                            const container$ = $('<div class="lGridComponent"></div>');
+                            var EcrStatementAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                            var EcrStatementDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
+
+                            container$.append(EcrStatementAddBtn$);
+                            container$.append(EcrStatementDelBtn$);
+                            statusbar.append(container$);
+
+                            EcrStatementAddBtn$.on('click', function (e) {
+                                var rowData = {};
+                                rowData.Type = '@Common.Constant.EoConstant.TYPE_ECR_STATEMENT';
+                                CreateECRStatementGrid$.jqxGrid('addrow', null, rowData);
+                                CreateECRStatementGrid$.jqxGrid({ editable: true });
+                            });
+
+                            EcrStatementDelBtn$.on('click', function (e) {
+                                var rowindex = CreateECRStatementGrid$.jqxGrid('selectedrowindexes');
+                                rowindex.sort();
+                                if (rowindex == null || rowindex == undefined) {
+                                    alert('삭제할 행을 선택하여 주세요');
+                                } else {
+                                    if (confirm('삭제하시겠습니까?')) {
+                                        for (var i = rowindex.length - 1; i >= 0; i--) {
+                                            var id = CreateECRStatementGrid$.jqxGrid('getrowid', rowindex[i]);
+                                            CreateECRStatementGrid$.jqxGrid('deleterow', id);
+                                        }
+                                    }
+                                }
+                            });
+                        },
+                    });
+
+                } else if (ecrValue == 'ECRRelated') {
+
+                    var CreateECRRelatedSource = {
+                        datatype: 'json',
+                        datafields: [
+                            { name: 'OID' },
+                            { name: 'Name' },
+                            { name: 'DesignChangeDt' },
+                            { name: 'CreateUs' },
+                            { name: 'BPolicy' },
+                            { name: 'BPolicyOID' },
+                        ],
+                    };
+                    const CreateECRRelatedGrid$ = $('#CreateECRRelatedGrid');
+                    CreateECRRelatedGrid$.jqxGrid('render');
+                    CreateECRRelatedGrid$.jqxGrid({
+                        theme: "kdnc",
+                        width: "100%",
+                        height: 767,
+                        columnsheight: 30,
+                        editable: false,
+                        selectionmode: 'checkbox',
+                        sortable: false,
+                        pageable: false,
+                        columns: [
+                            { text: 'NO', width: '5%', cellsalign: 'center', columntype: 'number', align: 'center', },
+                            { text: 'ECO_NO', datafield: 'Name', width: '28.2%', },
+                            { text: 'ECO_NO 일자', datafield: 'DesignChangeDt', width: '15%', type: 'text', align: 'center', cellsalign: 'center', text: '설계변경일자', cellsFormat: 'yyyy-MM-dd' },
+                            { text: '작성자', datafield: 'CreateUs', width: '10%', },
+                            { text: '상태', datafield: 'BPolicyOID', width: '40%', },
+                        ],
+                        showtoolbar: true,
+                        toolbarheight: 45,
+                        renderToolbar: function (statusbar) {
+                            statusbar.empty();
+                            var container$ = $('<div class="lGridComponent"></div>');
+                            var EcrRelatedAddBtn$ = $('<button class="custom-button"><i class="fas fa-plus-square"></i> 추가</button>').jqxButton();
+                            var EcrRelatedDelBtn$ = $('<button class="custom-button"><i class="fas fa-minus-square"></i> 삭제</button>').jqxButton();
+
+                            container$.append(EcrRelatedAddBtn$);
+                            container$.append(EcrRelatedDelBtn$);
+                            statusbar.append(container$);
+
+                            EcrRelatedAddBtn$.on('click', function (e) {
+                                OpenSearchECODialog(
+                                    function (res) {
+                                        PrintJqxGrid(CreateECRRelatedSource, CreateECRRelatedGrid$, CreateECRRelatedData);
+                                    }, null, CreateECRRelatedData, '/ChangeRequest/dlgSearchECO', 'ECO 검색', CreateECRRelatedGrid$, CreateECRRelatedSource);
+                            });
+
+                            EcrRelatedDelBtn$.on('click', function (e) {
+                                var rowindex = CreateECRRelatedGrid$.jqxGrid('selectedrowindexes');
+                                rowindex.sort();
+                                if (rowindex == null || rowindex == undefined) {
+                                    alert('삭제할 행을 선택하여 주세요');
+                                } else {
+                                    if (confirm('삭제하시겠습니까?')) {
+                                        for (var i = rowindex.length - 1; i >= 0; i--) {
+                                            var id = CreateECRRelatedGrid$.jqxGrid('getrowid', rowindex[i]);
+                                            CreateECRRelatedData.splice(id, 1);
+                                            CreateECRRelatedGrid$.jqxGrid('deleterow', id);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            $('.info_focus').click();
         });
-        $('.info_focus').click();
-    });
 
         function dropImage(uid) {
             $('#dropZone1_' + uid).simpleUpload({
