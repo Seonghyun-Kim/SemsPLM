@@ -324,6 +324,10 @@ namespace SemsPLM.Controllers
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
+            Library partnersKey = LibraryRepository.SelLibraryObject(new Library { Name = "PARTNERS" }); // 협력사
+            List<Library> partnersList = LibraryRepository.SelLibrary(new Library { FromOID = partnersKey.OID });
+            ViewBag.partnersList = partnersList;
+
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
@@ -381,9 +385,17 @@ namespace SemsPLM.Controllers
             List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
             ViewBag.factoryList = factoryList;
 
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });// OEM
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
+
+            Library partnersKey = LibraryRepository.SelLibraryObject(new Library { Name = "PARTNERS" }); // 협력사
+            List<Library> partnersList = LibraryRepository.SelLibrary(new Library { FromOID = partnersKey.OID });
+            ViewBag.partnersList = partnersList;
+
+            Library imputeDeptKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE_DEPART" });
+            List<Library> imputeDeptList = LibraryRepository.SelLibrary(new Library { FromOID = imputeDeptKey.OID });  // 자체
+            ViewBag.imputeDeptList = imputeDeptList;
 
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함

@@ -109,6 +109,8 @@
       UPDATE T_DQMS_QUICK
       SET
       OID = #OID#
+      ,ImputeDepartmentOID = #ImputeDepartmentOID#
+      ,ImputeSupplierOID = #ImputeSupplierOID#
       <isNotNull prepend="," property="PlantLibOID">
         PlantLibOID = #PlantLibOID#
       </isNotNull>
@@ -160,15 +162,7 @@
       <isNotNull prepend="," property="ImputeLibOID">
         ImputeLibOID = #ImputeLibOID#
       </isNotNull>
-
-      <isNotNull prepend="," property="ImputeDepartmentOID">
-        ImputeDepartmentOID = #ImputeDepartmentOID#
-      </isNotNull>
-
-      <isNotNull prepend="," property="ImputeSupplierOID">
-        ImputeSupplierOID = #ImputeSupplierOID#
-      </isNotNull>
-
+      
       <isNotNull prepend="," property="Summary">
         Summary = #Summary#
       </isNotNull>
