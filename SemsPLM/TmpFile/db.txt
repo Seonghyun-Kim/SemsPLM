@@ -564,3 +564,16 @@ T_BSUB_MENU
 113	BLOCKADE_ITEM_SALES_STARAGE	Exist	113	존재함	NULL	NULL	1	NULL	NULL	NULL
 114	BLOCKADE_ITEM_LOGISTICS	Exist	114	존재함	NULL	NULL	1	NULL	NULL	NULL
 115	BLOCKADE_ITEM_CUSTOMER	Exist	115	존재함	NULL	NULL	1	NULL	NULL	NULL
+
+
+
+라이브러리 추가
+
+QMS - 봉쇄조치방법(BLOCKADE_ACTION_METHOD)
+
+QMS - 봉쇄조치방법 - 선별
+QMS - 봉쇄조치방법 - 재작업
+QMS - 봉쇄조치방법 - 수리
+QMS - 봉쇄조치방법 - 폐기
+QMS - 봉쇄조치방법 - 반출
+QMS - 봉쇄조치방법 - 기타
