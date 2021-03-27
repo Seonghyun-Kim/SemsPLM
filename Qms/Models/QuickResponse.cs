@@ -192,6 +192,7 @@ namespace Qms.Models
 
 
         public List<QuickResponseModule> Modules { get; set; }
+        public List<QuickResponseTeam> TeamList { get; set; }
 
         #region -- File
         public List<HttpPostedFileBase> Files { get; set; }
@@ -518,6 +519,60 @@ namespace Qms.Models
         public static int UdtQuickResponseModule(QuickResponseModule _param)
         {
             return DaoFactory.SetUpdate("Qms.UdtQuickResponseModule", _param);
+        }
+    }
+
+    public class QuickResponseTeam : DObject, IDObject
+    {
+        // 신속대응 OID 
+        public int? QuickOID { get; set; }
+
+        // 구성원 권한 
+        public int? RoleLibOID { get; set; }
+
+        // 사용자 
+        public int? QuickUserOID { get; set; }
+
+        #region -- View
+        public string RoleLibNm { get; set; }
+
+        public int? QuickDeptOID { get; set; }
+        public string QuickDeptNm { get; set; }
+
+        public string QuickUserNm { get; set; }
+        #endregion
+
+        #region -- Search
+        public string IsRemove { get; set; }
+
+        #endregion
+    }
+
+    public static class QuickResponseTeamRepository
+    {
+        public static QuickResponseTeam SelQuickResponseTeam(QuickResponseTeam _param)
+        {
+            return DaoFactory.GetData<QuickResponseTeam>("Qms.SelQuickResponseTeam", _param);
+        }
+
+        public static List<QuickResponseTeam> SelQuickResponseTeams(QuickResponseTeam _param)
+        {
+            return DaoFactory.GetList<QuickResponseTeam>("Qms.SelQuickResponseTeam", _param);
+        }
+
+        public static int InsQuickResponseTeam(QuickResponseTeam _param)
+        {
+            return DaoFactory.SetInsert("Qms.InsQuickResponseTeam", _param);
+        }
+
+        public static int UdtQuickResponseTeam(QuickResponseTeam _param)
+        {
+            return DaoFactory.SetUpdate("Qms.UdtQuickResponseTeam", _param);
+        }
+
+        public static int DelQuickResponseTeam(QuickResponseTeam _param)
+        {
+            return DaoFactory.SetUpdate("Qms.DelQuickResponseTeam", _param);
         }
     }
 }

@@ -24,7 +24,27 @@
 
     @{Html.RenderAction("QuickResponseSummary", "Qms");}
 
-    <label><i class="fas fa-toggle-on"></i> 신속대응</label>
+    <label><i class="fas fa-toggle-on"></i> TEAM 구성</label>
+    <div class="scrollY" style="height:250px;">
+        <table id="tbDlgQuickResponseTeam" class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:5%" />
+                <col style="width:10%" />
+                <col style="width:15%" />
+                <col style="width:15%" />
+                <col style="width:8%" />
+            </colgroup>
+            <tr>
+                <th>No.</th>
+                <th>구성원</th>
+                <th>부서</th>
+                <th>이름</th>
+                <th><button id="btnDlgQuickResponseTeamAdd" class="custom-button">추가</button></th>
+            </tr>
+        </table>
+    </div>
+    
+    <label><i class="fas fa-toggle-on"></i> 신속대응 일정관리</label>
     <table class="infoTable" style="table-layout:fixed;">
 
         <colgroup>
@@ -211,8 +231,8 @@
 
 <script type="text/javascript">
     var fileUpload = $("#fileDlgQuickResponsePlan").FileUpload({ OID: "@Model.OID", Type : "@Common.Constant.QmsConstant.TYPE_QUICK_RESPONSE_PLAN" });
-
-    $(document).ready(function () {   
+    var tempNo = 1;
+    $(document).ready(function () {
         @if (Model.PlanUserOID == Convert.ToInt32(Session["UserOID"]) && (Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_PREPARE || Model.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_STARTED))
         {
         <text>
@@ -283,10 +303,10 @@
             <text>$("#txtDlgBloackAdePlanDt").val("@ViewBag.Blockade.EstEndDt.ToString("yyyy-MM-dd")")</text>
         }
 
-        $("#txtDlgBloackAdePlanDt").on('change', function (event) 
-        {  
-            var jsDate = event.args.date; 
-            
+        $("#txtDlgBloackAdePlanDt").on('change', function (event)
+        {
+            var jsDate = event.args.date;
+
             $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 7));
             $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 14));
             $("#txtDlgErrorProofPlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 14));
@@ -294,7 +314,7 @@
             $("#txtDlgCheckPlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 34));
             $("#txtDlgStandardPlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 35));
             $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput('setDate', addDays(jsDate, 40));
-        }); 
+        });
 
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput(DateFormat);
         $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({
@@ -412,13 +432,13 @@
             $("#btnDlgCheckPlanUserSearch").jqxButton({ disabled:true });
             $("#btnDlgStandardPlanUserSearch").jqxButton({ disabled:true });
             $("#btnDlgWorkerEduPlanUserSearch").jqxButton({ disabled: true });
-            
+
             $('#btnErrorProofUseFl').jqxSwitchButton({ disabled: true});
             $('#btnLpaUnfitUseFl').jqxSwitchButton({ disabled: true});
             $('#btnCheckUseFl').jqxSwitchButton({ disabled: true});
             $('#btnStandardUseFl').jqxSwitchButton({ disabled: true});
             $('#btnWorkerEduUseFl').jqxSwitchButton({ disabled: true});
-            
+
             $("#txtDlgBloackAdePlanDt").jqxDateTimeInput({ disabled: true});
             $("#txtDlgOccurrenceCausePlanDt").jqxDateTimeInput({ disabled: true});
             $("#txtDlgImproveCountermeasurePlanDt").jqxDateTimeInput({ disabled: true});
@@ -427,14 +447,133 @@
             $("#txtDlgCheckPlanDt").jqxDateTimeInput({ disabled: true});
             $("#txtDlgStandardPlanDt").jqxDateTimeInput({ disabled: true});
             $("#txtDlgWorkerEduPlanDt").jqxDateTimeInput({ disabled: true});
-            </text>           
+            </text>
         }
 
+        var QuickTeamList = @Html.Raw(Json.Encode(ViewBag.QuickTeamList));
+
+        if (QuickTeamList.length === 0) {
+            for (var i = 0; i < 5; i++) {
+                AddQuickResponseteam(null);
+            }
+        } else {
+            QuickTeamList.forEach(function (v, i) {
+                AddQuickResponseteam(v);
+            });
+        }
+
+        $("#btnDlgQuickResponseTeamAdd").on("click", function () {
+            AddQuickResponseteam(null);
+        });
 
         $("#btnDlgSave").on("click", function () {
             SaveQuickResponse();
         })
     });
+
+    var AddQuickResponseteam = function (data) {
+        var OID = data == null ? null : data.OID;
+        var table$ = $("#tbDlgQuickResponseTeam tbody");
+
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("Data", "Y");
+        tr$.setAttribute("OID", OID);
+
+        var tdTeamNo$ = document.createElement("td");
+        var lbTeamNo$ = document.createElement("label");
+        lbTeamNo$.innerText = tempNo++;
+
+        tdTeamNo$.appendChild(lbTeamNo$);
+
+        var tdTeamRole$ = document.createElement("td");
+        var cbTeamRole$ = document.createElement("div");
+        cbTeamRole$.setAttribute("DataId", "cbTeamRole");
+
+        $(cbTeamRole$).jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.TeamLibList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 220, height: 30 });
+        if (data != null) {
+            $(cbTeamRole$).jqxComboBox('selectItem', data.RoleLibOID);
+        }
+
+        tdTeamRole$.appendChild(cbTeamRole$);
+
+        var tdTempDept$ = document.createElement("td");
+        var txtTempDept$ = document.createElement("input");
+        txtTempDept$.disabled = true;
+        txtTempDept$.style.width = "100%";
+        txtTempDept$.setAttribute("DataId", "txtTempDept");
+
+        if (data != null) {
+            txtTempDept$.setAttribute("QuickDeptOID", data.QuickDeptOID);
+            txtTempDept$.value = data.QuickDeptNm;
+        }
+
+        tdTempDept$.appendChild(txtTempDept$);
+
+        var tdTempUser$ = document.createElement("td");
+        var txtTempUser$ = document.createElement("input");
+        txtTempUser$.style.width = "100%";
+        txtTempUser$.disabled = true;
+        txtTempUser$.setAttribute("DataId", "txtTempUser");
+
+        tdTempUser$.appendChild(txtTempUser$);
+
+        var tdTempSearchUser$ = document.createElement("td");
+        var divTempName$ = document.createElement("div");
+        var btnTempUser$ = document.createElement("button");
+        var btnDelTempUser$ = document.createElement("button");
+        btnTempUser$.className = "custom-button";
+        btnDelTempUser$.className = "custom-button";
+
+        $(divTempName$).css("display", "flex");
+
+        if (data != null) {
+            txtTempUser$.setAttribute("QuickUserOID", data.QuickUserOID);
+            txtTempUser$.value = data.QuickUserNm;
+        }
+
+        $(btnTempUser$).on("click", function () {
+            OpenApprovalPersonDialog(function (res) {
+                if (res.length > 1) {
+                    alert("담당자는 한명만 지정 할 수 있습니다.");
+                    return;
+                }
+
+                txtTempUser$.value = res[0].Name;
+                txtTempUser$.setAttribute("QuickUserOID", res[0].OID);
+
+                txtTempDept$.value = res[0].Depart;
+                txtTempDept$.setAttribute("DepartOID", res[0].DepartOID);
+
+            }, null, null, '/Common/ApprovalPerson', '사용자 검색');
+        });
+
+        $(btnDelTempUser$).on("click", function () {
+            tr$.setAttribute("Remove", "Y");
+            tr$.style.display = "none";
+        });
+
+        var isearch$ = document.createElement("i");
+        isearch$.innerText = "검색";
+        isearch$.className = "fas fa-search";
+
+        var isearchDel$ = document.createElement("i");
+        isearchDel$.innerText = "삭제";
+        isearchDel$.className = "fas fa-minus";
+
+        btnTempUser$.appendChild(isearch$);
+        btnDelTempUser$.appendChild(isearchDel$);
+        divTempName$.appendChild(btnTempUser$);
+        divTempName$.appendChild(btnDelTempUser$);
+        tdTempSearchUser$.appendChild(divTempName$);
+
+        tr$.appendChild(tdTeamNo$);
+        tr$.appendChild(tdTeamRole$);
+        tr$.appendChild(tdTempDept$);
+        tr$.appendChild(tdTempUser$);
+        tr$.appendChild(tdTempSearchUser$);
+
+        table$.append(tr$);
+    }
 
     var SelectModulePlanUser = function (textBoxID) {
         OpenApprovalPersonDialog(function (res) {
@@ -562,6 +701,45 @@
         }
 
         param.Modules = params;
+
+        // Team
+        var trTeam$ = $("#tbDlgQuickResponseTeam tr[Data='Y']");
+        param.TeamList = [];
+
+        var isTeamRequier = false;
+        var errorMsg = "";
+        trTeam$.each(function (i, v) {
+            var data = {};
+            var cbTeamRole$ = $(v).find("[DataId='cbTeamRole']")[0];
+            var txtTempDept$ = $(v).find("[DataId='txtTempDept']")[0];
+            var txtTempUser$ = $(v).find("[DataId='txtTempUser']")[0];
+
+            data.OID = v.OID;
+            data.QuickOID = $("#hiddenDlgQuickOID").val();
+            data.RoleLibOID = WebUtils.GetComboObjectValue(cbTeamRole$);
+            data.QuickUserOID = $(txtTempUser$).attr("QuickUserOID");
+
+            if ($(v).attr("Remove") !== "Y") {
+                if (WebUtils.isEmpty(data.RoleLibOID)) {
+                    errorMsg += "[" + i + "] 구성원을 선택해주세요.\n";
+                    isTeamRequier = true;
+                }
+
+                if (WebUtils.isEmpty(data.QuickUserOID)) {
+                    errorMsg += "[" + i + "] 사용자를 선택해주세요.\n";
+                    isTeamRequier = true;
+                }
+            } else {
+                data.IsRemove = "Y";
+            }
+
+            param.TeamList.push(data);
+        });
+
+        if (isTeamRequier) {
+            alert(errorMsg);
+            return;
+        }
 
         var Files = fileUpload.Files();
 

@@ -2106,6 +2106,12 @@ namespace SemsPLM.Controllers
                 }
             });
 
+            Library TeamLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "QUICK_TEMP_ROLE" });
+            List<Library> TeamLibList = LibraryRepository.SelLibrary(new Library { FromOID = TeamLibKey.OID });  // Team
+            ViewBag.TeamLibList = TeamLibList;
+
+            ViewBag.QuickTeamList = QuickResponseTeamRepository.SelQuickResponseTeams(new QuickResponseTeam { QuickOID = quickResponse.OID});
+
             return View("Dialog/dlgEditQuickResponsePlan", QuickResponseRepository.SelQuickResponse(quickResponse));
         }
 
@@ -2152,6 +2158,41 @@ namespace SemsPLM.Controllers
 
                         quick.BPolicyOID = 54; //검토중으로 변경
                         DObjectRepository.UdtDObject(Session, quick);
+                    }
+                });
+
+                // Team 추가
+                _param.TeamList.ForEach(v =>
+                {
+                    v.Type = QmsConstant.TYPE_QUICK_RESPONSE_TEAM;
+                    // 신규 추가
+                    if (v.OID == null)
+                    {
+                        if (v.IsRemove == "Y")
+                        {
+                            return;
+                        }
+
+                        DObject dobj = new DObject();
+                        dobj.Type = v.Type;
+                        dobj.Name = v.Type + "_" + v.QuickOID;
+                        v.OID = DObjectRepository.InsDObject(Session, dobj);
+
+                        QuickResponseTeamRepository.InsQuickResponseTeam(v);
+                    }
+                    else
+                    {
+                        // 기존 항목 삭제
+                        if (v.IsRemove == "Y")
+                        {
+                            v.Type = QmsConstant.TYPE_QUICK_RESPONSE_TEAM;
+                            DObjectRepository.DelDObject(Session, v, null);
+                        }
+                        // 기존 항목 업데이트
+                        else
+                        {
+                            QuickResponseTeamRepository.UdtQuickResponseTeam(v);
+                        }
                     }
                 });
 
