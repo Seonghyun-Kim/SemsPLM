@@ -292,3 +292,69 @@ function OpenDlgQuickResponsePlan(QuickResponseOID) {
 function CloseDlgQuickResponse() {
     $("#dlgEditQuickResponse").jqxWindow("close");
 }
+
+// 표준화 문서 검색
+function OpenQmsCommonDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    if (WebUtils.isEmpty(_Param)) {
+        _Param = {};
+    }
+
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1200 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (800 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1200, height: 800, minHeight: 800, maxWidth: 1200, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
+            $('#dlgDocumentGrid').jqxGrid({
+                renderToolbar: function (toolbar) {
+                    toolbar.empty();
+                    var container = $("<div class='lGridComponent'></div>");
+                    var btnAdd = $("<button id=''><i class='fas fa-plus'></i> 선택</button>").jqxButton();
+                    container.append(btnAdd);
+                    toolbar.append(container);
+
+                    btnAdd.on('click', function () {
+                        var checkIdx = $('#dlgDocumentGrid').jqxGrid('getselectedrowindex');
+                        if (WebUtils.isEmpty(checkIdx)) {
+                            alert('문서를 선택해주세요.');
+                            return;
+                        }
+
+                        var rowData = $('#dlgDocumentGrid').jqxGrid('getrowdata', checkIdx);
+
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction(rowData);
+                        }
+
+                        $(popLayer).jqxWindow("close");
+                    });
+                }
+            });
+        }
+    });
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}

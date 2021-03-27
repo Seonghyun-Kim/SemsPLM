@@ -794,8 +794,14 @@
 
     <!-- StdDoc SQL -->
     <select id="SelStandardDoc" parameterClass="StandardDoc" resultClass="StandardDoc">
-      SELECT A.*
+      SELECT
+      A.*
+      , OB.Name AS DocClassNm
+      , C.Title AS DocNm
       FROM T_DQMS_STANDARD_DOC A
+      LEFT JOIN T_DDOCUMENT_CLASSIFICATION B ON A.DocType = B.OID
+      LEFT JOIN T_DDOCUMENT C ON A.DocOID = C.OID
+      LEFT JOIN T_DOBJECT OB ON B.OID = OB.OID
       <dynamic prepend="where">
       </dynamic>
     </select>
@@ -807,14 +813,16 @@
       DocType,
       DocOID,
       DocSummary,
-      DocCompleteDt)
+      DocCompleteDt,
+      DocFl)
       VALUES
       (#OID#,
       #ModuleOID#,
       #DocType#,
       #DocOID#,
       #DocSummary#,
-      #DocCompleteDt#)
+      #DocCompleteDt#,
+      #DocFl#)
     </insert>
 
     <update id="UdtStandardDoc" parameterClass="StandardDoc">
@@ -823,7 +831,8 @@
       DocType = #DocType#,
       DocOID = #DocOID#,
       DocSummary = #DocSummary#,
-      DocCompleteDt = #DocCompleteDt#
+      DocCompleteDt = #DocCompleteDt#,
+      DocFl = #DocFl#
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
 

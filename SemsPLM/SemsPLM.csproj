@@ -3929,6 +3929,7 @@
     <Content Include="Views\Pms\Dashboard\dlgProjectDelayList.cshtml" />
     <Content Include="Views\ChangeOrder\Dialog\dlgEBomStructure.cshtml" />
     <Content Include="Views\Common\Partitial\ptFileHistory.cshtml" />
+    <Content Include="Views\Qms\Dialog\dlgSearchDocument.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2,6 +2,7 @@
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using Document.Models;
 using OfficeOpenXml;
 using Pms.Models;
 using Qms.Models;
@@ -3161,14 +3162,16 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                _param.Type = QmsConstant.TYPE_STANDARD;
 
                 foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
                 {
+                    standardDoc.ModuleOID = _param.ModuleOID;
                     if (standardDoc.OID == null)
                     {
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_STANDARD_DOC_ITEM;
-                        dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + standardDoc.ModuleOID;
+                        dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + _param.ModuleOID;
                         standardDoc.OID = DObjectRepository.InsDObject(Session, dobj);
 
                         StandardDocRepository.InsStandardDoc(standardDoc);
@@ -3177,6 +3180,19 @@ namespace SemsPLM.Controllers
                     {
                         StandardDocRepository.UdtStandardDoc(standardDoc);
                     }
+                }
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
                 }
 
                 DaoFactory.Commit();
@@ -3189,6 +3205,14 @@ namespace SemsPLM.Controllers
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
         }
+        public ActionResult SearchDocument(Doc _param)
+        {
+
+            //  ViewBag.Detail = DocRepository.SelDocObject(Session, new Doc { OID = _param.OID });
+            return PartialView("Dialog/dlgSearchDocument");
+        }
+
+
         #endregion
 
         #endregion
