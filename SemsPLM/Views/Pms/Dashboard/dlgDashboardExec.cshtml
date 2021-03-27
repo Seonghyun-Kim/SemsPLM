@@ -1,0 +1,578 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="cDashboard">
+    <div class="mainStatusCount">
+        <h3>전체 ITEM 관리현황</h3>
+        <div style="width:12.5%;padding:18px 10px 12px;">
+            <div style="background-color:#FEB019;" class="icon">
+                <i class="fas fa-list-ul"></i>
+            </div>
+            <div class="text">
+                <h4 style="line-height:20px;">개발 진행중<br />전체 프로젝트</h4>
+                <p><span id="" style="font-size:21px;font-weight:bold;">@ViewBag.ItemCount[0]</span>건</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(1,null)">
+            <div style="background-color:#008FFB;" class="icon">
+                <i class="fas fa-thermometer-three-quarters"></i>
+            </div>
+            <div class="text">
+                <h4>PTC</h4>
+                <p><span id="">@ViewBag.ItemCount[1]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ? Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[1])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(2,null)">
+            <div style="background-color:#FF4560;" class="icon">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <div class="text">
+                <h4>Actuator</h4>
+                <p><span id="">@ViewBag.ItemCount[2]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[2])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(3,null)">
+            <div style="background-color:#00E396;" class="icon">
+                <i class="fas fa-weight"></i>
+            </div>
+            <div class="text">
+                <h4>Control</h4>
+                <p><span id="">@ViewBag.ItemCount[3]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[3])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(4,null)">
+            <div style="background-color:#26a69a;" class="icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="text">
+                <h4>Clutch Coil</h4>
+                <p><span id="">@ViewBag.ItemCount[4]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[4])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(5,null)">
+            <div style="background-color:#775DD0;" class="icon">
+                <i class="fas fa-rss"></i>
+            </div>
+            <div class="text">
+                <h4>Sensor</h4>
+                <p><span id="">@ViewBag.ItemCount[5]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[5])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(6,null)">
+            <div style="background-color:#D10CE8;" class="icon">
+                <i class="fas fa-tablets"></i>
+            </div>
+            <div class="text">
+                <h4>Valve</h4>
+                <p><span id="">@ViewBag.ItemCount[6]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[6])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+        <div onclick="CallGateReview(7,null)">
+            <div style="background-color:#546E7A;" class="icon">
+                <i class="fas fa-wine-bottle"></i>
+            </div>
+            <div class="text">
+                <h4>EPB</h4>
+                <p><span id="">@ViewBag.ItemCount[7]</span>건 (<span>@(Convert.ToDouble(ViewBag.ItemCount[0])>0 ?Convert.ToInt32(((Convert.ToDouble(ViewBag.ItemCount[7])) / (Convert.ToDouble(ViewBag.ItemCount[0])) * 100)):0)</span>%)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="gateReviewGrid">
+        <h3>ITEM별 Gate Review 진행현황</h3>
+        <div class='kanban-legend'>
+            <ul>
+                <li>
+                    <div style="background:#888888;" class="legend-color"></div>
+                    <span>계획</span>
+                </li>
+                <li>
+                    <div style="background:#008ffb;" class="legend-color"></div>
+                    <span>진행</span>
+                </li>
+                <li>
+                    <div style="background:#f44336;" class="legend-color"></div>
+                    <span>지연</span>
+                </li>
+                <li>
+                    <div style="background:#feb019;" class="legend-color"></div>
+                    <span>지연완료</span>
+                </li>
+                <li>
+                    <div style="background:#a4c953;" class="legend-color"></div>
+                    <span>완료</span>
+                </li>
+            </ul>
+        </div>
+        <div id="gateReviewGridExec" class="box"></div>
+    </div>
+
+    <div class="cDashboardIssue">
+        <div style="margin-bottom:15px;">
+            <h3>프로젝트별 Issue 현황</h3>
+            <div id="prdtIssueExec" class="box"></div>
+        </div>
+        <div style="position:relative;">
+            <h3>상세 Issue List</h3>
+            <div class="importance">
+                <div id="checkHighExec"> 상</div>
+                <div id="checkMidExec"> 중</div>
+                <div id="checkLowExec"> 하</div>
+            </div>
+            <div id="issueListExec" class="box"></div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var gateReviewSource;
+    var gateReviewGridExec$;
+    var cIssueChartExec;
+    var cIssueTaskListExec = [];
+    var cIssueSeriesExec = [];
+    var selGateRowIdx;
+    var issueListExec$;
+    var issueListExecSource;
+    $(function () {
+        //Gate Review 진행현황
+         gateReviewSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'GatePolicy', type: 'Array' },
+                { name: 'TotalCnt', type: 'number' },
+                { name: 'PrepareCnt', type: 'number' },
+                { name: 'ProcessCnt', type: 'number' },
+                { name: 'DelayCnt', type: 'number' },
+                { name: 'CompleteCnt', type: 'number' },
+            ],
+        };
+         gateReviewGridExec$ = $('#gateReviewGridExec');
+        gateReviewGridExec$.jqxGrid({
+            width: "100%",
+            height: 600,
+            rowsheight: 56,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            showstatusbar: true,
+            statusbarheight: 32,
+            showaggregates: true,
+            columns: [
+                {
+                    text: '프로젝트', datafield: 'Name', align: 'center', width: '30%', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        var rowData = gateReviewGridExec$.jqxGrid('getrowdata', row);
+                        var val = '<div id="' + rowData.OID +'"  style="cursor:pointer; margin-top:18.5px;text-indent:4px;" onclick="CallIssue(' + rowData.OID + ')">' + cellValue + '</div>';
+                        return val;
+                } },
+                {
+                    text: 'G/Review 현황', datafield: 'GatePolicy', align: 'center', cellsalign: 'center', width: '28%', cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        var rowData = gateReviewGridExec$.jqxGrid('getrowdata',row);
+                        var pointerDiv = '<div class="gatePointer clearfix">';
+                        for (var i = 0; i < cellValue.length; i++) {
+                            var gStatus = 'grade' + cellValue[i];//임의로 작성. grade1:계획, grade2:진행, grade3:지연, grade4:지연완료, grade5:완료
+                            pointerDiv += '<div class="' + gStatus + '" onclick="CallTaskCnt(' + row + ',' + rowData.OID + ',' + (i + 1) + ')" style="z-index:'+ (6-i) +';">G'+(i+1)+'</div>';
+                        }
+
+                        pointerDiv += '</div>';
+
+                        return pointerDiv;
+                    },
+                      aggregatesrenderer: function (aggregates, column, element) {
+                          return '<div style="line-height:32px;">단계별 업무 총 합계</div>';
+                      }
+                },
+                { text: '총 업무', datafield:'TotalCnt', columngroup: 'taskStatus', align: 'center', cellalign: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                          });
+                        renderstring += "</div>";
+                          return renderstring;
+
+                    } },
+                { text: '계획', datafield:'PrepareCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                          });
+                        renderstring += "</div>";
+                          return renderstring;
+
+                    } },
+                { text: '진행중', datafield:'ProcessCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'],
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                          });
+                        renderstring += "</div>";
+                          return renderstring;
+
+                    } },
+                {
+                    text: '지연', datafield: 'DelayCnt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '7%', aggregates: ['sum'], cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        return '<div style="font-weight:bold;color:#f44336;text-align:center;margin-top:18.5px;">' + cellValue + '</div>';
+                    },
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                          });
+                        renderstring += "</div>";
+                          return renderstring;
+
+                    }
+                },
+                {
+                    text: '완료(지연완료포함)', datafield: 'CompleteCnt', columngroup: 'taskStatus', align: 'center', width: '14%', aggregates: ['sum'], cellsrenderer: function (row, dataField, cellValue, rowData, cellText) {
+                        var rowData = gateReviewGridExec$.jqxGrid('getrowdata', row);
+                        var div = '<div style="text-indent:28px;margin-top:18.5px;position:relative;">'
+                        div += cellValue + ' <button onclick="ProjectTabClick(' + rowData.OID + ',\'' + rowData.Name + '\')" class="custom-button" style="position:absolute;right:8px;top:-6px;font-size:14px;">바로가기</button></div>';
+
+                        return div;
+                    },
+                    aggregatesrenderer: function (aggregates, column, element, summaryData) {
+                        var renderstring = '<div class="gReviewAggr" style="text-indent:-80px;">'
+                        $.each(aggregates, function (key, value) {
+                            renderstring += value;
+                          });
+                        renderstring += "</div>";
+                          return renderstring;
+
+                    }
+                },
+            ],
+            columngroups: [
+                { text: '단계별 업무 상태', align: 'center', name: 'taskStatus' }
+            ],
+        });
+        gateReviewGridExec$.on('cellclick', function (event) {
+            // column data field.
+            var dataField = event.args.datafield;
+            var rowBoundIndex = event.args.rowindex;
+            if (dataField == 'Name') {
+                selGateRowIdx = gateReviewGridExec$.jqxGrid('getrowdata', rowBoundIndex).OID;
+                PrintJqxGrid(issueListExecSource, issueListExec$, null);
+
+            }else if(dataField == 'DelayCnt') {
+
+                var DelayList = {};
+                DelayList.OID = event.args.row.bounddata.OID;
+                var gate = $('#' + event.args.row.bounddata.OID).data('gate');
+                if (gate == undefined || gate < 0) {
+                    DelayList.Index = 0;
+                } else if (gate > 0) {
+                    DelayList.Index = gate;
+                }
+
+                if (gClickDuplication) { return; }
+                gClickDuplication = true;
+                setTimeout(function () {
+                    OpenProjectDelayListDialog(null, null, DelayList, '/Pms/dlgProjectDelayList', '프로젝트 지연 리스트');
+                    gClickDuplication = false;
+                }, 100);
+
+            }
+        });
+        //제품별 이슈현황
+
+        var cIssueSettingExec = {
+            series: cIssueSeriesExec,
+            chart: {
+                type: 'bar',
+                width: '100%',
+                height: 290,
+                zoom: {
+                    enabled: true,
+                },
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: false,
+                        selection: true,
+                        zoom: false,
+                        zoomin: false,
+                        zoomout: false,
+                        pan: true,
+                        reset: true,
+                    },
+                    autoSelected: 'pan'
+                },
+                events: {
+                    dataPointSelection: function (event, chartContext, config) {
+                        var Type = config.w.config.series[config.seriesIndex].name;
+                        CallIssueGrd(selGateRowIdx, Type);
+                    },
+                }
+            },
+            colors: ['#008ffb', '#f44336', '#a4c953'],
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: 80,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                categories: cIssueTaskListExec,
+                tickPlacement: 'on',
+                labels: {
+                    show: true,
+                    rotate: 0,
+                    rotateAlways: false,
+                    hideOverlappingLabels: true,
+                }
+            },
+            legend: {
+                show: true,
+                position: 'bottom',
+                horizontalAlign: 'center'
+            },
+            grid: {
+                padding: {
+                    left: 50,
+                    right: 50
+                }
+            }
+
+        }
+        cIssueChartExec = new ApexCharts(document.querySelector('#prdtIssueExec'), cIssueSettingExec);
+        cIssueChartExec.render();
+
+        //상세 이슈 리스트
+        $('#checkHighExec').jqxCheckBox({ width: 40, height: 32, checked: true, });
+        $('#checkMidExec').jqxCheckBox({ width: 40, height: 32, checked: true, });
+        $('#checkLowExec').jqxCheckBox({ width: 40, height: 32, checked: true, });
+
+        $('#checkHighExec, #checkMidExec, #checkLowExec').on('change', function () {
+            issueListExec$.jqxGrid('clearfilters');
+            var selHigh = $('#checkHighExec').val();
+            var selMid = $('#checkMidExec').val();
+            var selLow = $('#checkLowExec').val();
+
+            var filtertype = 'numericfilter';
+            var filtergroup = new $.jqx.filter();
+            var filtercondition = 'equal';
+            var filter_or_operator = 1;
+            if (selHigh) {
+                var filter1 = filtergroup.createfilter(filtertype, 3, filtercondition);
+                filtergroup.addfilter(filter_or_operator, filter1);
+                issueListExec$.jqxGrid('addfilter', 'Importance', filtergroup);
+            }
+            if (selMid) {
+                var filter2 = filtergroup.createfilter(filtertype, 2, filtercondition);
+                filtergroup.addfilter(filter_or_operator, filter2);
+                issueListExec$.jqxGrid('addfilter', 'Importance', filtergroup);
+            }
+            if (selLow) {
+                var filter3 = filtergroup.createfilter(filtertype, 1, filtercondition);
+                filtergroup.addfilter(filter_or_operator, filter3);
+                issueListExec$.jqxGrid('addfilter', 'Importance', filtergroup);
+            }
+            if (!selHigh && !selMid && !selLow) {
+                var filter4 = filtergroup.createfilter(filtertype, 4, filtercondition);
+                filtergroup.addfilter(filter_or_operator, filter4);
+                issueListExec$.jqxGrid('addfilter', 'Importance', filtergroup);
+            }
+            issueListExec$.jqxGrid('applyfilters');
+        });
+
+         issueListExecSource = {
+            datatype: 'json',
+            datafields: [
+                { name: 'OID', type: 'number' },
+                { name: 'Name', type: 'string' },
+                { name: 'ProjectNm', type: 'string' },
+                { name: 'Type', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'CreateUs', type: 'number' },
+                { name: 'CreateUsNm', type: 'string' },
+                { name: 'TaskNm', type: 'string' },
+                { name: 'IssueType', type: 'string' },
+                { name: 'IssueTypeNm', type: 'string' },
+                { name: 'CreateDt', type: 'date' },
+                { name: 'EstFinDt', type: 'date' },
+                { name: 'Importance', type: 'number' },
+                { name: 'ImportanceNm', type: 'string' },
+                { name: 'BPolicy', type: 'Array' },
+            ],
+            id: 'OID',
+            addRow: function (rowID, rowData, position, parentID, commit) {
+                commit(true);
+            },
+            deleteRow: function (rowID, commit) {
+                commit(true);
+            },
+            updateRow: function (rowID, rowData, commit) {
+                commit(true);
+            }
+        };
+         issueListExec$ = $('#issueListExec');
+
+        issueListExec$.jqxGrid({
+            width: "100%",
+            height: 240,
+            rowsheight: 28,
+            columnsheight: 30,
+            //source:,
+            sortable: false,
+            pageable: false,
+            showtoolbar: false,
+            columns: [
+                {
+                    text: 'NO', align: 'center', cellsalign: 'center', width: '8%',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (row + 1) + "</div>";
+                    }
+                },
+                { text: '이슈내용', datafield: 'Name', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '55%', },
+                {
+                    text: '상태', datafield: 'BPolicy', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '12%',
+                    cellsrenderer: function (row, column, value) {
+                        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                    }
+                },
+                { text: '예상 처리일', datafield: 'EstFinDt', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '25%', cellsFormat: 'yyyy-MM-dd', },
+                { text: 'Importance', datafield: 'Importance', columngroup: 'taskStatus', align: 'center', cellsalign: 'center', width: '25%',hidden:true},
+            ],
+        });
+        issueListExec$.on('rowdoubleclick', function (e) {
+            var param = {};
+            param.OID = e.args.row.bounddata.OID;
+            param.TaskNm = e.args.row.bounddata.TaskNm;
+            param.ProjectNm = e.args.row.bounddata.ProjectNm;
+            param.RootOID = selGateRowIdx;
+            if (param.OID == null) {
+                return;
+            }
+
+            if (gClickDuplication) { return; }
+            gClickDuplication = true;
+            setTimeout(function () {
+                OpenIssueDialog(
+                    function (res) {
+                        RequestData('/Pms/SelIssue', param, function (res) {
+                          //  PrintJqxTreeGrid(issueRiskSource, issueRiskGrd$, res);
+                        });
+                    }, null, param, '/Pms/InfoIssue', '이슈 상세');
+                gClickDuplication = false;
+            }, 100);
+        });
+
+        CallGateReview(1, function () {
+            var data = gateReviewGridExec$.jqxGrid('getrowdata', 0);
+            if (data != null) {
+                CallIssue(data.OID);
+                selGateRowIdx = data.OID;
+            }
+        });
+    });
+    function CallGateReview(num, func) {
+        param = {};
+        param.div = num;
+        param.Type = '@Common.Constant.PmsConstant.ATTRIBUTE_EXEC';
+        RequestData('/Pms/SelItemReviewDashBoard', param, function (res) {
+            if (res.isError) {
+                alert(res.resultMessage);
+                return;
+            }
+            PrintJqxGrid(gateReviewSource, gateReviewGridExec$, res);
+            if (func != null) {
+                func();
+            }
+        });
+    }
+    function CallTaskCnt(row, ProjectOID, Index) {
+
+        RequestData('/Pms/CallDashboardGate', { ProjectOID: ProjectOID, Index: Index }, function (res) {
+            gateReviewGridExec$.jqxGrid('setcellvalue', row, "TotalCnt", res[0]);         // 총 업무
+            gateReviewGridExec$.jqxGrid('setcellvalue', row, "PrepareCnt", res[1]);       // 계획
+            gateReviewGridExec$.jqxGrid('setcellvalue', row, "ProcessCnt", res[2]);       // 진행 중
+            gateReviewGridExec$.jqxGrid('setcellvalue', row, "DelayCnt", res[3]);         // 지연
+            gateReviewGridExec$.jqxGrid('setcellvalue', row, "CompleteCnt", res[4]);      // 완료
+            $('#' + ProjectOID).data('gate', Index);
+        });
+    }
+    function CallIssue(OID) {
+
+        //var cIssueChartCEO = new ApexCharts(document.querySelector('#prdtIssueCEO'), cIssueSettingCEO);
+        //cIssueChartCEO.render();
+
+        cIssueTaskListCEO = [];
+        cIssueTaskListExec = [];
+
+        RequestData('/Pms/CallDashboardIssue', { OID: OID }, function (res) {
+            _.each(res.PROJECT, function (item) {
+                var sItem = item.split(' ');
+                cIssueTaskListCEO.push([sItem[sItem.length - 1]]);
+            });
+
+            _.each(res.COUNT, function (item, key) {
+                cIssueTaskListExec.push({
+                    'name': key,
+                    'data': item
+                });
+            });
+
+            cIssueChartExec.updateOptions({ xaxis: { categories: cIssueTaskListCEO } });
+            cIssueChartExec.updateSeries(cIssueTaskListExec);
+
+        });
+    }
+    function CallIssueGrd(OID, Type) {
+      param = {};
+        param.OID = OID;
+        param.Type = Type;
+        RequestData('/Pms/CallDashBoardIssueGrd', param, function (res) {
+            if (res.isError) {
+                alert(res.resultMessage);
+                return;
+            }
+            PrintJqxGrid(issueListExecSource, issueListExec$, res);
+        });
+    }
+    function ProjectTabClick(OID, Name) {
+        const linkUrl = '/Pms/InfoProject?OID=' + OID;
+        if ($("div[tabUrl='" + linkUrl + "']").length > 0) {
+            var tabDiv = $("div[tabUrl='" + linkUrl + "']")[0].parentNode;
+            $('#tabContent').jqxTabs('select', $(tabDiv).index());
+            return;
+        }
+
+        const loading$ = $('#loading');
+        const tabContent$ = $('#tabContent');
+        loading$.css('display', 'block');
+        var linkName = Name;
+        tabContent$.jqxTabs('addLast', linkName, "");
+        var tabLength = tabContent$.jqxTabs('length');
+        $.ajax({
+            url: linkUrl,
+            type: 'get',
+            dataType: 'html',
+            async: true,
+            success: function (resHtml) {
+                var content = tabContent$.jqxTabs('getContentAt', tabLength - 1);
+                $(content).html("<div class='wrapPage' tabUrl='" + linkUrl + "'>" + resHtml + "</div>");
+            }, error: function (res) {
+                if (res.status === 404) {
+                    alert("현재 개발중인 화면입니다.");
+                    return false;
+                }
+                alert(res.responseText);
+            }
+            , complete: function () {
+                loading$.css('display', 'none');
+            }
+        });
+    }
+</script>

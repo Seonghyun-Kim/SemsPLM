@@ -159,7 +159,7 @@
                     horizontalAlign: 'center',
                     floating: false,
                 },
-                colors: ['#d9d9d9', '#00f','#f00','#9f9'],
+                colors: ['#aaaaaa', '#008ffb','#f44336','#a4c953'],
                 //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
                 labels:taskRatePersonLabels,
                 responsive: [{
@@ -200,7 +200,7 @@
                     horizontalAlign: 'center',
                     floating: false,
                 },
-                colors: ['#00f','#f00','#9f9'],
+                colors: ['#008ffb','#f44336','#a4c953'],
                 //colors: ['rgb(0,227,150)', 'rgb(0,143,251)', 'rgb(244,67,54)'],
                 responsive: [{
                     breakpoint: 480,
@@ -239,18 +239,18 @@
                     toolbar: {
                         show: true,
                         tools: {
-                            download: true,
+                            download: false,
                             selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
+                            zoom: false,
+                            zoomin: false,
+                            zoomout: false,
                             pan: true,
                             reset: true,
                         },
                         autoSelected: 'pan'
                     }
                 },
-                colors: ['#d9d9d9', '#00f', '#f00', '#9f9'],
+                colors: ['#aaaaaa', '#008ffb','#f44336','#a4c953'],
                 //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(254,176,25)', 'rgb(0,227,150)'],
                 plotOptions: {
                     bar: {
@@ -290,7 +290,9 @@
             function callProjectTaskInfo() {
                 RequestData('/Pms/CallProjectTaskInfo', {}, function (res) {
                     _.each(res.PROJECT, function (item) {
-                        dsbdPersonTaskList.push(item);
+                        var sItem = item.split(' ');
+                        //dsbdPersonTaskList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
+                        dsbdPersonTaskList.push([sItem[sItem.length - 1]]);
                     });
 
                     _.each(res.COUNT, function (item, key) {
@@ -319,8 +321,8 @@
 
             //이슈,DV,PV barchart
             var dsbdPersonIssueChartList = [];
-            var dsbdPersonIssueChartSample = [
-            ];
+            var dsbdPersonIssueChartSample = [];
+
             var dsbdPersonIssueChartSetting = {
                 series: dsbdPersonIssueChartSample,
                 chart: {
@@ -332,18 +334,18 @@
                     toolbar: {
                         show: true,
                         tools: {
-                            download: true,
+                            download: false,
                             selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
+                            zoom: false,
+                            zoomin: false,
+                            zoomout: false,
                             pan: true,
                             reset: true,
                         },
                         autoSelected: 'pan'
                     }
                 },
-                colors:['#00f', '#f00', '#9f9'],
+                colors:['#008ffb','#f44336','#a4c953'],
                 //colors:['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
                 plotOptions: {
                     bar: {
@@ -383,8 +385,10 @@
                 dsbdPersonIssueChartList = [];
                 dsbdPersonIssueChartSample = [];
                 RequestData('/Pms/callProjectIssueDVPV', { _Type: param }, function (res) {
-                    _.each(res.PROJECT, function (item) {
-                        dsbdPersonIssueChartList.push(item);
+                   _.each(res.PROJECT, function (item) {
+                        var sItem = item.split(' ');
+                        //dsbdPersonIssueChartList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
+                       dsbdPersonIssueChartList.push([sItem[sItem.length - 1]]);
                     });
 
                     _.each(res.COUNT, function (item, key) {

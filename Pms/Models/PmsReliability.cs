@@ -85,11 +85,14 @@ namespace Pms.Models
 
         public static List<TestItemList> InsPmsReliabilityItemList(HttpSessionStateBase Context, List<TestItemList> _param, int? FromOID)
         {
-            _param.ForEach(obj =>
+            if(_param != null || _param.Count > 0)
             {
-                obj.FromOID = FromOID;
-                DaoFactory.SetInsert("Pms.InsPmsReliabilityItemList", obj);
-            });
+                _param.ForEach(obj =>
+                {
+                    obj.FromOID = FromOID;
+                    DaoFactory.SetInsert("Pms.InsPmsReliabilityItemList", obj);
+                });
+            }
             
             return _param;
         }

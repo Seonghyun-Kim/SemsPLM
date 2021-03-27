@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\dll\Common.Logging.dll</HintPath>
     </Reference>
@@ -55,6 +58,9 @@
     <Reference Include="IBatisNet.DataMapper">
       <HintPath>..\dll\IBatisNet.DataMapper.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\dll\log4net.dll</HintPath>
     </Reference>
@@ -63,6 +69,18 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.2.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.2\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -96,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant\CommonConstant.cs" />
+    <Compile Include="Constant\CommonEnum.cs" />
     <Compile Include="Constant\DocClassConstant.cs" />
     <Compile Include="Constant\DocumentConstant.cs" />
     <Compile Include="Constant\EBomConstant.cs" />
@@ -104,6 +123,7 @@
     <Compile Include="Constant\PmsConstant.cs" />
     <Compile Include="Constant\QmsConstant.cs" />
     <Compile Include="Factory\DaoFactory.cs" />
+    <Compile Include="Factory\LogFactory.cs" />
     <Compile Include="Interface\IDObject.cs" />
     <Compile Include="Models\Approval\Approval.cs" />
     <Compile Include="Models\Approval\ApprovalComment.cs" />
@@ -129,6 +149,7 @@
     <Compile Include="Models\Company\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\SemsEncrypt.cs" />
+    <Compile Include="Utils\SemsExcelUtil.cs" />
     <Compile Include="Utils\SemsSecureEDecode.cs" />
     <Compile Include="Utils\SemsSmtp.cs" />
     <Compile Include="Utils\SemsUtil.cs" />

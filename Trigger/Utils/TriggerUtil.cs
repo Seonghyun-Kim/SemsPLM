@@ -63,7 +63,10 @@ namespace Trigger
                             return;
                         }
                     });
-                    DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+                    if (strActionOID.Length > 0)
+                    {
+                        DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+                    }
                 }
 
                 List<Dictionary<string, string>> actionProgram = BPolicyRepository.SelActionProgram(new BPolicy { Type = RelType, OID = Convert.ToInt32(CurrentStatus) });
@@ -129,7 +132,10 @@ namespace Trigger
                                 return;
                             }
                         });
-                        DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+                        if (strActionOID.Length > 0)
+                        {
+                            DObjectRepository.UdtDObject(Context, new DObject { OID = OID, BPolicyOID = Convert.ToInt32(strActionOID) });
+                        }                        
                     }
                 }
 

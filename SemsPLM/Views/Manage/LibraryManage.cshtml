@@ -199,7 +199,7 @@
     });
 
     function getLibraryList(_Source, _Grid$,_param,_key) {
-        RequestData("/Manage/SelLibrary", _param, function (res) {
+        RequestData("/Manage/AllSelLibrary", _param, function (res) {
             PrintJqxTreeGrid(_Source, _Grid$, res);
             callBackListSelect(_Grid$, _key);
         });

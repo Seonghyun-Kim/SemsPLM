@@ -415,6 +415,12 @@ namespace SemsPLM.Controllers
             List<Library> lLibrary = LibraryRepository.SelLibrary(_param);
             return Json(lLibrary);
         }
+        public JsonResult AllSelLibrary(Library _param)
+        {
+            List<Library> lLibrary = LibraryRepository.AllSelLibrary(_param);
+            return Json(lLibrary);
+        }
+
         public JsonResult SelLibraryObject(Library _param)
         {
             Library Library = LibraryRepository.SelLibraryObject(_param);
@@ -504,6 +510,13 @@ namespace SemsPLM.Controllers
             List<Library> lLibrary = LibraryRepository.SelCodeLibrary(_param);
             return Json(lLibrary);
         }
+
+        public JsonResult AllSelCodeLibrary(Library _param)
+        {
+            List<Library> lLibrary = LibraryRepository.AllSelCodeLibrary(_param);
+            return Json(lLibrary);
+        }
+
         public JsonResult SelCodeLibraryChild(Library _param)
         {
             List<Library> lLibrary = LibraryRepository.SelCodeLibraryChild(_param);
@@ -791,10 +804,17 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-        #region -- 문서분류체계 검색
+        #region -- 문서분류체계 USEY 검색
         public JsonResult SelDocumentClassification(DocClass _param)
         {
             return Json(DocClassRepository.SelDocClass(Session, _param));
+        }
+        #endregion
+
+        #region -- 문서분류체계 전체 검색
+        public JsonResult AllSelDocumentClassification(DocClass _param)
+        {
+            return Json(DocClassRepository.AllSelDocClass(Session, _param));
         }
         #endregion
 

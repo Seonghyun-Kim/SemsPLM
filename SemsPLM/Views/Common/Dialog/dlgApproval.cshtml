@@ -2,13 +2,7 @@
     Layout = null;
 }
 
-<div class="approvalTopBtn">
-    @if (ViewBag.IsQms != null && ViewBag.IsQms == "Y")
-    {
-        <label style="float:left;line-height: 1.8em;">품질책임자에게 결재 바랍니다.</label>
-    }
-    <button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 결재 상신</button>
-</div>
+<div class="approvalTopBtn"><button class="custom-button" id="btnApprov"><i class="fas fa-check"></i> 결재 상신</button></div>
 <div class="approvalLine">
     <div class="wholeUserList">
         <h4><i class="fas fa-building"></i> &nbsp;조직도</h4>

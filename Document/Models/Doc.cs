@@ -29,6 +29,7 @@ namespace Document.Models
         public int? Doc_Lib_Lev3_OID { get; set; }
         public string Doc_Lib_Lev3_KorNm { get; set; }
         public string DocType_KorNm { get; set; }
+        public string TaskNm { get; set; }
 
         public List<HttpPostedFileBase> Files { get; set; }
         public List<HttpFile> delFiles { get; set; }

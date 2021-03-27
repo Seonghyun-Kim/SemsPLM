@@ -126,7 +126,7 @@
                 { name: 'BPolicy' },
                 { name: 'BPolicyOID' },
                 { name: 'Title' },
-                { name: 'Revision' },
+                { name: 'Revision', type: 'string' },
                 { name: 'Eo_No' },
                 { name: 'CreateDt', type: 'date'  },
                 { name: 'CreateUs' },
@@ -155,7 +155,8 @@
                 { text: '문서 분류', datafield: 'DocType_KorNm', width: "20%", align: 'center', cellsalign: 'center', },
                 { text: '제목', datafield: 'Title', width: "29%", align: 'center', cellsalign: 'center', },
 
-                { text: '문서번호', datafield: 'Name', width: "20%", align: 'center', cellsalign: 'center', },
+                { text: '문서번호', datafield: 'Name', width: "15%", align: 'center', cellsalign: 'center', },
+                { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
                 {
                     text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
                     cellsrenderer: function (row, column, value) {

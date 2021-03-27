@@ -16,7 +16,8 @@
         // Rendezvous Servlet HOST
         this.RDVSERVLET_HOST = this.basedir + 'servlet/VueRDVServlet';
 
-        this.CL_PRTS = [2345, 7575, 8888];
+        //this.CL_PRTS = [2345, 7575, 8888];
+        this.CL_PRTS = null;
 
         // AutoVue Client Parameters
         this.INIT_PARAMS = { 'JVUESERVER': this.JVUESERVER, 'RDVSERVLET': this.RDVSERVLET_HOST, 'VERBOSE': 'true' };

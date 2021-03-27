@@ -96,12 +96,14 @@
 
                 var selectedRecords = new Array();
                 var checkedRows = dlgDocumentGrid$.jqxGrid('getselectedrowindexes');
-                console.log(checkedRows);
                 for (var i = 0; i < checkedRows.length; i++) {
                     var data = dlgDocumentGrid$.jqxGrid('getrowdata', checkedRows[i]);
                     var param = {};
                     param.RootOID = selDocumentDialog.Data.RootOID;
-                    param.FromOID = selDocumentDialog.Data.RootOID;
+                    param.FromOID = selDocumentDialog.Data.FromOID;
+                    if (param.RootOID != param.FromOID) {
+                        param.TaskOID = param.FromOID;
+                    }
                     param.ToOID = data.OID;
                     selectedRecords[selectedRecords.length] = param;
                 }
@@ -169,6 +171,7 @@
     function GetDocumentList() {
         param.Name = $('#dlgDocClassName').val();
         param.DocGroup = '@Common.Constant.DocumentConstant.TYPE_DOCUMENT';
+        param.IsReleasedLatest = 1;
         RequestData("/Document/SelDoc", param, function (res) {
             PrintJqxGrid(dlgDocumentSource, dlgDocumentGrid$, res);
         });

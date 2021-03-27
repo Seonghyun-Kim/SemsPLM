@@ -11,6 +11,8 @@
             <li class="tab" info="deliveries"><i class="fas fa-file-medical"></i> 산출물</li>
             <li class="tab" info="riskIssue"><i class="fas fa-exclamation"></i> 이슈</li>
             <li class="tab" info="Apphis"><i class="fas fa-stream"></i> 결재이력</li>
+            <li class="tab" info="document"><i class="fas fa-file-alt"></i> 일반 문서</li>
+            <li class="tab" info="epart"><i class="fas fa-dice-d6"></i> 부품</li>
         </ul>
     </div>
 
@@ -165,6 +167,16 @@
 
         <div id="Apphis" class="basic_grid dective">
             <div id="ApphisInfo_@ViewBag.OID">
+            </div>
+        </div>
+
+        <div id="document" class="basic_grid dective">
+            <div id="documentInfo_@ViewBag.OID">
+            </div>
+        </div>
+
+        <div id="epart" class="basic_grid dective">
+            <div id="epartInfo_@ViewBag.OID">
             </div>
         </div>
     </div>
@@ -765,7 +777,7 @@
                         { text: '예상처리일', cellsalign: 'center', align: 'center', datafield: 'EstFinDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                         { text: '처리완료일', cellsalign: 'center', align: 'center', datafield: 'ActProcessDt', width: '8%', cellsFormat: 'yyyy-MM-dd', },
                     ],
-                    showtoolbar: @Json.Encode((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    showtoolbar: @Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
                     rendertoolbar: function (statusbar) {
                         if (statusbar[0].children.length > 0) {
                             return;
@@ -850,7 +862,6 @@
                             param.Type = '@Common.Constant.PmsConstant.TYPE_ISSUE_TASK';
                             param.RootOID = ProjectOID;
                             param.FromOID = OID;
-                            param.ProjectNm = '@ViewBag.ProjectDetail.Name';
                             param.TaskNm = '@ViewBag.Detail.Name';
                             if (param.OID == null) {
                                 return;
@@ -879,6 +890,276 @@
             } else if (infoValue == 'Apphis') {
                 RequestHtml('/Common/ApprovalHistory', { OID: OID }, function (res) {
                     $('#ApphisInfo_' + OID).html(res);
+                });
+            }else if (infoValue === 'document') {
+                const documentSource = {
+                    datatype: 'json',
+                    datafields: [
+                        { name: 'OID' },
+                        { name: 'RootOID' },
+                        { name: 'FromOID' },
+                        { name: 'DocType' },
+                        { name: 'DocType_KorNm' },
+                        { name: 'Name' },
+                        { name: 'BPolicy' },
+                        { name: 'BPolicyOID' },
+                        { name: 'Title' },
+                        { name: 'Revision', type: 'string' },
+                        { name: 'Eo_No' },
+                        { name: 'CreateDt', type: 'date' },
+                        { name: 'CreateUs' },
+                        { name: 'CreateUsNm' },
+                        { name: 'Description' },
+                        { name: 'TaskNm' },
+                    ],
+                    addRow: function (rowID, rowData, position, parentID, commit) {
+                        commit(true);
+                    },
+                    deleteRow: function (rowID, commit) {
+                        commit(true);
+                    },
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+                    }
+                };
+
+                var documentAdapter = new $.jqx.dataAdapter(documentSource);
+                const documentGrd$ = $("#documentInfo_" + OID);
+                documentGrd$.jqxTreeGrid('render');
+                documentGrd$.jqxTreeGrid({
+                    theme: "kdnc",
+                    width: screenWidth,
+                    pagerButtonsCount: 8,
+                    toolbarHeight: 44,
+                    height: screenHeight,
+                    source: documentAdapter,
+                    sortable: false,
+                    pageable: false,
+                    selectionMode: "custom",
+                    editable: false,
+                    editSettings: { saveOnPageChange: true, saveOnBlur: true, saveOnSelectionChange: true, cancelOnEsc: true, saveOnEnter: true, editSingleCell: true, editOnDoubleClick: true, editOnF2: true },
+                    columnsResize: true,
+                    checkboxes: true,
+                    columns: [
+                        //{
+                        //    text: 'NO', width: "5%", cellsalign: 'center', columntype: 'number', align: 'center',
+                        //    cellsrenderer: function (row, column, value) {
+                        //        return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
+                        //    }
+                        //},
+                        { text: '문서 분류', datafield: 'DocType_KorNm', width: "17%", align: 'center', cellsalign: 'left', },
+                        { text: 'Task', datafield: 'TaskNm', width: "10%", align: 'center', cellsalign: 'center', },
+                        { text: '제목', datafield: 'Title', width: "30%", align: 'center', cellsalign: 'center', },
+
+                        { text: '문서번호', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: '리비전', datafield: 'Revision', width: "5%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "7%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            },
+                        },
+                        { text: '작성자', datafield: 'CreateUsNm', width: "7%", align: 'center', cellsalign: 'center' },
+                        { text: '작성일', datafield: 'CreateDt', width: "12%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        //   { text: '내용', datafield: 'Description', width: "30%", align: 'center', cellsalign: 'center', },
+                    ],
+                    showtoolbar: @Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    rendertoolbar: function (statusbar) {
+                        if (statusbar[0].children.length > 0) {
+                            return;
+                        }
+                        var container = $("<div class='lGridComponent' style='text-align: left;'></div>");
+                        var btnAdd = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                        var btnDelete = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+                        container.append(btnAdd);
+                        container.append(btnDelete);
+                        statusbar.append(container);
+
+                        btnAdd.on('click', function () {
+                            var param = {};
+                            param.RootOID = ProjectOID;
+                            param.FromOID = OID;
+                            var Data = documentGrd$.jqxTreeGrid('getRows');
+                            Data = Data.filter(function (item) {
+                                return item.FromOID == OID
+                            });
+                            console.log(Data);
+                            param.Data = Data;
+                            OpenPmsCommonDocumentDialog(function (res) {
+                                documentGrd$.jqxTreeGrid('pagerRenderer');
+                            }, null, param, '/Pms/SearchDocument', '문서 검색 추가', null);
+                        });
+                        btnDelete.on('click', function () {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                var data = documentGrd$.jqxTreeGrid('getCheckedRows');
+                                RequestData("/Pms/DelPmsDocumentRelation", data, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    documentGrd$.jqxTreeGrid('pagerRenderer');
+                                });
+                            }
+                        });
+                        var rowKey = null;
+
+                    },
+                    pagerRenderer: function () {
+                        RequestData("/Pms/SelPmsDocument", { 'RootOID': ProjectOID, 'FromOID': OID }, function (res) {
+                            PrintJqxTreeGrid(documentSource, documentGrd$, res);
+                            documentGrd$.jqxTreeGrid('updateBoundData');
+                        });
+                    }
+                });
+
+                documentGrd$.jqxTreeGrid('pagerRenderer');
+
+            } else if (infoValue === 'epart') {
+                var EPartParam = {};
+                EPartParam.RootOID = ProjectOID;
+                EPartParam.FromOID = OID;
+
+                var EPartSource =
+                {
+                    dataType: "json",
+                    dataFields: [
+                        { name: 'OID' },
+                        { name: 'Name' },
+                        { name: 'BPolicyOID' },
+                        { name: 'BPolicy' },
+                        { name: 'CreateUsNm' },
+                        { name: 'CreateDt', type: 'date' },
+
+                        { name: 'Title' },
+
+                        { name: 'Oem_Lib_OID' },
+                        { name: 'Oem_Lib_Nm' },
+                        { name: 'Sel_Revision' },
+                        { name: 'Division' },
+                        { name: 'DivisionNm' },
+                        { name: 'Standard' },
+
+                        { name: 'Car_Lib_OID' },
+                        { name: 'Car_Lib_Nm' },
+                        { name: 'ITEM_No' },
+                        { name: 'ITEM_NoNm' },
+                        { name: 'Block_No' },
+                        { name: 'Block_NoNm' },
+                        { name: 'Material_OID' },
+                        { name: 'Material_Nm' },
+                        { name: 'EPartType' },
+                        { name: 'Sel_Eo' },
+                        { name: 'Sel_Eo_Dt', type: 'date' },
+                        { name: 'Thumbnail' },
+                        { name: 'Revision' },
+
+                        { name: 'TaskNm' },
+                        { name: 'RootOID' },
+                        { name: 'FromOID' },
+                        { name: 'ToOID' },
+                        { name: 'Orgin_OID' },
+                    ],
+                    id: 'Orgin_OID',
+                    addRow: function (rowID, rowData, position, parentID, commit) {
+                        newRowID = rowID;
+                        commit(true);
+                    },
+                    updateRow: function (rowID, rowData, commit) {
+                        commit(true);
+                    }
+                };
+                var EPartdataAdapter = new $.jqx.dataAdapter(EPartSource);
+                const epartInfoGrid$ = $('#epartInfo_' + OID);
+                epartInfoGrid$.jqxGrid('render');
+                epartInfoGrid$.jqxGrid({
+                    width: "100%",
+                    theme: "kdnc",
+                    height: 650,
+                    sortable: true,
+                    showToolbar: @Json.Encode(((((List<Common.Models.BPolicyAuth>)ViewBag.Detail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1) ||((((List<Common.Models.BPolicyAuth>)ViewBag.ProjectDetail.BPolicyAuths).FindIndex(item => item.AuthNm == Common.Constant.CommonConstant.AUTH_RELATION) > -1))) && (ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)),
+                    toolbarHeight: 44,
+                    editable: false,
+                    selectionmode: 'checkbox',
+                    source: EPartdataAdapter,
+                    ready: function () {
+
+                    },
+                    columns: [
+                        { text: 'RootOID', datafield: 'RootOID', width: "5%", align: 'center', cellsalign: 'center', hidden: 'true' },
+                        { text: 'FromOID', datafield: 'FromOID', width: "5%", align: 'center', cellsalign: 'center', hidden: 'true' },
+                        { text: 'ToOID', datafield: 'ToOID', width: "5%", align: 'center', cellsalign: 'center', hidden: 'true' },
+
+                        { text: 'Task명', datafield: 'TaskNm', width: "7%", align: 'center', cellsalign: 'center', },
+                        { text: 'OEM', datafield: 'Oem_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                        { text: '차종', datafield: 'Car_Lib_Nm', width: "6%", align: 'center', cellsalign: 'center', },
+                        { text: '구분', datafield: 'DivisionNm', width: "7%", align: 'center', cellsalign: 'center', },
+                        { text: '품번', datafield: 'Name', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: '품명', datafield: 'Title', width: "12%", align: 'center', cellsalign: 'center', },
+                        { text: 'ITEM_NO', datafield: 'ITEM_NoNm', width: "11%", align: 'center', cellsalign: 'center', },
+                        { text: '재질', datafield: 'Material_Nm', width: "9%", align: 'center', cellsalign: 'center', },
+                        { text: '규격', datafield: 'Standard', width: "9%", align: 'center', cellsalign: 'center', },
+                        { text: '고객리비전', datafield: 'Sel_Revision', width: "7%", align: 'center', cellsalign: 'center', },
+                        { text: '리비전', datafield: 'Revision', width: "6%", align: 'center', cellsalign: 'center', },
+                        //{ text: '작성일', datafield: 'CreateDt', width: "8%", align: 'center', cellsalign: 'center', cellsFormat: 'yyyy-MM-dd', },
+                        //{ text: '작성자', datafield: 'CreateUsNm', width: "6%", align: 'center', cellsalign: 'center', },
+                        {
+                            text: '상태', datafield: 'BPolicy', width: "6%", align: 'center', cellsalign: 'center',
+                            cellsrenderer: function (row, column, value) {
+                                return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + value.StatusNm + "</div>";
+                            }
+                        },
+                    ],
+                    rendertoolbar: function (toolBar) {
+                        var container = $("<div class='lGridComponent' ></div>");
+                        var AddButton = $("<button class='custom-button'><i class='fas fa-plus'></i> 추가</button>").jqxButton();
+                        var DelButton = $("<button class='custom-button'><i class='fas fa-minus'></i> 삭제</button>").jqxButton();
+
+                        container.append(AddButton);
+                        container.append(DelButton);
+                        toolBar.append(container);
+                        AddButton.click(function (event) {
+                            var param = {};
+                            param.RootOID = ProjectOID;
+                            param.FromOID = OID;
+                            param.PartData = epartInfoGrid$.jqxGrid('getrows');
+                            OpenPmsEPartDialog(function (res) {
+                                RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                                    PrintJqxGrid(EPartSource, epartInfoGrid$, res);
+                                });
+                            }, null, param, '/EBom/dlgSearchEPart', '부품 추가');
+                        });
+
+                        DelButton.click(function (event) {
+                            if (confirm('삭제 하시겠습니까?')) {
+                                var rows = epartInfoGrid$.jqxGrid('selectedrowindexes');
+
+                                var delRecords = [];
+
+                                for (var m = 0; m < rows.length; m++) {
+                                    var row = epartInfoGrid$.jqxGrid('getrowdata', rows[m]);
+                                    var delparam = {};
+                                    delparam.RootOID = ProjectOID;
+                                    delparam.FromOID = OID;
+                                    delparam.ToOID = row.OID;
+                                    delRecords[m] = delparam;
+                                }
+
+                                RequestData("/Pms/DelEPartRelation", delRecords, function (res) {
+                                    if (res.isError) {
+                                        alert(res.resultMessage);
+                                        return;
+                                    }
+                                    RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                                        PrintJqxGrid(EPartSource, epartInfoGrid$, res);
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+
+                RequestData('/Pms/SelEPartRelation', EPartParam, function (res) {
+                    PrintJqxGrid(EPartSource, epartInfoGrid$, res);
                 });
             }
         });

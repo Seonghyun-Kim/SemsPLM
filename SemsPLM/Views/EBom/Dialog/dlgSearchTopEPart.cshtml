@@ -113,9 +113,8 @@
                         }
                         OpenInfoEPartCreateDialog(
                             function (res) {
-                                console.log(res);
                                 RequestData('/EBom/ReverseStructure', { _param: TopEPartList, RootOID: @ViewBag.OID, NewDataOID : res }, function (respon) {
-                                    alert('개정 되었습니다.');
+                                    //alert('개정 되었습니다.');
                                 });
                             }
                             , null, { Division : "@Common.Constant.EBomConstant.DIV_STANDARD"}, '/EBom/dlgCreateEPart', 'EPART 등록');

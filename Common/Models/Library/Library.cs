@@ -36,6 +36,7 @@ namespace Common.Models
         {
             return DaoFactory.SetUpdate("Library.updateLibrary", _param);
         }
+
         public static List<Library> SelLibrary(Library _param)
         {
             _param.Type = CommonConstant.TYPE_LIBRARY;
@@ -46,15 +47,25 @@ namespace Common.Models
             });
             return lLibrary;
         }
+        public static List<Library> AllSelLibrary(Library _param)
+        {
+            _param.Type = CommonConstant.TYPE_LIBRARY;
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.AllSelLibrary", _param);
+            lLibrary.ForEach(obj =>
+            {
+                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+            });
+            return lLibrary;
+        }
 
         public static Library SelLibraryObject(Library _param)
         {
             _param.Type = CommonConstant.TYPE_LIBRARY;
-            Library Library = DaoFactory.GetData<Library>("Library.SelLibrary", _param);
+            Library Library = DaoFactory.GetData<Library>("Library.AllSelLibrary", _param);
             //Library.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = Library.Type, OID = Library.BPolicyOID }).First();
             return Library;
         }
-#endregion
+        #endregion
 
         #region 코드라이브러리
         public static int updateCodeLibrary(Library _param)
@@ -71,9 +82,15 @@ namespace Common.Models
             return lLibrary;
         }
 
+        public static List<Library> AllSelCodeLibrary(Library _param)
+        {
+            List<Library> lLibrary = DaoFactory.GetList<Library>("Library.AllSelCodeLibrary", _param);
+            return lLibrary;
+        }
+
         public static Library SelCodeLibraryObject(Library _param)
         {
-            Library Library = DaoFactory.GetData<Library>("Library.SelCodeLibrary", _param);
+            Library Library = DaoFactory.GetData<Library>("Library.AllSelCodeLibrary", _param);
             return Library;
         }
         public static List<Library> SelCodeLibraryChild(Library _param)

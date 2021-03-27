@@ -237,7 +237,6 @@
         var epartList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.epartList))');
         var oemList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.oemList))');
         var sizeList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.psizeList))');
-        var CreateEPartChk$ = true;
 
         var epartType;
 
@@ -245,7 +244,9 @@
         $('#CreateEPartDivisionSingleDrawing').jqxRadioButton({ width: "30%", height: 25, checked: false });
         $('#CreateEPartDivisionStandard').jqxRadioButton({ width: "30%", height: 25, checked: false });
 
-
+        epartType$.jqxComboBox({ width: "100%", height: 32 });
+        itemMiddle$.jqxComboBox({ width: "100%", height: 32 });
+        BlockNo$.jqxComboBox({ width: "100%", height: 32 });
 
         $("#CreateEPartDivisionAssemblyDrawing").on('change', function (event) {
             checked = event.args.checked;
@@ -254,6 +255,7 @@
                 EPartDivision = "@Common.Constant.EBomConstant.DIV_ASSEMBLY";
                 DivisionAssemblyDrawing$.removeClass('DivisionAssemblyDrawing');
                 BlockNo$.jqxComboBox({ source: null, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
                 var placeSource =
                 {
                     localdata: placeList,
@@ -287,9 +289,9 @@
                     CreateEPartName();
                 });
             } else {
-                CreateEPart_ITEM_NO$.jqxComboBox('clearSelection'); 
-                itemMiddle$.jqxComboBox('clear'); 
-                placeList$.jqxComboBox('clearSelection'); 
+                CreateEPart_ITEM_NO$.jqxComboBox('clearSelection');
+                itemMiddle$.jqxComboBox('clear');
+                placeList$.jqxComboBox('clearSelection');
                 epartType$.jqxComboBox('clearSelection');
                 BlockNo$.jqxComboBox('clear');
                 oem$.jqxComboBox('clearSelection');
@@ -325,7 +327,7 @@
                         ]
                 };
                 var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
-                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, disabled: false });
 
             } else {
                 CreateEPart_ITEM_NO$.jqxComboBox('clearSelection');
@@ -362,7 +364,6 @@
                     }
                 }
 
-
                 var psizeSource =
                 {
                     localdata: standard,
@@ -375,7 +376,7 @@
                         ]
                 };
                 var psizeAdapter = new $.jqx.dataAdapter(psizeSource);
-                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                psize$.jqxComboBox({ source: psizeAdapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32, disabled: true });
                 psize$.jqxComboBox('selectIndex', 0);
 
                 BlockNo$.jqxComboBox({ source: blockNodapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
@@ -418,7 +419,17 @@
         CreateEPart_ITEM_NO$.on('change', function (evt) {
             var idx = evt.args.index;
             var param = {};
-            param.fromOID = CreateEPart_ITEM_NO$.val();
+
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                param.FromOID = $('#CreateEPart_ITEM_NO1').val();
+                $('#CreateEPart_Serial1').val("");
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
+                param.FromOID = $('#CreateEPart_ITEM_NO2').val();
+                $('#CreateEPart_Serial2').val("");
+            } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_STANDARD") {
+                $('#CreateEPart_Serial3').val("");
+            }
+
             param.Code1 = 'CLASS';
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 itemno = itemList[idx].Code1;
@@ -482,7 +493,13 @@
 
         oem$.on('change', function (evt) {
             var param = {};
-            param.fromOID = oem$.val();
+
+            if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
+                param.FromOID = $('#CreateEPart_Oem1').val();
+            } else {
+                param.FromOID = $('#CreateEPart_Oem2').val();
+            }
+
             param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
             RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
 
@@ -513,8 +530,6 @@
             });
         });
 
-
-
         psize$.on('change', function (evt) {
             var idx = evt.args.index;
             var param = {};
@@ -524,21 +539,22 @@
             param.fromOID = psize$.val();
             param.Code1 = 'TYPE';
             RequestData('/Manage/SelLibrary', param, function (res) {
-                    var blockNoSource =
-                    {
-                        localdata: res,
-                        datatype: "json",
-                        datafields:
-                            [
-                                { name: 'KorNm', type: 'string' },
-                                { name: 'OID', type: 'int' },
-                                { name: 'Name', type: 'string' }
-                            ]
-                    };
-                    var blockNoadapter = new $.jqx.dataAdapter(blockNoSource);
-                    BlockNo$.jqxComboBox({ source: blockNoadapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+                var blockNoSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Name', type: 'string' }
+                        ]
+                };
+                var blockNoadapter = new $.jqx.dataAdapter(blockNoSource);
+                BlockNo$.jqxComboBox({ source: blockNoadapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
             });
         });
+
         placeList$.on('change', function (evt) {
             var idx = evt.args.index;
             place = placeList[idx].Name;
@@ -556,6 +572,7 @@
 
             CreateEPartName();
         });
+
         itemMiddle$.on('change', function (evt) {
             var idx = evt.args.index;
             var data = evt.args.item.originalItem;
@@ -574,6 +591,7 @@
             }
             CreateEPartName();
         });
+
         Srev$.bind('change paste keyup', function () {
             $(this).val($(this).val().toUpperCase());
             if ($(this).val() == "O" || $(this).val() == "I") {
@@ -581,7 +599,7 @@
                 CreateEPartName();
                 return;
             }
-            
+
             if (EPartDivision == "@Common.Constant.EBomConstant.DIV_ASSEMBLY") {
                 srev = Srev$[0].value;
             } else if (EPartDivision == "@Common.Constant.EBomConstant.DIV_SINGLE") {
@@ -590,35 +608,18 @@
 
             CreateEPartName();
         });
-        $('#CreateEPartChk').bind('change paste keyup', function () {
-            CreateEPartChk$ = true;
-        });
 
-        $('#CreateEPartChk').on('click', function () {
-            var param = {};
-            param.Name = $('#CreateEPartName').val();
-            if (param.Name == null || param.Name == "") {
-                CreateEPartChk$ = true;
-                alert("품번을 입력해주세요");
-                return;
-            }
-
-            //RequestData('/EBom/CreateEPartChk', param, function (response) {
-            //    if (response.isError) {
-            //        alert(response.resultMessage);
-            //        return;
-            //    }
-            //    if (response == 1) {
-            //        alert("이미 사용중인 품번입니다");
-            //        CreateEPartChk$ = true;
-            //    } else {
-            //        alert("사용 가능한 품번입니다.");
-            //        CreateEPartChk$ = false;
-            //    }
-            //});
-
-        });
-
+        CreateEPart_ITEM_NO$.find('input, textarea, select').attr('disabled', 'disabled');
+        itemMiddle$.find('input, textarea, select').attr('disabled', 'disabled');
+        placeList$.find('input, textarea, select').attr('disabled', 'disabled');
+        epartType$.find('input, textarea, select').attr('disabled', 'disabled');
+        BlockNo$.find('input, textarea, select').attr('disabled', 'disabled');
+        CarType$.find('input, textarea, select').attr('disabled', 'disabled');
+        oem$.find('input, textarea, select').attr('disabled', 'disabled');
+        psize$.find('input, textarea, select').attr('disabled', 'disabled');
+        Name$.find('input, textarea, select').attr('disabled', 'disabled');
+        Serial$.find('input, textarea, select').attr('disabled', 'disabled');
+        Srev$.find('input, textarea, select').attr('disabled', 'disabled');
 
         $('#CreateEPartBtn').on('click', function () {
             var param = {};
@@ -661,20 +662,19 @@
             }
 
             if (param.Title == null || param.Title == "") {
-                alert('품명을 입력해주세요');
+                alert('품명을 입력해주세요.');
                 return;
             }
-
             if (param.Name == null || param.Name == "") {
-                alert('품번을 확인해주세요.');
+                alert('품번을 확인해주세요. 품번은 12자리 여야 합니다.');
                 return;
             } else if (param.Name.length != 12) {
-                alert('품번을 확인해주세요.');
+                alert('품번을 확인해주세요. 품번은 12자리 여야 합니다.');
                 return;
             } else if (param.Division == null || param.Division == "") {
                 alert('구분을 선택해주세요.');
                 return;
-            } 
+            }
 
             var Files = InfoFiles.Files();
             var removeFiles = InfoFiles.RemoveFiles();

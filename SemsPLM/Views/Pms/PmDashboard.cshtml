@@ -2,71 +2,74 @@
     Layout = null;
 }
 
-<div class="dashboardTop clearfix">
-    <div>
-        <p>내 작업<span>@ViewBag.PmMyTask</span></p>
-        <p style="color:#f00;" id="spPmDelayTask">내 지연작업<span>@ViewBag.PmMyDelayTask</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyTask" data-title="내 작업">+</button>
-    </div>
-    <div>
-        <p>내 프로젝트<span>@ViewBag.PmMyProjectTask</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyProject" data-title="내 프로젝트">+</button>
-    </div>
-    <div>
-        <p>결재중 작업<span>@ViewBag.PmMyApprovTask</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyApprovTask" data-title="결재중 작업">+</button>
-    </div>
-    <div>
-        <p>산출물<span>@ViewBag.PmMyDelivery</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyDelivery" data-title="산출물">+</button>
-    </div>
-    <div>
-        <p>이슈<span>@ViewBag.PmMyIssue</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyIssue" data-title="이슈">+</button>
-    </div>
-    <div>
-        <p>DV 현황<span>@ViewBag.PmMyDvStatus</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyDvStatus" data-title="DV 현황">+</button>
-    </div>
-    <div>
-        <p>PV 현황<span>@ViewBag.PmMyPvStatus</span></p>
-        <button class="btnPmClick" data-info="PmDashboardMyPvStatus" data-title="PV 현황">+</button>
-    </div>
-</div>
-
-<div class="dashboardGraphs clearfix">
-    <div style="width:100%;">
-        <div class="graphH">
-            프로젝트 진행 상태
-            <div class="pmDsbdLegend">
-                <div class="timelineLegend"><div></div> 현재</div>
-                @*<div class="dashboardStatusSelBox"></div>*@
+    <div style="width:100%;max-height:835px;overflow-y:hidden;overflow-x:hidden;-ms-overflow-style: none;">
+        <div class="dashboardTop clearfix">
+            <div>
+                <p>내 작업<span>@ViewBag.PmMyTask</span></p>
+                <p style="color:#f00;" id="spPmDelayTask">내 지연작업<span>@ViewBag.PmMyDelayTask</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyTask" data-title="내 작업">+</button>
+            </div>
+            <div>
+                <p>내 프로젝트<span>@ViewBag.PmMyProjectTask</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyProject" data-title="내 프로젝트">+</button>
+            </div>
+            <div>
+                <p>결재중 작업<span>@ViewBag.PmMyApprovTask</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyApprovTask" data-title="결재중 작업">+</button>
+            </div>
+            <div>
+                <p>산출물<span>@ViewBag.PmMyDelivery</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyDelivery" data-title="산출물">+</button>
+            </div>
+            <div>
+                <p>이슈<span>@ViewBag.PmMyIssue</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyIssue" data-title="이슈">+</button>
+            </div>
+            <div>
+                <p>DV 현황<span>@ViewBag.PmMyDvStatus</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyDvStatus" data-title="DV 현황">+</button>
+            </div>
+            <div>
+                <p>PV 현황<span>@ViewBag.PmMyPvStatus</span></p>
+                <button class="btnPmClick" data-info="PmDashboardMyPvStatus" data-title="PV 현황">+</button>
             </div>
         </div>
-        <div class="pmProjectList">
-            <div id="pmProjectTimeline">
+
+        <div class="dashboardGraphs clearfix">
+            <div style="width:100%;">
+                <div class="graphH">
+                    프로젝트 진행 상태
+                    <div class="pmDsbdLegend">
+                        <div class="timelineLegend"><div></div> 현재</div>
+                        @*<div class="dashboardStatusSelBox"></div>*@
+                    </div>
+                </div>
+                <div class="pmProjectList">
+                    <div id="pmProjectTimeline">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="dashboardGrids clearfix">
+            <div>
+                <div class="graphH">
+                    <i></i> 예정작업
+                    @*<button>+</button>*@
+                </div>
+                <div id="pmScheduleList"></div>
+            </div>
+            <div>
+                <div class="graphH">
+                    상세지연현황
+                    @*<button>+</button>*@
+                </div>
+                <div id="pmDelayList"></div>
             </div>
         </div>
-    </div>
 
-</div>
-
-<div class="dashboardGrids clearfix">
-    <div>
-        <div class="graphH">
-            <i></i> 예정작업
-            @*<button>+</button>*@
-        </div>
-        <div id="pmScheduleList"></div>
     </div>
-    <div>
-        <div class="graphH">
-            상세지연현황
-            @*<button>+</button>*@
-        </div>
-        <div id="pmDelayList"></div>
-    </div>
-</div>
 
 
 <script src="~/Resource/Base/d3.min.js"></script>

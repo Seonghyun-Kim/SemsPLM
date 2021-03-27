@@ -1,0 +1,289 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<div id="wbsInfo_@ViewBag.OID"></div>
+
+
+<script>
+    var newRowID = null;
+    var maxId = 0;
+    var projectDatas = [];
+    var deleteData = [];
+    var today = new Date();
+    var ProjectOID = '@ViewBag.OID';
+    $(function () {
+
+        const ProjectNm = '@ViewBag.Detail.Name';
+
+        var source =
+        {
+            dataType: "json",
+            dataFields: [
+                //System Mandatory
+                { name: 'OID', type: 'number' },
+                { name: 'RootOID', type: 'number' },
+                { name: 'FromOID', type: 'number' },
+                { name: 'ToOID', type: 'number' },
+                { name: 'Children', type: 'array' },
+                { name: 'Action', type: 'string' },
+                { name: 'Ord', type: 'number' },
+                { name: 'isCritical', type: 'string' },
+                { name: 'WorkingDay', type: 'number' },
+
+                //System Option
+                { name: 'expanded', type: 'bool' },
+                { name: 'diseditable', type: 'array' },
+
+                //Object Mandatory
+                { name: 'ObjName', type: 'string' },
+                { name: 'ObjType', type: 'string' },
+                { name: 'Id', type: 'number' },
+                { name: 'Dependency', type: 'string' },
+                { name: 'ObjSt', type: 'number' },
+                { name: 'ObjStNm', type: 'string' },
+                { name: 'Complete', type: 'number' },
+                { name: 'Members', type: 'array' },
+                { name: 'EstDuration', type: 'number' },
+                { name: 'EstStartDt', type: 'date' },
+                { name: 'EstEndDt', type: 'date' },
+                { name: 'ActDuration', type: 'number' },
+                { name: 'ActStartDt', type: 'date' },
+                { name: 'ActEndDt', type: 'date' },
+                { name: 'Level', type: 'number' },
+                { name: 'Delay', type: 'number' },
+                { name: 'Deliveries', type: 'number' },
+                { name: 'No', type: 'string' },
+
+                //Object Optional
+                { name: 'Description', type: 'string' },
+            ],
+            //hierarchy:
+            //{
+            //    root: 'Children',
+            //},
+            id: 'ToOID',
+        };
+
+        var projWbsInfo$ = $("#wbsInfo_" + ProjectOID);
+
+        //if (projWbsInfo$.html().length > 0) {
+        //    projWbsInfo$.jqxTreeGrid({ editable: false });
+        //    projWbsInfo$.jqxTreeGrid('pagerRenderer');
+        //    return;
+        //}
+
+        projWbsInfo$.jqxTreeGrid(
+            {
+                width: 1480,
+                height: 600,
+                theme: "kdnc",
+                columnsResize: true,
+                autoRowHeight: false,
+                sortable: false,
+                checkboxes: false,
+                selectionMode: "custom",
+                editable: false,
+                pagerButtonsCount: 8,
+                toolbarHeight: 44,
+                showToolbar: true,
+                ready: function () {
+
+                },
+                columns: [
+                    {
+                        text: '이름', dataField: 'ObjName', width: '20%', align: 'center', pinned: true,
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            const editable = projWbsInfo$.jqxTreeGrid('editable');
+                            if (rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PROJECT'
+                                || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_PHASE'
+                                || rowData.ObjType.toUpperCase() == '@Common.Constant.PmsConstant.TYPE_GATE') {
+
+                            } else {
+                                if (editable) {
+                                    return cellValue;
+                                } else {
+                                    var vText = cellText;
+                                    return vText
+                                    //return vText + ' <a href="#" onclick="PmsNewTabClick(' + ProjectOID + ', \'' + ProjectNm + '\', \'/Pms/InfoProcess\', ' + rowData.ToOID + ', \'' + rowData.ObjName + '\')" ><i class="fas fa-window-maximize"></i></a>';
+                                }
+                            }
+                        }
+                    },
+                    { text: '구분', dataField: 'ObjType', width: '5%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
+                    { text: 'Id', dataField: 'Id', width: '4%', align: 'center', editable: false, cellsAlign: 'center', pinned: true, },
+                    { text: 'NO', dataField: 'No', width: '6%', align: 'center', editable: false, cellsAlign: 'left', },
+                    //{ text: '레벨', dataField: 'Level', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
+                    //{
+                    //    text: 'Critical Path', dataField: 'isCritical', width: '8%', align: 'center', cellsAlign: 'center', editable: false,
+                    //    cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                    //        if (cellText == true) {
+                    //            return "<i class='fas fa-exclamation-circle'></i>";
+                    //        } else {
+                    //            return "";
+                    //        }
+                    //    },
+                    //},
+                    //{
+                    //    text: 'Predecessor', dataField: 'Dependency', columnGroup: 'Dependency', width: '8%', align: 'center', cellsAlign: 'center',
+                    //},
+                    { text: '상태', dataField: 'ObjStNm', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
+                    {
+                        text: '진행', dataField: 'Delay', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            if (('@ViewBag.Detail.BPolicyNm' == '@Common.Constant.PmsConstant.POLICY_PROJECT_STARTED')
+                                && (rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PROJECT' && rowData.ObjType.toUpperCase() != '@Common.Constant.PmsConstant.TYPE_PHASE') && (rowData.ActStartDt == null || rowData.ActStartDt == undefined)) {
+                                gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: projectDatas, source: source };
+                                return "";
+                                //return "<button class='custom-button tskStartBtn' data-type='" + rowData.ObjType + "' data-status='" + rowData.ObjSt + "'  onclick='fTaskStart(this, " + ProjectOID + ", " + row + ")'><i class='fas fa-caret-right'></i> 시작</button>";
+                            }
+
+                            if (cellText == null || cellText == undefined || cellText.length < 1) {
+                                return "";
+                            }
+
+                            var targetDelay = @Common.Constant.PmsConstant.DELAY;
+                            var iCellText = parseInt(cellText);
+                            if (iCellText >= 1 && iCellText <= targetDelay) {
+                                return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.WARNING_COLOR;"></div></div>';
+                            } else if (iCellText > targetDelay) {
+                                return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:@Common.Constant.PmsConstant.DELAY_COLOR;"></div></div>';
+                            } else {
+                                return '<div style="width:100%;text-align: center;"><div style="display:inline-block;width:20px;height:20px;border-radius:50%;background-color:#0f0;"></div></div>';
+                            }
+                            return cellText;
+                        },
+                    },
+                    { text: '% 완료', dataField: 'Complete', width: '5%', align: 'center', editable: false, cellsAlign: 'center', },
+                    {
+                        text: '멤버', dataField: 'Members', width: '14%', align: 'center', editable: false, autoCellHeight: false,
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            if (rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PROJECT' ||
+                                rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_PHASE' ||
+                                rowData.ObjType == '@Common.Constant.PmsConstant.TYPE_GATE') {
+                                var disableDiv = "<div style=text-align:center;color:#ccc;'>시스템</div>";
+                                return disableDiv;
+                                ; return;
+                            }
+                            if (cellValue != null && cellValue != undefined) {
+                                if (cellValue.length > 0) {
+                                    var tmpTag = "<div style='text-align: center;width:100%;height:20px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;'><div style='width:1000px;height:20px;'>";
+                                    for (var index = 0; index < cellValue.length; index++) {
+                                        if (cellValue[index].Thumbnail != null) {
+                                            tmpTag += "<div class='wbsMember'><div class='memberImg'><img src='@Url.Content("~/images/Thumbnail/")" + cellValue[index].Thumbnail + "'></div>" + cellValue[index].PersonNm + "&nbsp;</div>";
+                                        } else {
+                                            tmpTag += "<div class='wbsMember'><div class='memberImg'><i class='fa fa-user-circle-o' aria-hidden='true'></i></div>" + cellValue[index].PersonNm + "</div>";
+                                        }
+                                    }
+                                    tmpTag += "</div></div>";
+                                    return tmpTag;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        text: '지연일수', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            return (rowData.Delay == null || rowData.Delay == undefined || rowData.Delay.length < 1 ? "" : rowData.Delay);
+                        }
+                    },
+                    {
+                        text: '기간', dataField: 'EstDuration', columnGroup: 'Estimated', width: '4%', align: 'center', cellsAlign: 'center',
+                        validation: function (cell, value) {
+                            var bResult = true;
+                            if (value == '' || value == '0') {
+                                bResult = false;
+                            }
+                            return bResult;
+                        },
+                        cellsRenderer: function (row, dataField, cellValue, rowData) {
+                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            if (editable) {
+                                if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                    _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                    return "<span style='color: #999999;'>" + cellValue + "</span>";
+                                }
+                                return "<div class='editableCell'><div></div></div>" + cellValue;
+                            }
+                        }
+                    },
+                    {
+                        text: '시작일', dataField: 'EstStartDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '8%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                        validation: function (cell, value) {
+                            var bResult = true;
+                            if (value == '') {
+                                bResult = false;
+                            }
+                            return bResult;
+                        },
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
+                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            if (editable) {
+                                if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                    _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                    return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                }
+                                return "<div class='editableCell'><div></div></div>" + cellsFormat;
+                            }
+                        },
+                    },
+                    {
+                        text: '완료일', dataField: 'EstEndDt', columnGroup: 'Estimated', cellsFormat: 'yyyy-MM-dd', width: '8%', align: 'center', className: 'datePicker', cellsAlign: 'center',
+                        validation: function (cell, value) {
+                            var bResult = true;
+                            if (value == '') {
+                                bResult = false;
+                            }
+                            return bResult;
+                        },
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellsFormat) {
+                            var editable = projWbsInfo$.jqxTreeGrid('editable');
+                            if (editable) {
+                                if (rowData.diseditable != undefined && rowData.diseditable.length > 0 &&
+                                    _.find(rowData.diseditable, function (data) { return data == dataField }) != undefined) {
+                                    return "<span style='color: #999999;'>" + moment(cellValue).format('YYYY-MM-DD') + "</span>";
+                                }
+                                return "<div class='editableCell'><div></div></div>" + cellsFormat;
+                            }
+                        },
+                    },
+                    {
+                        text: '기간', dataField: 'ActDuration', columnGroup: 'Actual', width: '5%', align: 'center', editable: false, cellsAlign: 'center',
+                        cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                            if ((rowData.ActStartDt == null && rowData.ActEndDt == null) || (rowData.ActStartDt != null && rowData.ActEndDt != null)) {
+                                return cellText;
+                            } else if (rowData.ActStartDt != null && rowData.ActEndDt == null) {
+
+                            }
+                        }
+                    },
+                    { text: '시작일', dataField: 'ActStartDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '8%', align: 'center', editable: false, cellsAlign: 'center', },
+                    { text: '완료일', dataField: 'ActEndDt', columnGroup: 'Actual', cellsFormat: 'yyyy-MM-dd', width: '8%', align: 'center', editable: false, cellsAlign: 'center', },
+                    { text: '설명', dataField: 'Description', align: 'center', width: '8%', },
+                ],
+                columnGroups: [
+                    { text: '예상', name: 'Estimated', align: "center" },
+                    { text: '실제', name: 'Actual', align: "center" },
+                    { text: 'Dependency', name: 'Dependency' },
+                ],
+                pagerRenderer: function () {
+                    RequestData('/Pms/SelDelayWbs', { 'ProjectOID': @ViewBag.OID, 'Index' : @ViewBag.Index }, function (res) {
+                        //projectDatas = [];
+                        //projectDatas.push(res);
+                        //var arrData = fPmsArrayTasks(projectDatas);
+                        //var masterlink = fMasterLink(arrData);
+                        //fComputeCriticalPath(arrData, masterlink);
+
+                        PrintJqxTreeGrid(source, projWbsInfo$, res);
+                        gPmsModifyHistoryMaster[ProjectOID] = { obj: projWbsInfo$, data: res, source: source };
+                    });
+                },
+            });
+
+        projWbsInfo$.jqxTreeGrid('pagerRenderer');
+    });
+
+
+</script>

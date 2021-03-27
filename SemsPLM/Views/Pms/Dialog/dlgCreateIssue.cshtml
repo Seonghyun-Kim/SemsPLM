@@ -62,8 +62,8 @@
                 <input type="text" id="dlgManager" value="" style="width:150px;" readonly />
                 <button class="custom-button" id="dlgSelManager"><i class="fas fa-search"></i> 검색</button>
             </td>
-            <th><i class="fa fa-caret-right"></i> 필수 결재 여부</th>
-            <td>
+            <th class="TaskVal"><i class="fa fa-caret-right"></i> 필수 결재 여부</th>
+            <td class="TaskVal">
                 <div id="IsApprovalRequired" name="IsApprovalRequired" data-value="@Common.Constant.PmsConstant.ATTRIBUTE_ISSUE_ETC" class="issueCheckBox"></div>
             </td>
         </tr>
@@ -83,12 +83,21 @@
             </td>
 
         </tr>
+        <tr class="Process">
+            <th style="vertical-align:top;"><i class="fa fa-caret-right"></i> 첨부파일</th>
+            <td colspan="3">
+                <div id="dlgFile_FileList">
+                </div>
+            </td>
+        </tr>
     </table>
 </div>
 
 <script>
     var ApprovRequired = "@Common.Constant.CommonConstant.ACTION_NO";
+    var fileUpload = $('#dlgFile_FileList').FileUpload();
     $(function () {
+        fileUpload.EditMode();
         $('#dlgDescription').jqxEditor({
             width: '100%',
             height: 200,

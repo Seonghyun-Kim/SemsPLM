@@ -306,7 +306,7 @@
             DesignChangeDt = DesignChangeDt.substring(0, 10);
             $('#InfoChangeOrder_DesignChangeDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', DesignChangeDt);
         }
-         var ReqDt = "@ViewBag.ECODetail.SelRequestDt";
+        var ReqDt = "@ViewBag.ECODetail.SelRequestDt";
 
         if (ReqDt == null || ReqDt == "") {
             $('#InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', null);
@@ -314,7 +314,7 @@
             ReqDt = ReqDt.substring(0, 10);
             $('#InfoChangeOrder_SelRequestDt_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', ReqDt);
         }
-     var Ebom = "@ViewBag.ECODetail.EBom";
+        var Ebom = "@ViewBag.ECODetail.EBom";
 
         if (Ebom == null || Ebom == "") {
             $('#InfoChangeOrder_EBom_@ViewBag.ECODetail.OID').jqxDateTimeInput('setDate', null);
@@ -383,17 +383,17 @@
             }
         });
         var InfoDevTypeList = [{ type: '@Common.Constant.EoConstant.TYPE_DEV_KorNm', value: '@Common.Constant.EoConstant.TYPE_DEV' },
-                { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
-                var InfoDevTypeSource =
-                {
-                    localdata: InfoDevTypeList,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'type', type: 'string' },
-                            { name: 'value', type: 'string' },
-                        ]
-                };
+        { type: '@Common.Constant.EoConstant.TYPE_MP_KorNm', value: '@Common.Constant.EoConstant.TYPE_MP' }];
+        var InfoDevTypeSource =
+        {
+            localdata: InfoDevTypeList,
+            datatype: "json",
+            datafields:
+                [
+                    { name: 'type', type: 'string' },
+                    { name: 'value', type: 'string' },
+                ]
+        };
         var InfodevAdapter = new $.jqx.dataAdapter(InfoDevTypeSource);
         InfodevType$.jqxComboBox({ source: InfodevAdapter, displayMember: "type", valueMember: "value", width: 100, height: 32 });
         InfodevType$.val('@ViewBag.ECODetail.DevMP');
@@ -409,7 +409,7 @@
                 ]
         };
         var InforeasonAdapter = new $.jqx.dataAdapter(InforeasonSource);
-        InforeasonChange$.jqxComboBox({ source: InforeasonAdapter, displayMember: "KorNm", valueMember: "OID",width: 220, height: 32 });
+        InforeasonChange$.jqxComboBox({ source: InforeasonAdapter, displayMember: "KorNm", valueMember: "OID", width: 220, height: 32 });
         InforeasonChange$.val('@ViewBag.ECODetail.ReasonChange');
 
         for (var i = 0; i < InfoOriginList$.length; i++) {
@@ -428,8 +428,8 @@
             manager.setAttribute('readonly', 'readonly');
             manager.id = "managerNm_" + i + "_@ViewBag.ECODetail.OID";
             if (InfoOriginList$[i].ToOID != null) {
-                managerOID.setAttribute('value',InfoOriginList$[i].ToOID);
-                manager.setAttribute('value',InfoOriginList$[i].ManagerNm);
+                managerOID.setAttribute('value', InfoOriginList$[i].ToOID);
+                manager.setAttribute('value', InfoOriginList$[i].ManagerNm);
             }
             var btn = document.createElement("button");
             btn.innerHTML = "<i class='fas fa-search'></i> 처리자 선택";
@@ -445,8 +445,8 @@
             }, false);
 
             var wrapDiv$ = document.createElement("div");
-                wrapDiv$.className = "scrollY";
-             var div$ = document.createElement("div");
+            wrapDiv$.className = "scrollY";
+            var div$ = document.createElement("div");
             div$.id = "assessList_" + i + "_@ViewBag.ECODetail.OID";
 
             if (i % 2 != 1) {
@@ -484,7 +484,7 @@
                 ],
             }
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#assessList_" + i+"_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true , autoHeight:true});
+            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({ source: dataAdapter, displayMember: "Name", valueMember: "OID", width: 820, checkboxes: true, autoHeight: true });
 
         }
         $('.assessModify').attr('hidden', true);
@@ -658,131 +658,134 @@
         });
 
         $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').on('click', function () {
-                    $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
-                    $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').removeAttr('hidden');
-                    $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').removeAttr('hidden');
-                    $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').removeAttr('hidden');
-                    if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
-                        $('.assessModify').attr('hidden', false);
+            $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+            $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').removeAttr('hidden');
+            $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').removeAttr('hidden');
+            $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').removeAttr('hidden');
+            if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
+                $('.assessModify').attr('hidden', false);
+            }
+            //ToDo 결재중상태시 유동적 열기기능
+            if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
+                for (var i = 0; i < InfoOriginList$.length; i++) {
+                    $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                        disabled: false
+                    });
+                }
+            } else {
+                for (var i = 0; i < InfoOriginList$.length; i++) {
+                    if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() == '@Session["UserOID"]') {
+                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                            disabled: false
+                        });
                     }
-                    //ToDo 결재중상태시 유동적 열기기능
-                    if ('@(ViewBag.ApprovStatus == null || ViewBag.ApprovStatus != Common.Constant.CommonConstant.POLICY_APPROVAL_STARTED)' != "False") {
-                       for (var i = 0; i < InfoOriginList$.length; i++) {
-                            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
-                                disabled: false
-                            });
-                        }
-                    } else {
-                         for (var i = 0; i < InfoOriginList$.length; i++) {
-                             if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() == '@Session["UserOID"]') {
-                                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
-                                    disabled: false
-                                });
-                            }
-                        }
-                    }
+                }
+            }
+        });
+
+        $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').on('click', function () {
+            loadFlag = 'F';
+            $('.assessModify').attr('hidden', true);
+            $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
+            $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+            $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+            $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
+            InfoAssess$.removeAttr('hidden');
+            newList.attr('hidden', 'hidden');
+            for (var i = 0; i < InfoOriginList$.length; i++) {
+                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('clearSelection');
+                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('uncheckAll');
+
+                if (InfoOriginList$[i].ToOID != null) {
+                    $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ToOID);
+                    $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ManagerNm);
+                } else {
+                    $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val("");
+                    $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val("");
+                }
+
+                for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
+                    var check = InfoSelassessList$[i].CheckData[j].ToOID;
+                    $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
+
+                }
+                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
+                    disabled: true
                 });
-                $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').on('click', function () {
-                    loadFlag = 'F';
+            }
+        });
+
+        $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').off().on('click', function () {
+            if (gClickDuplication) { return; }
+            gClickDuplication = true;
+            if (confirm('저장 하시겠습니까?')) {
+                var iData = {};
+                iData.RootOID = @ViewBag.ECODetail.OID;
+                iData.Type = '@Common.Constant.EoConstant.TYPE_ASSESSLIST';
+                var checkList = [];
+                if (loadFlag == "F") { //기존 리비전 평가표로 작업시
+                    for (var i = 0; i < InfoOriginList$.length; i++) {
+                        var list = [];
+                        var data = {};
+                        data.OID = InfoOriginList$[i].OID;
+                        if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() != null) {
+                            data.ToOID = $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val();
+                        }
+                        list.push(data);
+                        var a = $('#assessList_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
+                        for (var j = 0; j < a.length; j++) {
+                            list.push(a[j].originalItem);
+                        }
+                        checkList.push(list);
+
+                    }
+                } else if (loadFlag == "T") { //최신 평가표로 불러온후 작업시
+                    for (var i = 0; i < loadAssessData.length; i++) {
+                        var list = [];
+                        var data = {};
+                        data.OID = loadAssessData[i].OID;
+                        list.push(data);
+                        var a = $('#assessListNew_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
+                        for (var j = 0; j < a.length; j++) {
+                            list.push(a[j].originalItem);
+                        }
+                        checkList.push(list);
+
+                    }
+                }
+                RequestData('/ChangeOrder/UpdateECOAssess', { _assessList: checkList, delData: iData }, function (response) {
+                    if (response.isError) {
+                        alert(response.resultMessage);
+                        return;
+                    }
+                    alert("저장되었습니다.");
+                    gClickDuplication = false;
+                    //PageReload();
+
                     $('.assessModify').attr('hidden', true);
                     $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
                     $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
                     $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
                     $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
-                    InfoAssess$.removeAttr('hidden');
-                    newList.attr('hidden', 'hidden');
-                    for (var i = 0; i < InfoOriginList$.length; i++) {
-                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('clearSelection');
-                        $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('uncheckAll');
-
-                        if (InfoOriginList$[i].ToOID != null) {
-                            $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ToOID);
-                            $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val(InfoOriginList$[i].ManagerNm);
-                        } else {
-                              $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val("");
-                            $("#managerNm_" + i + "_@ViewBag.ECODetail.OID").val("");
+                    RequestData('/ChangeOrder/SelChangeOrderAssessList', { OID: '@ViewBag.ECODetail.OID' }, function (response) {
+                        if (response.isError) {
+                            alert(response.resultMessage);
+                            return;
                         }
-
-                        for (j = 0; j < InfoSelassessList$[i].CheckData.length; j++) {
-                            var check = InfoSelassessList$[i].CheckData[j].ToOID;
-                            $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox('checkItem', check);
-
-                        }
+                        InfoOriginList$ = response.originList;
+                        InfoSelassessList$ = response.SelassessList;
+                    });
+                    for (var i = 0; i < InfoSelassessList$.length; i++) {
                         $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
                             disabled: true
                         });
                     }
                 });
-                $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').off().on('click', function () {
-                    if (gClickDuplication) { return; }
-                    gClickDuplication = true;
-                    if (confirm('저장 하시겠습니까?')) {
-                        var iData = {};
-                        iData.RootOID = @ViewBag.ECODetail.OID;
-                        iData.Type = '@Common.Constant.EoConstant.TYPE_ASSESSLIST';
-                        var checkList = [];
-                        if (loadFlag == "F") { //기존 리비전 평가표로 작업시
-                            for (var i = 0; i < InfoOriginList$.length; i++) {
-                                var list = [];
-                                var data = {};
-                                data.OID = InfoOriginList$[i].OID;
-                                if ($("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val() != null) {
-                                    data.ToOID = $("#managerOID_" + i + "_@ViewBag.ECODetail.OID").val();
-                                }
-                                list.push(data);
-                                var a = $('#assessList_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
-                                for (var j = 0; j < a.length; j++) {
-                                    list.push(a[j].originalItem);
-                                }
-                                checkList.push(list);
 
-                            }
-                        } else if (loadFlag == "T") { //최신 평가표로 불러온후 작업시
-                            for (var i = 0; i < loadAssessData.length; i++) {
-                                var list = [];
-                                var data = {};
-                                data.OID = loadAssessData[i].OID;
-                                list.push(data);
-                                var a = $('#assessListNew_' + i + "_@ViewBag.ECODetail.OID").jqxListBox('getCheckedItems');
-                                for (var j = 0; j < a.length; j++) {
-                                    list.push(a[j].originalItem);
-                                }
-                                checkList.push(list);
+            }
+            gClickDuplication = false;
+        });
 
-                            }
-                        }
-                        RequestData('/ChangeOrder/UpdateECOAssess', { _assessList: checkList, delData: iData }, function (response) {
-                            if (response.isError) {
-                                alert(response.resultMessage);
-                                return;
-                            }
-                            alert("저장되었습니다.");
-                            gClickDuplication = false;
-                            //PageReload();
-
-                            $('.assessModify').attr('hidden', true);
-                            $('#InfoChangeOrder_assessEdit_@ViewBag.ECODetail.OID').removeAttr('hidden');
-                            $('#InfoChangeOrder_assessCancel_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
-                            $('#InfoChangeOrder_assessSave_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
-                            $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').attr('hidden', 'hidden');
-                            RequestData('/ChangeOrder/SelChangeOrderAssessList', { OID: '@ViewBag.ECODetail.OID' }, function (response) {
-                                if (response.isError) {
-                                    alert(response.resultMessage);
-                                    return;
-                                }
-                                InfoOriginList$ = response.originList;
-                                InfoSelassessList$ = response.SelassessList;
-                            });
-                            for (var i = 0; i < InfoSelassessList$.length; i++) {
-                                $("#assessList_" + i + "_@ViewBag.ECODetail.OID").jqxListBox({
-                                    disabled: true
-                                });
-                            }
-                        });
-
-                    }
-                    gClickDuplication = false;
-                });
         $('#InfoChangeOrder_assessLoad_@ViewBag.ECODetail.OID').on('click', function () {
             if (confirm('최신 평가표를 불러오시겠습니까?')) {
                 RequestData('/Manage/SelAssessLibrary', param, function (response) {
@@ -996,7 +999,14 @@
                                 return "<div style='width:100%;height:100%;text-align:center;vertical-align:middle;line-height:1.9;'>" + (value + 1) + "</div>";
                             }
                         },
-                        { text: '품번', datafield: 'Name', width: '15%', },
+                        {
+                            text: '품번', datafield: 'Name', width: '15%',
+                            cellsRenderer: function (row, dataField, cellValue, rowData, cellText) {
+                                var getrowdata = ebomListGrid$.jqxGrid('getrowdata', row);
+                                var vText = cellValue;
+                                return vText + ' <a href="#" onclick="EBomStructureDialog(' + getrowdata.OID + ',\'' + getrowdata.Name + '\')" ><i class="fas fa-window-maximize"></i></a>';
+                            }
+                        },
                         { text: 'Block_No', datafield: 'Block_NoNm', width: '15%', },
                         { text: '차종', datafield: 'Car_Lib_Nm', width: '15%', },
                         { text: '차수(리비전)', datafield: 'Revision', width: '10%', align: 'center', },
@@ -1329,6 +1339,14 @@
             }
         });
     });
+
+    function EBomStructureDialog(OID, Name) {
+        var param = {};
+        param.OID = OID;
+        param.Name = Name;
+
+        OpenEBomStructureDialog(null, null, param, '/ChangeOrder/dlgEBomStructure', 'EBOM');;
+    }
 
     function getBomList(_Source, _Grid$, _param) {
         RequestData("/ChangeOrder/SelEOContents", _param, function (res) {

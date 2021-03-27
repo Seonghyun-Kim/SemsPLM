@@ -106,7 +106,7 @@
 </div>
 
 <script type="text/javascript">
-    var itemText = "";
+    var itemText = parent.selCarText;
     var middleText = "";
     var iuputText = "";
     $(function () {
@@ -154,7 +154,7 @@
         dlgItem$.on('change', function (evt) {
             var selected = evt.args.item;
 
-            itemText = selected.label;
+            middleText = selected.label;
             CreateProjName();
             var idx = evt.args.index;
             var param = {};
@@ -254,9 +254,9 @@
         dlgItemMiddle$.on('change', function (evt) {
             var selected = evt.args.item;
 
-            middleText = selected.label;
+           // middleText = selected.label;
             var idx = evt.args.index;
-            CreateProjName();
+           // CreateProjName();
         });
 
         txtDlgItemName$.bind('change paste keyup', function () {

@@ -39,6 +39,9 @@ namespace Common.Constant
         public static string ATTRIBUTE_OEM = "OEM";
         public static string ATTRIBUTE_CAR = "CAR";
 
+        public static string ATTRIBUTE_CEO = "CEO";
+        public static string ATTRIBUTE_EXEC = "EXEC";
+
         public static string RELATIONSHIP_WBS = "WBS";
         public static string RELATIONSHIP_MEMBER = "MEMBER";
         public static string RELATIONSHIP_ISSUE = "ISSUE";
@@ -49,6 +52,7 @@ namespace Common.Constant
         public static string RELATIONSHIP_DOC_MASTER = "DOC_MASTER";
         public static string RELATIONSHIP_PROJECT_EPART = "PROJECT_EPART";
         public static string RELATIONSHIP_EPART = "EPART";
+        public static string RELATIONSHIP_DOCUMENT = "DOCUMENT";
 
         public static string ROLE_PM = "PM";
         public static string ROLE_PE = "PE";

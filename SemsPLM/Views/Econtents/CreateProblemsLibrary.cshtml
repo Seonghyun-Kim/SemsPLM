@@ -34,34 +34,29 @@
         <th><i class="fa fa-caret-right"></i> 차종</th>
         <td><div id="CreateProblemsLibraryCAR"></div></td>
         <th><i class="fa fa-caret-right"></i> 제품</th>
-        <td><select></select></td>
+        <td><input type="text" id="CreateProblemProduct" /></td>
         <th><i class="fa fa-caret-right"></i> 부품</th>
-        <td><select></select></td>
+        <td><input type="text" id="CreateProblemPart" /></td>
     </tr>
     <tr>
         <th><i class="fa fa-caret-right"></i> 발생처</th>
         <td>
             <div>
-                <select style="width:45%"></select>
-                &nbsp;<select style="width:45%"></select>
+                <input type="text" id="CreateProblemOccurrence" />
             </div>
         </td>
         <th><i class="fa fa-caret-right"></i> 발생단계</th>
-        <td><select></select></td>
+        <td><input type="text" id="CreateProblemStage_Occurrence" /></td>
         <th><i class="fa fa-caret-right"></i> 고장유형</th>
-        <td><select></select></td>
+        <td><input type="text" id="CreateProblemFailure_Type" /></td>
         <th><i class="fa fa-caret-right"></i> 구분</th>
-        <td><select></select></td>
+        <td><input type="text" id="CreateProblemDivision" /></td>
     </tr>
     <tr>
         <th><i class="fa fa-caret-right"></i> 기타</th>
         <td colspan="5"><input type="text" id="CreateProblemDescription" /></td>
         <th><i class="fa fa-caret-right"></i> 리비전</th>
         <td>00</td>
-    </tr>
-    <tr>
-        <th><i class="fa fa-caret-right"></i> 첨부파일</th>
-        <td colspan="7"></td>
     </tr>
     <tr>
         <th style="vertical-align:text-top;"><i class="fa fa-caret-right"></i> Issues<br />(문제점)</th>
@@ -94,6 +89,10 @@
             </div>
         </td>
     </tr>
+    <tr>
+        <th><i class="fa fa-caret-right"></i> 첨부파일</th>
+        <td colspan="7"><div id="CreateProblemFile" style="width:100%"></div></td>
+    </tr>
 </table>
 
 <script type="text/javascript">
@@ -105,7 +104,11 @@
     var CreateProblemsLibraryOEM$ = $('#CreateProblemsLibraryOEM');
     var CreateProblemsLibraryCAR$ = $('#CreateProblemsLibraryCAR');
 
+    var InfoFiles = $('#CreateProblemFile').FileUpload();
+
     $(function () {
+        InfoFiles.EditMode();
+
         var CreateProblemsOemSource =
         {
             localdata: CreateProblemsOemList,
@@ -123,8 +126,29 @@
         CreateProblemsLibraryCAR$.jqxComboBox({ source: CreateProblemsDefaultCar, displayMember: "KorNm", valueMember: "OID", width:'100%', height: 32, });
         CreateProblemsLibraryCAR$.jqxComboBox({ selectedIndex: 0 });
 
+
         CreateProblemsLibraryOEM$.on('change', function (event) {
-            ChangeCreateProblemsLibraryComboBox(2, CreateProblemsLibraryOEM$.val());
+            var param = {};
+            param.fromOID = CreateProblemsLibraryOEM$.val();
+            param.Code1 = '@Common.Constant.CommonConstant.ATTRIBUTE_CARTYPE';
+            RequestData('/Manage/SelCodeLibraryChild', param, function (res) {
+
+                var carSource =
+                {
+                    localdata: res,
+                    datatype: "json",
+                    datafields:
+                        [
+                            { name: 'KorNm', type: 'string' },
+                            { name: 'OID', type: 'int' },
+                            { name: 'Code1', type: 'string' },
+                            { name: 'Code2', type: 'string' },
+                        ]
+                };
+                var caradapter = new $.jqx.dataAdapter(carSource);
+                CreateProblemsLibraryCAR$.jqxComboBox({ source: caradapter, displayMember: "KorNm", valueMember: "OID", width: "100%", height: 32 });
+
+            });
         });
 
         $('#IssuesImageDrag').simpleUpload({
@@ -217,34 +241,6 @@
             });
         });
     });
-
-    function ChangeCreateProblemsLibraryComboBox(ID, OID) {
-        var CreateProblemsLibraryComboBox$ = CreateProblemsLibraryCAR$
-        var param = {};
-        param.fromOID = OID;
-        var CreateProblemsLibraryComboSource;
-        RequestData("/Manage/SelCodeLibrary", param, function (res) {
-            if (res.length > 0) {
-                CreateProblemsLibraryComboSource =
-                {
-                    localdata: res,
-                    datatype: "json",
-                    datafields:
-                        [
-                            { name: 'KorNm', type: 'string' },
-                            { name: 'OID', type: 'int' },
-                        ]
-                };
-                var CreateProblemsLibraryComboAdapter = new $.jqx.dataAdapter(CreateProblemsLibraryComboSource);
-                CreateProblemsLibraryComboBox$.jqxComboBox({ source: CreateProblemsLibraryComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-            } else {
-                CreateECOComboSource = [{ KorNm: '등록 차종 없음', OID: null }];
-                var CreateProblemsLibraryComboAdapter = new $.jqx.dataAdapter(CreateProblemsLibraryComboSource);
-                CreateProblemsLibraryComboBox$.jqxComboBox({ source: CreateProblemsLibraryComboAdapter, displayMember: "KorNm", valueMember: "OID" });
-                CreateProblemsLibraryComboBox$.jqxComboBox({ selectedIndex: 0 });
-            }
-        });
-    }
 
 
 </script>

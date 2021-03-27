@@ -33,9 +33,36 @@
         <isNotNull prepend="and" property="FromOID">
           B.FromOID = #FromOID#
         </isNotNull>
-        <isNotNull prepend="and" property="IsUse">
-          B.IsUse = #IsUse#
-        </isNotNull>  
+      </dynamic>
+      AND B.IsUse = 'Y'
+      AND A.DeleteDt IS NULL
+    </select>
+
+    <select id="AllSelLibrary" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DLIBRARY B ON A.OID = B.OID
+      <dynamic prepend="where">
+        <isNotNull prepend="and" property="Type">
+          A.Type = #Type#
+        </isNotNull>
+        <isNotNull prepend="and" property="OID">
+          A.OID = #OID#
+        </isNotNull>
+        <isNotNull prepend="and" property="Name">
+          A.Name LIKE CONCAT('%',#Name#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="Description">
+          A.Description LIKE CONCAT('%',#Description#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="KorNm">
+          B.KorNm  LIKE CONCAT('%',#KorNm#,'%')
+        </isNotNull>
+        <isNotNull prepend="and" property="FromOID">
+          B.FromOID = #FromOID#
+        </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL
     </select>
@@ -90,6 +117,37 @@
         <isNotNull prepend="and" property="Code2">
           A.Code2  LIKE CONCAT('%',#Code2#,'%')
         </isNotNull>
+      AND A.IsUse = 'Y'
+      AND A.DeleteDt IS NULL
+      ORDER BY Ord
+    </select>
+
+    <select id="AllSelCodeLibrary" parameterClass="Library" resultClass="Library">
+      SELECT
+      A.*
+      FROM T_DCODELIBRARY A
+      WHERE 1=1
+      <isNotNull prepend="and" property="OID">
+        A.OID = #OID#
+      </isNotNull>
+      <isNotNull prepend="and" property="Description">
+        A.Description LIKE CONCAT('%',#Description#,'%')
+      </isNotNull>
+      <isNotNull prepend="and" property="KorNm">
+        A.KorNm  LIKE CONCAT('%',#KorNm#,'%')
+      </isNotNull>
+      <isNotNull prepend="and" property="FromOID">
+        A.FromOID = #FromOID#
+      </isNotNull>
+      <isNotNull prepend="and" property="IsUse">
+        A.IsUse = #IsUse#
+      </isNotNull>
+      <isNotNull prepend="and" property="Code1">
+        A.Code1 =#Code1#
+      </isNotNull>
+      <isNotNull prepend="and" property="Code2">
+        A.Code2  LIKE CONCAT('%',#Code2#,'%')
+      </isNotNull>
       AND A.DeleteDt IS NULL
       ORDER BY Ord
     </select>

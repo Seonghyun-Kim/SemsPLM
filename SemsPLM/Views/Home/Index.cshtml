@@ -2,178 +2,188 @@
     ViewBag.Title = "Homepage";
 }
 
-<div class="mainDashboard">
+    <div class="mainDashboard">
 
-    <div id="wrapProject" style="margin-right:1%;">
-        <div class="mainStatusCount clearfix">
-            <h3>업무 현황</h3>
-            <div>
-                <div style="background-color:#008FFB;" class="icon">
-                    <i class="fas fa-list-ul"></i>
+        <div id="wrapProject" style="margin-right:1%;">
+            <div class="mainStatusCount clearfix">
+                <h3>업무 현황</h3>
+                <div>
+                    <div style="background-color:#FEB019;" class="icon">
+                        <i class="far fa-calendar-check"></i>
+                    </div>
+                    <div class="text">
+                        <h4>진행 예정 업무</h4>
+                        <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spPrepare">0</span>건</p>
+                    </div>
                 </div>
-                <div class="text">
-                    <h4>진행 중 업무</h4>
-                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spStarted">0</span>건</p>
+                <div>
+                    <div style="background-color:#008FFB;" class="icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div class="text">
+                        <h4>진행 중 업무</h4>
+                        <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spStarted">0</span>건</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="background-color:#FF4560;" class="icon">
+                        <i class="far fa-calendar-times"></i>
+                    </div>
+                    <div class="text">
+                        <h4>지연 업무</h4>
+                        <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spDelay">0</span>건</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="background-color:#00E396;" class="icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="text">
+                        <h4>완료 업무</h4>
+                        <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spComplete">0</span>건</p>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div style="background-color:#00E396;" class="icon">
-                    <i class="fas fa-tasks"></i>
+
+            <div class="mainProjectCharts">
+                <div style="margin-right:1%;">
+                    <h3>전체 프로젝트 진행 제품군</h3>
+                    <div id="chartPrjectGroup" style="width:100%; padding:20px 0 0 30px;"></div>
                 </div>
-                <div class="text">
-                    <h4>완료 업무</h4>
-                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spComplete">0</span>건</p>
+                <div>
+                    <h3>이슈 현황</h3>
+                    <div id="chartMyTask" style="width:100%;padding-top:15px;"></div>
                 </div>
-            </div>
-            <div>
-                <div style="background-color:#FEB019;" class="icon">
-                    <i class="far fa-calendar-check"></i>
-                </div>
-                <div class="text">
-                    <h4>진행 예정 업무</h4>
-                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spPrepare">0</span>건</p>
+                <div style="padding-top:20px;width:100%;">
+                    <h3>진행중인 프로젝트 진척률</h3>
+                    <div id="chartPrjectTask" style="padding-top:15px;"></div>
                 </div>
             </div>
-            <div>
-                <div style="background-color:#FF4560;" class="icon">
-                    <i class="far fa-calendar-times"></i>
-                </div>
-                <div class="text">
-                    <h4>지연 업무</h4>
-                    <p><span onclick="TabPageLoad('/Pms/InfoMyTask', '내 업무')" id="spDelay">0</span>건</p>
-                </div>
-            </div>
+
         </div>
 
-        <div class="mainProjectCharts">
-            <div style="margin-right:1%;">
-                <h3>전체 프로젝트 진행 제품군</h3>
-                <div id="chartPrjectGroup" style="width:100%; padding:20px 0 0 30px;"></div>
+        <div id="wrapApprovalNotice">
+            <div class="mainStatusCount clearfix">
+                <h3>결재사항</h3>
+                <div>
+                    <div style="background-color:#26a69a;" class="icon">
+                        <i class="fas fa-pen-fancy"></i>
+                    </div>
+                    <div class="text">
+                        <h4>처리할 결재</h4>
+                        <p><span id="spPrepareApprov">0</span>건</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="background-color:#775DD0;" class="icon">
+                        <i class="far fa-paper-plane"></i>
+                    </div>
+                    <div class="text">
+                        <h4>진행 중 결재</h4>
+                        <p><span id="spStartedApprov">0</span>건</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="background-color:#D10CE8;" class="icon">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <div class="text">
+                        <h4>반려된 결재</h4>
+                        <p><span id="spRejectApprov">0</span>건</p>
+                    </div>
+                </div>
+                <div>
+                    <div style="background-color:#546E7A;" class="icon">
+                        <i class="far fa-file-alt"></i>
+                    </div>
+                    <div class="text">
+                        <h4>금주 완료된 결재</h4>
+                        <p><span id="spWeekCompleteApprov">0</span>건</p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h3>이슈 현황</h3>
-                <div id="chartMyTask" style="width:100%;padding-top:15px;"></div>
+
+            <div class="mainApprovalGrids">
+                <div id="tabApproval">
+                    <ul class="mainApprovalList">
+                        <li>진행중 결재</li>
+                        <li>완료된 결재</li>
+                        <li>처리할 결재</li>
+                        <li>반려된 결재</li>
+                    </ul>
+                    <!--TAB을 이중으로 감싸서 각 Page들의 Div 에 Margin 값이 적용 안되게 처리함-->
+                    <!--<div id="mainApprovalCont">-->
+                    <div>
+                        <div id="grdApprovalDemandList"></div>
+                    </div>
+                    <div>
+                        <div id="grdApprovalFinishList"></div>
+                    </div>
+                    <div>
+                        <div id="grdApprovalPrepareList"></div>
+                    </div>
+                    <div>
+                        <div id="grdApprovalRejectList"></div>
+                    </div>
+                    <!--</div>-->
+                </div>
             </div>
-            <div style="padding-top:20px;width:100%;">
-                <h3>진행중인 프로젝트 진척률</h3>
-                <div id="chartPrjectTask" style="padding-top:15px;"></div>
+            <div class="mainNoticeGrid">
+                <h3>공지사항</h3>
+                @*<button id="btnNotice"><i class="fas fa-plus" style="transform:unset;"></i> More</button>*@
+                <div class="noticeBtn">
+                    <button id="btnAddNotice"><i class="fas fa-edit"></i> 작성</button>
+                    <button id="btnDelNotice"><i class="fas fa-trash"></i> 삭제</button>
+                </div>
+                <div id="grdNotice" class="grdNotice"></div>
             </div>
         </div>
 
     </div>
-
-    <div id="wrapApprovalNotice">
-        <div class="mainStatusCount clearfix">
-            <h3>결재사항</h3>
-            <div>
-                <div style="background-color:#775DD0;" class="icon">
-                    <i class="far fa-paper-plane"></i>
-                </div>
-                <div class="text">
-                    <h4>진행 중 결재</h4>
-                    <p><span id="spStartedApprov">0</span>건</p>
-                </div>
-            </div>
-            <div>
-                <div style="background-color:#546E7A;" class="icon">
-                    <i class="far fa-file-alt"></i>
-                </div>
-                <div class="text">
-                    <h4>금주 완료된 결재</h4>
-                    <p><span id="spWeekCompleteApprov">0</span>건</p>
-                </div>
-            </div>
-            <div>
-                <div style="background-color:#26a69a;" class="icon">
-                    <i class="fas fa-pen-fancy"></i>
-                </div>
-                <div class="text">
-                    <h4>처리할 결재</h4>
-                    <p><span id="spPrepareApprov">0</span>건</p>
-                </div>
-            </div>
-            <div>
-                <div style="background-color:#D10CE8;" class="icon">
-                    <i class="fas fa-redo"></i>
-                </div>
-                <div class="text">
-                    <h4>반려된 결재</h4>
-                    <p><span id="spRejectApprov">0</span>건</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="mainApprovalGrids">
-            <div id="tabApproval">
-                <ul class="mainApprovalList">
-                    <li>진행중 결재</li>
-                    <li>완료된 결재</li>
-                    <li>처리할 결재</li>
-                    <li>반려된 결재</li>
-                </ul>
-                <!--TAB을 이중으로 감싸서 각 Page들의 Div 에 Margin 값이 적용 안되게 처리함-->
-                <!--<div id="mainApprovalCont">-->
-                <div>
-                    <div id="grdApprovalDemandList"></div>
-                </div>
-                <div>
-                    <div id="grdApprovalFinishList"></div>
-                </div>
-                <div>
-                    <div id="grdApprovalPrepareList"></div>
-                </div>
-                <div>
-                    <div id="grdApprovalRejectList"></div>
-                </div>
-                <!--</div>-->
-            </div>
-        </div>
-        <div class="mainNoticeGrid">
-            <h3>공지사항</h3>
-            @*<button id="btnNotice"><i class="fas fa-plus" style="transform:unset;"></i> More</button>*@
-            <div class="noticeBtn">
-                <button id="btnAddNotice"><i class="fas fa-edit"></i> 작성</button>
-                <button id="btnDelNotice"><i class="fas fa-trash"></i> 삭제</button>
-            </div>
-            <div id="grdNotice" class="grdNotice"></div>
-        </div>
-    </div>
-
-</div>
 
 <script type="text/javascript">
     $(function () {
 
         //전체 프로젝트 진행 제품군
-        var processPrdtData = [22,30,34,41,25,30,14];
-        var processPrdtLabels = ['Actuator','Heater','Control Head','Clutch Coil','Sensors','Valve','EPB'];
-        var processPrdtSetting = {
-            series: processPrdtData,
-            labels: processPrdtLabels,
-            chart: {
-                type: 'pie',
-                width: 400,
-            },
-            legend: {
-                    position: 'right',
-                    horizontalAlign: 'center',
-                    floating: false,
-            },
-            colors:['#008ffb','#00c4f0', '#39d7b9', '#00e396', '#a4c953', '#feb019', '#f44336'],
-            responsive: [{
-                breakpoint:480,
-            }]
-        }
-        var processPrdtPieChart = new ApexCharts(document.querySelector('#chartPrjectGroup'), processPrdtSetting);
-        processPrdtPieChart.render();
+        var processPrdtData = [];
+        var processPrdtLabels = ['Actuator','Ptc Heater','Control Head','Clutch Coil','Sensors','Valve','EPB'];
+        callProductTask();
+        function callProductTask() {
+            processPrdtData = [];
+            RequestData('/Pms/MainPeProductStatus', {}, function (res) {
+                processPrdtData = res;
 
+                var processPrdtSetting = {
+                    series: processPrdtData,
+                    labels: processPrdtLabels,
+                    chart: {
+                        type: 'pie',
+                        width: 400,
+                        events: {
+                            dataPointSelection: function (event, chartContext, config) {
+                                callProjectIssueDVPV("issue", processPrdtLabels[config.dataPointIndex]);
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'right',
+                        horizontalAlign: 'center',
+                        floating: false,
+                    },
+                    colors: ['#008ffb', '#00c4f0', '#39d7b9', '#00e396', '#a4c953', '#feb019', '#f44336'],
+                    responsive: [{
+                        breakpoint: 480,
+                    }]
+                }
+
+                var processPrdtPieChart = new ApexCharts(document.querySelector('#chartPrjectGroup'), processPrdtSetting);
+                processPrdtPieChart.render();
+            });
+        }
 
         //이슈 리스크 현황
         var issueRiskTaskList = [];
-        var issueRiskSample = [
-
-        ];
-
+        var issueRiskSample = [];
         var issueRiskSetting = {
             series: issueRiskSample,
             chart: {
@@ -186,11 +196,11 @@
                     toolbar: {
                         show: true,
                         tools: {
-                            download: true,
+                            download: false,
                             selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
+                            zoom: false,
+                            zoomin: false,
+                            zoomout: false,
                             pan: true,
                             reset: true,
                         },
@@ -198,11 +208,11 @@
                     }
             },
             //colors: ['rgb(0,143,251)', 'rgb(244,67,54)', 'rgb(0,227,150)'],
-            colors: ['#00f', '#f00', '#9f9'],
+            colors: ['#008ffb', '#f44336', '#a4c953'],
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '50%',
+                    columnWidth: 80,
                 }
             },
             dataLabels: {
@@ -228,17 +238,26 @@
                     left: 50,
                     right: 50
                 }
+            },
+            tooltip: {
+                 y: {
+            formatter: function (val) {
+                         return val;
+            }
+          }
             }
         }
         var issueRiskChart = new ApexCharts(document.querySelector('#chartMyTask'), issueRiskSetting);
         issueRiskChart.render();
         callProjectIssueDVPV("issue");
-        function callProjectIssueDVPV(param) {
+        function callProjectIssueDVPV(param, type) {
             issueRiskTaskList = [];
             issueRiskSample = [];
-            RequestData('/Pms/callProjectIssueDVPV', { _Type: param }, function (res) {
+            RequestData('/Pms/callProjectIssueDVPV', { _Type: param, _Product: type }, function (res) {
                 _.each(res.PROJECT, function (item) {
-                    issueRiskTaskList.push(item);
+                    var sItem = item.split(' ');
+                    //issueRiskTaskList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
+                    issueRiskTaskList.push([sItem[sItem.length - 1]]);
                 });
 
                 _.each(res.COUNT, function (item, key) {
@@ -267,14 +286,8 @@
         }
 
         //진행중인 프로젝트 진척률
-        var prjectTaskList = ['Task1', 'Task2', 'Task3', 'Task4'];
-        var prjectTaskSample = [
-            {name:'계획', data:[20,10,23,18]},
-            {name:'진행', data:[30,12,18,23]},
-            {name:'지연', data:[10,2,16,10]},
-            {name:'지연완료', data:[4,12,7,6]},
-            {name:'완료', data:[18,5,12,20]},
-        ]
+        var prjectTaskList = [];
+        var prjectTaskSample = [];
         var prjectTaskSetting = {
             series: prjectTaskSample,
             chart: {
@@ -282,27 +295,36 @@
                 width:940,
                 height: 250,
                 zoom: {
-                        enabled:true,
+                    enabled: true,
+                },
+
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: false,
+                        selection: true,
+                        zoom: false,
+                        zoomin: false,
+                        zoomout: false,
+                        pan: true,
+                        reset: true,
                     },
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: true,
-                            selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
-                            pan: true,
-                            reset: true,
-                        },
-                        autoSelected: 'pan'
-                    }
+                    autoSelected: 'pan'
+                },
+                beforeZoom: function (chartContext, { xaxis }) {
+                    return {
+                        xaxis: {
+                            min: 0,
+                            max: prjectTaskList[3]
+                        }
+                    };
+                }
             },
-            colors:['#d9d9d9', '#00f', '#f00', '#ff9', '#9f9'],
+            colors: ['#aaaaaa', '#008ffb', '#f44336', '#feb019', '#a4c953'],
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: '50%',
+                    columnWidth: 30,
                 }
             },
             dataLabels: {
@@ -311,6 +333,12 @@
             xaxis: {
                 categories: prjectTaskList,
                     tickPlacement:'on',
+                labels: {
+                    show: true,
+                    rotate: 0,
+                    rotateAlways: false,
+                    hideOverlappingLabels: true,
+                }
             },
             legend: {
                 show: true,
@@ -319,15 +347,29 @@
             },
             grid: {
                 padding: {
-                    left: 100,
-                    right: 100
+                    left: 50,
+                    right: 50
                 }
             }
         }
         var prjectTaskChart = new ApexCharts(document.querySelector('#chartPrjectTask'), prjectTaskSetting);
         prjectTaskChart.render();
+        callProjectTask();
+        function callProjectTask() {
+            prjectTaskList = [];
+            prjectTaskSample = [];
+            RequestData('/Pms/MainPeProjectStatus', null, function (res) {
+                _.each(res.ProjList, function (item) {
+                    var sItem = item.split(' ');
+                    //prjectTaskList.push([item.replace(sItem[sItem.length - 1], ''), sItem[sItem.length - 1]]);
+                    prjectTaskList.push([sItem[sItem.length - 1]]);
+                });
+                prjectTaskSample = res.DetailData;
 
-
+                prjectTaskChart.updateOptions({ xaxis: { categories: prjectTaskList } });
+                prjectTaskChart.updateSeries(prjectTaskSample);
+            });
+        }
         //결재
         $('#tabApproval').jqxTabs({ width: "100%", height: 344, });
 
@@ -369,7 +411,6 @@
                 { text: '상태', width: "10%", datafield: 'DocBpolicyNm', align: 'center', cellsalign: 'center' }
             ]
         });
-
 
         $("#grdApprovalFinishList").jqxGrid({
             width: "100%",

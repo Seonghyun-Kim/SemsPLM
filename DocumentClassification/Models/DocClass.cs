@@ -64,10 +64,23 @@ namespace DocumentClassification.Models
             });
             return lDocClass;
         }
+
+        public static List<DocClass> AllSelDocClass(HttpSessionStateBase Context, DocClass _param)
+        {
+            _param.Type = DocClassConstant.TYPE_DOCCLASS;
+            List<DocClass> lDocClass = DaoFactory.GetList<DocClass>("DocClass.AllSelDocClass", _param);
+            lDocClass.ForEach(obj =>
+            {
+                obj.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = obj.Type, OID = obj.BPolicyOID }).First();
+                obj.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = obj.CreateUs }).Name;
+            });
+            return lDocClass;
+        }
+
         public static DocClass SelDocClassObject(HttpSessionStateBase Context, DocClass _param)
         {
             _param.Type = DocClassConstant.TYPE_DOCCLASS;
-            DocClass lDocClass = DaoFactory.GetData<DocClass>("DocClass.SelDocClass", _param);
+            DocClass lDocClass = DaoFactory.GetData<DocClass>("DocClass.AllSelDocClass", _param);
             lDocClass.BPolicy = BPolicyRepository.SelBPolicy(new BPolicy { Type = lDocClass.Type, OID = lDocClass.BPolicyOID }).First();
             lDocClass.CreateUsNm = PersonRepository.SelPerson(Context, new Person { OID = lDocClass.CreateUs }).Name;
             return lDocClass;

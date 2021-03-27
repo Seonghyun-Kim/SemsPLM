@@ -11,6 +11,57 @@
 
   <statements>
 
+    <select id="SelNot1LvParentEPart" parameterClass="EPart" resultClass="EPart">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DEPART B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = 'PART'
+      <isNotNull property="OID">
+        AND A.OID = #OID#
+      </isNotNull>
+      <isNotNull property="Name">
+        AND A.Name like '%' + #Name# + '%'
+      </isNotNull>
+      <isNotNull property="Car_Lib_OID">
+        AND B.Car_Lib_OID = #Car_Lib_OID#
+      </isNotNull>
+      <isNotNull property="EPartType">
+        AND B.EPartType = #EPartType#
+      </isNotNull>
+      <isNotNull property="Division">
+        AND B.Division = #Division#
+      </isNotNull>
+      <isNotNull property="ITEM_No">
+        AND B.ITEM_No = #ITEM_No#
+      </isNotNull>
+      <isNotNull property="StartCreateDt">
+        AND A.CreateDt &gt;= #StartCreateDt#
+      </isNotNull>
+      <isNotNull property="EndCreateDt">
+        AND A.CreateDt &lt;= #EndCreateDt#
+      </isNotNull>
+      <isNotNull property="TdmxOID">
+        AND A.TdmxOID != #TdmxOID#
+      </isNotNull>
+      <isNotNull property="IsLatest">
+        AND A.IsLatest = #IsLatest#
+      </isNotNull>
+      <isNotNull property="IsReleasedLatest">
+        AND A.IsReleasedLatest = #IsReleasedLatest#
+      </isNotNull>
+      <isNotNull property="Title">
+        AND B.Title like '%' + #Title# + '%'
+      </isNotNull>
+      <isNotNull property="ITEM_Middle">
+        AND B.ITEM_Middle = #ITEM_Middle#
+      </isNotNull>
+      ORDER BY A.CreateDt DESC
+    </select>
+    
+
     <select id="SelEPart" parameterClass="EPart" resultClass="EPart">
       SELECT
       A.*

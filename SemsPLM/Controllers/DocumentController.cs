@@ -22,6 +22,7 @@ namespace SemsPLM.Controllers
             Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });
             ViewBag.docDetail = docDetail;
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
+            ViewBag.RevFlag = CommonConstant.ACTION_NO;
             return PartialView("InfoDocument");
         }
         public ActionResult Index()
@@ -56,6 +57,15 @@ namespace SemsPLM.Controllers
         {
             Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });
             ViewBag.docDetail = docDetail;
+            Doc tempDoc = DocRepository.SelDoc(Session, new Doc { TdmxOID = docDetail.TdmxOID }).First();
+            if(tempDoc.OID == docDetail.OID)
+            {
+                ViewBag.RevFlag = CommonConstant.ACTION_YES;
+            }
+            else
+            {
+                ViewBag.RevFlag = CommonConstant.ACTION_NO;
+            }
             ViewBag.Status = BPolicyRepository.SelBPolicy(new BPolicy { Type = DocumentConstant.TYPE_DOCUMENT });
             return View();
         }
@@ -176,7 +186,36 @@ namespace SemsPLM.Controllers
         }
         #endregion
 
-        
+        #region 문서개정
+        public JsonResult RevDocument(int OID)
+        {
+            int result = 0;
+            try
+            {
+                DaoFactory.BeginTransaction();
+
+                Doc docDetail = DocRepository.SelDocObject(Session, new Doc { OID = OID });
+                //if ()
+
+                result = DObjectRepository.ReviseDObject(Session, new DObject { OID = OID });
+                docDetail.OID = result;
+                DaoFactory.SetInsert("Doc.InsDoc", docDetail);
+
+                HttpFileRepository.ReviseFiles(Session, new HttpFile { OID = OID }, result);
+                //끝인데 파일 넣어라
+
+                DaoFactory.Commit();
+
+            }
+            catch (Exception ex)
+            {
+                DaoFactory.Rollback();
+                return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
+            }
+            return Json(result);
+        }
+        #endregion
+
 
         #endregion
 

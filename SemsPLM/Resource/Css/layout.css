@@ -486,6 +486,7 @@ nav {
     font-size:16px;
     border-radius:3px;
     text-indent:0 !important;
+    box-shadow:#ccc -1px -1px 2px inset;
 }
 
 .custom-button:hover {
@@ -502,6 +503,26 @@ button > .fas{
     transform:translateY(-1px);
     opacity:0.8;
 }
+
+
+.kanban-legend {
+    clear: both;
+    float: right;
+    padding: 10px 0;
+    line-height: normal;
+}
+
+    .kanban-legend > ul > li {
+        float: left;
+        margin-right: 20px;
+        font-size: 0.8em;
+    }
+
+    .kanban-legend .legend-color {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+    }
 
 
 .dlg_table{
@@ -1654,15 +1675,16 @@ input[name=gateReportRadio]:checked + label {
 }
 
 .problemsLibraryDetailBox{
-    height:200px;
+    height:150px;
     overflow:hidden;
 }
 
 .problemsLibraryDetailBox > textarea{
-    width:58%;
+    width:40%;
     height:100%;
     resize:none;
-    margin-right:1%;
+    margin-right:10px;
+    float:left;
 }
 
 .problemsLibraryDetailBox > img{
@@ -1671,6 +1693,19 @@ input[name=gateReportRadio]:checked + label {
     max-width:40%;
     max-height:100%;
 }
+
+    .problemsLibraryDetailBox .image_thumbnail {
+        width: unset;
+        height: 90px;
+        margin-left: 10px;
+    }
+
+        .problemsLibraryDetailBox .image_thumbnail > li {
+            width:auto;
+            max-width: 160px;
+            height: 100%;
+            position: relative;
+        }
 
 /* CreateOptimalDesign */
 .optimalDesignTable {
@@ -1915,6 +1950,10 @@ table.tableTopButtonBox input[type=text]{
     filter:unset;
 }
 
+div[role=columnheader]{
+    font-weight:bold;
+}
+
 .issueRadioBtn {
     color: inherit !important;
     opacity: unset !important;
@@ -1947,6 +1986,98 @@ table.tableTopButtonBox input[type=text]{
 
 .effectAssessList .jqx-fill-state-disabled{
     background-color: transparent !important;
+}
+
+.mailAlert{
+    width:270px;
+    height:160px;
+    background:#fff;
+    text-align:center;
+    box-shadow:-2px 6px 6px rgba(0,0,0,.3);
+    border-radius:0 0 5px 5px;
+    z-index:1;
+    position:fixed;
+    top:-160px;
+    right:0;
+}
+
+.mailAlert > i.fa-times{
+    position:absolute;
+    top:15px;
+    right:15px;
+    cursor:pointer;
+    color:#999;
+}
+
+.mailAlert > div {
+    margin:18px auto;
+    width:80px;
+    height:80px;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 5px 5px 10px #ccc;
+}
+
+.mailAlert > div > i {
+    color:#d11e1e;
+    font-size:48px;
+    line-height:80px;
+}
+
+.mailAlert > p{
+    font-weight:bold;
+}
+
+.modalBack {
+    position: fixed;
+    top:0;
+    left:0;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 999;
+}
+
+.modalDiv {
+    width: 400px;
+    height: 120px;
+    z-index: 1000;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px #aaa;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-left: -200px;
+    margin-top: -50px;
+}
+
+.modalDiv > p{
+    margin-bottom:20px;
+}
+
+.modalDiv > p > i{
+    margin-right:10px;
+}
+
+.shakeModal{
+    animation: shake 0.5s;
+    animation-iteration-count:3;
+}
+
+@-webkit-keyframes shake{
+    0% {transform: translate(1px, 1px) rotate(0deg);}
+    10% {transform: translate(-1px, -2px) rotate(-1deg);}
+    20% {transform: translate(-3px, 0px) rotate(1deg);}
+    30% {transform: translate(3px, 2px) rotate(0deg);}
+    40% {transform: translate(1px, -1px) rotate(1deg);}
+    50% {transform: translate(-1px, 2px) rotate(-1deg);}
+    60% {transform: translate(-3px, 1px) rotate(0deg);}
+    70% {transform: translate(3px, 1px) rotate(-1deg);}
+    80% {transform: translate(-1px, -1px) rotate(1deg);}
+    90% {transform: translate(1px, 2px) rotate(0deg);}
+    100% {transform: translate(1px, -2px) rotate(-1deg);}
 }
 
 /* IE6,7,8 */

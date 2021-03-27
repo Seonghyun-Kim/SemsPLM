@@ -631,7 +631,6 @@ namespace Pms.Models
             List<PmsRelationship> lProjectList = PmsRelationshipRepository.GetWbsOidLIst(Context, Convert.ToString(project.OID));
             List<PmsRelationship> getStructureList = new List<PmsRelationship>();
 
-
             DocClass DocClas = null;
             PmsProcess Task = null;
 
@@ -688,6 +687,7 @@ namespace Pms.Models
         {
             _param.Type = Common.Constant.PmsConstant.RELATIONSHIP_DOC_CLASS;
             List<PmsRelationship> ProjectList = new List<PmsRelationship>();
+            List<PmsRelationship> delList = new List<PmsRelationship>();
             if (_param.TaskOID != null)
             {
                 ProjectList = PmsRelationshipRepository.SelPmsRelationship(Context, _param);
@@ -706,13 +706,20 @@ namespace Pms.Models
                 if (ViewUrl == null)
                 {
                     Doc Doc = DocRepository.SelDocObject(Context, new Doc { OID = Obj.ToOID, DocGroup = DocClassConstant.TYPE_DOCCLASS });
-                    Obj.DocClassNm = Doc.DocType_KorNm;
-                    Obj.ToOID = Doc.OID;
-                    Obj.DocNm = Doc.Title;
-                    Obj.DocRev = Doc.Revision;
-                    Obj.DocStNm = Doc.BPolicy.StatusNm;
-                    Obj.CreateDt = Doc.CreateDt;
-                    Obj.CreateUsNm = Doc.CreateUsNm;
+                    if (Doc.IsLatest == 0 && Doc.IsReleasedLatest == 0)
+                    {
+                        delList.Add(Obj);
+                    }
+                    else
+                    {
+                        Obj.DocClassNm = Doc.DocType_KorNm;
+                        Obj.ToOID = Doc.OID;
+                        Obj.DocNm = Doc.Title;
+                        Obj.DocRev = Doc.Revision;
+                        Obj.DocStNm = Doc.BPolicy.StatusNm;
+                        Obj.CreateDt = Doc.CreateDt;
+                        Obj.CreateUsNm = Doc.CreateUsNm;
+                    }
                 }
                 else
                 {
@@ -742,7 +749,8 @@ namespace Pms.Models
                     }
                 }
             }
-            return ProjectList;
+
+            return ProjectList.Except(delList).ToList();
         }
 
         #endregion
@@ -788,6 +796,18 @@ namespace Pms.Models
             return lWbs;
         }
 
+        public static List<PmsRelationship> getProcWbsTypeOidList(HttpSessionStateBase Context, string OID)
+        {
+            List<PmsRelationship> lWbs = new List<PmsRelationship>();
+
+            PmsRelationship getStructure = new PmsRelationship();
+            getStructure.ToOID = Convert.ToInt32(OID);
+            lWbs.Add(getStructure);
+
+            GetWbsChildTypeOidList(Context, getStructure, lWbs);
+            return lWbs;
+        }
+
         public static void GetWbsChildTypeOidList(HttpSessionStateBase Context, PmsRelationship _parent, List<PmsRelationship> _ldStructure)
         {
             List<PmsRelationship> children = PmsRelationshipRepository.SelPmsRelationship(Context, new PmsRelationship { FromOID = Convert.ToInt32(_parent.ToOID), Type = PmsConstant.RELATIONSHIP_WBS });
@@ -803,10 +823,13 @@ namespace Pms.Models
                 item.ObjName = tmpProcess.Name;
                 item.EstStartDt = tmpProcess.EstStartDt;
                 item.EstEndDt = tmpProcess.EstEndDt;
+                item.EstDuration = tmpProcess.EstDuration;
                 item.ActStartDt = tmpProcess.ActStartDt;
                 item.ActEndDt = tmpProcess.ActEndDt;
+                item.ActDuration = tmpProcess.ActDuration;
                 item.Id = tmpProcess.Id;
                 item.Dependency = tmpProcess.Dependency;
+                item.ObjStNm = tmpProcess.BPolicy.Name;
                 _ldStructure.Add(item);
                 GetWbsChildTypeOidList(Context, item, _ldStructure);
             });

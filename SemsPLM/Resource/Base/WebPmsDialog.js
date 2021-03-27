@@ -717,7 +717,7 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.Type = _Param.Type;
                 param.Importance = $('#importance_Good').jqxRadioButton('checked') ? 3 : $('#importance_Aver').jqxRadioButton('checked') ? 2 : 1;
                 param.EstFinDt = $('#issueEstimatedFinDate').val();
-                param.Description = $('#dlgDescription').val();
+                param.Description = "Contents";
                 param.Manager_OID = $('#dlgMangerOID').val();
                 param.IsApprovalRequired = ApprovRequired;
                 var chkIssueType = [];
@@ -727,16 +727,33 @@ function OpenIssueDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                     }
                 }
                 param.IssueType = chkIssueType.join(',');
-                RequestData('/Pms/InsIssue',param, function (response) {
+                param.Files = fileUpload.Files();
+
+                var removeFiles = fileUpload.RemoveFiles();
+                if (!WebUtils.isEmpty(removeFiles)) {
+                    param.delFiles = [];
+                    param.delFiles = removeFiles;
+                }
+                if (param.Manager_OID == null || param.Manager_OID == '') {
+                    alert('처리자를 선택하여 주세요');
+                    return;
+                }
+                SendDataWithFile('/Pms/InsIssue', param, null, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
                         return;
                     }
-                    alert("저장되었습니다.");
-                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
-                        _CallBackFunction(_Param);
-                    }
-                    $(popLayer).jqxWindow('modalDestory');
+                    var innerParam = {};
+                    innerParam.OID = response;
+                    innerParam.Description = $('#dlgDescription').jqxEditor('val');
+                    innerParam.Contents = " ";
+                    RequestData('/Pms/UdtIssue', innerParam, function () {
+                        alert("저장되었습니다.");
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction(_Param);
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
                 });
             });
 
@@ -1108,7 +1125,7 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                 param.RootOID = _Param.RootOID;
                 param.FromOID = _Param.FromOID;
                 param.TaskOID = _Param.TaskOID;
-                
+
                 var removeFiles = documentFile.RemoveFiles();
                 if (!WebUtils.isEmpty(removeFiles)) {
                     param.delFiles = [];
@@ -1130,7 +1147,7 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                     $(popLayer).jqxWindow('modalDestory');
                 });
             });
-            
+
             $('#dlgInfoDocument_canclebtn, #dlgCreateDocument_canclebtn').on('click', function () {
                 $(popLayer).jqxWindow('modalDestory');
             });
@@ -1163,6 +1180,29 @@ function OpenPmsDocumentDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                         $(popLayer).jqxWindow('modalDestory');
                     });
                 }
+            });
+            $('#dlgInfoDocument_RevBtn').on('click', function () {
+                if (confirm('개정 하시겠습니까?')) {
+                    RequestData('/Pms/RevPmsDocument', { OID: _Param.OID }, function (response) {
+                        if (response.isError) {
+                            alert(response.resultMessage);
+                            return;
+                        }
+                        alert("개정되었습니다.");
+                        if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                            _CallBackFunction();
+                        }
+                        $(popLayer).jqxWindow('modalDestory');
+                    });
+                }
+            });
+            $('#dlgInfoDocument_ApprovalBtn').on('click', function () {
+                OpenApprovalDialog(function () {
+                    if (_CallBackFunction != null && typeof _CallBackFunction == 'function') {
+                        _CallBackFunction();
+                    }
+                    $(popLayer).jqxWindow('modalDestory');
+                }, null, { TargetOID: _Param.OID }, '/Common/Approval', '결재');
             });
         }
     });
@@ -1456,6 +1496,12 @@ function OpenInfoReliabilityReportDialog(_CallBackFunction, _Wrap, _Param, _Url,
                     alert('개발단계를 선택하여주세요.');
                     return;
                 }
+                var ListData = ReportTestItemListGrid$.jqxGrid('getrows');
+                if (ListData == null || ListData.length < 1) {
+                    alert('시험항목 리스트를 입력해 주세요');
+                    return;
+                }
+
                 RequestData('/Pms/UdtReliabilityReport', { _param: param, _ReportItemListParam: ReportTestItemListGrid$.jqxGrid('getrows') }, function (response) {
                     if (response.isError) {
                         alert(response.resultMessage);
@@ -1652,6 +1698,7 @@ function OpenPmsEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
                             var row = digSearchEPartGrid$.jqxGrid('getrowdata', rows[m]);
                             var param = {};
                             param.RootOID = _Param.RootOID;
+                            param.FromOID = _Param.FromOID;
                             param.ToOID = row.OID;
                             selectedRecords[m] = param;
                         }
@@ -1676,6 +1723,13 @@ function OpenPmsEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
             digSearchEPartGrid$.on('rowselect', function (event) {
                 var rowObj = event.args;
                 var disChk = [];
+                if (_Param.RootOID == _Param.FromOID) {
+
+                } else {
+
+                }
+
+
                 if (_Param.PartData != null && _Param.PartData != undefined) {
                     _Param.PartData.filter(function (item) {
                         if (typeof rowObj.rowindex == 'number') {
@@ -1702,23 +1756,63 @@ function OpenPmsEPartDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
 
 
             $('#dlgSearchEPartbtn').on('click', function () {
-                var SearchEPartCreateDt = $('#dlgSearchEPartCreateDt').val();
-                var SearchEPartCreateDtArray = SearchEPartCreateDt.split('-');
+
                 var EBomStructureParam = {};
                 EBomStructureParam.Car_Lib_OID = $("#dlgSearchEPartCar").val();
                 EBomStructureParam.Name = $('#dlgSearchEPartName').val();
                 EBomStructureParam.ITEM_No = $('#dlgSearchEPartItemNo').val();
                 EBomStructureParam.Division = EPartDivision;
-                EBomStructureParam.StartCreateDt = SearchEPartCreateDtArray[0];
-                EBomStructureParam.EndCreateDt = SearchEPartCreateDtArray[1] + " 23:59:59";
+
 
                 EBomStructureParam.ITEM_Middle = $('#dlgSearchEPartItemMiddle').val();
 
+                EBomStructureParam.IsReleasedLatest = 1;
 
-                RequestData('/Ebom/SelEPart', EBomStructureParam, function (res) {
+                RequestData('/EBom/SelEPart', EBomStructureParam, function (res) {
                     PrintJqxGrid(dlgEPartSource, digSearchEPartGrid$, res);
                 });
             });
+        }
+    });
+
+    $(popContent).load(_Url, _Param, function () {
+        $(popLayer).jqxWindow('setTitle', _Title);
+        $(popLayer).jqxWindow("show");
+        loading$.css('display', 'none');
+    });
+
+    $(popLayer).on('close', function (event) {
+        $(popLayer).jqxWindow('modalDestory');
+    });
+}
+
+
+function OpenProjectDelayListDialog(_CallBackFunction, _Wrap, _Param, _Url, _Title) {
+    const loading$ = $('#loading');
+    loading$.css('display', 'block');
+    var popLayer = document.createElement("div");
+    popLayer.style.display = "none";
+
+    var popTitle = document.createElement("div");
+    var popContent = document.createElement("div");
+
+    popLayer.appendChild(popTitle);
+    popLayer.appendChild(popContent);
+
+    if (_Wrap === undefined || _Wrap === null) {
+        document.body.appendChild(popLayer);
+    } else {
+        wrap.appendChild(popLayer);
+    }
+
+    var winHeight = $(window).height();
+    var winWidth = $(window).width();
+    var posX = (winWidth / 2) - (1500 / 2) + $(window).scrollLeft();
+    var posY = (winHeight / 2) - (660 / 2) + $(window).scrollTop();
+
+    $(popLayer).jqxWindow({
+        width: 1500, maxWidth: 1500, height: 660, minHeight: 660, resizable: false, zIndex: 99996, isModal: true, autoOpen: false, modalOpacity: 0.5, showCloseButton: true, position: { x: posX, y: posY },
+        initContent: function () {
         }
     });
 

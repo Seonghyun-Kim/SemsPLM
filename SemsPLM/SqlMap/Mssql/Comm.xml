@@ -147,6 +147,14 @@
       , DeleteDt = GETDATE()
       WHERE OID = #OID#
     </update>
+    
+    <update id="DelThumbnailDObject" parameterClass="DObject" >
+      UPDATE T_DOBJECT
+      SET ModifyUs = #ModifyUs#
+      , ModifyDt = GETDATE()
+      , Thumbnail = NULL
+      WHERE OID = #OID#
+    </update>
 
     <select id="SelBPolicy" parameterClass="BPolicy" resultClass="BPolicy">
       SELECT * FROM T_BPOLICY
@@ -545,10 +553,6 @@
 
       <isNotNull prepend="AND" property="FileOID">
         A.FileOID = #FileOID#
-      </isNotNull>
-
-      <isNotNull prepend="AND" property="Type">
-        A.Type = #Type#
       </isNotNull>
     </select>
 

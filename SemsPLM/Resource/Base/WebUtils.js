@@ -278,9 +278,20 @@ WebUtils.GetGrdSearchData = function (callBackFunction, source, grdId, pagenum, 
 
 WebUtils.CallAutoVueFile = function (FileOID) {
     RequestData('/Common/CommonFilePath', { 'FileOID': FileOID }, function (res) {
+        /*
         if (gAutoVue == null || gAutoVue == undefined) {
             gAutoVue = new WebAutoVue();
         }
         gAutoVue.CallAutoVue(res);
+        */
+        gClickDuplication = true;
+        setTimeout(function () {
+            var hiddenFrame$ = $('#hidFrame');
+            hiddenFrame$.empty();
+            hiddenFrame$.attr('src', 'http://plm.woory.com:8080/Autovue/callAutoVue.html?PATH=' + res.replace('/FileTemp/', ''));
+            hiddenFrame$.empty();
+            gClickDuplication = false;
+        }, 250);
+
     });
 }

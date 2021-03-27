@@ -204,6 +204,11 @@ namespace SemsPLM.Controllers
             return PartialView("Dialog/dlgSelectAssessManager");
         }
 
+        public ActionResult dlgEBomStructure()
+        {
+            return PartialView("Dialog/dlgEBomStructure");
+        }
+
         #region -- Module : ChangeOder
 
         #region 설계변경 등록

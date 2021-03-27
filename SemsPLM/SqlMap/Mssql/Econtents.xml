@@ -6,6 +6,9 @@
 
   <alias>
     <typeAlias alias="ProblemsLibrary"  type="Econtents.Models.ProblemsLibrary" />
+    
+    <typeAlias alias="OptimalDesign"  type="Econtents.Models.OptimalDesign" />
+    <typeAlias alias="OptimalDesignItem"  type="Econtents.Models.OptimalDesignItem" />
   </alias>
 
   <statements>
@@ -20,13 +23,19 @@
       <isNotNull property="OID">
         AND A.OID = #OID#
       </isNotNull>
+      <isNotNull property="OEM_Lib_OID">
+        AND B.OEM_Lib_OID = #OEM_Lib_OID#
+      </isNotNull>
+      <isNotNull property="Car_Lib_OID">
+        AND B.Car_Lib_OID = #Car_Lib_OID#
+      </isNotNull>
     </select>
     
     
     <insert id="InsProblemsLibrary" parameterClass="ProblemsLibrary" >
       INSERT INTO T_DPROBLEMS_LIBRARY
       ( OID
-      , Oem_Lib_OID
+      , OEM_Lib_OID
       , Car_Lib_OID
       , Product
       , Part
@@ -43,7 +52,7 @@
       )
       VALUES
       ( #OID#
-      , #Oem_Lib_OID#
+      , #OEM_Lib_OID#
       , #Car_Lib_OID#
       , #Product#
       , #Part#
@@ -59,6 +68,104 @@
       , #Countermeasures_Thumbnail#
       )
     </insert>
+
+    <update id="UdtProblemsLibrary" parameterClass="ProblemsLibrary">
+      UPDATE T_DPROBLEMS_LIBRARY
+      SET                                                          
+      OEM_Lib_OID                      = #OEM_Lib_OID#
+      , Car_Lib_OID                    = #Car_Lib_OID#
+      , Product                        = #Product#
+      , Part                           = #Part#
+      , Occurrence                     = #Occurrence#
+      , Stage_Occurrence               = #Stage_Occurrence#
+      , Failure_Type                   = #Failure_Type#
+      , Division                       = #Division#
+      , Issues                         = #Issues#
+      , Issues_Thumbnail               = #Issues_Thumbnail#
+      , Cause                          = #Cause#
+      , Cause_Thumbnail                = #Cause_Thumbnail#
+      , Countermeasures                = #Countermeasures#
+      , Countermeasures_Thumbnail      = #Countermeasures_Thumbnail#
+      WHERE OID = #OID#
+    </update>
+
+    <select id="SelOptimalDesign" parameterClass="OptimalDesign" resultClass="OptimalDesign">
+      SELECT
+      A.*
+      , B.*
+      FROM T_DOBJECT A
+      LEFT OUTER JOIN T_DOPTIMAL_DESIGN B ON B.OID = A.OID
+      WHERE A.DeleteDt IS NULL
+      AND A.Type = #Type#
+      <isNotNull property="OID">
+        AND A.OID = #OID#
+      </isNotNull>
+      <isNotNull property="Oem_Lib_OID">
+        AND B.Oem_Lib_OID = #Oem_Lib_OID#
+      </isNotNull>
+      <isNotNull property="Car_Lib_OID">
+        AND B.Car_Lib_OID = #Car_Lib_OID#
+      </isNotNull>
+    </select>
+
+    <insert id="InsOptimalDesign" parameterClass="OptimalDesign" >
+      INSERT INTO T_DOPTIMAL_DESIGN
+      ( OID
+      , Oem_Lib_OID
+      , Car_Lib_OID
+      , Product
+      , Division
+      , ReflectedNum
+      , NotReflectedNum
+      )
+      VALUES
+      ( #OID#
+      , #Oem_Lib_OID#
+      , #Car_Lib_OID#
+      , #Product#
+      , #Division#
+      , #ReflectedNum#
+      , #NotReflectedNum#
+      )
+    </insert>
+
+    <select id="SelOptimalDesignItem" parameterClass="OptimalDesignItem" resultClass="OptimalDesignItem">
+      SELECT
+      *
+      FROM T_DOPTIMAL_DESIGN_ITEM
+      WHERE 1 = 1
+      <isNotNull property="OID">
+        AND OID = #OID#
+      </isNotNull>
+      <isNotNull property="FromOID">
+        AND FromOID = #FromOID#
+      </isNotNull>
+    </select>
     
+    <insert id="InsOptimalDesignItem" parameterClass="OptimalDesignItem" >
+      <selectKey type="pre" resultClass="int" property="OID">
+        SELECT ISNULL(MAX(OID),0) + 1 AS OID FROM T_DOPTIMAL_DESIGN_ITEM
+      </selectKey>
+      INSERT INTO T_DOPTIMAL_DESIGN_ITEM
+      ( OID
+      , FromOID
+      , Problems_Lib_OID
+      , Reflected
+      , Description
+      )
+      VALUES
+      ( #OID#
+      , #FromOID#
+      , #Problems_Lib_OID#
+      , #Reflected#
+      , #Description#
+      )
+    </insert>
+    
+    
+    
+
+
+
   </statements>
 </sqlMap>

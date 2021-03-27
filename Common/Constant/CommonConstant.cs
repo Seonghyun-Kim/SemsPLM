@@ -51,6 +51,7 @@ namespace Common.Constant
 
         public static string ACTION_PROMOTE = "P";
         public static string ACTION_REJECT = "R";
+        public static string ACTION_NON_AUTO = "N";
 
         public static string INIT_REVISION = "00";
         public static int MAX_NUMBER = 1155;

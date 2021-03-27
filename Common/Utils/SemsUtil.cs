@@ -144,6 +144,13 @@ namespace Common
             }
             return result;
         }
+
+        public static int SingleCompare(string str)
+        {
+            string map = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+            int IndexValue = map.IndexOf(str);
+            return IndexValue;
+        }
     }
 
     public class StringValue : System.Attribute
