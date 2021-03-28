@@ -2,6 +2,7 @@
 using Common.Factory;
 using Common.Models;
 using Common.Models.File;
+using Document.Models;
 using OfficeOpenXml;
 using Pms.Models;
 using Qms.Models;
@@ -323,6 +324,10 @@ namespace SemsPLM.Controllers
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
 
+            Library partnersKey = LibraryRepository.SelLibraryObject(new Library { Name = "PARTNERS" }); // 협력사
+            List<Library> partnersList = LibraryRepository.SelLibrary(new Library { FromOID = partnersKey.OID });
+            ViewBag.partnersList = partnersList;
+
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
             //ViewBag.plantList = plantList;
@@ -380,9 +385,17 @@ namespace SemsPLM.Controllers
             List<Library> factoryList = LibraryRepository.SelLibrary(new Library { FromOID = factoryKey.OID });
             ViewBag.factoryList = factoryList;
 
-            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });
+            Library oemKey = LibraryRepository.SelCodeLibraryObject(new Library { Code1 = "OEM" });// OEM
             List<Library> oemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = oemKey.OID });
             ViewBag.oemList = oemList;
+
+            Library partnersKey = LibraryRepository.SelLibraryObject(new Library { Name = "PARTNERS" }); // 협력사
+            List<Library> partnersList = LibraryRepository.SelLibrary(new Library { FromOID = partnersKey.OID });
+            ViewBag.partnersList = partnersList;
+
+            Library imputeDeptKey = LibraryRepository.SelLibraryObject(new Library { Name = "IMPUTE_DEPART" });
+            List<Library> imputeDeptList = LibraryRepository.SelLibrary(new Library { FromOID = imputeDeptKey.OID });  // 자체
+            ViewBag.imputeDeptList = imputeDeptList;
 
             //Library plantKey = LibraryRepository.SelLibraryObject(new Library { Name = "PLANT" });
             //List<Library> plantList = LibraryRepository.SelLibrary(new Library { FromOID = oemKey.OID });  // 공장 구분으로 변경해야함
@@ -2093,6 +2106,12 @@ namespace SemsPLM.Controllers
                 }
             });
 
+            Library TeamLibKey = LibraryRepository.SelLibraryObject(new Library { Name = "QUICK_TEMP_ROLE" });
+            List<Library> TeamLibList = LibraryRepository.SelLibrary(new Library { FromOID = TeamLibKey.OID });  // Team
+            ViewBag.TeamLibList = TeamLibList;
+
+            ViewBag.QuickTeamList = QuickResponseTeamRepository.SelQuickResponseTeams(new QuickResponseTeam { QuickOID = quickResponse.OID});
+
             return View("Dialog/dlgEditQuickResponsePlan", QuickResponseRepository.SelQuickResponse(quickResponse));
         }
 
@@ -2139,6 +2158,41 @@ namespace SemsPLM.Controllers
 
                         quick.BPolicyOID = 54; //검토중으로 변경
                         DObjectRepository.UdtDObject(Session, quick);
+                    }
+                });
+
+                // Team 추가
+                _param.TeamList.ForEach(v =>
+                {
+                    v.Type = QmsConstant.TYPE_QUICK_RESPONSE_TEAM;
+                    // 신규 추가
+                    if (v.OID == null)
+                    {
+                        if (v.IsRemove == "Y")
+                        {
+                            return;
+                        }
+
+                        DObject dobj = new DObject();
+                        dobj.Type = v.Type;
+                        dobj.Name = v.Type + "_" + v.QuickOID;
+                        v.OID = DObjectRepository.InsDObject(Session, dobj);
+
+                        QuickResponseTeamRepository.InsQuickResponseTeam(v);
+                    }
+                    else
+                    {
+                        // 기존 항목 삭제
+                        if (v.IsRemove == "Y")
+                        {
+                            v.Type = QmsConstant.TYPE_QUICK_RESPONSE_TEAM;
+                            DObjectRepository.DelDObject(Session, v, null);
+                        }
+                        // 기존 항목 업데이트
+                        else
+                        {
+                            QuickResponseTeamRepository.UdtQuickResponseTeam(v);
+                        }
                     }
                 });
 
@@ -3177,14 +3231,16 @@ namespace SemsPLM.Controllers
             try
             {
                 DaoFactory.BeginTransaction();
+                _param.Type = QmsConstant.TYPE_STANDARD;
 
                 foreach (StandardDoc standardDoc in _param.StandardFollowUpList)
                 {
+                    standardDoc.ModuleOID = _param.ModuleOID;
                     if (standardDoc.OID == null)
                     {
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_STANDARD_DOC_ITEM;
-                        dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + standardDoc.ModuleOID;
+                        dobj.Name = QmsConstant.TYPE_STANDARD_DOC_ITEM + "_" + _param.ModuleOID;
                         standardDoc.OID = DObjectRepository.InsDObject(Session, dobj);
 
                         StandardDocRepository.InsStandardDoc(standardDoc);
@@ -3193,6 +3249,19 @@ namespace SemsPLM.Controllers
                     {
                         StandardDocRepository.UdtStandardDoc(standardDoc);
                     }
+                }
+
+                if (_param.Files != null)
+                {
+                    HttpFileRepository.InsertData(Session, _param);
+                }
+
+                if (_param.delFiles != null)
+                {
+                    _param.delFiles.ForEach(v =>
+                    {
+                        HttpFileRepository.DeleteData(Session, v);
+                    });
                 }
 
                 DaoFactory.Commit();
@@ -3205,6 +3274,14 @@ namespace SemsPLM.Controllers
                 return Json(new ResultJsonModel { isError = true, resultMessage = ex.Message, resultDescription = ex.ToString() });
             }
         }
+        public ActionResult SearchDocument(Doc _param)
+        {
+
+            //  ViewBag.Detail = DocRepository.SelDocObject(Session, new Doc { OID = _param.OID });
+            return PartialView("Dialog/dlgSearchDocument");
+        }
+
+
         #endregion
 
         #endregion

@@ -7,6 +7,7 @@
   <alias>
     <typeAlias alias="QuickResponse" type="Qms.Models.QuickResponse" />
     <typeAlias alias="QuickResponseModule" type="Qms.Models.QuickResponseModule" />
+    <typeAlias alias="QuickResponseTeam" type="Qms.Models.QuickResponseTeam" />
     <typeAlias alias="BlockadeItem" type="Qms.Models.BlockadeItem" />
     <typeAlias alias="OccurrenceCauseItem" type="Qms.Models.OccurrenceCauseItem" />
     <typeAlias alias="OccurrenceWhy" type="Qms.Models.OccurrenceWhy" />
@@ -109,6 +110,8 @@
       UPDATE T_DQMS_QUICK
       SET
       OID = #OID#
+      ,ImputeDepartmentOID = #ImputeDepartmentOID#
+      ,ImputeSupplierOID = #ImputeSupplierOID#
       <isNotNull prepend="," property="PlantLibOID">
         PlantLibOID = #PlantLibOID#
       </isNotNull>
@@ -160,15 +163,7 @@
       <isNotNull prepend="," property="ImputeLibOID">
         ImputeLibOID = #ImputeLibOID#
       </isNotNull>
-
-      <isNotNull prepend="," property="ImputeDepartmentOID">
-        ImputeDepartmentOID = #ImputeDepartmentOID#
-      </isNotNull>
-
-      <isNotNull prepend="," property="ImputeSupplierOID">
-        ImputeSupplierOID = #ImputeSupplierOID#
-      </isNotNull>
-
+      
       <isNotNull prepend="," property="Summary">
         Summary = #Summary#
       </isNotNull>
@@ -261,7 +256,7 @@
       SELECT A.OID, AO.Name, AO.Type, AO.BPolicyOID, A.PlantLibOID, C.KorNm AS PlantNm, A.OccurrenceLibOID, D.KorNm AS OccurrenceNm, A.PartOID, B.Name AS PartNo, B0.Title AS PartNm, A.LotNo, A.OemLibOID, E.KorNm AS OemNm, A.WorkUserOID, N.Name AS WorkUserNm
       , A.WriteDt, A.PoorCnt
       , A.Title, A.OccurrenceAreaLibOID, F.KorNm AS OccurrenceAreaNm, A.InduceLibOID, G.KorNm AS InduceNm, A.DefectDegreeLibOID, H.KorNm AS DefectDegreeNm, A.ImputeLibOID, I.KorNm AS ImputeNm, A.ImputeDepartmentOID
-      , L.KorNm AS ImputeDepartmentNm, A.ImputeSupplierOID, M.Name AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
+      , L.KorNm AS ImputeDepartmentNm, A.ImputeSupplierOID, M.KorNm AS ImputeSupplierNm, A.Summary, A.PoorDetail, A.RecurrenceFl, A.OccurrencePlace, A.OccurrenceDt, A.CorrectDecisionLibOID, K.KorNm AS CorrectDecisionNm,  A.MeasureResponseDt, A.Qa
       , A.BlockadeMaterialFl, A.BlockadeOutProductFl, A.BlockadeProcessProductFl, A.BlockadeFinishProductFl, A.BlockadeStorageProductFl
       , A.BlockadeShipProductFl, A.PlanUserOID, O.Name AS PlanUserNm, A.PoorPicture, A.GoodPicture, A.FinishDt, AO.CreateUs, AO.CreateUsNm, P.Name AS BPolicyNm, P.StatusOID, P.StatusNm
       , A.OemLibOID, E.KorNm AS OemLibNm
@@ -279,9 +274,9 @@
       LEFT JOIN T_DLIBRARY H ON A.DefectDegreeLibOID = H.OID
       LEFT JOIN T_DLIBRARY I ON A.ImputeLibOID = I.OID
       LEFT JOIN T_DLIBRARY J ON A.OccurrencePlace = J.OID
-      LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID     
+      LEFT JOIN T_DLIBRARY K ON A.CorrectDecisionLibOID = K.OID
       LEFT JOIN T_DLIBRARY L ON A.ImputeDepartmentOID = L.OID
-      LEFT JOIN T_DOBJECT M ON A.ImputeSupplierOID = M.OID AND M.Type = 'SUPPLIER'
+      LEFT JOIN T_DLIBRARY M ON A.ImputeSupplierOID = M.OID
       LEFT JOIN T_DOBJECT N ON A.WorkUserOID = N.OID AND N.Type = 'PERSON'
       LEFT JOIN T_DOBJECT O ON A.PlanUserOID = O.OID AND O.Type = 'PERSON'
       LEFT JOIN T_BPOLICY P ON AO.BPolicyOID = P.OID
@@ -794,8 +789,14 @@
 
     <!-- StdDoc SQL -->
     <select id="SelStandardDoc" parameterClass="StandardDoc" resultClass="StandardDoc">
-      SELECT A.*
+      SELECT
+      A.*
+      , OB.Name AS DocClassNm
+      , C.Title AS DocNm
       FROM T_DQMS_STANDARD_DOC A
+      LEFT JOIN T_DDOCUMENT_CLASSIFICATION B ON A.DocType = B.OID
+      LEFT JOIN T_DDOCUMENT C ON A.DocOID = C.OID
+      LEFT JOIN T_DOBJECT OB ON B.OID = OB.OID
       <dynamic prepend="where">
       </dynamic>
     </select>
@@ -807,14 +808,16 @@
       DocType,
       DocOID,
       DocSummary,
-      DocCompleteDt)
+      DocCompleteDt,
+      DocFl)
       VALUES
       (#OID#,
       #ModuleOID#,
       #DocType#,
       #DocOID#,
       #DocSummary#,
-      #DocCompleteDt#)
+      #DocCompleteDt#,
+      #DocFl#)
     </insert>
 
     <update id="UdtStandardDoc" parameterClass="StandardDoc">
@@ -823,7 +826,8 @@
       DocType = #DocType#,
       DocOID = #DocOID#,
       DocSummary = #DocSummary#,
-      DocCompleteDt = #DocCompleteDt#
+      DocCompleteDt = #DocCompleteDt#,
+      DocFl = #DocFl#
       WHERE OID = #OID# AND ModuleOID = #ModuleOID#
     </update>
 
@@ -1228,6 +1232,53 @@
       DELETE FROM T_DQMS_OPENISSUE_RELATIONSHIP
       WHERE FromOID = #FromOID# AND ToOID = #ToOID# AND type = #type#
     </delete>
+
+    <!-- Quick Paln Team SQL -->
+    <insert id="InsQuickResponseTeam" parameterClass="QuickResponseTeam">
+      INSERT INTO T_DQMS_QUICK_TEAM
+      (OID,
+      QuickOID,
+      RoleLibOID,
+      QuickUserOID)
+      VALUES
+      (#OID#,
+      #QuickOID#,
+      #RoleLibOID#,
+      #QuickUserOID#);
+    </insert>
+
+    <update id="UdtQuickResponseTeam" parameterClass="QuickResponseTeam">
+      UPDATE T_DQMS_QUICK_TEAM
+      SET
+      RoleLibOID = #RoleLibOID#,
+      QuickUserOID = #QuickUserOID#,
+      WHERE OID = #OID# AND QuickOID = #QuickOID#
+    </update>
+
+    <update id="DelQuickResponseTeam" parameterClass="QuickResponseTeam">
+      UPDATE T_DOBJECT
+      SET
+      DeleteDt = GETDATE(),
+      DeleteUs = #DeleteUs#,
+      WHERE OID = #OID# AND Type = #Type#
+    </update>
+    
+    <select id="SelQuickResponseTeam" parameterClass="QuickResponseTeam" resultClass="QuickResponseTeam">
+      SELECT
+      A.*
+      ,D.Name AS QuickUserNm
+      ,C.DepartmentOID AS QuickDeptOID
+      ,C.DepartmentNm AS QuickDeptNm
+      FROM T_DQMS_QUICK_TEAM A
+      LEFT JOIN T_DOBJECT B ON A.OID = B.OID
+      LEFT JOIN T_DPERSON C ON A.QuickUserOID = C.OID
+      LEFT JOIN T_DOBJECT D ON C.OID = D.OID
+      WHERE B.DeleteDt IS NULL
+      <isNotNull prepend="and" property="QuickOID">
+        A.QuickOID = #QuickOID#
+      </isNotNull>
+    </select>
+    
   </statements>
 
 </sqlMap>

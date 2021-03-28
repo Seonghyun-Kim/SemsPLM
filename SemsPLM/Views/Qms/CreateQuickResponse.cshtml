@@ -43,7 +43,7 @@
                 <th><label class="lbText">발생유형</label></th>
                 <td><div id="cbDlgOccurrence"></div></td>
                 <th><label class="lbText">고객사</label></th>
-                <td><div id="cbDlgOem"></div></td>
+                <td><div id="cbDlgOem" style="display:none;"></div></td>
             </tr>
             <tr>
                 <th><label class="lbText">품목</label></th>
@@ -63,9 +63,9 @@
             <tr>
                 <th><label class="lbText">차종</label></th>
                 <td><input type="text" id="txtDlgCarCode" value="@ViewBag.CarLibNm" readonly="readonly" /></td>
-                <th><label class="lbText">발생Lot</label></th>
+                <th><label class="lbText">발생LOT</label></th>
                 <td><input type="text" id="txtDlgLotNo" value="" /></td>
-                <th><label class="lbText">발생수량</label></th>
+                <th><label class="lbText">불량수량</label></th>
                 <td><input type="text" id="txtDlgPoorCnt" value="" /></td>
             </tr>
             <tr>
@@ -110,8 +110,9 @@
                     <div style="display:flex;flex-direction:row;">
                         <div id="cbDlgImpute"></div>
                         <div id="cbDlgImputeDepartment" style="display:none;"></div>
-                        <input type="text" id="txtDlgImputeSupplier" value="" style="display:none;width:140px;height:30px;" readonly="readonly" />
-                        <button id="btnImputeSaerchSupplier" class="custom-button" style="display:none;height:30px;"><i class="fas fa-search"></i> 검색</button>
+                        <div id="cbDlgImputePartners" style="display:none;"></div>
+                        @*<input type="text" id="txtDlgImputeSupplier" value="" style="display:none;width:140px;height:30px;" readonly="readonly" />
+        <button id="btnImputeSaerchSupplier" class="custom-button" style="display:none;height:30px;"><i class="fas fa-search"></i> 검색</button>*@
                     </div>
                 </td>
             </tr>
@@ -124,7 +125,7 @@
                 <td><div id="cbDlgDefectDegree"></div></td>
             </tr>
             <tr>
-                <th><label class="lbText">불량 상세 내용</label></th>
+                <th><label class="lbText">불량상세내용</label></th>
                 <td colspan="3">
                     <textarea id="txtDlgPoorDetail" style="width:98%;"></textarea>
                 </td>
@@ -261,8 +262,9 @@
         @*$("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.oemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 150, height: 25 });*@
         @*$("#cbDlgCorrectDecision").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.correctDecisionList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });*@
         $("#cbDlgItem").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30 });
-        
+
         $("#cbDlgImputeDepartment").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeDeptList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
+        $("#cbDlgImputePartners").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.partnersList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30 });
 
         // 발생유형에 따라 발생처 변경
         $("#cbDlgOccurrence").on('select', function (event) {
@@ -270,6 +272,13 @@
 
             var name = args.item.label === "사외" ? "OCCURRENCE_AREA_OUT" : args.item.label === "사내" ? "OCCURRENCE_AREA_INSIDE" : null;
             if (!WebUtils.isEmpty(name)) {
+                if (name === "OCCURRENCE_AREA_OUT") {
+                    $("#cbDlgOem").css("display", "");
+                } else {
+                    $("#cbDlgOem").css("display", "none");
+                    $("#cbDlgOem").jqxComboBox("clearSelection");
+                }
+
                 RequestData("/Manage/SelLibraryObject", { Name: name }, function (res1) {
                     var OID = res1.OID;
 
@@ -287,16 +296,23 @@
             var args = event.args;
             if (args.item.label === "자체") {
                 $("#cbDlgImputeDepartment").css("display", "block");
-                $("#txtDlgImputeSupplier").css("display", "none");
-                $("#btnImputeSaerchSupplier").css("display", "none");
+                $("#cbDlgImputePartners").css("display", "none");
+                $("#cbDlgImputePartners").jqxComboBox("clearSelection");
+                @*$("#txtDlgImputeSupplier").css("display", "none");
+                $("#btnImputeSaerchSupplier").css("display", "none");*@
             } else if (args.item.label === "협력사") {
                 $("#cbDlgImputeDepartment").css("display", "none");
-                $("#txtDlgImputeSupplier").css("display", "block");
-                $("#btnImputeSaerchSupplier").css("display", "block");
+                $("#cbDlgImputePartners").css("display", "block");
+                $("#cbDlgImputeDepartment").jqxComboBox("clearSelection");
+                @*$("#txtDlgImputeSupplier").css("display", "block");
+                $("#btnImputeSaerchSupplier").css("display", "block");*@
             } else {
                 $("#cbDlgImputeDepartment").css("display", "none");
-                $("#txtDlgImputeSupplier").css("display", "none");
-                $("#btnImputeSaerchSupplier").css("display", "none");
+                $("#cbDlgImputePartners").css("display", "none");
+                $("#cbDlgImputeDepartment").jqxComboBox("clearSelection");
+                $("#cbDlgImputePartners").jqxComboBox("clearSelection");
+                @*$("#txtDlgImputeSupplier").css("display", "none");
+                $("#btnImputeSaerchSupplier").css("display", "none");*@
             }
         });
 
@@ -458,7 +474,7 @@
             if (item.label === "자체") {
                 param.ImputeDepartmentOID = WebUtils.GetComboValue("cbDlgImputeDepartment");
             } else if (item.label === "협력사") {
-                param.ImputeSupplierOID = $("#txtDlgImputeSupplier").attr("ImputeSupplierOID");
+                param.ImputeSupplierOID = WebUtils.GetComboValue("cbDlgImputePartners");
             }
 
             //param.Summary = $("#txtDlgSummary").val();
@@ -479,6 +495,7 @@
             param.PoorPicture = $("#hidImgFileNameDlgPoorPicture").val();
             param.GoodPicture = $("#hidImgFileNameDlgGoodPicture").val();
 
+            var OccurrenceLibItem = $("#cbDlgOccurrence").jqxComboBox('getItemByValue', param.OccurrenceLibOID);
 
             if (WebUtils.isEmpty(param.PlantLibOID)) {
                 alert("공장구분을 선택 해주세요.");
@@ -490,33 +507,40 @@
                 return;
             }
 
+            if (!WebUtils.isEmpty(OccurrenceLibItem) && OccurrenceLibItem.label == "사외") {
+                if (WebUtils.isEmpty(param.OemLibOID)) {
+                    alert("고객사를 선택 해주세요.");
+                    return;
+                }
+            }
+
             if (WebUtils.isEmpty(param.ItemLibOID)) {
                 alert("품목을 선택 해주세요.");
                 return;
             }
 
             if (WebUtils.isEmpty(param.PartOID)) {
-                alert("제품을 선택 해주세요.");
+                alert("품번을 선택 해주세요.");
                 return;
             }
 
-            if (WebUtils.isEmpty(param.CarCode)) {
+            @*if (WebUtils.isEmpty(param.CarCode)) {
                 alert("차종을 입력 해주세요.");
                 return;
-            }
+            }*@
 
             if (WebUtils.isEmpty(param.WorkUserOID)) {
-                alert("접수자을 선택 해주세요.");
+                alert("품질담당자을 선택 해주세요.");
                 return;
             }
 
             if (WebUtils.isEmpty(param.PoorCnt)) {
-                alert("발생수량을 입력 해주세요.");
+                alert("불량수량을 입력 해주세요.");
                 return;
             }
 
             if (WebUtils.isEmpty(param.Title)) {
-                alert("불량내용(문제점 요약)을 입력 해주세요.");
+                alert("제목을 입력 해주세요.");
                 return;
             }
 
@@ -540,6 +564,18 @@
                 return;
             }
 
+            if (item.label === "자체") {
+                if (WebUtils.isEmpty(param.ImputeDepartmentOID)) {
+                    alert("부서를 선택 해주세요.");
+                    return;
+                }
+            } else if (item.label === "협력사") {
+                if (WebUtils.isEmpty(param.ImputeSupplierOID)) {
+                    alert("협력사를 선택 해주세요.");
+                    return;
+                }
+            }
+
             if (item.label === "협력사" && WebUtils.isEmpty(param.ImputeSupplierOID)) {
                 alert("협력사를 선택 해주세요.");
                 return;
@@ -559,7 +595,7 @@
             }
 
             if (WebUtils.isEmpty(param.PoorDetail)) {
-                alert("불량 상세 내용을 입력 해주세요.");
+                alert("불량내용상세을 입력 해주세요.");
                 return;
             }
 

@@ -41,61 +41,79 @@
                 <p>설명 : <span></span></p>
             </div>
         </div>
-        <div id="properties" class="basic_grid">
-            @if ((ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.StandardDoc.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
-            {
-                <table class="tableTopButtonBox">
+        <div class="scrollY" style="height:668px;">
+            <div id="properties" class="basic_grid">
+                @if ((ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.StandardDoc.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
+                {
+                    <table class="tableTopButtonBox">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.StandardDoc.OID">
+                                    <button id="InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                    <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                    <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                    <button id="InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+
+                <label><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</label>
+                <table id="tblInfoStandardFollowUp_@ViewBag.StandardDoc.OID" class="infoTable" style="table-layout:fixed;">
+                    <colgroup>
+                        <col style="width:300px;" />
+                        <col style="width:auto;" />
+                        <col style="width:300px;" />
+                        <col style="width:auto;" />
+                        <col style="width:300px;" />
+                        <col style="width:auto;" />
+                    </colgroup>
                     <tbody>
                         <tr>
-                            <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.StandardDoc.OID">
-                                <button id="InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                <button id="InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                            </td>
+                            <th><label class="lbText">Yes/No</label></th>
+                            <th><label class="lbText">문서타입</label></th>
+                            @*<th><label class="lbText">기술표준문서</label></th>*@
+                            <th><label class="lbText">반영내용</label></th>
+                            <th><label class="lbText">완료일</label></th>
+                            <th><label class="lbText">첨부파일</label></th>
+                            <th><label class="lbText"></label></th>
                         </tr>
                     </tbody>
                 </table>
-            }
 
-            <label><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</label>
-            <table id="tblInfoStandardFollowUp_@ViewBag.StandardDoc.OID" class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:190px;" />
-                    <col style="width:auto;" />
-                    <col style="width:190px;" />
-                    <col style="width:auto;" />
-                </colgroup>
-                <tbody>
-                    <tr>
-                        <th><label class="lbText">문서타입</label></th>
-                        <th><label class="lbText">기술표준문서</label></th>
-                        <th><label class="lbText">완료일</label></th>
-                        <th><label class="lbText">반영내용</label></th>
-                        <th><label class="lbText">첨부파일</label></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="Apphis" class="basic_grid dective">
-            <div id="ApphisInfo_@ViewBag.StandardDoc.OID">
+                <label><i class="fas fa-caret-square-down"></i> 첨부파일</label>
+                <div id="InfoStandardFollowUp_FileList_@ViewBag.StandardDoc.OID">
+
+                </div>
             </div>
-        </div>
-        <div id="Downhis" class="basic_grid dective">
-            @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.StandardDoc.OID });}
+            <div id="Apphis" class="basic_grid dective">
+                <div id="ApphisInfo_@ViewBag.StandardDoc.OID">
+                </div>
+            </div>
+            <div id="Downhis" class="basic_grid dective">
+                @{Html.RenderAction("FileHistory", "Common", new { OID = ViewBag.StandardDoc.OID });}
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+    var StandardDocItem = @Html.Raw(Json.Encode(ViewBag.StandardDocItem));
+    var fileUpload = $("#InfoStandardFollowUp_FileList_@ViewBag.StandardDoc.OID").FileUpload({ OID: '@ViewBag.StandardDoc.OID' });
+    var fieldTypes = ["DocDrawing", "DocPFMEA", "DocManage", "DocWork", "DocInspect"];
+
     $(document).ready(function () {
-        const StandardDocOID = '@ViewBag.StandardDoc.OID';
+        var StandardDocOID = '@ViewBag.StandardDoc.OID';
 
-        PrintStandardFollowUp({ DocTypeNm: "P-FMEA" });
-        PrintStandardFollowUp({ DocTypeNm: "도면" });
-        PrintStandardFollowUp({ DocTypeNm: "관리계획서" });
-        PrintStandardFollowUp({ DocTypeNm: "작업표준서" });
-        PrintStandardFollowUp({ DocTypeNm: "검사기준서" });
-
+        if (WebUtils.isEmpty(StandardDocItem) && StandardDocItem.length < 0) {
+            fieldTypes.forEach(function (v, i) {
+                PrintStandardFollowUp(fieldTypes[i], StandardDocOID, v);
+            });
+        } else {
+            StandardDocItem.forEach(function (v, i) {
+                PrintStandardFollowUp(fieldTypes[i], StandardDocOID, v);
+            });
+        }
 
         const StandardDocDiv$ = $('#InfoStandardFollowUp_' + StandardDocOID);
         $('#InfoStandardFollowUp_' + StandardDocOID + ' .tab').on('click', function () {
@@ -135,6 +153,8 @@
             $("#InfoStandardFollowUp_EditBtn_" + StandardDocOID).css("display", "none");
             $("#InfoStandardFollowUp_SaveBtn_" + StandardDocOID).css("display", "inline-block");
             $("#InfoStandardFollowUp_EditCancleBtn_" + StandardDocOID).css("display", "inline-block");
+
+            fileUpload.EditMode();
         });
 
         // 취소
@@ -157,20 +177,65 @@
         // 저장
         $('#InfoStandardFollowUp_SaveBtn_' + StandardDocOID).on("click", function () {
             var param = {};
+            param.OID = StandardDocOID;
+            param.ModuleOID = StandardDocOID;
+            param.StandardFollowUpList = [];
 
-            // 문서별 데이터 저장 로직 필요
+            var isRequier = false;
+            var ErrorMas = "";
+            var SetDataFunc = function (fieldType) {
+                var item = $("[fieldType='" + fieldType + "_" + + StandardDocOID + "']");
+                var data = {};
+                data.OID = $(item[0]).attr("OID");
+                data.DocType = $(item[0]).attr("DocType");
+                data.DocTypeNm = $(item[2]).text();
+                data.DocOID = $(item[0]).attr("DocOID");
+                data.DocSummary = $(item[3]).val();
+                data.DocCompleteDt = $(item[4]).jqxDateTimeInput("val");
+                data.DocFl = $(item[1]).val() === true ? 1 : 0;
 
-            return;
-            $.post('/Qms/SaveStandardFollowUp', param, function (response) {
+                // Yes이면 필수 값 체크
+                if (data.DocFl) {
+                    if (WebUtils.isEmpty(data.DocSummary)) {
+                        ErrorMas += "[" + data.DocTypeNm + "] 반영내용을 입력 해주세요.\n";
+                        isRequier = true;
+                    }
+
+                    if (WebUtils.isEmpty(data.DocOID)) {
+                        ErrorMas += "[" + data.DocTypeNm + "] 첨부파일을 입력 해주세요.\n";
+                        isRequier = true;
+                    }
+                }
+
+                param.StandardFollowUpList.push(data);
+            }
+
+            SetDataFunc("DocDrawing");
+            SetDataFunc("DocPFMEA");
+            SetDataFunc("DocManage");
+            SetDataFunc("DocWork");
+            SetDataFunc("DocInspect");
+
+            if (isRequier) {
+                alert(ErrorMas)
+                return;
+            }
+
+            var Files = fileUpload.Files();
+
+            var removeFiles = fileUpload.RemoveFiles();
+            if (!WebUtils.isEmpty(removeFiles)) {
+                param.delFiles = [];
+                param.delFiles = removeFiles;
+            }
+
+            SendDataWithFile('/Qms/SaveStandardFollowUp', param, Files, function (response) {
                 if (response.isError) {
                     alert(response.resultMessage);
                     return;
                 }
                 alert("저장되었습니다.");
-
                 PageReload();
-            }).fail(function (err) {
-                alert(err.responseText);
             });
         });
 
@@ -182,29 +247,31 @@
         });
     });
 
-    function PrintStandardFollowUp(v) {
-        var OID = "";
-        var DocType = "";
-        var DocTypeNm = "";
-
-        if (!WebUtils.isEmpty(v)) {
-            OID = v.OID;
-            DocType = v.DocType;
-            DocTypeNm = v.DocTypeNm;
-        }
+    function PrintStandardFollowUp(fieldType, ModuleOID, v) {
 
         var tr$ = document.createElement("tr");
-        tr$.setAttribute("OID", OID);
-        tr$.setAttribute("DocType", DocType);
+        tr$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        tr$.setAttribute("UseFl", "Y");
+
+        if (!WebUtils.isEmpty(v)) {
+            tr$.setAttribute("OID", v.OID);
+            tr$.setAttribute("DocOID", v.DocOID);
+            tr$.setAttribute("DocType", v.DocType);
+        }
 
         // 문서타입
         var tdDocType$ = document.createElement("td");
         var lbDocType$ = document.createElement("label");
-        lbDocType$.innerText = DocTypeNm;
+        lbDocType$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        lbDocType$.innerText = "";
         tdDocType$.appendChild(lbDocType$);
 
+        if (!WebUtils.isEmpty(v)) {
+            lbDocType$.innerText = v.DocClassNm;
+        }
+
         // 기술표준문서
-        var tdDocName$ = document.createElement("td");
+        @*var tdDocName$ = document.createElement("td");
         var divDocName$ = document.createElement("div");
         var txtDocName$ = document.createElement("input");
         var btnDocSearch$ = document.createElement("button");
@@ -212,7 +279,7 @@
         $(divDocName$).css("display", "flex");
 
         txtDocName$.setAttribute("type", "text");
-        txtDocName$.style.width = "200px";
+        txtDocName$.style.width = "170px";
         txtDocName$.setAttribute("readonly", "readonly");
 
         if (!WebUtils.isEmpty(v)) {
@@ -231,33 +298,7 @@
         divDocName$.appendChild(txtDocName$);
         divDocName$.appendChild(btnDocSearch$);
         btnDocSearch$.appendChild(isearch$);
-        tdDocName$.appendChild(divDocName$);
-
-        // 완료일
-        var tdDocCompleteDt$ = document.createElement("td");
-        var dtDocCompleteDt$ = document.createElement("div");
-
-        dtDocCompleteDt$.setAttribute("AttrType", "DATE");
-        dtDocCompleteDt$.setAttribute("data-field", "");
-        dtDocCompleteDt$.className = "Modifiable_@ViewBag.StandardDoc.OID";
-
-        $(dtDocCompleteDt$).jqxDateTimeInput(DateFormat);
-        $(dtDocCompleteDt$).jqxDateTimeInput({
-            width: 140,
-            height: 30,
-            theme: "Light",
-            disabled: true
-        });
-
-        if (!WebUtils.isEmpty(v)) {
-            $(dtDocCompleteDt$).val(WebUtils.GetDate(0, "d", "-"));
-        } else {
-            var milli = v.DocCompleteDt.replace(/\/Date\((-?\d+)\)\//, '$1');
-            var d = new Date(parseInt(milli));
-            $(dtDocCompleteDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
-        }
-
-        tdDocCompleteDt$.appendChild(dtDocCompleteDt$);
+        tdDocName$.appendChild(divDocName$);*@
 
         // 반영내용
         var tdDocDesc$ = document.createElement("td");
@@ -265,6 +306,7 @@
 
         txtDocDesc$.setAttribute("type", "text");
         txtDocDesc$.style.width = "100%";
+        txtDocDesc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
         txtDocDesc$.setAttribute("readonly", "readonly");
         txtDocDesc$.setAttribute("AttrType", "TEXT");
         txtDocDesc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
@@ -275,8 +317,35 @@
 
         tdDocDesc$.appendChild(txtDocDesc$);
 
+        // 완료일
+        var tdDocCompleteDt$ = document.createElement("td");
+        var dtDocCompleteDt$ = document.createElement("div");
+
+        dtDocCompleteDt$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        dtDocCompleteDt$.setAttribute("AttrType", "DATE");
+        dtDocCompleteDt$.setAttribute("data-field", "");
+        @*dtDocCompleteDt$.className = "Modifiable_@ViewBag.StandardDoc.OID";*@
+
+        $(dtDocCompleteDt$).jqxDateTimeInput(DateFormat);
+        $(dtDocCompleteDt$).jqxDateTimeInput({
+            width: 140,
+            height: 30,
+            theme: "Light",
+            disabled: true
+        });
+
+        if (WebUtils.isEmpty(v)) {
+            $(dtDocCompleteDt$).val(WebUtils.GetDate(0, "d", "-"));
+        } else {
+            var milli = v.DocCompleteDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            $(dtDocCompleteDt$).val(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        tdDocCompleteDt$.appendChild(dtDocCompleteDt$);
+
         // 첨부파일
-        var tdDocFileName$ = document.createElement("td");
+        @*var tdDocFileName$ = document.createElement("td");
         var txtDocFileName$ = document.createElement("input");
 
         txtDocFileName$.setAttribute("type", "text");
@@ -289,18 +358,100 @@
             txtDocFileName$.value = WebUtils.isEmpty(v.DocFileNm) === true ? "" : v.DocFileNm;
         }
 
-        tdDocFileName$.appendChild(txtDocFileName$);
+        tdDocFileName$.appendChild(txtDocFileName$);*@
+        // 첨부파일
+        var tdDocName$ = document.createElement("td");
+        var divDocName$ = document.createElement("div");
+        var txtDocName$ = document.createElement("input");
 
+
+        $(divDocName$).css("display", "flex");
+
+        txtDocName$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        txtDocName$.setAttribute("type", "text");
+        txtDocName$.style.width = "100%";
+        txtDocName$.setAttribute("readonly", "readonly");
+
+        if (!WebUtils.isEmpty(v)) {
+            txtDocName$.value = WebUtils.isEmpty(v.DocNm) === true ? "" : v.DocNm;
+        }
+
+        tdDocName$.appendChild(txtDocName$);
+
+        // Yes/No
+        var tdIsDoc$ = document.createElement("td");
+        var btnIsDoc$ = document.createElement("div");
+        $(btnIsDoc$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
+        $(btnIsDoc$).jqxSwitchButton({ disabled: true });
+        btnIsDoc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        btnIsDoc$.setAttribute("AttrType", "SWITCH");
+        btnIsDoc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
+
+        if (!WebUtils.isEmpty(v)) {
+            $(btnIsDoc$).jqxSwitchButton({ checked: v.DocFl === 1 ? true : false });
+        }
+
+        $(btnIsDoc$).bind('change', function (event) {
+            var args = event.args;
+            if (args.check === true) {
+                tr$.setAttribute("UseFl", "N");
+                btnDocSearch$.className = "custom-button";
+                $(btnDocSearch$).css("display", "none");
+                txtDocDesc$.className = "";
+            } else {
+                tr$.setAttribute("UseFl", "Y");
+                btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
+                $(btnDocSearch$).css("display", "flex");
+                txtDocDesc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
+            }
+            //alert("You changed the state of the button");
+        });
+
+        tdIsDoc$.appendChild(btnIsDoc$);
+
+        // 문서 검색
+        var tdDocSearch$ = document.createElement("td");
+        var btnDocSearch$ = document.createElement("button");
+        btnDocSearch$.setAttribute("AttrType", "BUTTON");
+        btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
+        $(btnDocSearch$).css("display", "none");
+        //btnDocSearch$.setAttribute("onclick", "InfoStandardFollowUpDocSearch()");
+        $(btnDocSearch$).on("click", function () {
+            OpenQmsCommonDocumentDialog(function (res) {
+                //$(txtDocDesc$).val(res.Description);
+                lbDocType$.innerText = res.DocType_KorNm;
+                $(txtDocName$).val(res.Title);
+                $(dtDocCompleteDt$).val(res.CreateDt);
+                tr$.setAttribute("DocOID", res.OID);
+                tr$.setAttribute("DocType", res.DocType);
+                tr$.setAttribute("CreateDt", res.CreateDt);
+            }, null, null, '/Qms/SearchDocument', '문서 검색', null);
+        });
+
+
+        var isearch$ = document.createElement("i");
+        isearch$.innerText = "검색";
+        isearch$.className = "fas fa-search";
+
+        divDocName$.appendChild(btnDocSearch$);
+        btnDocSearch$.appendChild(isearch$);
+        tdDocSearch$.appendChild(divDocName$);
+
+        tr$.appendChild(tdIsDoc$);
         tr$.appendChild(tdDocType$);
-        tr$.appendChild(tdDocName$);
-        tr$.appendChild(tdDocCompleteDt$);
         tr$.appendChild(tdDocDesc$);
-        tr$.appendChild(tdDocFileName$);
+        tr$.appendChild(tdDocCompleteDt$);
+        tr$.appendChild(tdDocName$);
+        tr$.appendChild(tdDocSearch$);
+        //tr$.appendChild(tdDocFileName$);
 
         $("#tblInfoStandardFollowUp_@ViewBag.StandardDoc.OID").append(tr$);
     }
 
-    function InfoStandardFollowUpDocSearch() {
+    @*function InfoStandardFollowUpDocSearch(param) {
 
-    }
+        OpenQmsCommonDocumentDialog(function (res) {
+            return res;
+        }, null, null, '/Qms/SearchDocument', '문서 검색', null);
+    }*@
 </script>

@@ -123,9 +123,9 @@
                         <tr>
                             <th><label class="lbText">차종</label></th>
                             <td><input type="text" id="InfoQuickResponse_txtCarCode_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.CarCode" style="width:120px; margin-right:5px;" /></td>
-                            <th><label class="lbText">발생Lot</label></th>
+                            <th><label class="lbText">발생LOT</label></th>
                             <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtLotNo_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.LotNo" /></td>
-                            <th><label class="lbText">발생수량</label></th>
+                            <th><label class="lbText">불량수량</label></th>
                             <td><input type="text" readonly="readonly" id="InfoQuickResponse_txtPoorCnt_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.PoorCnt" /></td>
                         </tr>
                         <tr>
@@ -164,8 +164,9 @@
                             <th><label class="lbText">귀책구분</label></th>
                             <td>
                                 <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID"></div>
-                                <div id="InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID" style="display:none;"></div>
-                                <input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm" style="display:none;" />
+                                <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID" style="display:none;"></div>
+                                <div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID" style="display:none;"></div>
+                                @*<input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm" style="display:none;" />*@
                             </td>
                             @*<th><label class="lbText">유발공정</label></th>
                         <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>*@
@@ -179,7 +180,7 @@
                             <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbDefectDegree_@ViewBag.QuickDetail.OID"></div></td>
                         </tr>
                         <tr>
-                            <th><label class="lbText">불량 내용 상세</label></th>
+                            <th><label class="lbText">불량내용상세</label></th>
                             <td colspan="3">
                                 <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtPoorDetail_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.PoorDetail</textarea>
                             </td>
@@ -337,6 +338,10 @@
         $("#InfoQuickResponse_cbEnrollmentType_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.EnrollmentTypeList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true });
         $("#InfoQuickResponse_cbDlgItem_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.ItemList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 250, height: 30, disabled: true });
 
+        $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.imputeDeptList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true  });
+        $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").jqxComboBox({ selectedIndex: 0, source: WebUtils.ConvComboData(@Html.Raw(Json.Encode(ViewBag.partnersList)), "OID", "KorNm", true), displayMember: "text", valueMember: "value", width: 160, height: 30, disabled: true  });
+
+
          $("#InfoQuickResponse_cbOem_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.OemLibOID");
          $("#InfoQuickResponse_cbPlant_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.PlantLibOID");
          $("#InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.OccurrenceLibOID");
@@ -347,6 +352,8 @@
          @*$("#InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.CorrectDecisionLibOID");*@
         $("#InfoQuickResponse_cbEnrollmentType_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.EnrollmentLibOID");
         $("#InfoQuickResponse_cbDlgItem_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.ItemLibOID");
+        $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.ImputeDepartmentOID");
+        $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").jqxComboBox('val', "@ViewBag.QuickDetail.ImputeSupplierOID");
 
         // 발생유형에 따라 발생처 변경
         $("#InfoQuickResponse_cbOccurrence_@ViewBag.QuickDetail.OID").on('select', function (event) {
@@ -364,6 +371,32 @@
             } else {
                 $("#InfoQuickResponse_cbOccurrenceArea_@ViewBag.QuickDetail.OID").jqxComboBox("clearSelection");
                 $("#InfoQuickResponse_cbOccurrenceArea_@ViewBag.QuickDetail.OID").jqxComboBox({ source: {} })
+            }
+        });
+
+        var item = $("#InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID").jqxComboBox('getItemByValue', "@ViewBag.QuickDetail.ImputeLibOID");
+
+        if (item.label === "자체") {
+            $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").css("display", "block");
+        } else if (item.label === "협력사") {
+            $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").css("display", "block");
+        }
+
+        $("#InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID").on('select', function (event) {
+            var args = event.args;
+            if (args.item.label === "자체") {
+                $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").css("display", "block");
+                $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").css("display", "none");
+                $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").jqxComboBox("clearSelection");
+            } else if (args.item.label === "협력사") {
+                $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").css("display", "none");
+                $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").css("display", "block");
+                $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").jqxComboBox("clearSelection");
+            } else {
+                $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").css("display", "none");
+                $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").css("display", "none");
+                $("#InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID").jqxComboBox("clearSelection");
+                $("#InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID").jqxComboBox("clearSelection");
             }
         });
 
@@ -544,8 +577,8 @@
                 RequestHtml('/Common/ApprovalHistory', { OID: QuickDetailOID }, function (res) {
                     $('#ApphisInfo_' + QuickDetailOID).html(res);
                 });
-            }else if (infoValue == 'fileHistory') {               
-            }            
+            }else if (infoValue == 'fileHistory') {
+            }
         });
 
         $('#InfoQuickResponse_EditBtn_' + QuickDetailOID).on('click', function () {
@@ -628,16 +661,14 @@
             param.DefectDegreeLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbDefectDegree_@ViewBag.QuickDetail.OID");
             param.ImputeLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID");
 
-            @*var item = $("#cbDlgImpute").jqxComboBox('getItemByValue', param.ImputeLibOID);
+            var item = $("#InfoQuickResponse_cbImpute_@ViewBag.QuickDetail.OID").jqxComboBox('getItemByValue', param.ImputeLibOID);
 
             if (item.label === "자체") {
                 param.ImputeDepartmentOID = WebUtils.GetComboValue("InfoQuickResponse_cbImputeDepartment_@ViewBag.QuickDetail.OID");
             } else if (item.label === "협력사") {
-                param.ImputeSupplierOID = $("#InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID").attr("ImputeSupplierOID");
-            }*@
+                param.ImputeSupplierOID = WebUtils.GetComboValue("InfoQuickResponse_cbImputePartners_@ViewBag.QuickDetail.OID");
+            }
 
-            param.ImputeDepartmentOID = null;
-            param.ImputeSupplierOID = null;
             param.PartOID = $("#InfoQuickResponse_txtPartNo_@ViewBag.QuickDetail.OID").attr("PartOID");
             //param.Summary = $("#txtDlgSummary").val();
             param.PoorDetail = $("#InfoQuickResponse_txtPoorDetail_@ViewBag.QuickDetail.OID").val();
@@ -659,12 +690,12 @@
             param.EnrollmentLibOID = WebUtils.GetComboValue("InfoQuickResponse_cbEnrollmentType_@ViewBag.QuickDetail.OID");
 
             if (WebUtils.isEmpty(param.PartOID)) {
-                alert("제품을 선택 해주세요.");
+                alert("품번을 선택 해주세요.");
                 return;
             }
 
             if (WebUtils.isEmpty(param.Title)) {
-                alert("불량내용(문제점 요약)을 입력 해주세요.");
+                alert("제목을 입력 해주세요.");
                 return;
             }
 
@@ -688,6 +719,18 @@
                 return;
             }
 
+            if (item.label === "자체") {
+                if (WebUtils.isEmpty(param.ImputeDepartmentOID)) {
+                    alert("부서를 선택 해주세요.");
+                    return;
+                }
+            } else if (item.label === "협력사") {
+                if (WebUtils.isEmpty(param.ImputeSupplierOID)) {
+                    alert("협력사를 선택 해주세요.");
+                    return;
+                }
+            }
+
             @*if (item.label === "협력사" && WebUtils.isEmpty(param.ImputeSupplierOID)) {
                 alert("협력사를 선택 해주세요.");
                 return;
@@ -707,7 +750,7 @@
             }
 
             if (WebUtils.isEmpty(param.PoorDetail)) {
-                alert("불량 상세 내용을 입력 해주세요.");
+                alert("불량내용상세을 입력 해주세요.");
                 return;
             }
 

@@ -1,38 +1,49 @@
 ﻿using Common.Factory;
 using Common.Interface;
 using Common.Models;
+using Common.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Qms.Models
 {
-    public class StandardDoc : DObject, IDObject
+    public class StandardDoc : DObject, IDObject, IObjectFile
     {
         // 신속대응 OID
         public int? QuickOID { get; set; }
         public int? ModuleOID { get; set; }
 
         // 문서타입 
-        public int DocType { get; set; }
+        public int? DocType { get; set; }
 
         // 문서 OID 
-        public int DocOID { get; set; }
+        public int? DocOID { get; set; }
 
         // 반영내용 
         public string DocSummary { get; set; }
 
         public DateTime? DocCompleteDt { get; set; }
 
+        public int? DocFl { get; set; }
+
         public List<StandardDoc> StandardFollowUpList { get; set; }
 
         #region -- Search & View
-        public string DocTypeNm { get; set; }
+        public string DocClassNm { get; set; }
         public string DocNm { get; set; }
 
         public string DocFileNm { get; set; }
+        #endregion
+
+        #region -- File
+        public List<HttpPostedFileBase> Files { get; set; }
+
+        public List<HttpFile> delFiles { get; set; }
+
         #endregion
     }
 
