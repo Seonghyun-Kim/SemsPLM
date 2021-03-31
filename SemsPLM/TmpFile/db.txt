@@ -577,3 +577,78 @@ QMS - 봉쇄조치방법 - 수리
 QMS - 봉쇄조치방법 - 폐기
 QMS - 봉쇄조치방법 - 반출
 QMS - 봉쇄조치방법 - 기타
+
+
+
+데이터 변경사항
+발생처(사내)
+고객, 해외법인, 출하, 입고, CKD -> 수입, 공정, 출하, 해외법인
+고객, 입고, CKD 사용유무 N으로 설정
+수입, 공정 신규추가
+
+테이블 변경 -> aquerytool 반영 완료
+T_DQMS_STANDARD_DOC
+DocType -> Null 허용
+DocOID-> Null 허용
+DocCompleteDt -> Null 허용
+DocFl> Null 허용, 신규추가 (Yes/No 용)  tinyint
+
+T_DQMS_QUICK
+발생유형이 사외 일 경우만 고객사 항목은 필수
+OemLibOID -> Null 허용
+
+테이블 추가 -> aquerytool 반영 완료
+테이블 명 : T_DQMS_QUICK_TEAM
+컬럼 명 : OID, 타입 : int, Desc : 오브젝트
+컬럼 명 : QuickOID, 타입 : int, Desc : 신속대응 OID
+컬럼 명 : RoleLibOID, 타입 : int, Desc : 구성원 권한
+컬럼 명 : QuickUserOID, 타입 : int, Desc : 사용자
+
+
+신속대응 테이블 변경
+발생유형이 사외 일 경우만 고객사 항목은 필수
+OemLibOID -> Null 허용
+
+협력사 데이터
+협력사 그룹코드 신규추가
+코드 : PARTNERS
+이름 : 협력사 
+순서 : 9
+사용여부 : Y
+
+협력사 데이터
+코드 : 1
+이름 : 테슬라
+순서 : 1
+사용여부 : Y
+
+TEAM 데이터
+TEAM 그룹코드 신규추가
+코드 : QUICK_TEMP_ROLE
+이름 : TEAM
+순서 : 21
+사용여부 : Y
+
+TEAM 데이터
+코드 : 1
+이름 : Champion
+순서 : 1
+사용여부 : Y
+
+코드 : 2
+이름 : Team Leader
+순서 : 2
+사용여부 : Y
+
+코드 : 3
+이름 : Team Members
+순서 : 3
+사용여부 : Y
+
+DB 데이터 추가 사항
+T_BPOLICY
+Type : QUICK_RESPONSE_TEAM
+Name : Exist
+StatusOID : 148
+StatusNm : 존재함
+StatusOrd : 1

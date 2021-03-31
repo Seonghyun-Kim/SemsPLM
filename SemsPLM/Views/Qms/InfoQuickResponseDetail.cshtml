@@ -65,7 +65,7 @@
                 <td>@ViewBag.QuickResponse.PoorCnt</td>
                 <th><label class="lbText">작성일자</label></th>
                 <td>@(ViewBag.QuickResponse.WriteDt == null ? "" : ViewBag.QuickResponse.WriteDt.ToString("yyyy-MM-dd"))</td>
-                <th><label class="lbText">접수자</label></th>
+                <th><label class="lbText">품질담당자</label></th>
                 <td>@ViewBag.QuickResponse.WorkUserNm</td>
             </tr>
             @*<tr>
@@ -115,7 +115,7 @@
         </colgroup>
         <tbody>
             <tr>
-                <th><label class="lbText">불량내용(문제점 요약)</label></th>
+                <th><label class="lbText">제목</label></th>
                 <td colspan="5">@ViewBag.QuickResponse.Title</td>
             </tr>
             <tr>
@@ -124,7 +124,17 @@
                 <th><label class="lbText">발생장소</label></th>
                 <td>@ViewBag.QuickResponse.OccurrencePlace</td>
                 <th><label class="lbText">귀책구분</label></th>
-                <td>@ViewBag.QuickResponse.ImputeNm</td>
+                <td>
+                    @ViewBag.QuickResponse.ImputeNm
+                    @if (ViewBag.QuickResponse.ImputeNm == "자체")
+                    {
+                        <label class="lbText">ViewBag.QuickResponse.ImputeDepartmentNm</label>
+                    }
+                    else
+                    {
+                        <label class="lbText">ViewBag.QuickResponse.ImputeSupplierNm</label>
+                    }
+                </td>
             </tr>
             <tr>
                 <th><label class="lbText">재발여부</label></th>
@@ -140,10 +150,10 @@
                 <th><label class="lbText">대책서회신요구일자</label></th>
                 <td>@(ViewBag.QuickResponse.MeasureResponseDt == null ? "" : ViewBag.QuickResponse.MeasureResponseDt.ToString("yyyy-MM-dd"))</td>
             </tr>
-            <tr>
+            @*<tr>
                 <th><label class="lbText">등록구분</label></th>
                 <td colspan="5">@ViewBag.QuickResponse.EnrollmentLibNm</td>
-            </tr>
+            </tr>*@
 
             @*<tr>
                 <th><label class="lbText">제목</label></th>
@@ -239,7 +249,7 @@
         </tr>
     </table>
 
-    <label><i class="fas fa-caret-square-down"></i> 시정결과</label>
+    @*<label><i class="fas fa-caret-square-down"></i> 시정결과</label>
     <table id="tbDetailCorrectiveAction_@Model" class="infoTable">
         <colgroup>
             <col style="width:9%" />
@@ -264,7 +274,7 @@
             <th>적합</th>
             <th>부적합</th>
         </tr>
-    </table>
+    </table>*@
 
     <div id="fileBlockade_@Model">
 
@@ -820,7 +830,7 @@
 
         BlockadeList.forEach(function (v, i) {
             DetailPrintBlockade(v);
-            DetailPrintCorrectiveAction(v);
+            //DetailPrintCorrectiveAction(v);
         });
 
         var OccurrenceCauseItems = @Html.Raw(Json.Encode(ViewBag.OccurrenceCauseItems));

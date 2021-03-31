@@ -1422,7 +1422,7 @@ namespace SemsPLM.Controllers
                 ws.Cells[StartBlockadeItemRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                 iRow++;
-
+                /*
                 // 시정결과
                 PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TITLE", "시정결과");
                 iRow++;
@@ -1454,7 +1454,7 @@ namespace SemsPLM.Controllers
                 });
 
                 ws.Cells[StartCorrectiveActionRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
-
+                */
                 ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 #endregion
                 iRow = iRow + 2;
