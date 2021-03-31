@@ -43,21 +43,18 @@
         </div>
         <div class="scrollY" style="height:668px;">
             <div id="properties" class="basic_grid">
-                @if ((ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_STARTED || ViewBag.StandardDoc.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED) && ViewBag.StandardDoc.ChargeUserOID == Convert.ToInt32(Session["UserOID"]))
-                {
-                    <table class="tableTopButtonBox">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.StandardDoc.OID">
-                                    <button id="InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
-                                    <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
-                                    <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
-                                    <button id="InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                }
+                <table class="tableTopButtonBox">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;" id="InfoStandardFollowUp_defaultBtn_@ViewBag.StandardDoc.OID">
+                                <button id="InfoStandardFollowUp_EditBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-edit"></i> 수정</button>
+                                <button id="InfoStandardFollowUp_EditCancleBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-times"></i> 취소</button>
+                                <button id="InfoStandardFollowUp_SaveBtn_@ViewBag.StandardDoc.OID" class="custom-button" style="display:none;"><i class="fas fa-save"></i> 저장</button>
+                                <button id="InfoStandardFollowUp_ApprovalBtn_@ViewBag.StandardDoc.OID" class="custom-button"><i class="fas fa-pen-alt"></i> 결재</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <label><i class="fas fa-caret-square-down"></i> 표준화 & Follow-Up 조치</label>
                 <table id="tblInfoStandardFollowUp_@ViewBag.StandardDoc.OID" class="infoTable" style="table-layout:fixed;">
@@ -100,7 +97,14 @@
 <script type="text/javascript">
     var StandardDocItem = @Html.Raw(Json.Encode(ViewBag.StandardDocItem));
     var fileUpload = $("#InfoStandardFollowUp_FileList_@ViewBag.StandardDoc.OID").FileUpload({ OID: '@ViewBag.StandardDoc.OID' });
-    var fieldTypes = ["DocDrawing", "DocPFMEA", "DocManage", "DocWork", "DocInspect"];
+    var fieldTypes = [
+        { OID: 118, fieldType: "DocDrawing", fieldTypeNm: "도면" },
+        { OID: 183, fieldType: "DocPFMEA", fieldTypeNm: "P-FMEA" },
+        { OID: 148, fieldType: "DocManage", fieldTypeNm: "관리계획서" },
+        { OID: 208, fieldType: "DocWork", fieldTypeNm: "작업표준서" },
+        { OID: 222, fieldType: "DocInspect", fieldTypeNm: "검사기준서" },
+        { OID: null, fieldType: "etc", fieldTypeNm: "기타" }
+    ];
 
     $(document).ready(function () {
         var StandardDocOID = '@ViewBag.StandardDoc.OID';
@@ -218,6 +222,7 @@
             SetDataFunc("DocManage");
             SetDataFunc("DocWork");
             SetDataFunc("DocInspect");
+            SetDataFunc("etc");
 
             if (isRequier) {
                 alert(ErrorMas)
@@ -250,28 +255,24 @@
         });
     });
 
-    function PrintStandardFollowUp(fieldType, ModuleOID, v) {
+    function PrintStandardFollowUp(type, ModuleOID, v) {
 
         var tr$ = document.createElement("tr");
-        tr$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        tr$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         tr$.setAttribute("UseFl", "Y");
+        tr$.setAttribute("DocType", type.OID);
 
         if (!WebUtils.isEmpty(v)) {
             tr$.setAttribute("OID", v.OID);
             tr$.setAttribute("DocOID", v.DocOID);
-            tr$.setAttribute("DocType", v.DocType);
         }
 
         // 문서타입
         var tdDocType$ = document.createElement("td");
         var lbDocType$ = document.createElement("label");
-        lbDocType$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
-        lbDocType$.innerText = "";
+        lbDocType$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
+        lbDocType$.innerText = type.fieldTypeNm;
         tdDocType$.appendChild(lbDocType$);
-
-        if (!WebUtils.isEmpty(v)) {
-            lbDocType$.innerText = v.DocClassNm;
-        }
 
         // 기술표준문서
         @*var tdDocName$ = document.createElement("td");
@@ -309,7 +310,7 @@
 
         txtDocDesc$.setAttribute("type", "text");
         txtDocDesc$.style.width = "100%";
-        txtDocDesc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        txtDocDesc$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         txtDocDesc$.setAttribute("readonly", "readonly");
         txtDocDesc$.setAttribute("AttrType", "TEXT");
         txtDocDesc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
@@ -324,10 +325,9 @@
         var tdDocCompleteDt$ = document.createElement("td");
         var dtDocCompleteDt$ = document.createElement("div");
 
-        dtDocCompleteDt$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        dtDocCompleteDt$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         dtDocCompleteDt$.setAttribute("AttrType", "DATE");
         dtDocCompleteDt$.setAttribute("data-field", "");
-        @*dtDocCompleteDt$.className = "Modifiable_@ViewBag.StandardDoc.OID";*@
 
         $(dtDocCompleteDt$).jqxDateTimeInput(DateFormat);
         $(dtDocCompleteDt$).jqxDateTimeInput({
@@ -337,7 +337,11 @@
             disabled: true
         });
 
-        if (WebUtils.isEmpty(v)) {
+        if (type.fieldType === "etc") {
+             dtDocCompleteDt$.className += " Modifiable_@ViewBag.StandardDoc.OID";
+        }
+
+        if (WebUtils.isEmpty(v.DocCompleteDt)) {
             $(dtDocCompleteDt$).val(WebUtils.GetDate(0, "d", "-"));
         } else {
             var milli = v.DocCompleteDt.replace(/\/Date\((-?\d+)\)\//, '$1');
@@ -370,7 +374,7 @@
 
         $(divDocName$).css("display", "flex");
 
-        txtDocName$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        txtDocName$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         txtDocName$.setAttribute("type", "text");
         txtDocName$.style.width = "100%";
         txtDocName$.setAttribute("readonly", "readonly");
@@ -386,7 +390,7 @@
         var btnIsDoc$ = document.createElement("div");
         $(btnIsDoc$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
         $(btnIsDoc$).jqxSwitchButton({ disabled: true });
-        btnIsDoc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        btnIsDoc$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         btnIsDoc$.setAttribute("AttrType", "SWITCH");
         btnIsDoc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
 
@@ -396,12 +400,13 @@
 
         $(btnIsDoc$).bind('change', function (event) {
             var args = event.args;
+
             if (args.check === true) {
                 tr$.setAttribute("UseFl", "N");
                 btnDocSearch$.className = "custom-button";
                 $(btnDocSearch$).css("display", "none");
                 txtDocDesc$.className = "";
-            } else {
+            } else if (type.fieldType !== "etc") {
                 tr$.setAttribute("UseFl", "Y");
                 btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
                 $(btnDocSearch$).css("display", "flex");
@@ -416,21 +421,23 @@
         var tdDocSearch$ = document.createElement("td");
         var btnDocSearch$ = document.createElement("button");
         btnDocSearch$.setAttribute("AttrType", "BUTTON");
-        btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
+        btnDocSearch$.setAttribute("DocType", type.OID);
+        btnDocSearch$.className = type.fieldType === "etc" ? "" : "Modifiable_@ViewBag.StandardDoc.OID custom-button";
         $(btnDocSearch$).css("display", "none");
         //btnDocSearch$.setAttribute("onclick", "InfoStandardFollowUpDocSearch()");
         $(btnDocSearch$).on("click", function () {
+            var param = {};
+            param.DocType = $(btnDocSearch$).attr("DocType");
+
             OpenQmsCommonDocumentDialog(function (res) {
                 //$(txtDocDesc$).val(res.Description);
-                lbDocType$.innerText = res.DocType_KorNm;
+                //lbDocType$.innerText = res.DocType_KorNm;
                 $(txtDocName$).val(res.Title);
                 $(dtDocCompleteDt$).val(res.CreateDt);
                 tr$.setAttribute("DocOID", res.OID);
-                tr$.setAttribute("DocType", res.DocType);
                 tr$.setAttribute("CreateDt", res.CreateDt);
-            }, null, null, '/Qms/SearchDocument', '문서 검색', null);
+            }, null, param, '/Qms/SearchDocument', '문서 검색', null);
         });
-
 
         var isearch$ = document.createElement("i");
         isearch$.innerText = "검색";

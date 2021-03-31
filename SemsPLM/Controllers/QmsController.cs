@@ -3278,6 +3278,7 @@ namespace SemsPLM.Controllers
         {
 
             //  ViewBag.Detail = DocRepository.SelDocObject(Session, new Doc { OID = _param.OID });
+            ViewBag.DocType = _param.DocType;
             return PartialView("Dialog/dlgSearchDocument");
         }
 
