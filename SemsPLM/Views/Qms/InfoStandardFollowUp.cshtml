@@ -105,11 +105,14 @@
     $(document).ready(function () {
         var StandardDocOID = '@ViewBag.StandardDoc.OID';
 
-        if (WebUtils.isEmpty(StandardDocItem) && StandardDocItem.length < 0) {
+        // 도면, 작업표준서, PFMEA 등 해당 분류체계만 검색 할 수 있도록 코드 값이 존재 하지 않아 첨부파일 기준으로 문서타입 지정
+        // 처음 등록 시에는 표준화 데이터(분류체계)가 존재 하지 않아서 NULL로 표현
+        if (WebUtils.isEmpty(StandardDocItem) && StandardDocItem.length <= 0) {
             fieldTypes.forEach(function (v, i) {
-                PrintStandardFollowUp(fieldTypes[i], StandardDocOID, v);
+                PrintStandardFollowUp(v, StandardDocOID, null);
             });
         } else {
+            // 기존에 등록 한 데이터들을 화면에 표현
             StandardDocItem.forEach(function (v, i) {
                 PrintStandardFollowUp(fieldTypes[i], StandardDocOID, v);
             });
