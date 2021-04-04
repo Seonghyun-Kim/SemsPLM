@@ -436,6 +436,7 @@ namespace SemsPLM.Controllers
             List<Library> ItemList = LibraryRepository.SelCodeLibrary(new Library { FromOID = ItemKey.OID });  // 품목
             ViewBag.ItemList = ItemList;
 
+
             return View();
         }
 
@@ -1410,7 +1411,7 @@ namespace SemsPLM.Controllers
                 {
                     PrintExcelCell(ws.Cells[iRow, 3, iRow + 1, 4], "TH", v.Name);
                     PrintExcelCell(ws.Cells[iRow, 5, iRow + 1, 8], "TD", v.TargetScope);
-                    PrintExcelCell(ws.Cells[iRow, 9, iRow + 1, 13], "TD", v.Act);
+                    PrintExcelCell(ws.Cells[iRow, 9, iRow + 1, 13], "TD", v.ActName);
                     PrintExcelCell(ws.Cells[iRow, 14, iRow + 1, 15], "TD", v.TargetCnt.ToString());
                     PrintExcelCell(ws.Cells[iRow, 16, iRow + 1, 17], "TD", v.ActDepartmentNm);
                     PrintExcelCell(ws.Cells[iRow, 18, iRow + 1, 19], "TD", v.ActUserNm);
@@ -1842,10 +1843,20 @@ namespace SemsPLM.Controllers
                     int StartStandardRow = iRow;
 
                     PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TH", "문서타입");
-                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 12], "TH", "문서명");
-                    PrintExcelCell(ws.Cells[iRow, 13, iRow, 21], "TH", "반영내용");
-                    PrintExcelCell(ws.Cells[iRow, 22, iRow, 24], "TH", "완료일");
+                    PrintExcelCell(ws.Cells[iRow, 6, iRow, 12], "TH", "반영내용");
+                    PrintExcelCell(ws.Cells[iRow, 13, iRow, 16], "TH", "완료일");
+                    PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TH", "문서명");
                     iRow++;
+
+                    StandardDocItem.ForEach(v =>
+                    {
+
+                        PrintExcelCell(ws.Cells[iRow, 3, iRow, 5], "TD",v.DocClassNm);
+                        PrintExcelCell(ws.Cells[iRow, 6, iRow, 12], "TD", v.DocSummary);
+                        PrintExcelCell(ws.Cells[iRow, 13, iRow, 16], "TD", v.DocCompleteDt == null ? "" : ((DateTime)v.DocCompleteDt).ToString("yyyy-MM-dd")); 
+                        PrintExcelCell(ws.Cells[iRow, 17, iRow, 24], "TD", v.DocNm);
+                        iRow++;
+                    });
 
                     ws.Cells[StartStandardRow, 3, iRow - 1, 24].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                     ws.Cells[StartModuleRow + 1, 2, iRow, 25].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
@@ -1946,8 +1957,7 @@ namespace SemsPLM.Controllers
 
             return iRow + 3;
         }
-
-
+        
         private void PrintExcelCell(ExcelRange range, string Type, string Text)
         {
             range.Merge = true;

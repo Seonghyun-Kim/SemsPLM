@@ -439,14 +439,14 @@
     </update>
 
     <select id="SelBlockadeItem" parameterClass="BlockadeItem" resultClass="BlockadeItem">
-      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, A.TargetCnt, E.OID AS ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
+      SELECT A.OID, B.Type, B.Name, B.BPolicyOID, A.ModuleOID, A.TargetScope, A.Act, F.KorNm AS ActName, A.TargetCnt, E.OID AS ActDepartmentOID, C.Name AS ActDepartmentNm, A.ActUserOID, D.Name AS ActUserNm, A.ActStartDt
       , A.ActEndDt, A.SortSuitableCnt, A.SortIncongruityCnt, A.ReworkCnt, A.DisuseCnt, A.SpecialCnt, A.EtcCnt, B.Description
       FROM T_DQMS_BLOCKADE A
       LEFT JOIN T_DOBJECT B ON A.OID = B.OID
       LEFT JOIN T_DOBJECT D ON A.ActUserOID = D.OID
       LEFT JOIN T_DPERSON E ON  A.ActUserOID = E.OID
       LEFT JOIN T_DOBJECT C ON E.DepartmentOID = C.OID
-
+      LEFT JOIN T_DLIBRARY F ON A.Act = F.OID
       <dynamic prepend="where">
         <isNotNull prepend="AND" property="OID">
           A.OID = #OID#

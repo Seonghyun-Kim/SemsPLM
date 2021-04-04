@@ -20,6 +20,8 @@ namespace Qms.Models
         // 조치방법 
         public string Act { get; set; }
 
+        public string ActName { get; set; }
+
         // 대상수량 
         public int? TargetCnt { get; set; }
 

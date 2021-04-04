@@ -128,11 +128,11 @@
                     @ViewBag.QuickResponse.ImputeNm
                     @if (ViewBag.QuickResponse.ImputeNm == "자체")
                     {
-                        <label class="lbText">ViewBag.QuickResponse.ImputeDepartmentNm</label>
+                        <label class="lbText">@ViewBag.QuickResponse.ImputeDepartmentNm</label>
                     }
                     else
                     {
-                        <label class="lbText">ViewBag.QuickResponse.ImputeSupplierNm</label>
+                        <label class="lbText">@ViewBag.QuickResponse.ImputeSupplierNm</label>
                     }
                 </td>
             </tr>
@@ -687,18 +687,16 @@
             <label style="font-size:14px;text-indent:5px;margin:20px 0px 10px;"><i class="fas fa-caret-square-down"></i> 표준화 F/U</label>
             <table id="tblInfoStandardFollowUp_@Model" class="infoTable" style="table-layout:fixed;">
                 <colgroup>
-                    <col style="width:190px;" />
-                    <col style="width:auto;" />
-                    <col style="width:190px;" />
+                    <col style="width:300px;" />
                     <col style="width:auto;" />
                     <col style="width:300px;" />
+                    <col style="width:auto;" />
                 </colgroup>
                 <tbody>
                     <tr>
                         <th><label class="lbText">문서타입</label></th>
-                        <th><label class="lbText">기술표준문서</label></th>
-                        <th><label class="lbText">완료일</label></th>
                         <th><label class="lbText">반영내용</label></th>
+                        <th><label class="lbText">완료일</label></th>
                         <th><label class="lbText">첨부파일</label></th>
                     </tr>
                 </tbody>
@@ -818,7 +816,22 @@
 
         @if (ViewBag.StandardDocFl == 1)
         {
-            <text>loadApprovDetail($("#StandardDocApprovalLine_@Model"), "표준 F/U", @Html.Raw(Json.Encode(ViewBag.StandardDocApprvalData)));</text>
+            <text>
+        loadApprovDetail($("#StandardDocApprovalLine_@Model"), "표준 F/U", @Html.Raw(Json.Encode(ViewBag.StandardDocApprvalData)));
+        var StandardDocItems = @Html.Raw(Json.Encode(ViewBag.StandardDocItem));
+        var fieldTypes = [
+            { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_DWG", fieldType: "DocDrawing", fieldTypeNm: "도면" },
+            { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_PFMEA", fieldType: "DocPFMEA", fieldTypeNm: "P-FMEA" },
+            { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_MANAGE", fieldType: "DocManage", fieldTypeNm: "관리계획서" },
+            { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_WORKSTD", fieldType: "DocWork", fieldTypeNm: "작업표준서" },
+            { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_INSPECT", fieldType: "DocInspect", fieldTypeNm: "검사기준서" },
+            { DocClassCode: null, fieldType: "etc", fieldTypeNm: "기타" }
+        ];
+
+        StandardDocItems.forEach(function (v, i) {
+            DetailPrintStandardFollowUp(fieldTypes[i], v);
+        });
+        </text>
         }
 
         @if (ViewBag.WorkerEduFl == 1)
@@ -842,6 +855,7 @@
         ImproveCounterMeasureItems.forEach(function (v, i) {
             DetailImproveCounterMeasure(v);
         });
+
 
         $("#btnDlgExcel_@ViewBag.QuickResponse.OID").on("click", function () {     
             var url = "/Qms/ExcelExportQuickResponseDetail?OID=@ViewBag.QuickResponse.OID";      
@@ -919,7 +933,7 @@
         tdTargetScope$.innerText = v.TargetScope;
 
         var tdAct$ = document.createElement("td");
-        tdAct$.innerText = v.Act;
+        tdAct$.innerText = v.ActName;
 
         var tdTargetCnt$ = document.createElement("td");
         tdTargetCnt$.innerText = v.TargetCnt;
@@ -1201,5 +1215,43 @@
             $("#tbQmsCheckListEndDesc_@Model").append(tdEndDesc$);
         }
 
+    }
+
+    function DetailPrintStandardFollowUp(type, v) {
+
+        var tr$ = document.createElement("tr");
+        tr$.setAttribute("DocClassCode", type.DocClassCode);
+        
+        // 문서타입
+        var tdDocType$ = document.createElement("td");
+        var lbDocType$ = document.createElement("label");
+        lbDocType$.innerText = type.fieldTypeNm;
+        tdDocType$.appendChild(lbDocType$);
+
+        // 반영내용
+        var tdDocDesc$ = document.createElement("td");
+        tdDocDesc$.innerText = WebUtils.isEmpty(v.DocSummary) === true ? "" : v.DocSummary;  
+
+
+        var tdDocCompleteDt$ = document.createElement("td");
+        if (WebUtils.isEmpty(v) || v.DocCompleteDt === null) {
+            tdDocCompleteDt$.innerText = "";
+        } else {
+            var milli = v.DocCompleteDt.replace(/\/Date\((-?\d+)\)\//, '$1');
+            var d = new Date(parseInt(milli));
+            tdDocCompleteDt$.innerText = (d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+        }
+
+        // 첨부파일
+        var tdDocName$ = document.createElement("td");
+        tdDocName$.innerText = WebUtils.isEmpty(v.DocNm) === true ? "" : v.DocNm;
+      
+        tr$.appendChild(tdDocType$);
+        tr$.appendChild(tdDocDesc$);
+        tr$.appendChild(tdDocCompleteDt$);
+        tr$.appendChild(tdDocName$);
+        //tr$.appendChild(tdDocFileName$);
+
+        $("#tblInfoStandardFollowUp_@Model").append(tr$);
     }
 </script>
