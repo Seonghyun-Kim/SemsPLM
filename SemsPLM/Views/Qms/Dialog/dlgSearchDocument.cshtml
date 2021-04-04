@@ -91,7 +91,7 @@
         var param = {};
         param.Name = $('#dlgDocumentName').val();
         param.Title = $('#dlgDocumentTitle').val();
-        param.DocType = "@ViewBag.DocType";
+        param.Code = "@ViewBag.Code";
         param.IsLatest = 1;
         //param.IsReleasedLatest = 1;
         RequestData("/Document/SelDoc", param, function (res) {
@@ -108,7 +108,7 @@
     function GetDocumentList() {
         var param = {};
         param.Name = $('#dlgDocClassName').val();
-        param.DocType = "@ViewBag.DocType";
+        param.Code = "@ViewBag.Code";
         param.IsLatest = 1;
         //param.IsReleasedLatest = 1;
         RequestData("/Document/SelDoc", param, function (res) {

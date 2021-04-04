@@ -31,6 +31,8 @@ namespace Document.Models
         public string DocType_KorNm { get; set; }
         public string TaskNm { get; set; }
 
+        public string Code { get; set; }
+
         public List<HttpPostedFileBase> Files { get; set; }
         public List<HttpFile> delFiles { get; set; }
     }
