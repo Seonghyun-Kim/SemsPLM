@@ -69,6 +69,8 @@
         </div>
         <div style="overflow-y:scroll;height:668px;box-sizing:border-box;">
             <div id="properties" class="basic_grid">
+                @if (ViewBag.QuickDetail.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_QUICK_RESPONSE_PREPARE || ViewBag.QuickDetail.BPolicyNm == Common.Constant.QmsConstant.POLICY_QMS_MODULE_REJECTED && ViewBag.QuickDetail.CreateUs == Convert.ToInt32(Session["UserOID"]))
+                {
                 <table class="tableTopButtonBox" style="border-bottom:1px solid #c5c5c5;">
                     <tbody>
                         <tr>
@@ -81,6 +83,8 @@
                         </tr>
                     </tbody>
                 </table>
+
+                }
 
                 <label><i class="fas fa-caret-square-down"></i> 기본정보</label>
                 <table class="infoTable" style="table-layout:fixed;">
@@ -169,7 +173,7 @@
                                 @*<input type="text" readonly="readonly" id="InfoQuickResponse_txtImputeSupplier_@ViewBag.QuickDetail.OID" value="@ViewBag.QuickDetail.ImputeSupplierNm" style="display:none;" />*@
                             </td>
                             @*<th><label class="lbText">유발공정</label></th>
-                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>*@
+                    <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbInduce_@ViewBag.QuickDetail.OID"></div></td>*@
                         </tr>
                         <tr>
                             <th><label class="lbText">재발여부 </label></th>
@@ -188,16 +192,16 @@
                             <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="DATE" id="InfoQuickResponse_txtMeasureResponseDt_@ViewBag.QuickDetail.OID" value="@(ViewBag.QuickDetail.MeasureResponseDt == null ? "" : ViewBag.QuickDetail.MeasureResponseDt.ToString("yyyy-MM-dd"))"></div></td>
                         </tr>
                         @*<tr>
-                        <th><label class="lbText">QA</label></th>
-                        <td colspan="5">
-                            <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
-                        </td>
-                    </tr>*@
+                    <th><label class="lbText">QA</label></th>
+                    <td colspan="5">
+                        <textarea class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="TEXTAREA" readonly="readonly" id="InfoQuickResponse_txtQa_@ViewBag.QuickDetail.OID" style="width:98%;">@ViewBag.QuickDetail.Qa</textarea>
+                    </td>
+                </tr>*@
                         <tr>
                             <th><label class="lbText">등록구분</label></th>
                             <td colspan="5"><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbEnrollmentType_@ViewBag.QuickDetail.OID"></div></td>
                             @*<th><label class="lbText">시정판정</label></th>
-                        <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>*@
+                    <td><div class="Modifiable_@ViewBag.QuickDetail.OID" AttrType="COMBO" id="InfoQuickResponse_cbCorrectDecision_@ViewBag.QuickDetail.OID"></div></td>*@
                         </tr>
                     </tbody>
                 </table>
@@ -256,24 +260,24 @@
                         <col style="width:210px;" />
                         <col style="width:auto;" />
                         @*<col style="width:210px;" />
-                        <col style="width:auto;" />
-                        <col style="width:210px;" />
-                        <col style="width:auto;" />*@
+                <col style="width:auto;" />
+                <col style="width:210px;" />
+                <col style="width:auto;" />*@
                     </colgroup>
                     <tbody>
                         <tr>
                             @*<th><label class="lbText">봉쇄조치 범위선택 </label></th>
-                            <td colspan="3">
-                                <div style="display:flex;flex-direction:row;">
-                                    <div id="InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID">원재료</div>
-                                    <div id="InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID">외주품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID">공정품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID">완성품</div>
-                                    <div id="InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID">창고재고</div>
-                                    <div id="InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID">고객출하</div>
-                                </div>
+                    <td colspan="3">
+                        <div style="display:flex;flex-direction:row;">
+                            <div id="InfoQuickResponse_chkBlockadeMaterial_@ViewBag.QuickDetail.OID">원재료</div>
+                            <div id="InfoQuickResponse_chkBlockadeOutProduct_@ViewBag.QuickDetail.OID">외주품</div>
+                            <div id="InfoQuickResponse_chkBlockadeProcessProduct_@ViewBag.QuickDetail.OID">공정품</div>
+                            <div id="InfoQuickResponse_chkBlockadeFinishProduct_@ViewBag.QuickDetail.OID">완성품</div>
+                            <div id="InfoQuickResponse_chkBlockadeStorageProduct_@ViewBag.QuickDetail.OID">창고재고</div>
+                            <div id="InfoQuickResponse_chkBlockadeShipProduct_@ViewBag.QuickDetail.OID">고객출하</div>
+                        </div>
 
-                            </td>*@
+                    </td>*@
                             <th><label class="lbText">일정계획담당자</label></th>
                             <td>
                                 <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
@@ -284,25 +288,25 @@
                 </table>
 
                 @*<label><i class="fas fa-caret-square-down"></i> 일정계획담당자</label>
-            <table class="infoTable" style="table-layout:fixed;">
-                <colgroup>
-                    <col style="width:210px;" />
-                    <col style="width:auto;" />
-                    <col style="width:210px;" />
-                    <col style="width:auto;" />
-                    <col style="width:210px;" />
-                    <col style="width:auto;" />
-                </colgroup>
-                <tbody>
-                    <tr>
-                        <th><label class="lbText">일정계획담당자</label></th>
-                        <td colspan="5">
-                            <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
-                            <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>*@
+        <table class="infoTable" style="table-layout:fixed;">
+            <colgroup>
+                <col style="width:210px;" />
+                <col style="width:auto;" />
+                <col style="width:210px;" />
+                <col style="width:auto;" />
+                <col style="width:210px;" />
+                <col style="width:auto;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th><label class="lbText">일정계획담당자</label></th>
+                    <td colspan="5">
+                        <input type="text" readonly="readonly" id="InfoQuickResponse_txtPlanUserNm_@ViewBag.QuickDetail.OID" style="width:60%;" PlanUserOID="@ViewBag.QuickDetail.PlanUserOID" value="@ViewBag.QuickDetail.PlanUserNm" />
+                        <button id="InfoQuickResponse_btnPlanUserSearch_@ViewBag.QuickDetail.OID" class="custom-button" style="display:none;"><i class="fas fa-search"></i> 검색</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>*@
 
                 <label><i class="fas fa-caret-square-down"></i> 첨부파일</label>
                 <div id="InfoQuickResponse_fileList_@ViewBag.QuickDetail.OID">

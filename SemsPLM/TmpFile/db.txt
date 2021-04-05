@@ -555,6 +555,11 @@ T_BSUB_MENU
 
 
 
+
+
+
+
+
 -- 2021.03.27 김성현
 봉쇄조치 POLICY 명 변경
 
@@ -652,3 +657,58 @@ Name : Exist
 StatusOID : 148
 StatusNm : 존재함
 StatusOrd : 1
+
+
+소스 변경 사항
+Doc 클래스
+public string Code { get; set; } -> 추가(검색용)
+
+SelDoc.xml 변경 사항
+SelDoc 쿼리
+기존 쿼리
+SELECT
+A.*
+, B.*
+FROM T_DOBJECT A
+LEFT OUTER JOIN T_DDOCUMENT B ON A.OID = B.OID
+
+변경 쿼리
+SELECT
+A.*
+, B.*
+FROM T_DOBJECT A
+LEFT OUTER JOIN T_DDOCUMENT B ON A.OID = B.OID
+LEFT OUTER JOIN T_DDOCUMENT_CLASSIFICATION C ON B.DocType = C.OID
+
+신규 추가
+<isNotNull prepend="and" property="Code">
+C.Code = #Code#
+</isNotNull>
+
+데이터 변경 사항
+문서분류체계(T_DDOCUMENT_CLASSIFICATION) 
+코드 값(OID 값은 나중에 변경이 될 가능성 있음.)
+DWG 코드 값 -> 도면
+118	시작도면(2D, 3D) 
+119	시작회로도면
+125	시작확정도면
+128	시작확정회로도면
+132	시작승인도면
+133	시작승인회로도면
+4325	양산도면
+4329	양산 기초 도면
+
+PFMEA 코드 값 -> PFMEA
+183	PFMEA
+
+MANAGE 코드 값 -> 관리계획서
+148	시작품 관리 계획서
+242	양산관리 계획서
+
+WORKSTD 코드 값 -> 작업표준서
+208	작업표준서
+
+INSPECT 코드 값 -> 검사기준서
+152	시작품 검사기준서
+154	시작 부품 검사기준서
+222	검사기준서
