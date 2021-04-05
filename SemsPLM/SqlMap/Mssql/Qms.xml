@@ -798,6 +798,9 @@
       LEFT JOIN T_DDOCUMENT C ON A.DocOID = C.OID
       LEFT JOIN T_DOBJECT OB ON B.OID = OB.OID
       <dynamic prepend="where">
+        <isNotNull prepend="and" property="ModuleOID">
+          A.ModuleOID = #ModuleOID#
+        </isNotNull>
       </dynamic>
     </select>
 

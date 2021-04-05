@@ -100,7 +100,14 @@
 <script type="text/javascript">
     var StandardDocItem = @Html.Raw(Json.Encode(ViewBag.StandardDocItem));
     var fileUpload = $("#InfoStandardFollowUp_FileList_@ViewBag.StandardDoc.OID").FileUpload({ OID: '@ViewBag.StandardDoc.OID' });
-    var fieldTypes = ["DocDrawing", "DocPFMEA", "DocManage", "DocWork", "DocInspect"];
+    var fieldTypes = [
+        { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_DWG", fieldType: "DocDrawing", fieldTypeNm: "도면" },
+        { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_PFMEA", fieldType: "DocPFMEA", fieldTypeNm: "P-FMEA" },
+        { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_MANAGE", fieldType: "DocManage", fieldTypeNm: "관리계획서" },
+        { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_WORKSTD", fieldType: "DocWork", fieldTypeNm: "작업표준서" },
+        { DocClassCode: "@Common.Constant.QmsConstant.STANDARD_INSPECT", fieldType: "DocInspect", fieldTypeNm: "검사기준서" },
+        { DocClassCode: null, fieldType: "etc", fieldTypeNm: "기타" }
+    ];
 
     $(document).ready(function () {
         var StandardDocOID = '@ViewBag.StandardDoc.OID';
@@ -204,7 +211,7 @@
                         isRequier = true;
                     }
 
-                    if (WebUtils.isEmpty(data.DocOID)) {
+                    if (WebUtils.isEmpty(data.DocOID) && fieldType !== "etc") {
                         ErrorMas += "[" + data.DocTypeNm + "] 첨부파일을 입력 해주세요.\n";
                         isRequier = true;
                     }
@@ -218,6 +225,7 @@
             SetDataFunc("DocManage");
             SetDataFunc("DocWork");
             SetDataFunc("DocInspect");
+            SetDataFunc("etc");
 
             if (isRequier) {
                 alert(ErrorMas)
@@ -250,11 +258,12 @@
         });
     });
 
-    function PrintStandardFollowUp(fieldType, ModuleOID, v) {
+    function PrintStandardFollowUp(type, ModuleOID, v) {
 
         var tr$ = document.createElement("tr");
-        tr$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        tr$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         tr$.setAttribute("UseFl", "Y");
+        tr$.setAttribute("DocClassCode", type.DocClassCode);
 
         if (!WebUtils.isEmpty(v)) {
             tr$.setAttribute("OID", v.OID);
@@ -265,13 +274,9 @@
         // 문서타입
         var tdDocType$ = document.createElement("td");
         var lbDocType$ = document.createElement("label");
-        lbDocType$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
-        lbDocType$.innerText = "";
+        lbDocType$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
+        lbDocType$.innerText = type.fieldTypeNm;
         tdDocType$.appendChild(lbDocType$);
-
-        if (!WebUtils.isEmpty(v)) {
-            lbDocType$.innerText = v.DocClassNm;
-        }
 
         // 기술표준문서
         @*var tdDocName$ = document.createElement("td");
@@ -309,7 +314,7 @@
 
         txtDocDesc$.setAttribute("type", "text");
         txtDocDesc$.style.width = "100%";
-        txtDocDesc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        txtDocDesc$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         txtDocDesc$.setAttribute("readonly", "readonly");
         txtDocDesc$.setAttribute("AttrType", "TEXT");
         txtDocDesc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
@@ -324,10 +329,9 @@
         var tdDocCompleteDt$ = document.createElement("td");
         var dtDocCompleteDt$ = document.createElement("div");
 
-        dtDocCompleteDt$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        dtDocCompleteDt$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         dtDocCompleteDt$.setAttribute("AttrType", "DATE");
         dtDocCompleteDt$.setAttribute("data-field", "");
-        @*dtDocCompleteDt$.className = "Modifiable_@ViewBag.StandardDoc.OID";*@
 
         $(dtDocCompleteDt$).jqxDateTimeInput(DateFormat);
         $(dtDocCompleteDt$).jqxDateTimeInput({
@@ -336,6 +340,10 @@
             theme: "Light",
             disabled: true
         });
+
+        if (type.fieldType === "etc") {
+             dtDocCompleteDt$.className += " Modifiable_@ViewBag.StandardDoc.OID";
+        }
 
         if (WebUtils.isEmpty(v)) {
             $(dtDocCompleteDt$).val(WebUtils.GetDate(0, "d", "-"));
@@ -370,7 +378,7 @@
 
         $(divDocName$).css("display", "flex");
 
-        txtDocName$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        txtDocName$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         txtDocName$.setAttribute("type", "text");
         txtDocName$.style.width = "100%";
         txtDocName$.setAttribute("readonly", "readonly");
@@ -386,7 +394,7 @@
         var btnIsDoc$ = document.createElement("div");
         $(btnIsDoc$).jqxSwitchButton({ height: 30, width: 80, checked: true, onLabel: "Yes", offLabel: "No" });
         $(btnIsDoc$).jqxSwitchButton({ disabled: true });
-        btnIsDoc$.setAttribute("fieldType", fieldType + "_" + ModuleOID);
+        btnIsDoc$.setAttribute("fieldType", type.fieldType + "_" + ModuleOID);
         btnIsDoc$.setAttribute("AttrType", "SWITCH");
         btnIsDoc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
 
@@ -396,15 +404,16 @@
 
         $(btnIsDoc$).bind('change', function (event) {
             var args = event.args;
+
             if (args.check === true) {
                 tr$.setAttribute("UseFl", "N");
-                btnDocSearch$.className = "custom-button";
-                $(btnDocSearch$).css("display", "none");
+                //btnDocSearch$.className = "custom-button";
+                $(divDocName$).css("display", "none");
                 txtDocDesc$.className = "";
-            } else {
+            } else if (type.fieldType !== "etc") {
                 tr$.setAttribute("UseFl", "Y");
-                btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
-                $(btnDocSearch$).css("display", "flex");
+                @*btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";*@
+                $(divDocName$).css("display", "flex");
                 txtDocDesc$.className = "Modifiable_@ViewBag.StandardDoc.OID";
             }
             //alert("You changed the state of the button");
@@ -416,21 +425,24 @@
         var tdDocSearch$ = document.createElement("td");
         var btnDocSearch$ = document.createElement("button");
         btnDocSearch$.setAttribute("AttrType", "BUTTON");
-        btnDocSearch$.className = "Modifiable_@ViewBag.StandardDoc.OID custom-button";
+        btnDocSearch$.setAttribute("DocType", type.OID);
+        btnDocSearch$.className = type.fieldType === "etc" ? "" : "Modifiable_@ViewBag.StandardDoc.OID custom-button";
         $(btnDocSearch$).css("display", "none");
         //btnDocSearch$.setAttribute("onclick", "InfoStandardFollowUpDocSearch()");
         $(btnDocSearch$).on("click", function () {
+            var param = {};
+            param.Code = $(tr$).attr("DocClassCode");
+
             OpenQmsCommonDocumentDialog(function (res) {
                 //$(txtDocDesc$).val(res.Description);
-                lbDocType$.innerText = res.DocType_KorNm;
+                //lbDocType$.innerText = res.DocType_KorNm;
                 $(txtDocName$).val(res.Title);
                 $(dtDocCompleteDt$).val(res.CreateDt);
                 tr$.setAttribute("DocOID", res.OID);
                 tr$.setAttribute("DocType", res.DocType);
                 tr$.setAttribute("CreateDt", res.CreateDt);
-            }, null, null, '/Qms/SearchDocument', '문서 검색', null);
+            }, null, param, '/Qms/SearchDocument', '문서 검색', null);
         });
-
 
         var isearch$ = document.createElement("i");
         isearch$.innerText = "검색";

@@ -32,6 +32,7 @@
       , B.*
       FROM T_DOBJECT A
       LEFT OUTER JOIN T_DDOCUMENT B ON A.OID = B.OID
+      LEFT OUTER JOIN T_DDOCUMENT_CLASSIFICATION C ON B.DocType = C.OID
       <dynamic prepend="where">
         <isNotNull prepend="and" property="Type">
           A.Type = #Type#
@@ -68,6 +69,9 @@
         </isNotNull>
         <isNotNull prepend="and" property="OIDs">
           A.OID IN ( <iterate property="OIDs" conjunction=","> #OIDs[]# </iterate> )
+        </isNotNull>
+        <isNotNull prepend="and" property="Code">
+          C.Code = #Code#
         </isNotNull>
       </dynamic>
       AND A.DeleteDt IS NULL

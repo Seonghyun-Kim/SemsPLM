@@ -136,5 +136,12 @@ namespace Common.Constant
         public static string POLICY_OPENISSUE_ITEM_UNCOMMITTED = "Uncommitted";
         public static string POLICY_OPENISSUE_ITEM_COMPLETED = "Compleated";
 
+
+        // 표준화 문서 코드
+        public static string STANDARD_DWG = "DWG";
+        public static string STANDARD_PFMEA = "PFMEA";
+        public static string STANDARD_MANAGE = "MANAGE";
+        public static string STANDARD_WORKSTD = "WORKSTD";
+        public static string STANDARD_INSPECT = "INSPECT";
     }
 }
