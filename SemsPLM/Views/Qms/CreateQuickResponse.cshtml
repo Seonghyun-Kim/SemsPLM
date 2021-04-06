@@ -406,7 +406,7 @@
         }).on('upload:done', function (e, file, index, data, xhr) {
             var imgPictureResult$ = $('#imgResultDlgPoorPicture');
             imgPictureResult$.empty();
-            imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/")' + data +'" />');
+            imgPictureResult$.append('<img class="img-thumbnail" style="width:200px;height:240px;" src="@(Url.Content(FullImgPath) + "/")' + data +'" />');
             $('#hidImgFileNameDlgPoorPicture').val(data);
             $('#imghereDlgPoorPicture').hide();
             $('.img-thumbnail').next().on('click', function () {
@@ -436,7 +436,7 @@
         }).on('upload:done', function (e, file, index, data, xhr) {
             var imgPictureResult$ = $('#imgResultDlgGoodPicture');
             imgPictureResult$.empty();
-            imgPictureResult$.append('<img class="img-thumbnail" src="@(Url.Content(FullImgPath) + "/")' + data +'" />');
+            imgPictureResult$.append('<img class="img-thumbnail" style="width:200px;height:240px;" src="@(Url.Content(FullImgPath) + "/")' + data +'" />');
             $('#hidImgFileNameDlgGoodPicture').val(data);
             $('#imghereDlgGoodPicture').hide();
             $('.img-thumbnail').next().on('click', function () {
@@ -630,9 +630,10 @@
                 alert("저장되었습니다.");
 
                 PageReload();
-                //var linkName = "[신속대응상세] " + response.Title;
-                //var linkUrl = '/Qms/InfoQuickResponseDetail?OID=' + response.OID;
-                //TabPageLoad(linkName, linkUrl)
+
+                var linkName = "[신속대응상세] " + response.Title;
+                var linkUrl = '/Qms/InfoQuickResponseDetail?OID=' + response.OID;
+                TabPageLoad(linkName, linkUrl)
             });
         });
 
