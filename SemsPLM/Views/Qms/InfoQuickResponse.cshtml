@@ -480,7 +480,7 @@
             var popX = scX + (mtWidth - 1) / 2 - 50;
             var popY = scY + (mtHeight - 1) / 2 - 90;
             var win = "toolbar=0, menubar=0, scrollbars=0, resizable=1, left=" + popX + ", top=" + popY + ", width=1, height=1";
-            var url = "/Qms/ImgFileDownload?OID=" + @ViewBag.QuickDetail.OID + "&FileName=" + $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val();
+            var url = "/Qms/ImgFileDownload?OID=" + @ViewBag.QuickDetail.OID + "&FileName=" + $('#hidInfoQuickResponsePoorPicture_@ViewBag.QuickDetail.OID').val() + "&downloadFileNm=" + "고품사진";
 
             window.location.href = url;
         });
@@ -523,7 +523,7 @@
             var popX = scX + (mtWidth - 1) / 2 - 50;
             var popY = scY + (mtHeight - 1) / 2 - 90;
             var win = "toolbar=0, menubar=0, scrollbars=0, resizable=1, left=" + popX + ", top=" + popY + ", width=1, height=1";
-            var url = "/Qms/ImgFileDownload?OID=" + @ViewBag.QuickDetail.OID + "&FileName=" + $('#hidInfoQuickResponseGoodPicture_@ViewBag.QuickDetail.OID').val();
+            var url = "/Qms/ImgFileDownload?OID=" + @ViewBag.QuickDetail.OID + "&FileName=" + $('#hidInfoQuickResponseGoodPicture_@ViewBag.QuickDetail.OID').val() + "&downloadFileNm=" + "양품사진";
 
             window.location.href = url;
         });

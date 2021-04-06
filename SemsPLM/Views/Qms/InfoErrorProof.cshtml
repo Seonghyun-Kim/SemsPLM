@@ -87,7 +87,7 @@
                         <td colspan="3">
                             <div style="display:flex;">
                                 <input type="text" id="txtDlgEditErrorProofCheckUser_@ViewBag.ErrorProof.OID" style="width:120px; margin-right:5px;" readonly="readonly" CheckUserOID="@ViewBag.ErrorProof.CheckUserOID" value="@ViewBag.ErrorProof.CheckUserNm" />
-                                <button id="btnDlgEditErrorProofCheckUser_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="BUTTON"><i class="fas fa-search"></i> 검색</button>
+                                <button id="btnDlgEditErrorProofCheckUser_@ViewBag.ErrorProof.OID" class="Modifiable_@ViewBag.ErrorProof.OID" AttrType="BUTTON" style="display:none;"><i class="fas fa-search"></i> 검색</button>
                             </div>
                         </td>
                     </tr>
@@ -278,7 +278,7 @@
         dtDlgEditErrorProofActDt$.val( vActDt === null ? WebUtils.GetDate(-1, "m", "-") : vActDt);
 
         // 담당자 검색
-        var btnDlgUserSearch$ = $("#btnDlgEditErrorProofCheckUser_" + ErrorProofOID).jqxButton({disabled: true});
+        var btnDlgUserSearch$ = $("#btnDlgEditErrorProofCheckUser_" + ErrorProofOID).jqxButton();
         btnDlgUserSearch$.on("click", function () {
             OpenApprovalPersonDialog(function (res) {
                 if (res.length > 1) {

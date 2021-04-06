@@ -1114,7 +1114,7 @@ namespace SemsPLM.Controllers
         }
 
         [HttpGet]
-        public ActionResult ImgFileDownload(int? OID, string fileName)
+        public ActionResult ImgFileDownload(int? OID, string fileName, string downloadFileNm)
         {
             try
             {
@@ -1133,7 +1133,7 @@ namespace SemsPLM.Controllers
 
                 System.IO.Stream fileStream = new FileStream(fi.FullName, FileMode.Open); ;
 
-                string downloadImgName = string.Format("{0}.{1}", "고품사진", fileName.Substring(fileName.LastIndexOf(".") + 1));
+                string downloadImgName = string.Format("{0}.{1}", downloadFileNm, fileName.Substring(fileName.LastIndexOf(".") + 1));
 
                 if (Request.Browser.Browser == "IE" || Request.Browser.Browser == "InternetExplorer")
                 {
@@ -2503,6 +2503,11 @@ namespace SemsPLM.Controllers
                 {
                     if (v.OID == null)
                     {
+                        if (v.IsRemove == "Y")
+                        {
+                            return;
+                        }
+
                         DObject dobj = new DObject();
                         dobj.Type = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
                         dobj.Name = QmsConstant.TYPE_IMPROVE_COUNTERMEASURE_ITEM;
