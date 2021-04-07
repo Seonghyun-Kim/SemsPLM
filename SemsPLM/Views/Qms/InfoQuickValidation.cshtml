@@ -213,6 +213,16 @@
                     return;
                 }
 
+                if (WebUtils.isEmpty(data.CheckDetail)) {
+                    alert((i + 1) + "차 유효성검증" + " 검증내용요약을 입력 해주세요.");
+                    return;
+                }
+
+                if (data.FinishFl === 1 && WebUtils.isEmpty(data.FinishDetail)) {
+                    alert((i + 1) + "차 유효성검증" + " 종료사유을 입력 해주세요.");
+                    return;
+                }
+
                 param.QmsCheckList.push(data);
             }
 

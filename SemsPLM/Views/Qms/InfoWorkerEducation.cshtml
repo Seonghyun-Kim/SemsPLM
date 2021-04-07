@@ -72,7 +72,7 @@
                         <td>
                             <div class="Modifiable_@ViewBag.WorkerEdu.OID" AttrType="DATE" id="InfoWorkerEducation_txtEduDt_@ViewBag.WorkerEdu.OID" value="@(ViewBag.WorkerEdu.EduDt == null ? "" : ViewBag.WorkerEdu.EduDt.ToString("yyyy-MM-dd"))"></div>
                         </td>
-                        <th><label class="lbText">담당자</label></th>
+                        <th><label class="lbText">교육담당자</label></th>
                         <td>
                             <div style="display:flex">
                                 <input type="text" readonly="readonly" id="InfoWorkerEducation_txtEduUser_@ViewBag.WorkerEdu.OID" style="width:120px;" EduUserOID="@ViewBag.WorkerEdu.EduUserOID" value="@ViewBag.WorkerEdu.EduUserNm" />

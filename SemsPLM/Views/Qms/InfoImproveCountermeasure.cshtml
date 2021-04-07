@@ -172,7 +172,7 @@
                 if ($(v).attr("Remove") === "Y") {
                     data.IsRemove = "Y";
                 }
-                else {
+                else if ($(v).attr("Remove") !== "Y"){
                     SaveCnt++;
 
                     if (WebUtils.isBlank(data.RootCause)) {
@@ -186,9 +186,9 @@
                     if (WebUtils.isBlank(data.ProcessDt)) {
                         errMsg += "[" + (i + 1).toString() + "] 행의 처리일자가 입력되지 않았습니다.\n";
                     }
-
-                    param.ImproveCounterMeasureItems.push(data);
                 }
+
+                param.ImproveCounterMeasureItems.push(data);
             });
 
             if (errMsg.length != 0) {
