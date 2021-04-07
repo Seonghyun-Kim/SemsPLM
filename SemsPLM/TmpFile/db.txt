@@ -561,7 +561,7 @@ T_BSUB_MENU
 
 
 -- 2021.03.27 김성현
-봉쇄조치 POLICY 명 변경
+※봉쇄조치 POLICY 명 변경
 
 110	BLOCKADE_ITEM_PARTNER	Exist	110	존재함	NULL	NULL	1	NULL	NULL	NULL
 111	BLOCKADE_ITEM_MATERIAL_STORAGE	Exist	111	존재함	NULL	NULL	1	NULL	NULL	NULL
@@ -572,26 +572,28 @@ T_BSUB_MENU
 
 
 
-라이브러리 추가
+※라이브러리 추가
 
-QMS - 봉쇄조치방법(BLOCKADE_ACTION_METHOD)
+QMS - 봉쇄조치방법(BLOCKADE_ACTION_METHOD) 17
 
-QMS - 봉쇄조치방법 - 선별
-QMS - 봉쇄조치방법 - 재작업
-QMS - 봉쇄조치방법 - 수리
-QMS - 봉쇄조치방법 - 폐기
-QMS - 봉쇄조치방법 - 반출
-QMS - 봉쇄조치방법 - 기타
+QMS - 봉쇄조치방법 - 선별 1
+QMS - 봉쇄조치방법 - 재작업 2
+QMS - 봉쇄조치방법 - 수리 3
+QMS - 봉쇄조치방법 - 폐기 4
+QMS - 봉쇄조치방법 - 반출 5
+QMS - 봉쇄조치방법 - 기타 6
 
 
 
-데이터 변경사항
-발생처(사내)
+※라이브러리 변경
+QMS - 발생처(사내)
 고객, 해외법인, 출하, 입고, CKD -> 수입, 공정, 출하, 해외법인
 고객, 입고, CKD 사용유무 N으로 설정
 수입, 공정 신규추가
 
-테이블 변경 -> aquerytool 반영 완료
+
+
+※테이블 변경
 T_DQMS_STANDARD_DOC
 DocType -> Null 허용
 DocOID-> Null 허용
@@ -602,54 +604,66 @@ T_DQMS_QUICK
 발생유형이 사외 일 경우만 고객사 항목은 필수
 OemLibOID -> Null 허용
 
-테이블 추가 -> aquerytool 반영 완료
+
+
+※테이블 추가
 테이블 명 : T_DQMS_QUICK_TEAM
 컬럼 명 : OID, 타입 : int, Desc : 오브젝트
 컬럼 명 : QuickOID, 타입 : int, Desc : 신속대응 OID
 컬럼 명 : RoleLibOID, 타입 : int, Desc : 구성원 권한
 컬럼 명 : QuickUserOID, 타입 : int, Desc : 사용자
 
+CREATE TABLE T_DQMS_QUICK_TEAM
+(
+    "OID"           int    NOT NULL, 
+    "QuickOID"      int    NOT NULL, 
+    "RoleLibOID"    int    NOT NULL, 
+    "QuickUserOID"  int    NOT NULL, 
+    CONSTRAINT PK_T_DQMS_QUICK_TEAM PRIMARY KEY (OID)
+)
+GO
 
-신속대응 테이블 변경
-발생유형이 사외 일 경우만 고객사 항목은 필수
-OemLibOID -> Null 허용
+EXECUTE sys.sp_addextendedproperty 'MS_Description',
+    '오브젝트', 
+   'user', dbo, 'table', 'T_DQMS_QUICK_TEAM', 'column', 'OID'
+GO
 
-협력사 데이터
-협력사 그룹코드 신규추가
-코드 : PARTNERS
-이름 : 협력사 
-순서 : 9
-사용여부 : Y
+EXECUTE sys.sp_addextendedproperty 'MS_Description',
+    '신속대응 OID', 
+   'user', dbo, 'table', 'T_DQMS_QUICK_TEAM', 'column', 'QuickOID'
+GO
 
-협력사 데이터
-코드 : 1
-이름 : 테슬라
-순서 : 1
-사용여부 : Y
+EXECUTE sys.sp_addextendedproperty 'MS_Description',
+    '구성원 권한', 
+   'user', dbo, 'table', 'T_DQMS_QUICK_TEAM', 'column', 'RoleLibOID'
+GO
 
-TEAM 데이터
-TEAM 그룹코드 신규추가
-코드 : QUICK_TEMP_ROLE
-이름 : TEAM
-순서 : 21
-사용여부 : Y
+EXECUTE sys.sp_addextendedproperty 'MS_Description',
+    '사용자', 
+   'user', dbo, 'table', 'T_DQMS_QUICK_TEAM', 'column', 'QuickUserOID'
+GO
 
-TEAM 데이터
-코드 : 1
-이름 : Champion
-순서 : 1
-사용여부 : Y
 
-코드 : 2
-이름 : Team Leader
-순서 : 2
-사용여부 : Y
 
-코드 : 3
-이름 : Team Members
-순서 : 3
-사용여부 : Y
+※라이브러리 추가
+QMS - 협력사(PARTNERS) 18
 
+QMS - 협력사 - 테슬라 1
+QMS - 협력사 - BMW 2
+
+
+
+※라이브러리 추가
+QMS - 구성원롤 (QUICK_TEMP_ROLE) 19
+
+QMS - 협력사 - Champion 1
+QMS - 협력사 - Team Leader 2
+QMS - 협력사 - Team Members 2
+
+
+
+
+※POLICY 추가
 DB 데이터 추가 사항
 T_BPOLICY
 Type : QUICK_RESPONSE_TEAM
@@ -659,33 +673,8 @@ StatusNm : 존재함
 StatusOrd : 1
 
 
-소스 변경 사항
-Doc 클래스
-public string Code { get; set; } -> 추가(검색용)
 
-SelDoc.xml 변경 사항
-SelDoc 쿼리
-기존 쿼리
-SELECT
-A.*
-, B.*
-FROM T_DOBJECT A
-LEFT OUTER JOIN T_DDOCUMENT B ON A.OID = B.OID
-
-변경 쿼리
-SELECT
-A.*
-, B.*
-FROM T_DOBJECT A
-LEFT OUTER JOIN T_DDOCUMENT B ON A.OID = B.OID
-LEFT OUTER JOIN T_DDOCUMENT_CLASSIFICATION C ON B.DocType = C.OID
-
-신규 추가
-<isNotNull prepend="and" property="Code">
-C.Code = #Code#
-</isNotNull>
-
-데이터 변경 사항
+※ 문서분류체계 변경 사항
 문서분류체계(T_DDOCUMENT_CLASSIFICATION) 
 코드 값(OID 값은 나중에 변경이 될 가능성 있음.)
 DWG 코드 값 -> 도면
@@ -697,6 +686,8 @@ DWG 코드 값 -> 도면
 133	시작승인회로도면
 4325	양산도면
 4329	양산 기초 도면
+
+>> 여기까지 처리
 
 PFMEA 코드 값 -> PFMEA
 183	PFMEA
