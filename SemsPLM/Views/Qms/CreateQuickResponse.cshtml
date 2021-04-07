@@ -454,7 +454,7 @@
             param.PlantLibOID = WebUtils.GetComboValue("cbDlgPlant");
             param.OccurrenceLibOID = WebUtils.GetComboValue("cbDlgOccurrence");
             param.ItemLibOID = WebUtils.GetComboValue("cbDlgItem");
-            param.PartOID = WebUtils.isEmpty($("#txtDlgPartNo").attr("PartOID")) === true ? 156 : $("#txtDlgPartNo").attr("PartOID");
+            param.PartOID = $("#txtDlgPartNo").attr("PartOID");
             param.LotNo = $("#txtDlgLotNo").val();
             param.OemLibOID = WebUtils.GetComboValue("cbDlgOem");
             param.CarCode = $("#txtDlgCarCode").val();
